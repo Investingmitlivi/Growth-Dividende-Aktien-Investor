@@ -1,22 +1,22 @@
 import requests, json, time
 #import streamlit_authenticator as stauth
-import pickle
-import matplotlib.pyplot as plt
+#import pickle
+#import matplotlib.pyplot as plt
 import streamlit as st, pandas as pd, numpy as np, yfinance as yf
 import plotly.express as px
-import sqlite3 
-import bcrypt
+#import sqlite3 
+#import bcrypt
 import plotly.graph_objs as go
 import plotly.graph_objects as go
 import altair as alt
-import random
-import string
-import uuid  # Import the uuid library
-import hashlib
+#import random
+#import string
+#import uuid  # Import the uuid library
+#import hashlib
 import time
 import firebase_admin
-import math
-import re
+#import math
+#import re
 #import finnhub
 
 from sqlite3 import OperationalError
