@@ -8362,9 +8362,13 @@ with st.container():
           except Exception as e: 
                 Net_debt_latest_quarter=0
 
-
+          try:
           
-          Net_debt_to_Ebitda = "{:.1f}".format(EBIDTA_latest_year/Net_debt_latest_quarter)
+               Net_debt_to_Ebitda = "{:.1f}".format(EBIDTA_latest_year/Net_debt_latest_quarter)
+
+          except Exception as e: 
+                
+               Net_debt_to_Ebitda =" "
 
           try:
                if Net_debt_to_Ebitda <0:
@@ -11114,6 +11118,8 @@ with st.container():
           #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
           Growth_rate1 = col9.number_input("Growth Rate (Base Case) in %:", value=0.00)
           Growth_rate2 = col10.number_input("Growth Rate (Bullish Case) in %:", value=0.00)
+
+     
      #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
 
           cola, colb, colc= st.columns(3)
