@@ -7811,31 +7811,31 @@ Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuati
 
  #------------------------------------------------------------
  #..........................................................
-from stocknews import StockNews
-with st.container():
-     with news:
-          #st.header(f'News of {ticker}')
-          #sn = StockNews(ticker, save_news=False)
-          #df_news = sn.read_rss()
-          #for i in range(10):
-          #    st.subheader(f'News {i+1}')
-               #st.write("me")
-               #print(df_news)
-     #stock_info = yf.Ticker(ticker)     
-          # Get the stock news
-          news = stock_info.news[:10]  # Get the top ten news articles
+# from stocknews import StockNews
+# with st.container():
+#      with news:
+#           #st.header(f'News of {ticker}')
+#           #sn = StockNews(ticker, save_news=False)
+#           #df_news = sn.read_rss()
+#           #for i in range(10):
+#           #    st.subheader(f'News {i+1}')
+#                #st.write("me")
+#                #print(df_news)
+#      #stock_info = yf.Ticker(ticker)     
+#           # Get the stock news
+#           news = stock_info.news[:10]  # Get the top ten news articles
 
-          # Display the news headlines and links
-          for i, item in enumerate(news, 1):
-               headline = item['title']
-               link = item['link']
-               st.write(f"Headline: {headline}")
-               st.write(f"{link}")
-          #print(f"{i}. Headline: {headline}")
-          #print(f"Link: {link}")
-          #print("=" * 50)
+#           # Display the news headlines and links
+#           for i, item in enumerate(news, 1):
+#                headline = item['title']
+#                link = item['link']
+#                st.write(f"Headline: {headline}")
+#                st.write(f"{link}")
+#           #print(f"{i}. Headline: {headline}")
+#           #print(f"Link: {link}")
+#           #print("=" * 50)
 
-          yf.pdr_override()  # Clear the cached data
+#           yf.pdr_override()  # Clear the cached data
 
 
 
