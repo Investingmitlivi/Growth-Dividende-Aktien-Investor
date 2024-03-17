@@ -1,5 +1,5 @@
 import requests, json, time
-import streamlit_authenticator as stauth
+#import streamlit_authenticator as stauth
 import pickle
 import matplotlib.pyplot as plt
 import streamlit as st, pandas as pd, numpy as np, yfinance as yf
