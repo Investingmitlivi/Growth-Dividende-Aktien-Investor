@@ -7341,14 +7341,7 @@ stock_info = yf.Ticker(ticker)
 
 
 
-is_refreshed = False
-
-# Check if the site is being refreshed
-if st._is_running_with_streamlit:
-    is_refreshed = st.session_state["_is_session_started"]
-
-# Retrieve the current price only when the site is refreshed
-if is_refreshed:
+def get_current_price():
 
      try:
           current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
@@ -7357,6 +7350,10 @@ if is_refreshed:
      
           current_price = quote.fundamental_df.at[0, "Price"]
           current_price = 23
+
+     return current_price 
+
+current_price = get_current_price()    
 
 def format_date(date):
     return date.strftime('%Y/%m/%d')
