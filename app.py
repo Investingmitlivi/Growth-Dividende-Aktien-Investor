@@ -7189,8 +7189,8 @@ def main():
            st.button('Sign out',on_click=t)
 
    
-if __name__ == '__main__':
-      main()
+#if __name__ == '__main__':
+ #     main()
 
 
 
