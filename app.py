@@ -7337,13 +7337,26 @@ else:
 
 stock_info = yf.Ticker(ticker)
 
-try:
-     current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
 
-except Exception as e: #except all errors
-    
-     current_price = quote.fundamental_df.at[0, "Price"]
-     current_price = 23
+
+
+
+is_refreshed = False
+
+# Check if the site is being refreshed
+if st._is_running_with_streamlit:
+    is_refreshed = st.session_state["_is_session_started"]
+
+# Retrieve the current price only when the site is refreshed
+if is_refreshed:
+
+     try:
+          current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
+
+     except Exception as e: #except all errors
+     
+          current_price = quote.fundamental_df.at[0, "Price"]
+          current_price = 23
 
 def format_date(date):
     return date.strftime('%Y/%m/%d')
