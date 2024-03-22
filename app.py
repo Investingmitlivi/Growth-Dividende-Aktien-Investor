@@ -7821,32 +7821,40 @@ Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuati
 
  #------------------------------------------------------------
  #..........................................................
-# from stocknews import StockNews
-# with st.container():
-#      with news:
-#           #st.header(f'News of {ticker}')
-#           #sn = StockNews(ticker, save_news=False)
-#           #df_news = sn.read_rss()
-#           #for i in range(10):
-#           #    st.subheader(f'News {i+1}')
-#                #st.write("me")
-#                #print(df_news)
-#      #stock_info = yf.Ticker(ticker)     
-#           # Get the stock news
-#           news = stock_info.news[:10]  # Get the top ten news articles
+from stocknews import StockNews
+with st.container():
+     with news:
+          
+          news = stock_info.news[:10]  # Get the top ten news articles
 
-#           # Display the news headlines and links
-#           for i, item in enumerate(news, 1):
-#                headline = item['title']
-#                link = item['link']
-#                st.write(f"Headline: {headline}")
-#                st.write(f"{link}")
-#           #print(f"{i}. Headline: {headline}")
-#           #print(f"Link: {link}")
-#           #print("=" * 50)
+          # Display the news headlines and links
+          for i, item in enumerate(news, 1):
+               headline = item['title']
+               link = item['link']
+               st.write(f"Headline: {headline}")
+               st.write(f"{link}")
+              
+          yf.pdr_override()  # Clear the cached data
 
-#           yf.pdr_override()  # Clear the cached data
 
+          # links = quote.outer_news_df[['title', 'link']].head(10)
+
+          # # Display the headlines and links
+          # for i, row in links.iterrows():
+          #      headline = row['title']
+          #      link = row['link']
+          #      st.write(f"Headline: {headline}")
+          #      st.write(f"Link: {link}")
+
+
+
+
+
+        #  link = quote.outer_news_df  # Assuming outer_news_df contains the link information
+
+
+#          st.write(f"[{link}]({link})")        
+          
 
 
 
@@ -11968,7 +11976,7 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='Revenue Growth',
                               text='Revenue Growth', 
                               labels={'value': 'Amount'},
-                              title='Revenue Growth')
+                              title='Revenue Growth ')
                               #barmode='group')  # Use 'group' to display bars side by side
 
                               
@@ -12113,9 +12121,11 @@ with st.container():
                     'Dividends per Share growth': Dividends_per_share_growth_annual_2003,
                     })
 
+
+
                     # Create a Plotly Express bar chart
                     fig2 = px.bar(data, x='Date', y='Dividends per Share growth',
-                              text='Dividends per Share growth',  # Display the value on top of each bar
+                              text='Dividends per Share growth',  # Corrected the column name
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                               title='Dividends per Share growth')
 
