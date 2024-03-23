@@ -12615,7 +12615,7 @@ with st.container():
           st.image('fcf estimate.png', use_column_width=True)
 
           st.write("Discount Rate Calculation")
-          st.image('Wacc.png', use_column_width=True)
+          st.image('WACC!.png', use_column_width=True)
 
           st.write("Terminal Value")
           st.image('Terminal-Value.png', use_column_width=True)
