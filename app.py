@@ -8518,27 +8518,40 @@ with st.container():
 #"{:.2f}".format(((sum(pe_one) / len(pe_one))))
           }
                # Convert data into DataFrames
-          df1 = pd.DataFrame(data1).transpose()
+          df1 = pd.DataFrame(data1).transpose()                                      
           df2 = pd.DataFrame(data2).transpose()
           df3 = pd.DataFrame(data3).transpose()
           df4 = pd.DataFrame(data4).transpose()
 
-          # Reset column index to start from 1
-          df1.columns = range(1, len(df1.columns) + 1)
-          df2.columns = range(2, len(df2.columns) + 2)
-          df3.columns = range(3, len(df3.columns) + 3)
-          df4.columns = range(4, len(df4.columns) + 4)
+          # # Reset column index to start from 1
+          # df1.columns = range(1, len(df1.columns) + 1)
+          # df2.columns = range(2, len(df2.columns) + 2)
+          # df3.columns = range(3, len(df3.columns) + 3)
+          # df4.columns = range(4, len(df4.columns) + 4)
           
 
         
-          #style = "color: #2E8B57"
-          style = "color: #2E8B57; text-align: center"
+          # #style = "color: #2E8B57"
+          # style = "color: #2E8B57; text-align: center"
 
+          # styled_df1 = df1.style.applymap(lambda x: style).set_caption("")
+          # styled_df2 = df2.style.applymap(lambda x: style).set_caption("")
+          # styled_df3 = df3.style.applymap(lambda x: style).set_caption("")
+          # styled_df4 = df4.style.applymap(lambda x: style).set_caption("")
+          
+
+          # Rename columns to replace indices with "ratios"
+          df1 = df1.rename(columns={i: " " for i in df1.columns})
+          df2 = df2.rename(columns={i: " " for i in df2.columns})
+          df3 = df3.rename(columns={i: " " for i in df3.columns})
+          df4 = df4.rename(columns={i: " " for i in df4.columns})
+
+          # Apply styling to DataFrames
+          style = "color: #2E8B57; text-align: center"
           styled_df1 = df1.style.applymap(lambda x: style).set_caption("")
           styled_df2 = df2.style.applymap(lambda x: style).set_caption("")
           styled_df3 = df3.style.applymap(lambda x: style).set_caption("")
           styled_df4 = df4.style.applymap(lambda x: style).set_caption("")
-
 
           
 
