@@ -8413,8 +8413,8 @@ with st.container():
                #Target_Price='{:.2f}'.format(Target_Price)   
                Dividend_Est = quote.fundamental_df.at[0,"Dividend Est."]
                Dividend_Ex_Date= quote.fundamental_df.at[0,"Dividend Ex-Date"]
-               Price_Change =quote.fundamental_df.at[0,"Change"]
-
+               #Price_Change =quote.fundamental_df.at[0,"Change"]
+               Earnings_next_5_yrs=quote.fundamental_df.at[0,"EPS next 5Y"]
                    
           except Exception as e: 
 
@@ -8427,7 +8427,8 @@ with st.container():
                Moving_50="-"
                Target_Price ="-"
                Dividend_Est ="-"
-               Price_Change="-"
+               #Price_Change="-"
+               Earnings_next_5_yrs="-"
           
           data1 = {
           'Market Cap (intraday)': [Marketcap_in_Billion],
@@ -8504,6 +8505,7 @@ with st.container():
           data4 = {
           'FCF Yield':[fcf_yield_ttm],
           'Forward P/E': [forwardPE], 
+          'EPS next 5yrs':[Earnings_next_5_yrs],
           'PEG': [PEG],
           'Beta': [Beta],
           'RSI (14)': [RSI],
@@ -8511,8 +8513,8 @@ with st.container():
           '200 SMA':[Moving_200],
           'Earnings':[Earnings],
           'Target Price':  [f"$ {Target_Price}"],
-          'Current price': ["$ {:.2f}".format(amount)] ,
-          'Price Change':[Price_Change]      
+          'Current price': ["$ {:.2f}".format(amount)] 
+          #'Price Change':[Price_Change]      
 #"{:.2f}".format(((sum(pe_one) / len(pe_one))))
           }
                # Convert data into DataFrames
@@ -12444,6 +12446,10 @@ with st.container():
                           
                     with col2:
                          st.plotly_chart(fig12,use_container_width=True,config=config)
+
+
+
+
 
 #...........................................................................................................
    
