@@ -10608,7 +10608,7 @@ with st.container():
                netmarge = "-🔴"    
 
 
-          if one_FCF_annual_payout > 55:
+          if one_FCF_annual_payout > 60:
                     payout = "-🔴"  # Red X for KGV less than 23
 
           elif one_FCF_annual_payout < 0:
@@ -10689,7 +10689,7 @@ with st.container():
           col5.metric("5 YR ROIC > 9%",f"{Average_ROIC_funf}",roic)
           col6.metric("5 YR ROE > 14%", f"{five_Yrs_ROE:.5}%",roe)
           col7.metric("5 YR NET MARGIN > 5%",f"{five_yrs_Nettomarge:.2f}%",netmarge)
-          col8.metric("FCF PAYOUT RATIO < 55 %",f"{one_FCF_annual_payout:.2f}%",payout)
+          col8.metric("FCF PAYOUT RATIO < 60 %",f"{one_FCF_annual_payout:.2f}%",payout)
 
           col9, col10, col11, col12 = st.columns(4)
 
