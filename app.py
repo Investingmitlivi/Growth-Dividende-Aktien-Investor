@@ -1,7 +1,7 @@
 import requests, json, time
 #import streamlit_authenticator as stauth
 #import pickle
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import streamlit as st, pandas as pd, numpy as np, yfinance as yf
 import plotly.express as px
 #import sqlite3 
@@ -5355,6 +5355,7 @@ ticker_symbol_name = {
      'RCS':'PIMCO Strategic Income Fund Inc.',
      'RCUS':'Arcus Biosciences Inc. ',
      'RDCM':'Radcom Ltd. ',
+     'RDDT':'Reddit Inc. ',
      'RDFN':'Redfin Corporation ',
      'RDHL':'Redhill Biopharma Ltd. ',
      'RDI':'Reading International Inc  ',
@@ -7217,6 +7218,10 @@ custom_css = """
           """
 
 
+
+
+
+
 #............................... quickfs api .................
 
 
@@ -7344,7 +7349,8 @@ stock_info = yf.Ticker(ticker)
 def get_current_price():
 
      try:
-          current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
+          #current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
+          current_price = stock_info.history(period="1d")["Close"].iloc[-1]
 
      except Exception as e: #except all errors
      
@@ -8158,8 +8164,8 @@ with st.container():
 
           try:
                 
-               Divdend_per_share_yield_average =annual_data['dividends'][-5:]
-               Divdend_per_share_yield_average =sum(Divdend_per_share_yield_average) / len(Divdend_per_share_yield_average)
+               Divdends_paid_5years =annual_data['dividends'][-5:]
+               Divdend_per_share_yield_average =sum(Divdends_paid_5years) / len(Divdends_paid_5years)
                 
           except Exception as e: 
                 
@@ -8686,6 +8692,9 @@ with st.container():
                     Free_cash_flow_annual = annual_data['fcf'][-10:]
 
                     index = range(len(date_list_annual))
+
+
+                    
                     FFO = pd.DataFrame({'Period End Date': date_list_annual,
                                                        'Operating Cash Flow': Net_Operating_CashFlow_annual,
                                                        'Changes In Working Capital': Changes_in_working_capital_annual
@@ -8700,13 +8709,8 @@ with st.container():
 
                                    # Replace the numbering with the actual date
                     total.columns = total.iloc[0]  # Use the first row as column names
-                    total = total[1:]  # Remove the first row
+                    total = total[1:]  
 
-                                        # Convert the numbers to billions and display with 2 decimal places
-                                        #total = (total / 1e9).round(2)
-                                        
-                                        #total = "{:.2f}B".format((total/1000000000))
-                         #total_qaurter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9))
                     total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x)>= 1e9 else "{:,.0f}M".format(x / 1e6))
 
 
@@ -8769,8 +8773,8 @@ with st.container():
                     merged_df = pd.concat([total_annual,Capex_annual_df,Net_Assets_from_Acquisitions_annual_df,Purchase_of_Investment_annual_df,Net_investing_CashFlow_annual_df,Cash_Dividends_paid_Total_annual_df,Insurance_Reduction_of_DebtNet_annual_df,Repurchase_of_common_Preferred_stock_annual_df,Net_Financing_cashFlow_annual_df,Net_change_in_cash_annual_df,Free_cash_flow_annual_df]) 
                               
                     st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                       #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                    #st.markdown('</div>', unsafe_allow_html=True) 
+                    
+                    
                     st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
 
                     with Quarterly:
@@ -8874,6 +8878,7 @@ with st.container():
 
 
                          merged_df = pd.concat([total_quarter,Capex_quarter_df,Net_Assets_from_Acquisitions_quarter_df,Purchase_of_Investment_quarter_df,Net_investing_CashFlow_quarter_df,Cash_Dividends_paid_Total_quarter_df,Insurance_Reduction_of_DebtNet_quarter_df,Repurchase_of_common_Preferred_stock_quarter_df,Net_Financing_cashFlow_quarter_df,Net_change_in_cash_quarter_df,Free_cash_flow_quarter_df])           
+                         #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
                          st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
                                                             #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
                          #st.markdown('</div>', unsafe_allow_html=True) 
@@ -10505,50 +10510,6 @@ with st.container():
                netincome_annual_funf_growth_ =0    
      #...............................................................................................................................
 
-          # # Create a DataFrame
-          # quarterly_data = {
-          # #'Period End Date': Period_end_dates,
-          # 'accounts_payable': Accounts_payable_quarter,
-          # 'current_accrued_liabilities': Current_accrued_liab_quarter,
-          # 'tax_payable': Tax_payable_quarter,
-          # 'other_current_liabilities': Other_current_liabilities_quarter,
-          # 'current_deferred_revenue': Current_deferred_revenue_quarter
-          # }
-
-          # columns = ['accounts_payable', 'current_accrued_liabilities', 'tax_payable', 'other_current_liabilities', 'current_deferred_revenue']
-
-          # data = []
-
-          # # Extract the last 10 quarters for each column
-          # for column in columns:
-          #      try:
-          #           data.append(quarterly_data[column][-10:])
-          #      except KeyError:
-          #           data.append([0] * 10)  # Insert zeros for missing column
-
-          # # Create a DataFrame
-          # df = pd.DataFrame(data, index=columns).T
-          # print(df)
-
-
-          # sums = [sum(col) for col in zip(*data)]
-          # data.append(sums)
-
-          # # Add column names for the sums row
-          # columns.append('sum')
-
-          # # Create a DataFrame
-          # df = pd.DataFrame(data).T
-          # df.columns = columns
-          # print(df)
-
-
-
-
-
-
-
-     #---------------------------------------------------------------------------------------------------------------------------------
 
      
      #...........................................................................................................
@@ -11427,8 +11388,29 @@ with st.container():
                else:
                     font_color = "red"
                col22.write(f"<span style='color:{font_color}'>{high_DCF:.2f} €</span>", unsafe_allow_html=True)
+
+
 with st.container():
      with Multiple_Valuation:
+
+          Revenue_annaul_10 =annual_data['revenue'][-10:]
+          Revenue_annaul_10=sum(Revenue_annaul_10)/len(Revenue_annaul_10)
+
+          Revenue_annual_5 =annual_data['revenue'][-5:]
+
+          Netincome_annual_10 =annual_data['net_income'][-10:]
+          Netincome_annual_10=sum(Netincome_annual_10)/len(Netincome_annual_10)
+
+
+          Net_profit_margin_annual_10 =Revenue_annaul_10/Netincome_annual_10
+       #    if Revenue_ttm!=0 and average_revenue_annual !=0 :
+        #       Price_to_sales_last = "{:.2f}".format(Marketcap/(Revenue_ttm/1000000000))
+         #      five_yrs_Nettomarge = "{:.2f}%".format((Average_netIncome_annual/average_revenue_annual)*100)
+          #     Net_margin_ttm ="{:.2f}%".format((netincome_ttm/revenue_ttm)*100)
+        #  else:
+         #      Price_to_sales_last = "NA"
+          #     five_yrs_Nettomarge ="NA"
+           #    Net_margin_ttm="NA"
 
           Revenue_growth_3years = annual_data['revenue_growth'][-3:]
           Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
@@ -11454,6 +11436,20 @@ with st.container():
           FCF_Margin_1 = annual_data['fcf_margin'][-1:]     
           FCF_Margin_1=sum(FCF_Margin_1)/len(FCF_Margin_1)
           FCF_Margin_1 = (FCF_Margin_1*100)
+     
+
+          #Profit_Margin_10 = annual_data['fcf_margin'][-10:]
+          #Profit_Margin_10=sum(Profit_Margin_10)/len(Profit_Margin_10)
+          #Profit_Margin_10 = (Profit_Margin_10*100)
+
+         # Profit_Margin_5 = annual_data['fcf_margin'][-5:]   
+          #Profit_Margin_5 =sum(Profit_Margin_5)/len(Profit_Margin_5)
+          #Profit_Margin_5 = (Profit_Margin_5*100)
+
+          Profit_Margin_1 = annual_data['fcf_margin'][-1:]     
+          Profit_Margin_1=sum(Profit_Margin_1)/len(Profit_Margin_1)
+          Profit_Margin_1 = (Profit_Margin_1*100)
+
 
           
 
@@ -11475,11 +11471,11 @@ with st.container():
 
           with col1:
                st.write("10 Years")
-               st.write(round(FCF_Margin_10, 2))
+               st.write(round(Net_profit_margin_annual_10, 2))
 
           with col2:
                st.write("5 Years")
-               st.write(round(FCF_Margin_5, 2))
+               st.write(round(five_yrs_Nettomarge, 2))
 
           with col3:
                st.write("3 Years")
@@ -12059,6 +12055,10 @@ with st.container():
           #-------------------------------------------------------------------------------------------------
           # Create a DataFrame for the data
                     #Free_cash_flow_annual_2003 = [round(value, 2) for value in Free_cash_flow_annual_2003]
+                         
+                    dividendPaidInTheLast21Years =annual_data['dividends'][-21:]  
+                    dividendPaidInTheLast21Years = ["{:.2f}".format(value/1e9) for value in dividendPaidInTheLast21Years]  
+                     
                     Free_cash_flow_annual_2003 = annual_data['fcf'][-21:]
                     Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
 
@@ -12273,10 +12273,10 @@ with st.container():
                     col1, col2 = st.columns(2)
                     with col1:
 
-                         st.plotly_chart(fig2,use_container_width=True,config=config)
+                         st.plotly_chart(fig1,use_container_width=True,config=config)
 
                     with col2:
-                         st.plotly_chart(fig1,use_container_width=True,config=config)
+                         st.plotly_chart(fig2,use_container_width=True,config=config)
 
 
 #------------------------------------------------------------                    
@@ -12460,14 +12460,10 @@ with st.container():
                     with col2:
                          st.plotly_chart(fig12,use_container_width=True,config=config)
 
-
-
-
-
 #...........................................................................................................
-   
-
-                    #............................................................................................
+                    Net_Operating_CashFlow_annual = annual_data['cf_cfo'][-21:] 
+                   
+#.......................................................................................................
 
                     with Quarter:
                                             #revenue_2013 = annual_data['revenue'][-10:] 
@@ -12703,47 +12699,47 @@ with st.container():
 
 
 
-          print(f"Beta of {ticker}: {Average_stock_market_beta}")                
-          print("5 years FCF Average:",average_fcf_Annual_funf)
+          #print(f"Beta of {ticker}: {Average_stock_market_beta}")                
+          #print("5 years FCF Average:",average_fcf_Annual_funf)
           #print("sum_discounted_values",discounted_values)
           #print("total debt in prozent:",Total_debt_prozent)
           #print("Marketcap_in_prozent:",Marketcap_in_prozent )
           #print("Cost_of_debt_after_Tax:", Cost_of_debt_after_Tax)
           #print("cost of Equity",Cost_of_equity)
           #print("Cost_of_debt",Cost_of_debt)
-          print("WACC:",WACC_prozent)
-          print("Debt_equity_last_quater",Debt_equity_last_quater)
+          #print("WACC:",WACC_prozent)
+          #print("Debt_equity_last_quater",Debt_equity_last_quater)
           #print("Historical_marketkap",Historical_marketkap)
           #print("npv-result:",rounded_npv_result)
           #print("npv-result2:",rounded_npv_result2)
-          print("Enterprise_value",Enterprise_value)
-          print("shares_diluted_ttm:",shares_diluted_ttm)
-          print("shares_basic_ttm",shares_basic_ttm)
-          print("shares_eop_ttm",shares_eop_ttm)
-          print("shares_eop_change_ttm",shares_eop_change_ttm)
-          print("shares_eop_annual",shares_eop_annual)
-          print("shares_eop_quarter",shares_eop_quarter)
-          print("shares_basic_quarter",shares_basic_quarter)
-          #print("shares_diluted_quarter",shares)
-          print("last 5 year price",(annual_data['period_end_price'][-5:]))
-          print("period_end_price_ttm",period_end_price_ttm)
-          print("interest_expense_yr ",interest_expense_yr)
-          #print("average_Dividend_growth_4yrs_percentage",average_Dividend_growth_4yrs_percentage)
+          # print("Enterprise_value",Enterprise_value)
+          # print("shares_diluted_ttm:",shares_diluted_ttm)
+          # print("shares_basic_ttm",shares_basic_ttm)
+          # print("shares_eop_ttm",shares_eop_ttm)
+          # print("shares_eop_change_ttm",shares_eop_change_ttm)
+          # print("shares_eop_annual",shares_eop_annual)
+          # print("shares_eop_quarter",shares_eop_quarter)
+          # print("shares_basic_quarter",shares_basic_quarter)
+          # #print("shares_diluted_quarter",shares)
+          # print("last 5 year price",(annual_data['period_end_price'][-5:]))
+          # print("period_end_price_ttm",period_end_price_ttm)
+          # print("interest_expense_yr ",interest_expense_yr)
+          # #print("average_Dividend_growth_4yrs_percentage",average_Dividend_growth_4yrs_percentage)
           print(f"The current 10-year Treasury yield is: {Average_10years_treasury_rate:.2f}")
-          print("Total cash",Total_cash_last_years)
-          #st.(WACC_prozent)
-          #print("Intrinsic_Value_DDM",Intrinsic_Value_DDM)
-          print("Total Debt",Total_DEbt_in_billion)
-          print("Total Discounted value:",discounted_values)
-          print("Total Discounted value2:",discounted_values2)
-          print("Terminal value:",Terminal_Value)
-          print("Terminal value2:",Terminal_Value2)
-          #print(finnhub_client.company_peers(ticker))
-          #print("Dividend_ttm",Dividend_ttm)
-          print("Debt_equity_ttm:",Debt_equity_ttm)
-          #print("CIK:",cik)
-          print("usage:",usage)
-          #print("EPS_ttm",eps_diluted_ttm)
+          # print("Total cash",Total_cash_last_years)
+          # #st.(WACC_prozent)
+          # #print("Intrinsic_Value_DDM",Intrinsic_Value_DDM)
+          # print("Total Debt",Total_DEbt_in_billion)
+          # print("Total Discounted value:",discounted_values)
+          # print("Total Discounted value2:",discounted_values2)
+          # print("Terminal value:",Terminal_Value)
+          # print("Terminal value2:",Terminal_Value2)
+          # #print(finnhub_client.company_peers(ticker))
+          # #print("Dividend_ttm",Dividend_ttm)
+          # print("Debt_equity_ttm:",Debt_equity_ttm)
+          # #print("CIK:",cik)
+          # print("usage:",usage)
+          # #print("EPS_ttm",eps_diluted_ttm)
          
           hide_streamlit_style = """
             <style>
