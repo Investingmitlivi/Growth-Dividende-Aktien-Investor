@@ -12517,7 +12517,7 @@ with st.container():
                     fig.update_traces(line=dict(width=5))
 
                     # Display the plot
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, use_container_width=True,config=config)
                                                             
 #.......................................................................................................
 
@@ -12812,3 +12812,14 @@ with st.container():
           }
           </style>
 ''', unsafe_allow_html=True)
+          
+     hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    .streamlit-container .element-container:nth-child(2) .stPlot {display: none;}
+    </style>
+"""
+
+# Apply the CSS styles using st.markdown
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
