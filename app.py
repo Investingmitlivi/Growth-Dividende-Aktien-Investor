@@ -12479,8 +12479,46 @@ with st.container():
                          st.plotly_chart(fig12,use_container_width=True,config=config)
 
 #...........................................................................................................
-                    Net_Operating_CashFlow_annual = annual_data['cf_cfo'][-21:] 
                    
+
+                    #revenue_2003= annual_data['revenue'][-21:]                    
+                    #revenue_2003 = [round(value, 2) for value in revenue_2003]
+                    #revenue_2003 = ["{:.2f}".format(value/1e9) for value in revenue_2003]
+
+                    NetIncome_annual_2003=annual_data['net_income'][-21:]
+                    NetIncome_annual_2003 = ["$ {:.2f}".format(value/1e9) for value in NetIncome_annual_2003]
+
+                    #Free_cash_flow_annual_2003 = annual_data['fcf'][-21:]
+                    #Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
+
+                    Net_Operating_CashFlow_annual_2003 = annual_data['cf_cfo'][-21:] 
+                    Net_Operating_CashFlow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Net_Operating_CashFlow_annual_2003]
+
+                    SGA_Expense_annual_2003 = annual_data['total_opex'][-21:]
+                    SGA_Expense_annual_2003 = ["{:.2f}".format(value/1e9) for value in SGA_Expense_annual_2003]
+
+
+                                   # Create a DataFrame with the data
+                    data = pd.DataFrame({
+                    'Date': date_annual_20yrs,
+                    'Revenue': revenue_2003,
+                    'Net Income': NetIncome_annual_2003,
+                    'Free Cash Flow': Free_cash_flow_annual_2003,
+                    'Operating Cash Flow': Net_Operating_CashFlow_annual_2003,
+                    'Operating Expenses': SGA_Expense_annual_2003
+                    })
+
+                    # Plot the data using Plotly Express
+                    fig = px.line(data, x='Date', y=['Revenue', 'Net Income', 'Free Cash Flow',
+                                                  'Operating Cash Flow', 'Operating Expenses'],
+                              title='Financial Metrics Over Time')
+
+                    # Adjust line width
+                    fig.update_traces(line=dict(width=5))
+
+                    # Display the plot
+                    st.plotly_chart(fig, use_container_width=True)
+                                                            
 #.......................................................................................................
 
                     with Quarter:
