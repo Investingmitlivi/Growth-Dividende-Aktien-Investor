@@ -11544,7 +11544,8 @@ with st.container():
           #if  Dividend_quarter4 and Dividend_quarter5!=0:  
           try:
                Growth_rate= round(((Dividend_quarter5- Dividend_quarter4)/Dividend_quarter4)*100,2)
-          except ZeroDivisionError:
+
+          except Exception as e:
                Growth_rate= 0
                 
 
@@ -11560,12 +11561,23 @@ with st.container():
           #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
           Dividend301 = colc.number_input("Year 2", value=Dividend_quarter3*4, key="unique_key_for_Dividend301")
           #      elif i == 12:
-          #           Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
-          Dividend401 = cold.number_input("Year 1", value=Dividend_quarter4*4, key="unique_key_for_Dividend401")
+          #   
+          #         Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
+
+          try:
+           Dividend401 = cold.number_input("Year 1", value=Dividend_quarter4*4, key="unique_key_for_Dividend401")
+          except Exception as e:
+           Dividend401 = 0
 
           #      elif i == 13:
           #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
-          Dividend501 = col2.number_input("Current year", value=Dividend_quarter5*4, key="unique_key_for_Dividend501")
+           
+          try:  
+           Dividend501 = col2.number_input("Current year", value=Dividend_quarter5*4, key="unique_key_for_Dividend501")
+
+          except Exception as e:
+          
+           Dividend501 = 0
 
 
           cola, colb, colc, cold,col2 = st.columns(5)
@@ -11595,7 +11607,7 @@ with st.container():
           try:
                Average_dividend_growth_rate = total_dividend_growth / num_dividend_growth_rates
 
-          except ZeroDivisionError:
+          except Exception as e:
                Average_dividend_growth_rate=0
                 
           cola = st.columns(1)
@@ -11606,7 +11618,13 @@ with st.container():
           col10,col11 =st.columns(2)
           Growth_rate_dividend = col10.number_input("Growth Rate %:", value=0.00)
           WACC = col11.number_input("WACC in (%):", value=WACC)
-          intrinsic_value3 = (Dividend15 * 4) * (1 + (Growth_rate_dividend / 100)) / ((WACC / 100) - (Growth_rate_dividend / 100))
+
+          try: 
+           intrinsic_value3 = (Dividend15 * 4) * (1 + (Growth_rate_dividend / 100)) / ((WACC / 100) - (Growth_rate_dividend / 100))
+
+          except Exception as e:
+                
+           intrinsic_value3 =0
           #st.write(intrinsic_value3)
 
           #try:
