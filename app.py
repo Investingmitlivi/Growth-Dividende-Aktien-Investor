@@ -7843,7 +7843,7 @@ with st.container():
 
           except Exception as e:    
           
-               st.error("Error fetching news: {}".format(str(e)))
+               st.error("Error fetching news: {}")
           yf.pdr_override()  # Clear the cached data
 
 
