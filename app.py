@@ -7830,16 +7830,20 @@ Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuati
 from stocknews import StockNews
 with st.container():
      with news:
-          
-          news = stock_info.news[:10]  # Get the top ten news articles
+          try:
+               news = stock_info.news[:10]  # Get the top ten news articles
 
-          # Display the news headlines and links
-          for i, item in enumerate(news, 1):
-               headline = item['title']
-               link = item['link']
-               st.write(f"Headline: {headline}")
-               st.write(f"{link}")
-              
+               # Display the news headlines and links
+               for i, item in enumerate(news, 1):
+                    headline = item['title']
+                    link = item['link']
+                    st.write(f"Headline: {headline}")
+                    st.write(f"{link}")
+               
+
+          except Exception as e:    
+          
+               st.error("Error fetching news: {}".format(str(e)))
           yf.pdr_override()  # Clear the cached data
 
 
