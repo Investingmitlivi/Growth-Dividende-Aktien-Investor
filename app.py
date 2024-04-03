@@ -7843,7 +7843,7 @@ with st.container():
 
           except Exception as e:    
           
-               st.error("No news avaialable for this stock:")
+               st.error("No news available for this stock:")
           yf.pdr_override()  # Clear the cached data
 
 
