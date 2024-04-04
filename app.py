@@ -10705,12 +10705,15 @@ with st.container():
           df4 = pd.DataFrame(data4).transpose()
 
           # Reset column index to start from 1
-          df1.columns = range(1, len(df1.columns) + 1)
-          df2.columns = range(2, len(df2.columns) + 2)
-          df3.columns = range(3, len(df3.columns) + 3)
-          df4.columns = range(4, len(df4.columns) + 4)
+         # df1.columns = range(1, len(df1.columns) + 1)
+          #df2.columns = range(2, len(df2.columns) + 2)
+          #df3.columns = range(3, len(df3.columns) + 3)
+          #df4.columns = range(4, len(df4.columns) + 4)
           
-
+          df1 = df1.rename(columns={i: " " for i in df1.columns})
+          df2 = df2.rename(columns={i: " " for i in df2.columns})
+          df3 = df3.rename(columns={i: " " for i in df3.columns})
+          df4 = df4.rename(columns={i: " " for i in df4.columns})
         
           #style = "color: #2E8B57"
           style = "color: #2E8B57; text-align: center"
@@ -10728,13 +10731,13 @@ with st.container():
           col1, col2, col3, col4 = st.columns(4)
 
           # Display the dataframes in each column
-          with col1:
+          with col1.container():
                st.table(styled_df1)
-          with col2:
+          with col2.container():
                st.table(styled_df2)
-          with col3:
+          with col3.container():
                st.table(styled_df3)
-          with col4:
+          with col4.container():
                st.table(styled_df4)
                          
 
@@ -12066,6 +12069,8 @@ with st.container():
                               text='Shares Outstanding',  # Display the value on top of each bar
                               labels={'value': 'Amount($)'},  # Include the percentage sign in the label
                               title='Shares Outstanding') # Use 'group' to display bars side by side
+                    
+                    #fig2.update_traces(texttemplate='%{y}', textposition='outside')
 
                     # Display the chart using Streamlit
                     col1,col2 = st.columns(2)
@@ -12078,30 +12083,37 @@ with st.container():
           # Create a DataFrame for the data
                     #Free_cash_flow_annual_2003 = [round(value, 2) for value in Free_cash_flow_annual_2003]
                          
-                    dividendPaidInTheLast21Years =annual_data['dividends'][-21:]  
-                    dividendPaidInTheLast21Years = ["{:.2f}".format(value/1e9) for value in dividendPaidInTheLast21Years]  
+                    #dividendPaidInTheLast21Years = abs(annual_data['cff_dividend_paid'][-21:])
+                    dividendPaidInTheLast21Years = [abs(value) for value in annual_data['cff_dividend_paid'][-21:]]
+
+                    
+
+
+                    #dividendPaidInTheLast21Years = ["{:.2f}".format(value/1e9) for value in dividendPaidInTheLast21Years]  
                      
                     Free_cash_flow_annual_2003 = annual_data['fcf'][-21:]
-                    Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
-
+                    #Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
                     data = pd.DataFrame({
                     'Date': date_annual_20yrs,
+                    'Dividends': dividendPaidInTheLast21Years,
                     'Free Cash Flow': Free_cash_flow_annual_2003,
                     })
+                    fig = go.Figure()
 
-                    # Titel und Plot anzeigen
-                    #st.title('Annual Free Cash Flow')
-                    fig1 = px.bar(data, x='Date', y='Free Cash Flow',
-                              text='Free Cash Flow', 
-                              labels={'value': 'Amount(B)'},
-                              title='Free Cash Flow in Billions($)')
-                              #barmode='group')
 
-                    # Diagramm anzeigen
-                    #st.plotly_chart(fig1,use_container_width=True,config=config)
+                    fig.add_trace(go.Bar(x=data['Date'], y=data['Free Cash Flow'], name='Free Cash Flow'))
+                    # Add the Dividends bar plot
+                    fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'], name='Dividends'))
 
-                     # Create a DataFrame for the data
-                    #Free_cash_flow_annual_2003 = [round(value, 2) for value in Free_cash_flow_annual_2003]
+                    # Add the Free Cash Flow bar plot
+                    
+
+                    # Update layout
+                    fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='Amount (B)', title='Dividends and Free Cash Flow ')
+
+                    fig.update_traces(texttemplate='%{y}', textposition='outside')
+
+                   
                     Free_cash_flow_per_share_annual_2003 =annual_data['fcf_per_share'][-21:]
                     Free_cash_flow_per_share_annual_2003 = ["{:.2f}".format(value) for value in Free_cash_flow_per_share_annual_2003]
 
@@ -12116,13 +12128,15 @@ with st.container():
                               text='Free Cash Flow per share',  # Display the value on top of each bar
                               labels={'value': 'Amount()'},  # Include the percentage sign in the label
                               title='Free Cash Flow per share')
+                    fig2.update_traces(texttemplate='%{y}', textposition='outside')
+
 
                     # Diagramm anzeigen
-                    col1,col2=st.columns(2)
-                    with col1:
-                         st.plotly_chart(fig1,use_container_width=True,config=config)
-                    with col2:
-                         st.plotly_chart(fig2,use_container_width=True,config=config)
+                    #col1,col2=st.columns(2)
+                    #with col1:
+                    st.plotly_chart(fig,use_container_width=True,config=config)
+                    #with col2:
+                    #st.plotly_chart(fig2,use_container_width=True,config=config)
 
           #-------------------------------------------------------------------------------------------------
  
@@ -12485,43 +12499,40 @@ with st.container():
 #...........................................................................................................
                    
 
-                    #revenue_2003= annual_data['revenue'][-21:]                    
-                    #revenue_2003 = [round(value, 2) for value in revenue_2003]
-                    #revenue_2003 = ["{:.2f}".format(value/1e9) for value in revenue_2003]
+                    # NetIncome_annual_2003=annual_data['net_income'][-21:]
+                    # NetIncome_annual_2003 = ["$ {:.2f}".format(value/1e9) for value in NetIncome_annual_2003]
 
-                    NetIncome_annual_2003=annual_data['net_income'][-21:]
-                    NetIncome_annual_2003 = ["$ {:.2f}".format(value/1e9) for value in NetIncome_annual_2003]
+                    # #Free_cash_flow_annual_2003 = annual_data['fcf'][-21:]
+                    # #Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
 
-                    #Free_cash_flow_annual_2003 = annual_data['fcf'][-21:]
-                    #Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
+                    # Net_Operating_CashFlow_annual_2003 = annual_data['cf_cfo'][-21:] 
+                    # Net_Operating_CashFlow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Net_Operating_CashFlow_annual_2003]
 
-                    Net_Operating_CashFlow_annual_2003 = annual_data['cf_cfo'][-21:] 
-                    Net_Operating_CashFlow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Net_Operating_CashFlow_annual_2003]
-
-                    SGA_Expense_annual_2003 = annual_data['total_opex'][-21:]
-                    SGA_Expense_annual_2003 = ["{:.2f}".format(value/1e9) for value in SGA_Expense_annual_2003]
+                    # SGA_Expense_annual_2003 = annual_data['total_opex'][-21:]
+                    # SGA_Expense_annual_2003 = ["{:.2f}".format(value/1e9) for value in SGA_Expense_annual_2003]
 
 
-                                   # Create a DataFrame with the data
-                    data = pd.DataFrame({
-                    'Date': date_annual_20yrs,
-                    'Revenue': revenue_2003,
-                    'Net Income': NetIncome_annual_2003,
-                    'Free Cash Flow': Free_cash_flow_annual_2003,
-                    'Operating Cash Flow': Net_Operating_CashFlow_annual_2003,
-                    'Operating Expenses': SGA_Expense_annual_2003
-                    })
+                    #                # Create a DataFrame with the data
+                    # data = pd.DataFrame({
+                    # 'Date': date_annual_20yrs,
+                    # 'Revenue': revenue_2003,
+                    # 'Net Income': NetIncome_annual_2003,
+                    # 'Free Cash Flow': Free_cash_flow_annual_2003,
+                    # 'Operating Cash Flow': Net_Operating_CashFlow_annual_2003,
+                    # 'Operating Expenses': SGA_Expense_annual_2003
+                    # })
 
-                    # Plot the data using Plotly Express
-                    fig = px.line(data, x='Date', y=['Revenue', 'Net Income', 'Free Cash Flow',
-                                                  'Operating Cash Flow', 'Operating Expenses'],
-                              title='Financial Metrics Over Time')
 
-                    # Adjust line width
-                    fig.update_traces(line=dict(width=5))
+                    # # Plot the data using Plotly Express
+                    # fig = px.line(data, x='Date', y=['Revenue', 'Net Income', 'Free Cash Flow',
+                    #                               'Operating Cash Flow', 'Operating Expenses'],
+                    #           title='Financial Metrics Over Time')
 
-                    # Display the plot
-                    st.plotly_chart(fig, use_container_width=True,config=config)
+                    # # Adjust line width
+                    # #fig.update_traces(line=dict(width=5))
+
+                    # # Display the plot
+                    # st.plotly_chart(fig, use_container_width=True,config=config)
                                                             
 #.......................................................................................................
 
