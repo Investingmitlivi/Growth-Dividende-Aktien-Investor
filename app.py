@@ -15,6 +15,7 @@ import altair as alt
 #import hashlib
 import time
 import firebase_admin
+import math
 #import math
 #import re
 #import finnhub
@@ -7963,7 +7964,7 @@ with st.container():
           rounded = "{:.2f}B".format(average_fcf_Annual_one)
           
           FCF_annual_five =annual_data['fcf'][-5:]
-          average_FCF_annual_five = round((sum(FCF_annual_five) / len(FCF_annual_five)) / 1000000000, 2)
+          average_FCF_annual_five = float(round((sum(FCF_annual_five) / len(FCF_annual_five)) / 1000000000, 2))
           average_FCF_annual_five_we = ((sum(FCF_annual_five) / len(FCF_annual_five)))
 
           #average_FCF_annual_five_rounded = "{:.2f}B".format(average_FCF_annual_five)
@@ -8093,8 +8094,13 @@ with st.container():
                
 
                if len(FCF_annual_five) >= 5:
-                    pe_five_ = round(Marketcap/Average_netIncome_annual,2)
+                    pe_five_ = round(float(Marketcap)/Average_netIncome_annual,2)
                     pfcf_funf="{:.2f}".format(Marketcap/average_FCF_annual_five)
+
+                   # if math.isinf(pfcf_funf):
+                        # pfcf_funf = 0
+                   # else: 
+                    #     pfcf_funf = 0
 
                else:
                     pfcf_funf="-"
@@ -8375,40 +8381,22 @@ with st.container():
           fcf_ttm =fcf_ttm*1000000000
           fcf_ttm ="{:.2f}B".format(fcf_ttm/ 1000000000) if abs(fcf_ttm) >= 1000000000 else "{:,.1f}M".format(fcf_ttm / 1000000)
 
-          try:
-                EBIDTA_latest_year = annual_data['ebitda'][-1:]
-                EBIDTA_latest_year = round(sum(EBIDTA_latest_year) / len(EBIDTA_latest_year),2)
-
-          except Exception as e: 
-                
-               EBIDTA_latest_year=0
-
-          try: 
-                Net_debt_latest_quarter=quarterly_data['lt_debt'][-1:]
-                Net_debt_latest_quarter = round(sum(Net_debt_latest_quarter) / len(Net_debt_latest_quarter),2)
-
-          except Exception as e: 
-                Net_debt_latest_quarter=0
-
-          try:
           
-               Net_debt_to_Ebitda = "{:.1f}".format(EBIDTA_latest_year/Net_debt_latest_quarter)
+          #Net_Operating_CashFlow_ttm = Financial_data['ttm']['cf_cfo'] 
+          Net_Operating_CashFlow_annual_5 = annual_data['cf_cfo'][-5:] 
+          Net_Operating_CashFlow_annual = annual_data['cf_cfo'][-10:] 
 
-          except Exception as e: 
+          P_OCF_ttm = "{:.2f}".format(Marketcap/(Financial_data['ttm']['cf_cfo']/1000000000))
+
+          if len(Net_Operating_CashFlow_annual_5) >=5:
+               P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5)/len(Net_Operating_CashFlow_annual_5))/1000000000))
+          else:
+               P_OCF_5 = "-"
+          if len(Net_Operating_CashFlow_annual) >= 10:
+               P_OCF_10="{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual)/len(Net_Operating_CashFlow_annual))/1000000000))
+          else:
+               P_OCF_10= "-"
                 
-               Net_debt_to_Ebitda =" "
-
-          try:
-               if Net_debt_to_Ebitda <0:
-                    Net_debt_to_Ebitda="-"
-
-               else:
-                    Net_debt_to_Ebitda =Net_debt_to_Ebitda
-
-          except Exception as e: 
-               Net_debt_to_Ebitda="-"
-                    
-
 
           try:
                
@@ -8449,7 +8437,10 @@ with st.container():
           'Net Income (TTM)': [netincome_ttm], 
           'P/E (TTM)': [pe_ttm],
           '5 YR P/E': ["{:.2f} ".format(pe_five_)],
-          'Historical P/E': [average_PE_historical],  
+          'Historical P/E': [average_PE_historical],
+          'P/OCF (TTM)':[P_OCF_ttm],  
+          '5 YR P/OCF ':[P_OCF_5],  
+          '10 YR P/OCF':[P_OCF_10],  
           '5 YR Gross Profit Margin': [five_yrs_average_gross_margin],
           'Gross Profit Margin (TTM)': [rounded_gross_margin],
           
@@ -8681,7 +8672,6 @@ with st.container():
                
                with Annual:
                     Changes_in_working_capital_annual = annual_data['cfo_change_in_working_capital'][-10:] 
-                    Net_Operating_CashFlow_annual = annual_data['cf_cfo'][-10:] 
                     Capex_annual = annual_data['capex'][-10:] 
                     Net_Assets_from_Acquisitions_annual = annual_data['cfi_acquisitions'][-10:] 
                     Purchase_of_Investment_annual = annual_data['cfi_investment_purchases'][-10:]
@@ -11982,17 +11972,12 @@ with st.container():
                     'Revenue':revenue_2003,
                     })
 
-                    # Create a Streamlit app
-                    #st.title('Free Cash Flow and Revenue Data')
-
-                    # Create a Plotly Express bar chart with side-by-side bars
                     fig1 = px.bar(data, x='Date', y='Revenue',
                               text='Revenue',    
                               labels={'value': 'Amount()'},
                               title='Revenue in Billions($)')
-                              #barmode='group')  # Use 'group' to display bars side by side
-
-                              
+                   
+                                   
                     
                     revenue_growth_2003= annual_data['revenue_growth'][-21:]                    
                     #revenue_2003 = [round(value, 2) for value in revenue_2003]
