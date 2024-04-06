@@ -59,7 +59,13 @@ except ValueError:
 
 fig = go.Figure()
 
+#st.set_page_config(layout='wide')
+#st.plotly_chart(fig, config={'displayModeBar': False})
+#
 config = {'displayModeBar': False}
+
+#st.plotly_chart(fig, config={'displayModeBar': False})
+
 
 #with st.container():
  #    st.subheader("Hi, I am Livinus :wave:")
@@ -7562,7 +7568,9 @@ fig.update_layout(
     yaxis_title='Price ',
 )
 
-st.plotly_chart(fig,use_container_width=True,config=config)
+st.plotly_chart(fig,use_container_width=True,config={'displayModeBar': False})
+#st.plotly_chart(fig, config={'displayModeBar': False})
+
 
 
 data2 = data
