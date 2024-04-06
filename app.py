@@ -8018,8 +8018,8 @@ with st.container():
           rounded = "{:.2f}B".format(average_fcf_Annual_one)
           
           FCF_annual_five =annual_data['fcf'][-5:]
-          average_FCF_annual_five = float(round((sum(FCF_annual_five) / len(FCF_annual_five)) / 1000000000, 2))
-          average_FCF_annual_five_we = ((sum(FCF_annual_five) / len(FCF_annual_five)))
+          average_FCF_annual_five = float((sum(FCF_annual_five) / len(FCF_annual_five)))
+          #average_FCF_annual_five_we = float((sum(FCF_annual_five) / len(FCF_annual_five)))
 
           #average_FCF_annual_five_rounded = "{:.2f}B".format(average_FCF_annual_five)
 
@@ -8143,12 +8143,13 @@ with st.container():
 
                if len(FCF_annual_five) >= 5:
                     pe_five_ = round(float(Marketcap)/Average_netIncome_annual,2)
-                    pfcf_funf="{:.2f}".format(Marketcap/average_FCF_annual_five)
 
-                   # if math.isinf(pfcf_funf):
-                        # pfcf_funf = 0
-                   # else: 
-                    #     pfcf_funf = 0
+                    if average_FCF_annual_five>0:
+                         pfcf_funf="{:.2f}".format(Marketcap/(average_FCF_annual_five/1000000000))
+                    else:
+                          pfcf_funf ="-"
+
+                   
 
                else:
                     pfcf_funf="-"
@@ -8166,11 +8167,17 @@ with st.container():
                #Marketcap_in_million = "{:.1f}".format(Marketcap_in_million)
                pe_five_ = round((amount)/(eps_5years_average_diluted_annual),2)
 
-               FCF_annual_five =annual_data['fcf'][-5:]
-               average_FCF_annual_five = round((sum(FCF_annual_five) / len(FCF_annual_five)), 2)
+               #FCF_annual_five =annual_data['fcf'][-5:]
+               #average_FCF_annual_five = round((sum(FCF_annual_five) / len(FCF_annual_five)), 2)
 
-               #Historical_marketkap_ = round((sum(Historical_marketkap) / len(Historical_marketkap)), 2) 
-               pfcf_funf="{:.2f}".format(Marketcap_in_million/average_FCF_annual_five)
+               #Historical_marketkap_ = round((sum(Historical_marketkap) / len(Historical_marketkap)), 2)
+
+               #print(average_FCF_annual_five_we) 
+               if average_FCF_annual_five>5:
+                    pfcf_funf="{:.2f}".format(Marketcap_in_million/(average_FCF_annual_five/1000000000))
+               else: 
+                     
+                     pfcf_funf ="-"
 
                #st.write(Average_netIncome_annual)
                #Marketcap_in_million = round(Marketcap_in_million,2)
@@ -8185,7 +8192,7 @@ with st.container():
           #print(f"{amount} USD is approximately {amount_euro:.2f} EUR")
           if len(FCF_annual_five) >= 5:
                Average_ROIC_funf = "{:.2f}%".format(((sum(ROIC_annual_funf) / len(ROIC_annual_funf))*100))
-               average_FCF_annual_five_we ="{:.2f}B".format(average_FCF_annual_five_we/ 1000000000) if abs(average_FCF_annual_five_we) >= 1000000000 else "{:,.1f}M".format(average_FCF_annual_five_we / 1000000)
+               average_FCF_annual_five_we ="{:.2f}B".format(average_FCF_annual_five/ 1000000000) if abs(average_FCF_annual_five) >= 1000000000 else "{:,.1f}M".format(average_FCF_annual_five / 1000000)
                five_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
                #five_Yrs_ROE = "{:.2f}%".format((Average_netIncome_annual/Average_total_equity_annual)*100)
                #five_Yrs_ROE =ROE_five
@@ -8434,8 +8441,12 @@ with st.container():
           Net_Operating_CashFlow_annual_5 = annual_data['cf_cfo'][-5:] 
           Net_Operating_CashFlow_annual = annual_data['cf_cfo'][-10:] 
 
-          P_OCF_ttm = "{:.2f}".format(Marketcap/(Financial_data['ttm']['cf_cfo']/1000000000))
+          if Financial_data['ttm']['cf_cfo'] !=0:
+               P_OCF_ttm = "{:.2f}".format(Marketcap/(Financial_data['ttm']['cf_cfo']/1000000000))
 
+          else:
+               P_OCF_ttm = "-"
+          #print(P_OCF_ttm)
           if len(Net_Operating_CashFlow_annual_5) >=5:
                P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5)/len(Net_Operating_CashFlow_annual_5))/1000000000))
           else:
@@ -10423,7 +10434,7 @@ with st.container():
           #Stockprice = yf.Ticker(ticker)
           #price = Stockprice.info['regularMarketPrice']
           average_revenue_annual = round((sum(revenue_annual_funf) / len(revenue_annual_funf)) / 1000000000, 2)
-          average_fcf_Annual_funf = round((sum(Free_cash_flow_annual_funf) / len(Free_cash_flow_annual_funf)) / 1000000000, 2)
+          average_fcf_Annual_funf = ((sum(Free_cash_flow_annual_funf) / len(Free_cash_flow_annual_funf)) / 1000000000)
           Average_netIncome_annual = round((sum(net_income_annual_funf) / len(net_income_annual_funf)) / 1000000000, 2)
           #average_Ebitda = round((sum(Ebita_annual) / len(Ebita_annual)) / 1000000000, 2)
           Average_total_equity_annual = round((sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000, 2)
@@ -10452,7 +10463,7 @@ with st.container():
           try:
                if len(net_income_annual_funf) >= 5:
                     
-                    KCV = round(Marketcap/average_fcf_Annual_funf, 2) 
+                    KCV =  pfcf_funf
                     #five_Yrs_ROE = round((Average_netIncome_annual/Average_total_equity_annual)*100,2)
                     five_Yrs_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
 
@@ -10600,9 +10611,9 @@ with st.container():
                     pe = "✅"  # Green checkmark for KGV greater than or equal to 23
 
           
-          if KCV > 23:
+          if float(KCV) > 23.00:
                     pcf = "-🔴"  # Red X for KCV greater than 23
-          elif KCV < 0:
+          elif float(KCV) < 0.00:
                     pcf = "-🔴"  # Red X for KCV smaller than 0
           else:
                     pcf= "✅"  # Green checkmark for KGV greater than or equal to 23
@@ -12668,7 +12679,7 @@ with st.container():
                Buy_price_euro = Euro
 
           except Exception as e:
-               #print("Error occurred. Using alternative conversion method.")
+               #print("Error occurred. Using alternative conversion method.")Flax
                c = CurrencyRates()
                Buy_price_euro= c.convert("USD", "EUR", Buy_price_dollar)
                #print(f"{graham_valuation2} USD is approximately {Euro_equivalent_graham_valuation2:.2f} EUR")
@@ -12831,8 +12842,8 @@ with st.container():
           # #st.(WACC_prozent)
           # #print("Intrinsic_Value_DDM",Intrinsic_Value_DDM)
           # print("Total Debt",Total_DEbt_in_billion)
-          # print("Total Discounted value:",discounted_values)
-          # print("Total Discounted value2:",discounted_values2)
+          #print("Total Discounted value:",discounted_values)
+          #print("Total Discounted value2:",discounted_values2)
           # print("Terminal value:",Terminal_Value)
           # print("Terminal value2:",Terminal_Value2)
           # #print(finnhub_client.company_peers(ticker))
