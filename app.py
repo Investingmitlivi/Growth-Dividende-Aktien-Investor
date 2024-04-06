@@ -7197,12 +7197,18 @@ def main():
 
 
 ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()}     
-selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')                                                                                                                                           
-ticker = ticker_symbol_name.get(selected_ticker) 
-name, symbol = selected_ticker.split(' : ')
-#st.write(f'Selected Ticker Name: {name}') 
+selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')    
 
 
+
+#ticker = ticker_symbol_name.get(selected_ticker) 
+#name, symbol = selected_ticker.split(' : ')
+
+
+if selected_ticker:
+    ticker = ticker_symbol_name.get(selected_ticker) 
+    name, symbol = selected_ticker.split(' : ')
+    #st.write(f'Selected Ticker Name: {name}')
 
 
 
