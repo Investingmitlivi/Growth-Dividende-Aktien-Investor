@@ -12721,7 +12721,8 @@ with st.container():
 
           - Enterprise Value wird um den Wert der Cash und Cash-Äquivalente ergänzt, und dann wird die Gesamtschuld abgezogen, um den Eigenkapitalwert zu ermitteln. Der Eigenkapitalwert wird dann durch die Zahl der im Umlauf befindlichen Aktien dividiert, um einen fairen Wert pro Aktie zu erhalten.          """
 
-          st.write(short_description, use_container_width=True, config=config)
+          st.write(short_description)
+
 
 
 
