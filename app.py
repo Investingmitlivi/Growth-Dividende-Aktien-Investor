@@ -45,7 +45,7 @@ from pyfinviz.quote import Quote
 from stocknews import StockNews
 
 
-st.set_page_config(page_title="Investingwithlivi", page_icon = "📚", layout="wide")
+st.set_page_config(page_title="StockAnalysisTool", page_icon = "📚", layout="wide")
 
 
 cred = credentials.Certificate('investingmitlivi-firebase key.json')
