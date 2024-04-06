@@ -92,7 +92,7 @@ try:
 
 except ValueError:
       
-      print("")
+     st.write("")
 
 
 fig = go.Figure()
@@ -7296,7 +7296,7 @@ if response.status_code == 200:
    usage = usage_response.json()
     # Continue processing the data as required
 else:
-    print('Error:', response.status_code)
+    st.write()
 
 #data = response.json()
 #usage = response.json()
@@ -7436,21 +7436,21 @@ def get_all_time_high_and_low_price(ticker):
 try:
      all_time_high_date, all_time_high_price, fifty_two_week_low = get_all_time_high_and_low_price(ticker)
 except Exception as e:
-      print(" ")
+      st.write(" ")
 try:      
      if all_time_high_date and all_time_high_price:
           formatted_date = format_date(all_time_high_date)
-          print(f"All-Time High for {ticker}:")
-          print(f"Date: {formatted_date}")
-          print(f"Price: {all_time_high_price:.2f}$")
-     else:
-          print(f"No all-time high data found for {ticker}")
+         # print(f"All-Time High for {ticker}:")
+          #print(f"Date: {formatted_date}")
+          #print(f"Price: {all_time_high_price:.2f}$")
+    # else:
+          #print(f"No all-time high data found for {ticker}")
 
      if fifty_two_week_low:
-          print(f"52-Week Low for {ticker}:")
-          print(f"Price: {fifty_two_week_low:.2f}$")
+          st.write("")
+          #print(f"Price: {fifty_two_week_low:.2f}$")
      else:
-          print(f"No 52-week low data found for {ticker}")
+          st.write(" ")
 
      # Fetch historical data and exclude dividend data
      historical_data = stock_info.history(period='1y', actions=False)
@@ -7459,7 +7459,7 @@ try:
      min_price_date = historical_data[historical_data['Close'] == min_price].index[0]
 
 except Exception as e:
-      print(" ")
+      st.write(" ")
 
 #print(f"52-Week Low for {ticker}:")
 #print(f"Datedgfdhggjhkgj: {min_price_date.strftime('%Y-%m-%d')}")
@@ -7481,7 +7481,7 @@ try:
 
      percentage_difference = round(((current_price - close_price) / close_price) * 100,2)
 except Exception as e:
-      print(" ")
+      st.write(" ")
 # Determine text color based on percentage_difference
 #text_color = "green" if percentage_difference >= 0 else "red"
 
@@ -7503,7 +7503,7 @@ except Exception as e:
         
      c = CurrencyRates()
      converted_amount = c.convert("USD", "EUR", current_price)
-     print(f"{current_price} USD is approximately {converted_amount:.2f} EUR")
+     #print(f"{current_price} USD is approximately {converted_amount:.2f} EUR")
 
 #..........................................................................................................   
 formatted_value = f"{current_price:.2f} "
@@ -7664,7 +7664,7 @@ try:
           st.write(f'MAX Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True) 
 
 except NameError as ne:
-          print("An error occurred:")
+          st.write("")
 
 #..............................................................
   #st.write(data2)
@@ -7955,20 +7955,20 @@ with st.container():
                #print("10-year Treasury yield:", treasury_yield)
 
           except HTTPError as e:
-               print("     ")
-               print(f"yfinance: HTTP Error: {e}")
-               print("     ")
+               st.write("     ")
+               #print(f"yfinance: HTTP Error: {e}")
+               #print("     ")
 
           except (KeyError, TypeError):
-               print("     ")
-               print("Yfinace: Error: No data found for Marketcap.")
-               print("     ")
+               st.write("     ")
+               #print("Yfinace: Error: No data found for Marketcap.")
+               #print("     ")
 
           try:
               
                fundamental_df = quote.fundamental_df
                market_cap_original = quote.fundamental_df.at[0, "Market Cap"] 
-               print("market_cap",market_cap_original)
+               #print("market_cap",market_cap_original)
 
                try:
                     Marketcap = float(market_cap_original.replace('B', ''))  
@@ -7985,9 +7985,9 @@ with st.container():
                # Handle the specific exceptions here
                Forward_PE="NA"   
                RSI="N/A"
-               print("     ")
-               print(f"Pyfinance: An error occurred: {e}")
-               print("     ")
+               #print("     ")
+               #print(f"Pyfinance: An error occurred: {e}")
+               #print("     ")
 
           if 'market_cap' not in locals():  
                             #print("Error: No data found Marketcap.")
@@ -10567,9 +10567,9 @@ with st.container():
                except Exception as e:
                      Schuldentillgung =0
 
-               print("Schuldentillgung",Schuldentillgung)
-               print("average_fcf_Annual_funf",average_fcf_Annual_funf)
-               print("Total_Debt_from_all_calc",Total_Debt_from_all_calc)
+               #print("Schuldentillgung",Schuldentillgung)
+               #print("average_fcf_Annual_funf",average_fcf_Annual_funf)
+               #print("Total_Debt_from_all_calc",Total_Debt_from_all_calc)
 
 
           elif Total_Debt_from_all_calc != 0:
@@ -11163,7 +11163,7 @@ with st.container():
      # Margin_of_safety2 = colb.number_input("2.Margin of Safety %:", value=8.50)
           Margin_of_safety3 = colc.number_input("2.Margin of Safety (%):", value=9.00)
      #-------------------------------------------------------------------------------------------------------------------------------------------
-          print("last FCF:",Average_Free_cash_flow_annual_one_one)
+          #print("last FCF:",Average_Free_cash_flow_annual_one_one)
           if Average_Free_cash_flow_annual_one_one < 0:
                Average_Free_cash_flow_annual_one_one = average_fcf_Annual_funf
           
@@ -11687,7 +11687,7 @@ with st.container():
                     url = 'https://www.alphavantage.co/query?function=intrinsic_value3&from_currency=USD&to_currency=target_currency&apikey=NLEU37NOPD4HYBPZ'
                     r = requests.get(url)
                     intrinsic_value3 = r.json()
-                    print("data",data)
+                    #print("data",data)
                     
          # except Exception as e:
           #     print(f"Error occurred during currency exchange rate retrieval: {e}")
@@ -11715,7 +11715,7 @@ with st.container():
                          
                               
           else:     
-               print("")
+               st.write("")
                
 
                          
@@ -12675,7 +12675,7 @@ with st.container():
           # Display the result
      # .......................................DDM...................
 
-          print("Margin_of_safety",Margin_of_safety)
+        #  print("Margin_of_safety",Margin_of_safety)
 
           if st.button("Calculate"):
                
@@ -12826,7 +12826,7 @@ with st.container():
           # print("period_end_price_ttm",period_end_price_ttm)
           # print("interest_expense_yr ",interest_expense_yr)
           # #print("average_Dividend_growth_4yrs_percentage",average_Dividend_growth_4yrs_percentage)
-          print(f"The current 10-year Treasury yield is: {Average_10years_treasury_rate:.2f}")
+          #print(f"The current 10-year Treasury yield is: {Average_10years_treasury_rate:.2f}")
           # print("Total cash",Total_cash_last_years)
           # #st.(WACC_prozent)
           # #print("Intrinsic_Value_DDM",Intrinsic_Value_DDM)
@@ -12839,7 +12839,7 @@ with st.container():
           # #print("Dividend_ttm",Dividend_ttm)
           # print("Debt_equity_ttm:",Debt_equity_ttm)
           # #print("CIK:",cik)
-          print("usage:",usage)
+          #print("usage:",usage)
           # #print("EPS_ttm",eps_diluted_ttm)
          
           hide_streamlit_style = """
