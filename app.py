@@ -1,3 +1,6 @@
+
+
+
 import requests, json, time
 #import streamlit_authenticator as stauth
 #import pickle
@@ -19,6 +22,8 @@ import math
 #import math
 #import re
 #import finnhub
+
+
 
 from sqlite3 import OperationalError
 from requests.exceptions import HTTPError
@@ -45,9 +50,42 @@ from pyfinviz.quote import Quote
 from stocknews import StockNews
 
 
+
+
 st.set_page_config(page_title="StockAnalysisTool", page_icon = "📚", layout="wide")
 
-
+hide_streamlit_style = """
+                <style>
+                div[data-testid="stToolbar"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stDecoration"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                div[data-testid="stStatusWidget"] {
+                visibility: hidden;
+                height: 0%;
+                position: fixed;
+                }
+                #MainMenu {
+                visibility: hidden;
+                height: 0%;
+                }
+                header {
+                visibility: hidden;
+                height: 0%;
+                }
+                footer {
+                visibility: hidden;
+                height: 0%;
+                }
+                </style>
+                """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 cred = credentials.Certificate('investingmitlivi-firebase key.json')
 try:
      firebase_admin.initialize_app(cred)
@@ -63,6 +101,8 @@ fig = go.Figure()
 #st.plotly_chart(fig, config={'displayModeBar': False})
 #
 config = {'displayModeBar': False}
+
+
 
 #st.plotly_chart(fig, config={'displayModeBar': False})
 
@@ -88,7 +128,7 @@ with st.container():
         Stock Analysis.
 
         - I share my experiences on how to evaluate a stock or a company.
-        - First,i take a look at the financial statements to determine if the company is financially sound, and ultimately, i identify potential price targets for the company.
+        - First, i take a look at the financial statements to determine if the company is financially sound, and ultimately, i identify potential price targets for the company.
         """
      
         )
@@ -7111,96 +7151,96 @@ ticker_symbol_name = {
 
 
 # Get the ticker input from the user
-
-def main():
+#....................................................
+# def main():
     
    
 
-     if 'username' not in st.session_state:
-           st.session_state.username =''
+#      if 'username' not in st.session_state:
+#            st.session_state.username =''
 
-     if 'useremail' not in st.session_state:
-           st.session_state.useremail =''   
+#      if 'useremail' not in st.session_state:
+#            st.session_state.useremail =''   
 
-     def f():
+#      def f():
 
-          try:
-                user =auth.get_user_by_email(email)
-                #st.sidebar.write(user.uid)
+#           try:
+#                 user =auth.get_user_by_email(email)
+#                 #st.sidebar.write(user.uid)
 
-                st.write('Login successful')
+#                 st.write('Login successful')
 
-                st.session_state.username=user.uid
-                st.session_state.useremail=user.email
+#                 st.session_state.username=user.uid
+#                 st.session_state.useremail=user.email
 
-                st.session_state.signedout=True
-                st.session_state.signout=True
+#                 st.session_state.signedout=True
+#                 st.session_state.signout=True
 
 
-          except:
+#           except:
 
-               st.warning('Login Failed')
+#                st.warning('Login Failed')
 
                
 
-     def t():
-           st.session_state.signout=False
-           st.session_state.signedout=False
-           st.session_state.username ='' 
+#      def t():
+#            st.session_state.signout=False
+#            st.session_state.signedout=False
+#            st.session_state.username ='' 
 
 
 
-     if 'signedout' not in st.session_state:
-          st.session_state.signedout =False 
+#      if 'signedout' not in st.session_state:
+#           st.session_state.signedout =False 
 
-     if 'signout' not in st.session_state:
-          st.session_state.signout =False 
+#      if 'signout' not in st.session_state:
+#           st.session_state.signout =False 
 
-     if not st.session_state['signedout']:  
-          choice = st.selectbox('Login/Sign up',['Login','Sign Up'])  
+#      if not st.session_state['signedout']:  
+#           choice = st.selectbox('Login/Sign up',['Login','Sign Up'])  
 
 
-          if choice =="Login":
+#           if choice =="Login":
 
-               #st.sidebar.subheader("Login Section")  
+#                #st.sidebar.subheader("Login Section")  
 
-               email=st.text_input("Email Address")
-               password=st.text_input("Password",type='password')
+#                email=st.text_input("Email Address")
+#                password=st.text_input("Password",type='password')
 
-               #username=st.sidebar.text_input("User Name")
+#                #username=st.sidebar.text_input("User Name")
 
-               st.button('Login',on_click=f)
+#                st.button('Login',on_click=f)
 
-          else:
+#           else:
 
-               email=st.text_input("Email Address")
+#                email=st.text_input("Email Address")
 
-               password=st.text_input("Password",type='password')
+#                password=st.text_input("Password",type='password')
 
-               username=st.text_input("Enter User Name")
+#                username=st.text_input("Enter User Name")
                
 
 
 
-               if st.button('Create my account'):
+#                if st.button('Create my account'):
 
-                    user=auth.create_user(email=email,password=password,uid=username)
+#                     user=auth.create_user(email=email,password=password,uid=username)
 
-                    st.success('Account created successfully!')    
-                    st.markdown('Please Login using your email and password')
-                    st.balloons()
+#                     st.success('Account created successfully!')    
+#                     st.markdown('Please Login using your email and password')
+#                     st.balloons()
 
 
-     if st.session_state.signedout:
-           #st.sidebar.text('Name' +st.session_state.username)
-           #st.sidebar.text('Emailid:' +st.session_state.useremail)
-           st.button('Sign out',on_click=t)
+#      if st.session_state.signedout:
+#            #st.sidebar.text('Name' +st.session_state.username)
+#            #st.sidebar.text('Emailid:' +st.session_state.useremail)
+#            st.button('Sign out',on_click=t)
 
    
-#if __name__ == '__main__':
- #     main()
+# #if __name__ == '__main__':
+#  #     main()
 
-
+#..............................................................
 
 ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()}     
 selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')    
@@ -8089,13 +8129,7 @@ with st.container():
                     pfcf_ttm= "-"
                else:
                     pfcf_ttm="{:.2f} ".format(Marketcap / fcf_ttm) 
-               # Assuming pfcf_ttm is a variable with some numeric value or possibly 'inf'
-               # Assuming pfcf_ttm is a variable with some numeric value or possibly 'inf'
-               #positive_infinity = "inf"
-               #if pfcf_ttm == positive_infinity:
-                     
-                #    pfcf_ttm="-"
-
+             
 
           except NameError:
                 
@@ -8458,10 +8492,7 @@ with st.container():
           '5 YR Gross Profit Margin': [five_yrs_average_gross_margin],
           'Gross Profit Margin (TTM)': [rounded_gross_margin],
           
-          
-          
-
-               
+                 
           }
 
           data2 = {
@@ -11120,9 +11151,8 @@ with st.container():
           #st.write(FCF_Cagr_10.2f}%)
      #------------------------------------------------------------------------------------------------------------------------
           col9, col10= st.columns(2)
-          #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-          Growth_rate1 = col9.number_input("Growth Rate (Base Case) in %:", value=0.00)
-          Growth_rate2 = col10.number_input("Growth Rate (Bullish Case) in %:", value=0.00)
+          Growth_rate1 = col9.number_input("Growth Rate (Base Case) in %:", value=0.00,key="growth_rate1")
+          Growth_rate2 = col10.number_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2")
 
      
      #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
