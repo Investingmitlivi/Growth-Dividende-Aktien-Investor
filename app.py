@@ -8035,6 +8035,9 @@ with st.container():
           
           FCF_annual_five =annual_data['fcf'][-5:]
           average_FCF_annual_five = float((sum(FCF_annual_five) / len(FCF_annual_five)))
+
+          FCF_annual_ten =annual_data['fcf'][-10:]
+          average_FCF_annual_ten = float((sum(FCF_annual_ten) / len(FCF_annual_ten)))
           #average_FCF_annual_five_we = float((sum(FCF_annual_five) / len(FCF_annual_five)))
 
           #average_FCF_annual_five_rounded = "{:.2f}B".format(average_FCF_annual_five)
@@ -8192,7 +8195,8 @@ with st.container():
           if len(Net_Operating_CashFlow_annual) >= 10:
                P_OCF_10="{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual)/len(Net_Operating_CashFlow_annual))/1000000000))
                Average_fcf_growth_ten =  "{:.2f}".format(((sum(fcf_growth_ten) / len(fcf_growth_ten)))*100)
-               #Revenue_growth_10years=Revenue_growth_10years
+               average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
+               pfcf_ten="{:.2f}".format(Marketcap/(average_FCF_annual_ten/1000000000))
                Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
                Revenue_growth_10years = "{:.2f}%".format(Revenue_growth_10years*100)
 
@@ -8205,6 +8209,8 @@ with st.container():
                Revenue_growth_10years= "0.00"
                EPS_growth_10yrs="0.00"
                Average_pe_ten = "0.00"
+               average_PE_historical = "-"
+               pfcf_ten = "-"
             
            # 
         
@@ -8227,7 +8233,7 @@ with st.container():
                     five_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
                     pe_five_ = "{:.2f}".format(float(Marketcap)/Average_netIncome_annual)
                     pfcf_funf="{:.2f}".format(Marketcap/(average_FCF_annual_five/1000000000))
-                    average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
+                    #average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
                     P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5)/len(Net_Operating_CashFlow_annual_5))/1000000000))
                     KCV =  pfcf_funf
                     #five_Yrs_ROE = round((Average_netIncome_annual/Average_total_equity_annual)*100,2)
@@ -8562,7 +8568,7 @@ with st.container():
                Moving_50="-"
                Target_Price ="-"
                Dividend_Est ="-"
-               #Price_Change="-"
+               Dividend_Ex_Date = "-"
                Earnings_next_5_yrs="-"
           
           data1 = {
@@ -8574,7 +8580,7 @@ with st.container():
           'Net Income (TTM)': [netincome_ttm], 
           'P/E (TTM)': [pe_ttm],
           '5 YR P/E': [pe_five_],
-          'Historical P/E': [average_PE_historical],
+          '10 YR P/E': [average_PE_historical],
           'P/OCF (TTM)':[P_OCF_ttm],  
           '5 YR P/OCF ':[P_OCF_5],  
           '10 YR P/OCF':[P_OCF_10],  
@@ -8595,6 +8601,7 @@ with st.container():
           'FCF (TTM)': [fcf_ttm],
           'P/FCF (TTM)': [pfcf_ttm], 
           '5 YR P/FCF':[pfcf_funf],
+          '10 YR P/FCF':[pfcf_ten],
           '5 YR Operating Margin': [rounded_operating_margin_five],
           'Operating Margin': [rounded_operating_margin],
           '5 YR Net Profit Margin':f"{five_yrs_Nettomarge}%",
