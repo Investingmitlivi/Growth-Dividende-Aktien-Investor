@@ -8002,6 +8002,22 @@ with st.container():
           EPS_last = annual_data['eps_basic'][-1:]
           EPS_last_average  = ((sum(EPS_last) / len(EPS_last))) 
           EPS_last_average_one=EPS_last_average
+
+          EPS_growth_3years = annual_data['eps_diluted_growth'][-3:]
+          EPS_growth_3years = sum(EPS_growth_3years)/len(EPS_growth_3years)
+          EPS_growth_3years =EPS_growth_3years*100
+
+          EPS_growth_five = annual_data['eps_diluted_growth'][-5:]
+          EPS_growth_5yrs = sum(EPS_growth_five)/len(EPS_growth_five)
+          EPS_growth_5yrs =EPS_growth_5yrs*100
+
+          EPS_growth = annual_data['eps_diluted_growth'][-10:]
+          EPS_growth_10yrs = sum(EPS_growth)/len(EPS_growth)
+          EPS_growth_10yrs =EPS_growth_10yrs*100
+
+
+         
+
           Revenue_last = annual_data['revenue'][-1:]
           average_Revenue_last_ohne_billion = (sum(Revenue_last) / len(Revenue_last))/1000000000
           average_Revenue_last = "{:.2f}B".format(round(((sum(Revenue_last) / len(Revenue_last)))/1000000000, 2))
@@ -8049,6 +8065,30 @@ with st.container():
           revenue_annual_ttm = annual_data['revenue'][-1:] 
           average_revenue_annual_ttm = round((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000, 2)
 
+          ROIC_annual_3years = annual_data['roic'][-3:]
+          ROIC_annual_3years=sum(ROIC_annual_3years)/len(ROIC_annual_3years)
+
+          ROIC_annual_3years = "{:.2f}%".format(ROIC_annual_3years*100)
+
+          Revenue_growth_3years = annual_data['revenue_growth'][-3:]
+          Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
+          Revenue_growth_3years = (Revenue_growth_3years*100)
+
+          Revenue_growth_5years = annual_data['revenue_growth'][-5:]
+          Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
+          Revenue_growth_5years = (Revenue_growth_5years*100)
+
+          Revenue_growth_10years = annual_data['revenue_growth'][-10:]
+          
+
+          #Revenue_growth_3years = annual_data['revenue_growth'][-3:]
+          #Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
+          #Revenue_growth_3years = (Revenue_growth_3years*100)
+
+          #Revenue_growth_5years = annual_data['revenue_growth'][-5:]
+          #Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
+          #Revenue_growth_5years = (Revenue_growth_5years*100)
+
           try:
                fcf_yield_ttm = "{:.2f}%".format((fcf_per_share/amount)*100)
           except Exception as e:
@@ -8056,12 +8096,12 @@ with st.container():
 
           PE_historical = annual_data['price_to_earnings'][-10:] 
 
-          if len(PE_historical) == 10:
+          # if len(PE_historical) == 10:
           
-               average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
-          else:
+          #      average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
+          # else:
                 
-                average_PE_historical="-"
+          #       average_PE_historical="-"
 
           ROA_annual_ttm = annual_data['roa'][-1:] 
           average_ROA_annual_ttm = "{:.2f}%".format((sum(ROA_annual_ttm) / len(ROA_annual_ttm))*100)
@@ -8136,43 +8176,103 @@ with st.container():
                pfcf_ttm="-"
                 
           Historical_marketkap=annual_data['market_cap'][-5:]
-          Historical_marketkap = round(sum(Historical_marketkap) / len(Historical_marketkap)/ 1000000000, 2)    
+          Historical_marketkap = round(sum(Historical_marketkap) / len(Historical_marketkap)/ 1000000000, 2)  
+
+          Net_Operating_CashFlow_annual_5 = annual_data['cf_cfo'][-5:] 
+          Net_Operating_CashFlow_annual = annual_data['cf_cfo'][-10:] 
+
+          fcf_growth_five =annual_data['fcf_growth'][-5:]
+          fcf_growth_ten =annual_data['fcf_growth'][-10:]
+
+          pe_five =annual_data['price_to_earnings'][-5:]
+          pe_ten =annual_data['price_to_earnings'][-10:]
+
+          ROE_five = annual_data['roe'][-5:]
+
+          if len(Net_Operating_CashFlow_annual) >= 10:
+               P_OCF_10="{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual)/len(Net_Operating_CashFlow_annual))/1000000000))
+               Average_fcf_growth_ten =  "{:.2f}".format(((sum(fcf_growth_ten) / len(fcf_growth_ten)))*100)
+               #Revenue_growth_10years=Revenue_growth_10years
+               Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
+               Revenue_growth_10years = "{:.2f}%".format(Revenue_growth_10years*100)
+
+               EPS_growth_10yrs=round(EPS_growth_10yrs,2)
+               Average_pe_ten = "{:.2f}".format(sum(pe_ten) / len(pe_ten))
+
+          else:
+               P_OCF_10= "-"
+               Average_fcf_growth_ten = "0.00"
+               Revenue_growth_10years= "0.00"
+               EPS_growth_10yrs="0.00"
+               Average_pe_ten = "0.00"
+            
+           # 
+        
+
+          fcf_growth_3years =annual_data['fcf_growth'][-3:]
+          Average_fcf_growth_3years =  "{:.2f}%".format(((sum(fcf_growth_3years) / len(fcf_growth_3years)))*100)
+
+          pe_one =annual_data['price_to_earnings'][-1:]
+          Average_pe_one =  "{:.2f}".format(((sum(pe_one) / len(pe_one))))
+
+          
+           #    
 
           try:
                
 
                if len(FCF_annual_five) >= 5:
+                    Average_ROIC_funf = "{:.2f}%".format(((sum(ROIC_annual_funf) / len(ROIC_annual_funf))*100))
+                    average_FCF_annual_five_we ="{:.2f}B".format(average_FCF_annual_five/ 1000000000) if abs(average_FCF_annual_five) >= 1000000000 else "{:,.1f}M".format(average_FCF_annual_five / 1000000)
+                    five_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
                     pe_five_ = round(float(Marketcap)/Average_netIncome_annual,2)
+                    pfcf_funf="{:.2f}".format(Marketcap/(average_FCF_annual_five/1000000000))
+                    average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
+                    P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5)/len(Net_Operating_CashFlow_annual_5))/1000000000))
+                    KCV =  pfcf_funf
+                    #five_Yrs_ROE = round((Average_netIncome_annual/Average_total_equity_annual)*100,2)
+                    five_Yrs_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
+                    Average_fcf_growth_five =  "{:.2f}%".format(((sum(fcf_growth_five) / len(fcf_growth_five)))*100)
+                    five_yrs_Nettomarge = round((Average_netIncome_annual/average_revenue_annual)*100,2)  
+                    Average_pe_five =  "{:.2f}".format(((sum(pe_five) / len(pe_five)))) 
 
-                    if average_FCF_annual_five>0:
-                         pfcf_funf="{:.2f}".format(Marketcap/(average_FCF_annual_five/1000000000))
+                    if Average_netIncome_annual==0.0 or Average_netIncome_annual==-0.0:
+                             KGV = round(amount/eps_5years_average_diluted_annual, 2)
                     else:
-                          pfcf_funf ="-"
-
-                   
-
+                         KGV = round(Marketcap/Average_netIncome_annual, 2)
+                 
+               
                else:
+                    Average_ROIC_funf ="NA"
+                    average_FCF_annual_five_we="{:.2f}".format(0.0)
+                    #pe_five_ =0
+                    rounded_operating_margin_five ="{:.2f}%".format(0.0)
+                    five_yrs_Nettomarge ="0.00"
+                    five_ROE="0.00"
                     pfcf_funf="-"
                     pe_five_="-"
+                    average_PE_historical="-"
+                    P_OCF_5 = "-"
+                    KGV=0.0
+                    KCV=0.0
+                    five_Yrs_ROE=0.0
+                    five_yrs_Nettomarge=0.0
+                    Average_fcf_growth_five = "0.00"
+                    Average_pe_five = "0.00"
+
+
+
+                  
           
 
           except ZeroDivisionError:
                eps_diluted_annual=annual_data['eps_diluted'][-5:]
                eps_5years_average_diluted_annual=sum(eps_diluted_annual)/len(eps_diluted_annual)
 
-               #pe_ttm = "{:.2f} ".format(amount / eps_diluted_ttm)
-
-               #net_income_annual_funf = annual_data['net_income'][-5:] 
-               #Average_netIncome_annual = round((sum(net_income_annual_funf) / len(net_income_annual_funf)), 2)
-               #Marketcap_in_million = "{:.1f}".format(Marketcap_in_million)
+              
                pe_five_ = round((amount)/(eps_5years_average_diluted_annual),2)
+               five_yrs_Nettomarge=0.0
 
-               #FCF_annual_five =annual_data['fcf'][-5:]
-               #average_FCF_annual_five = round((sum(FCF_annual_five) / len(FCF_annual_five)), 2)
-
-               #Historical_marketkap_ = round((sum(Historical_marketkap) / len(Historical_marketkap)), 2)
-
-               #print(average_FCF_annual_five_we) 
                if average_FCF_annual_five>5:
                     pfcf_funf="{:.2f}".format(Marketcap_in_million/(average_FCF_annual_five/1000000000))
                else: 
@@ -8188,22 +8288,9 @@ with st.container():
           #Historical_marketkap ="{:.2f}".format(Historical_marketkap/ 1000000000) if abs(Historical_marketkap) >= 1000000000 else "{:,.1f}".format(Historical_marketkap / 1000000)
 
           #st.write(Historical_marketkap)
-          ROE_five = annual_data['roe'][-5:]
+          
           #print(f"{amount} USD is approximately {amount_euro:.2f} EUR")
-          if len(FCF_annual_five) >= 5:
-               Average_ROIC_funf = "{:.2f}%".format(((sum(ROIC_annual_funf) / len(ROIC_annual_funf))*100))
-               average_FCF_annual_five_we ="{:.2f}B".format(average_FCF_annual_five/ 1000000000) if abs(average_FCF_annual_five) >= 1000000000 else "{:,.1f}M".format(average_FCF_annual_five / 1000000)
-               five_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
-               #five_Yrs_ROE = "{:.2f}%".format((Average_netIncome_annual/Average_total_equity_annual)*100)
-               #five_Yrs_ROE =ROE_five
-
-          else:
-               Average_ROIC_funf ="NA"
-               average_FCF_annual_five_we="{:.2f}".format(0.0)
-               pe_five_ =0
-               rounded_operating_margin_five ="{:.2f}%".format(0.0)
-               five_yrs_Nettomarge ="0.00"
-               five_ROE="0.00"
+         
                #five_Yrs_ROE ="0.00"
               
 
@@ -8438,8 +8525,7 @@ with st.container():
 
           
           #Net_Operating_CashFlow_ttm = Financial_data['ttm']['cf_cfo'] 
-          Net_Operating_CashFlow_annual_5 = annual_data['cf_cfo'][-5:] 
-          Net_Operating_CashFlow_annual = annual_data['cf_cfo'][-10:] 
+          
 
           if Financial_data['ttm']['cf_cfo'] !=0:
                P_OCF_ttm = "{:.2f}".format(Marketcap/(Financial_data['ttm']['cf_cfo']/1000000000))
@@ -8447,14 +8533,7 @@ with st.container():
           else:
                P_OCF_ttm = "-"
           #print(P_OCF_ttm)
-          if len(Net_Operating_CashFlow_annual_5) >=5:
-               P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5)/len(Net_Operating_CashFlow_annual_5))/1000000000))
-          else:
-               P_OCF_5 = "-"
-          if len(Net_Operating_CashFlow_annual) >= 10:
-               P_OCF_10="{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual)/len(Net_Operating_CashFlow_annual))/1000000000))
-          else:
-               P_OCF_10= "-"
+         
                 
 
           try:
@@ -8495,7 +8574,7 @@ with st.container():
           '5 YR Net Income': [Average_netIncome_annual_we], 
           'Net Income (TTM)': [netincome_ttm], 
           'P/E (TTM)': [pe_ttm],
-          '5 YR P/E': ["{:.2f} ".format(pe_five_)],
+          '5 YR P/E': [pe_five_],
           'Historical P/E': [average_PE_historical],
           'P/OCF (TTM)':[P_OCF_ttm],  
           '5 YR P/OCF ':[P_OCF_5],  
@@ -10378,10 +10457,7 @@ with st.container():
                debt_Assets_annual_one =annual_data['debt_to_assets'][-1:]
                
                Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
-               
-               #Free_cash_flow_ttm =annual_data['fcf'][-1:]
-               
-               #Ebita_annual = annual_data['ebitda'][-5:] 
+          
                
                LongTerm_debt_annual_one =annual_data['lt_debt'][-1:]
                Short_term_debt_annual_one =annual_data['st_debt'][-1:]
@@ -10393,14 +10469,7 @@ with st.container():
                debt_Assets_annual = pd.Series()
                debt_Assets_annual_one = pd.Series()
                interest_expense_yr=pd.Series()
-               #Free_cash_flow_annual_one=pd.Series()
-               
-          #Total_assets_annual = annual_data['total_assets'][-10:]
-          #net_debt_annual =annual_data['net_debt'][-10:]
-          #net_debt_annual = float(net_debt_annual[9])/1000000000
-
-          #Other_LongTerm_liabilites_annual = annual_data['other_lt_liabilities'][-10:]
-          #Other_LongTerm_liabilites_annual = float(Other_LongTerm_liabilites_annual[9])/1000000000
+           
 
           
           Cash_Dividends_paid_Total_annual_one = annual_data['cff_dividend_paid'][-1:] 
@@ -10422,21 +10491,14 @@ with st.container():
 
 
 
-          #Total_debt_lt_st = round((sum(LongTerm_debt_annual_one + Short_term_debt_annual_one)) / 1000000000, 2) 
-          #Cash_Dividends_paid_Total_annual = annual_data['cff_dividend_paid'][-1:] 
-          #Average_net_debt_one = round(((sum(net_debt_annual) / len(net_debt_annual)))/1000000000, 1)
-          #Average_st_annual_one = round(((sum(Short_term_debt_annual_one) / len(Short_term_debt_annual_one)))/1000000000, 2)
-          #Average_Total_assets_annual_one = round(((sum(Total_assets_annual_one) / len(Total_assets_annual_one)))/1000000000, 2)
-          Average_Free_cash_flow_annual_one = round(((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000, 2)
+          Average_Free_cash_flow_annual_one = ((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000
           Average_Free_cash_flow_annual_one_one =Average_Free_cash_flow_annual_one
 
-          #average_Total_equity = round((sum(Total_equity) / len(Total_equity)) / 1000000000, 2)
-          #Stockprice = yf.Ticker(ticker)
-          #price = Stockprice.info['regularMarketPrice']
+   
           average_revenue_annual = round((sum(revenue_annual_funf) / len(revenue_annual_funf)) / 1000000000, 2)
           average_fcf_Annual_funf = ((sum(Free_cash_flow_annual_funf) / len(Free_cash_flow_annual_funf)) / 1000000000)
           Average_netIncome_annual = round((sum(net_income_annual_funf) / len(net_income_annual_funf)) / 1000000000, 2)
-          #average_Ebitda = round((sum(Ebita_annual) / len(Ebita_annual)) / 1000000000, 2)
+        
           Average_total_equity_annual = round((sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000, 2)
 
           
@@ -10460,28 +10522,7 @@ with st.container():
           #DEBT_Equity = round(, 2)
           
           #Marketcap = current_price * shares_basic_quarter[0]/1000000000
-          try:
-               if len(net_income_annual_funf) >= 5:
-                    
-                    KCV =  pfcf_funf
-                    #five_Yrs_ROE = round((Average_netIncome_annual/Average_total_equity_annual)*100,2)
-                    five_Yrs_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
 
-                    five_yrs_Nettomarge = round((Average_netIncome_annual/average_revenue_annual)*100,2)   
-
-                    if Average_netIncome_annual==0.0 or Average_netIncome_annual==-0.0:
-                         KGV = round(amount/eps_5years_average_diluted_annual, 2)
-                    else:
-                         KGV = round(Marketcap/Average_netIncome_annual, 2)
-               #net_income_annual_funf = annual_data['net_income'][-5:]
-               else:
-                    KGV=0.0
-                    KCV=0.0
-                    five_Yrs_ROE=0.0
-                    five_yrs_Nettomarge=0.0
-
-          except ZeroDivisionError:
-               five_yrs_Nettomarge=0.0
 
           #st.write("Average_netIncome_annual",Average_netIncome_annual)
           
@@ -10833,19 +10874,6 @@ with st.container():
                Average_interest_expense_annual_one=0.0
 
 
-          EPS_growth = annual_data['eps_diluted_growth'][-10:]
-          EPS_growth_10yrs = sum(EPS_growth)/len(EPS_growth)
-          EPS_growth_10yrs =EPS_growth_10yrs*100
-
-
-          EPS_growth_five = annual_data['eps_diluted_growth'][-5:]
-          EPS_growth_5yrs = sum(EPS_growth_five)/len(EPS_growth_five)
-          EPS_growth_5yrs =EPS_growth_5yrs*100
-
-          EPS_growth_3years = annual_data['eps_diluted_growth'][-3:]
-          EPS_growth_3years = sum(EPS_growth_3years)/len(EPS_growth_3years)
-          EPS_growth_3years =EPS_growth_3years*100
-
 
           
      # Average_eps_quarter = round(((sum(int(eps_basic_quarter[9])) / len(int(eps_basic_quarter[9])))), 2)
@@ -10962,22 +10990,7 @@ with st.container():
           #SGR=
 
      #-----------------------------------------------------Growth rate Estimate-----------------------------------------------------------------------------
-          ROIC_annual_3years = annual_data['roic'][-3:]
-          ROIC_annual_3years=sum(ROIC_annual_3years)/len(ROIC_annual_3years)
 
-          ROIC_annual_3years = "{:.2f}%".format(ROIC_annual_3years*100)
-
-          Revenue_growth_3years = annual_data['revenue_growth'][-3:]
-          Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
-          Revenue_growth_3years = (Revenue_growth_3years*100)
-
-          Revenue_growth_5years = annual_data['revenue_growth'][-5:]
-          Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
-          Revenue_growth_5years = (Revenue_growth_5years*100)
-
-          Revenue_growth_10years = annual_data['revenue_growth'][-10:]
-          Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
-          Revenue_growth_10years = round((Revenue_growth_10years*100),2)
           
           #col4.info(f"ROE_Retention_ratio: {ROE_Retention_ratio:.2f}%")
           
@@ -10986,47 +10999,9 @@ with st.container():
           
      #---------------------------------------------------------------------------------------------------------------------
           # Display the inputs on the same row
-          fcf_growth_ten =annual_data['fcf_growth'][-10:]
+        
 
-          if len(fcf_growth_ten) == 10:
-               Average_fcf_growth_ten =  "{:.2f}".format(((sum(fcf_growth_ten) / len(fcf_growth_ten)))*100)
-               Revenue_growth_10years=Revenue_growth_10years
-               EPS_growth_10yrs=round(EPS_growth_10yrs,)
-
-          else:
-               Average_fcf_growth_ten = "0.00"
-               Revenue_growth_10years= "0.00"
-               EPS_growth_10yrs="0.00"
-
-
-          fcf_growth_five =annual_data['fcf_growth'][-5:]
-
-          if len(fcf_growth_five) == 5:
-               Average_fcf_growth_five =  "{:.2f}%".format(((sum(fcf_growth_five) / len(fcf_growth_five)))*100)
-          else:
-               Average_fcf_growth_ten = "0.00"
-               Average_fcf_growth_five = "0.00"
-
-          fcf_growth_3years =annual_data['fcf_growth'][-3:]
-          Average_fcf_growth_3years =  "{:.2f}%".format(((sum(fcf_growth_3years) / len(fcf_growth_3years)))*100)
-
-          pe_one =annual_data['price_to_earnings'][-1:]
-          Average_pe_one =  "{:.2f}".format(((sum(pe_one) / len(pe_one))))
-
-          pe_five =annual_data['price_to_earnings'][-5:]
-
-          if len(pe_five) == 5:
-               Average_pe_five =  "{:.2f}".format(((sum(pe_five) / len(pe_five))))
-
-          else:
-               Average_pe_five = "0.00"
-
-          pe_ten =annual_data['price_to_earnings'][-10:]
-
-          if len(pe_ten) == 10:
-               Average_pe_ten = "{:.2f}".format(sum(pe_ten) / len(pe_ten))
-          else:
-               Average_pe_ten = "0.00"
+          
      #...........................................CAGR..........................................................................
           FCF_Cagr_10 = sum(FCF_Cagr_10)/len(FCF_Cagr_10)
           FCF_Cagr_10 =round((FCF_Cagr_10*100),2)
@@ -11464,17 +11439,11 @@ with st.container():
           #     five_yrs_Nettomarge ="NA"
            #    Net_margin_ttm="NA"
 
-          Revenue_growth_3years = annual_data['revenue_growth'][-3:]
-          Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
-          Revenue_growth_3years = (Revenue_growth_3years*100)
+       
 
-          Revenue_growth_5years = annual_data['revenue_growth'][-5:]
-          Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
-          Revenue_growth_5years = (Revenue_growth_5years*100)
-
-          Revenue_growth_10years = annual_data['revenue_growth'][-10:]
-          Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
-          Revenue_growth_10years = round((Revenue_growth_10years*100),2)
+          #Revenue_growth_10years = annual_data['revenue_growth'][-10:]
+          #Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
+          #Revenue_growth_10years = round((Revenue_growth_10years*100),2)
 
 
           FCF_Margin_10 = annual_data['fcf_margin'][-10:]
@@ -11509,11 +11478,11 @@ with st.container():
 
           with col1:
                st.write("10 Years")
-               st.write(round(Revenue_growth_10years, 2))
+               st.write(Revenue_growth_10years)
 
           with col2:
                st.write("5 Years")
-               st.write(round(Revenue_growth_5years, 2))
+               st.write(Revenue_growth_5years)
 
           with col3:
                st.write("3 Years")
@@ -12371,7 +12340,7 @@ with st.container():
                     
                     fig21 = px.bar(data, x='Date', y='PE Ratio',
                               labels={'value': 'Ratio'},
-                              title=f'10 YR PE: {average_PE_historical}  5 YR PE: {pe_five_:.2f}  Current PE: {pe_ttm}  Forward P/E: {forwardPE}')  # Use 'group' to display bars side by side
+                              title=f'10 YR PE: {average_PE_historical}  5 YR PE: {pe_five_}  Current PE: {pe_ttm}  Forward P/E: {forwardPE}')  # Use 'group' to display bars side by side
 
                                                                                                                                  
                     fig21.add_shape(
@@ -12850,7 +12819,7 @@ with st.container():
           # #print("Dividend_ttm",Dividend_ttm)
           # print("Debt_equity_ttm:",Debt_equity_ttm)
           # #print("CIK:",cik)
-          #print("usage:",usage)
+          print("usage:",usage)
           # #print("EPS_ttm",eps_diluted_ttm)
          
           hide_streamlit_style = """
