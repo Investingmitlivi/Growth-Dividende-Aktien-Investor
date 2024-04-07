@@ -8225,7 +8225,7 @@ with st.container():
                     Average_ROIC_funf = "{:.2f}%".format(((sum(ROIC_annual_funf) / len(ROIC_annual_funf))*100))
                     average_FCF_annual_five_we ="{:.2f}B".format(average_FCF_annual_five/ 1000000000) if abs(average_FCF_annual_five) >= 1000000000 else "{:,.1f}M".format(average_FCF_annual_five / 1000000)
                     five_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
-                    pe_five_ = round(float(Marketcap)/Average_netIncome_annual,2)
+                    pe_five_ = "{:.2f}".format(float(Marketcap)/Average_netIncome_annual)
                     pfcf_funf="{:.2f}".format(Marketcap/(average_FCF_annual_five/1000000000))
                     average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
                     P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5)/len(Net_Operating_CashFlow_annual_5))/1000000000))
@@ -8233,7 +8233,7 @@ with st.container():
                     #five_Yrs_ROE = round((Average_netIncome_annual/Average_total_equity_annual)*100,2)
                     five_Yrs_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
                     Average_fcf_growth_five =  "{:.2f}%".format(((sum(fcf_growth_five) / len(fcf_growth_five)))*100)
-                    five_yrs_Nettomarge =  "{:.2f}%".format((Average_netIncome_annual/average_revenue_annual)*100)  
+                    five_yrs_Nettomarge =  "{:.2f}".format((Average_netIncome_annual/average_revenue_annual)*100)  
                     Average_pe_five =  "{:.2f}".format(((sum(pe_five) / len(pe_five)))) 
 
                     if Average_netIncome_annual==0.0 or Average_netIncome_annual==-0.0:
@@ -8597,7 +8597,7 @@ with st.container():
           '5 YR P/FCF':[pfcf_funf],
           '5 YR Operating Margin': [rounded_operating_margin_five],
           'Operating Margin': [rounded_operating_margin],
-          '5 YR Net Profit Margin': [five_yrs_Nettomarge],
+          '5 YR Net Profit Margin':f"{five_yrs_Nettomarge}%",
           'Net Profit Margin (TTM)': [Net_margin_ttm]
           #'P_B_ttm': [Total_Equity_ttm],
           
@@ -10665,7 +10665,7 @@ with st.container():
           else:
                     roe= "✅"  # Green checkmark for KGV greater than or equal to 23          
 
-          if five_yrs_Nettomarge > 5:
+          if float(five_yrs_Nettomarge) > 5:
                     
                netmarge = "✅"  
           else:
@@ -10752,7 +10752,7 @@ with st.container():
 
           col5.metric("5 YR ROIC > 9%",f"{Average_ROIC_funf}",roic)
           col6.metric("5 YR ROE > 14%", f"{five_Yrs_ROE:.5}%",roe)
-          col7.metric("5 YR NET MARGIN > 5%",f"{five_yrs_Nettomarge:.2f}%",netmarge)
+          col7.metric("5 YR NET MARGIN > 5%", f"{five_yrs_Nettomarge}%", netmarge)
           col8.metric("FCF PAYOUT RATIO < 60 %",f"{one_FCF_annual_payout:.2f}%",payout)
 
           col9, col10, col11, col12 = st.columns(4)
@@ -11495,7 +11495,7 @@ with st.container():
 
           with col2:
                st.write("5 Years")
-               st.write(round(five_yrs_Nettomarge, 2))
+               st.write(five_yrs_Nettomarge)
 
           with col3:
                st.write("3 Years")
