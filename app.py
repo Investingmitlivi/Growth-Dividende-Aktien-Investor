@@ -8900,10 +8900,16 @@ with st.container():
 
                     merged_df = pd.concat([total_annual,Capex_annual_df,Net_Assets_from_Acquisitions_annual_df,Purchase_of_Investment_annual_df,Net_investing_CashFlow_annual_df,Cash_Dividends_paid_Total_annual_df,Insurance_Reduction_of_DebtNet_annual_df,Repurchase_of_common_Preferred_stock_annual_df,Net_Financing_cashFlow_annual_df,Net_change_in_cash_annual_df,Free_cash_flow_annual_df]) 
                               
-                    st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
                     
+
+                    st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
                     
-                    st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
+                    #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                    #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
+
+
+                    
 
                     with Quarterly:
                          
@@ -9006,12 +9012,14 @@ with st.container():
 
 
                          merged_df = pd.concat([total_quarter,Capex_quarter_df,Net_Assets_from_Acquisitions_quarter_df,Purchase_of_Investment_quarter_df,Net_investing_CashFlow_quarter_df,Cash_Dividends_paid_Total_quarter_df,Insurance_Reduction_of_DebtNet_quarter_df,Repurchase_of_common_Preferred_stock_quarter_df,Net_Financing_cashFlow_quarter_df,Net_change_in_cash_quarter_df,Free_cash_flow_quarter_df])           
+                         
+                         st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+
                          #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                         st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                            #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                         #st.markdown('</div>', unsafe_allow_html=True) 
-                         st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
-                         #st.write(data)
+                                                           
+                         #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
+                      
 
 
                          with Balance_Sheet:
@@ -9219,13 +9227,14 @@ with st.container():
                          
                                         merged_df_quarter = pd.concat([cash_und_cash_investments_quarter_df,Gross_loans_quarter_df,Loans_loss_quarter_df,Net_Loan_quarter_df,Intangible_assets_quarter_df,Net_goodwill_quarter_df,Total_assets_quarter_df,deposits_liability_quarter_df,Short_term_debt_quarter_df,LongTerm_debt_quarter_df,Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])           
 
+                                       
                                         merged_df = pd.concat([cash_und_cash_investments_annual_df,Gross_loans_annual_df,Loans_loss_annual_df,Net_Loan_annual_df,Intangible_assets_annual_df,Net_goodwill_annual_df,Total_assets_annual_df,deposits_liability_df,Short_term_debt_annual_df,LongTerm_debt_annual_df,Other_longterm_liabilities_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
-                                   
-                                        st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                        #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                        #st.markdown('</div>', unsafe_allow_html=True) 
-                                        st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
+                                       
+                                        st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                        #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                         
+                                        #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
 
                                    elif "Insurance" in Industry or "Health Care Providers & Services" in Industry or ticker=="BRK-A" or ticker=="BRK-B":
                                         cash_und_cash_investments = annual_data['cash_and_equiv'][-10:]
@@ -9371,12 +9380,14 @@ with st.container():
                                    
 
                                         merged_df = pd.concat([cash_und_cash_investments_annual_df,Intangible_assets_annual_df,Net_goodwill_annual_df,Total_assets_annual_df,Short_term_debt_annual_df,LongTerm_debt_annual_df,Other_longterm_liabilities_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
-                                   
-                                        st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                        #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                        #st.markdown('</div>', unsafe_allow_html=True) 
-                                        st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
+                                                                           
+                                                                           
+                                        
+                                        st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                        #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                                       
+                                        #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
                                         
                                    else:      
                                         
@@ -9607,48 +9618,23 @@ with st.container():
 
                                         merged_df =pd.concat([total_annual,Inventories_annual_df,Total_current_assets_df,Intangible_assets_annual_df,Net_goodwill_annual_df,Total_assets_annual_df,Short_term_debt_annual_df,Total_current_liabilities_annual_df,LongTerm_debt_annual_df,Other_longterm_liabilities_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
                                         merged_df_quarter = pd.concat([total,Inventories_quarter_df,Total_current_assets_quarter_df,Intangible_assets_quarter_df,Net_goodwill_quarter_df,Total_assets_quarter_df,Short_term_debt_quarter_df,Total_current_liabilities_quarter_df,LongTerm_debt_quarter_df,Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])           
-
-                                        st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                        #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                        #st.markdown('</div>', unsafe_allow_html=True) 
-                                        st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
-
-
-                                   #merged_df = pd.concat([total,Intangible_assets_annual_df,Net_goodwill_annual_df,Total_assets_annual_df,Short_term_debt_annual_df,LongTerm_debt_annual_df,Other_longterm_liabilities_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
                                         
-                                        #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                        #st.markdown('</div>', unsafe_allow_html=True) 
-                                        #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
+                                        
+                                        st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
-                                        #Nopat_quarter_table= ["{:.2f}B".format(nopat / 1000000000)for nopat in Nopat_quarter]
-                                        #Nopat_quarter_df = pd.DataFrame(Nopat_quarter_table, index=date_list_quarter,  columns=["Nopat"])
-                                        #Nopat_quarter_df = Nopat_quarter_df.transpose()
-                                        # Display the result in Streamlit
-                                        #st.dataframe(total)
-
+                                        #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                                      
+                                       # st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
 
                                    with Quarterly:
+
+                                        st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                        #st.dataframe(merged_df_quarter.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                                       
+                                       # st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
                                         
-                                        st.dataframe(merged_df_quarter.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                        #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                        #st.markdown('</div>', unsafe_allow_html=True) 
-                                        st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
-                                        
-                                        #merged_df_quarter = pd.concat([total,Total_current_assets_quarter_df,Intangible_assets_quarter_df,Net_goodwill_quarter_df,Total_assets_quarter_df,Short_term_debt_quarter_df,Total_current_liabilities_quarter_df,LongTerm_debt_quarter_df,Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])           
-                                        #st.dataframe(merged_df_quarter.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                        #st.markdown('</div>', unsafe_allow_html=True)
-                                        #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
-                                        #  merged_df = pd.concat([cash_und_cash_investments_annual_df,Intangible_assets_annual_df,Net_goodwill_annual_df,Total_assets_annual_df,Short_term_debt_annual_df,LongTerm_debt_annual_df,Other_longterm_liabilities_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
                                    
-                                        #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'))
-                                        #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                        #st.markdown('</div>', unsafe_allow_html=True) 
-                                        #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True) 
 
      #................................................................................................................................................
 
@@ -9746,11 +9732,12 @@ with st.container():
 
                                                                  merged_df_banks = pd.concat([total_interest_expense_quarterly_df,total_interestincome_quarterly_df,Net_interest_Income_quarterly_df,Prov_Credit_losses_quarterly_df,Total_Non_interest_expenses_quarterly_df,Total_Non_interest_revenue_quarterly_df,net_income_quarterly_df,Pretax_income_quarterly_df,eps_basic_quarterly_df,shares_basic_quarterly_df,eps_diluted_quarterly_df,shares_diluted_quarterly_df])    
 
-                                                                 st.dataframe(merged_df_banks.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.markdown('</div>', unsafe_allow_html=True)  
+                                                                 st.table(merged_df_banks.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                                                 
+                                                                 #st.dataframe(merged_df_banks.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
                                                             
-                                                                 st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)   
+                                                                # st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)   
                                                   
                                                   
                                                   elif "Insurance" in Industry or "Health Care Providers & Services" in Industry :
@@ -9823,10 +9810,11 @@ with st.container():
                                                   
                                                                       merged_df_insurance = pd.concat([net_premiums_earned_df,net_investment_income_df,Fees_and_other_income_df,revenue_df,Interest_Expense_insurance_df,Pretax_income_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df]) 
                                              
-                                                                      st.dataframe(merged_df_insurance.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.markdown('</div>', unsafe_allow_html=True)  
-                                                                      st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True) 
+                                                                      st.table(merged_df_insurance.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                                                      #st.dataframe(merged_df_insurance.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+
+                                                                      #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True) 
                                                                       
                                                                  except KeyError:
 
@@ -9922,11 +9910,14 @@ with st.container():
                                                                       interestincome_df = interestincome_df.transpose()
                                                             #------------------------------------------------------------
 
+                                                                      
                                                                       merged_df_insurance = pd.concat([revenue_df,cogs_df, gross_profit_df,SGA_Expense_df, Research_Dev_df,interestincome_df,interestexxpense_df,Pretax_income_df,Income_tax_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df,Ebitda_df])  
-                                                                      st.dataframe(merged_df_insurance.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                                      #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                                                      #st.markdown('</div>', unsafe_allow_html=True)  
-                                                                      st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)        
+                                                                      
+                                                                      st.table(merged_df_insurance.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                                                      #st.dataframe(merged_df_insurance.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                                                                      
+                                                                      #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)        
 
                                                   else:
                                                             #st.write("no")       
@@ -10022,10 +10013,12 @@ with st.container():
                                                        #------------------------------------------------------------
 
                                                                  merged_df = pd.concat([revenue_df,cogs_df, gross_profit_df,SGA_Expense_df, Research_Dev_df,interestincome_df,interestexxpense_df,Pretax_income_df,Income_tax_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df,Ebitda_df])  
-                                                                 st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.markdown('</div>', unsafe_allow_html=True)  
-                                                                 st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)      
+                                                                 st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                                                 
+                                                                 #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                                                                
+                                                                # st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)      
                                                   
                                                   with Annual: 
 
@@ -10121,10 +10114,11 @@ with st.container():
 
                                                             merged_df_banks = pd.concat([total_interest_expense_df,total_interestincome_df,Net_interest_Income_df,Prov_Credit_losses_df,Total_Non_interest_expenses_df,Total_Non_interest_revenue_df,net_income_df,Pretax_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df])    
 
-                                                            st.dataframe(merged_df_banks.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                            #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                                            #st.markdown('</div>', unsafe_allow_html=True)  
-                                                            st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)  
+                                                            st.table(merged_df_banks.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                                            #st.dataframe(merged_df_banks.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                                                        
+                                                            #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)  
 
                                                        elif "Insurance" in Industry or "Health Care Providers & Services" in Industry or ticker=="BRK.A" or ticker=="BRK.B":
 
@@ -10196,10 +10190,12 @@ with st.container():
                                                                  shares_diluted_df = shares_diluted_df.transpose()
                                         
                                                                  merged_df_insurance = pd.concat([net_premiums_earned_df,net_investment_income_df,Fees_and_other_income_df,revenue_df,Interest_Expense_insurance_df,Pretax_income_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df]) 
-                                                                 st.dataframe(merged_df_insurance.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.markdown('</div>', unsafe_allow_html=True)  
-                                                                 st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True) 
+                                                                 st.table(merged_df_insurance.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                                                 
+                                                                 #st.dataframe(merged_df_insurance.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                                                  
+                                                                 #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True) 
 
                                                             except KeyError:
                                                                  revenue_2013 = annual_data['revenue'][-10:] 
@@ -10294,10 +10290,13 @@ with st.container():
                                                        #------------------------------------------------------------
 
                                                                  merged_df_insurance = pd.concat([revenue_df,cogs_df, gross_profit_df,SGA_Expense_df, Research_Dev_df,interestincome_df,interestexxpense_df,Pretax_income_df,Income_tax_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df,Ebitda_df])  
-                                                                 st.dataframe(merged_df_insurance.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                                 #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                                                 #st.markdown('</div>', unsafe_allow_html=True)  
-                                                                 st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True) 
+                                                                 
+                                                                 st.table(merged_df_insurance.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                                                 
+                                                                # st.dataframe(merged_df_insurance.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                                                                 
+                                                                 #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True) 
                                                             
                                                                  
                                                        else:
@@ -10394,10 +10393,12 @@ with st.container():
                                                   #------------------------------------------------------------
 
                                                             merged_df = pd.concat([revenue_df,cogs_df, gross_profit_df,SGA_Expense_df, Research_Dev_df,interestincome_df,interestexxpense_df,Pretax_income_df,Income_tax_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df,Ebitda_df])  
-                                                            st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                            #st.dataframe(revenue_df.style.set_table_attributes('class="scroll-table"'))
-                                                            #st.markdown('</div>', unsafe_allow_html=True)  
-                                                            st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True) 
+                                                            
+                                                            st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                                            #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                                                           
+                                                            #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True) 
                                                             
                                                             #revenue_2013 = annual_data['revenue'][-10:] 
                                                        
@@ -11855,8 +11856,10 @@ with st.container():
 
                     merged_df_key_ratio = pd.DataFrame(merged_data, index=Period_end_dates).transpose()
 
-                    st.dataframe(merged_df_key_ratio.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                    st.markdown('</div>', unsafe_allow_html=True)
+                    st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                    #st.dataframe(merged_df_key_ratio.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                    #st.markdown('</div>', unsafe_allow_html=True)
 
                     with Quarter:
                                         FCF_Margin_quarter = quarterly_data['fcf_margin'][-10:]
@@ -11971,8 +11974,11 @@ with st.container():
 
                                         merged_df_key_ratio = pd.DataFrame(merged_data, index=Period_end_dates_quarter).transpose()
 
-                                        st.dataframe(merged_df_key_ratio.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                        st.markdown('</div>', unsafe_allow_html=True)
+                                        st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+
+                                        #st.dataframe(merged_df_key_ratio.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
+                                        #st.markdown('</div>', unsafe_allow_html=True)
 
 
 
