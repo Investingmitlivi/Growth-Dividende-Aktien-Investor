@@ -11974,7 +11974,9 @@ with st.container():
 
                                         merged_df_key_ratio = pd.DataFrame(merged_data, index=Period_end_dates_quarter).transpose()
 
-                                        st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                       # st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                        st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px', 'margin': 'auto'}))
+                                        
 
 
                                         #st.dataframe(merged_df_key_ratio.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
@@ -12125,24 +12127,24 @@ with st.container():
                     # Update layout
                     fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='Amount (B)', title='Dividends and Free Cash Flow ')
 
-                    fig.update_traces(texttemplate='%{y}', textposition='outside')
+                    fig.update_traces(texttemplate='%{y}', textposition='inside')
 
                    
-                    Free_cash_flow_per_share_annual_2003 =annual_data['fcf_per_share'][-21:]
-                    Free_cash_flow_per_share_annual_2003 = ["{:.2f}".format(value) for value in Free_cash_flow_per_share_annual_2003]
+                    #Free_cash_flow_per_share_annual_2003 =annual_data['fcf_per_share'][-21:]
+                    #Free_cash_flow_per_share_annual_2003 = ["{:.2f}".format(value) for value in Free_cash_flow_per_share_annual_2003]
 
-                    data = pd.DataFrame({
-                    'Date': date_annual_20yrs,
-                    'Free Cash Flow per share': Free_cash_flow_per_share_annual_2003,
-                    })
+#                    data = pd.DataFrame({
+ #                   'Date': date_annual_20yrs,
+  #                  'Free Cash Flow per share': Free_cash_flow_per_share_annual_2003,
+   #                 })
 
                     # Titel und Plot anzeigen
                     #st.title('Annual Free Cash Flow')
-                    fig2 = px.bar(data, x='Date', y='Free Cash Flow per share',
-                              text='Free Cash Flow per share',  # Display the value on top of each bar
-                              labels={'value': 'Amount()'},  # Include the percentage sign in the label
-                              title='Free Cash Flow per share')
-                    fig2.update_traces(texttemplate='%{y}', textposition='outside')
+#                    fig2 = px.bar(data, x='Date', y='Free Cash Flow per share',
+ #                             text='Free Cash Flow per share',  # Display the value on top of each bar
+  #                            labels={'value': 'Amount()'},  # Include the percentage sign in the label
+   #                           title='Free Cash Flow per share')
+    #                fig2.update_traces(texttemplate='%{y}', textposition='outside')
 
 
                     # Diagramm anzeigen
