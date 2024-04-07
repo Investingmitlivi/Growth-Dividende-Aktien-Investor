@@ -8233,7 +8233,7 @@ with st.container():
                     #five_Yrs_ROE = round((Average_netIncome_annual/Average_total_equity_annual)*100,2)
                     five_Yrs_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
                     Average_fcf_growth_five =  "{:.2f}%".format(((sum(fcf_growth_five) / len(fcf_growth_five)))*100)
-                    five_yrs_Nettomarge = round((Average_netIncome_annual/average_revenue_annual)*100,2)  
+                    five_yrs_Nettomarge =  "{:.2f}%".format((Average_netIncome_annual/average_revenue_annual)*100)  
                     Average_pe_five =  "{:.2f}".format(((sum(pe_five) / len(pe_five)))) 
 
                     if Average_netIncome_annual==0.0 or Average_netIncome_annual==-0.0:
@@ -8256,7 +8256,6 @@ with st.container():
                     KGV=0.0
                     KCV=0.0
                     five_Yrs_ROE=0.0
-                    five_yrs_Nettomarge=0.0
                     Average_fcf_growth_five = "0.00"
                     Average_pe_five = "0.00"
 
@@ -8271,7 +8270,7 @@ with st.container():
 
               
                pe_five_ = round((amount)/(eps_5years_average_diluted_annual),2)
-               five_yrs_Nettomarge=0.0
+              
 
                if average_FCF_annual_five>5:
                     pfcf_funf="{:.2f}".format(Marketcap_in_million/(average_FCF_annual_five/1000000000))
