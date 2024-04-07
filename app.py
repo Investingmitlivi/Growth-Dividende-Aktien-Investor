@@ -12833,7 +12833,7 @@ with st.container():
           # #print("Dividend_ttm",Dividend_ttm)
           # print("Debt_equity_ttm:",Debt_equity_ttm)
           # #print("CIK:",cik)
-          print("usage:",usage)
+          #print("usage:",usage)
           # #print("EPS_ttm",eps_diluted_ttm)
          
           hide_streamlit_style = """
