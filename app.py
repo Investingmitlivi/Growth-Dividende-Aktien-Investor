@@ -8659,7 +8659,7 @@ with st.container():
           '50 SMA' : [Moving_50],
           '200 SMA':[Moving_200],
           'Earnings':[Earnings],
-          'Target Price':  [f"$ {Target_Price}"],
+          'Analyst Target Price':  [f"$ {Target_Price}"],
           'Current price': ["$ {:.2f}".format(amount)] 
           #'Price Change':[Price_Change]      
 #"{:.2f}".format(((sum(pe_one) / len(pe_one))))
