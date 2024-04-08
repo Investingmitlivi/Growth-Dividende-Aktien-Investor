@@ -55,6 +55,7 @@ from stocknews import StockNews
 st.set_page_config(page_title="StockAnalysisTool", page_icon = "📚", layout="wide")
 
 hide_streamlit_style = """
+                <div style="max-width: 100%;">
                 <style>
                 div[data-testid="stToolbar"] {
                 visibility: hidden;
@@ -84,8 +85,12 @@ hide_streamlit_style = """
                 height: 0%;
                 }
                 </style>
+                </div>
                 """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+
+#
 cred = credentials.Certificate('investingmitlivi-firebase key.json')
 try:
      firebase_admin.initialize_app(cred)
@@ -12834,32 +12839,32 @@ with st.container():
           # #print("Dividend_ttm",Dividend_ttm)
           # print("Debt_equity_ttm:",Debt_equity_ttm)
           # #print("CIK:",cik)
-          print("usage:",usage)
+          #print("usage:",usage)
           # #print("EPS_ttm",eps_diluted_ttm)
          
-          hide_streamlit_style = """
-            <style>
+         # hide_streamlit_style = """
+          #  <style>
             #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            </style>
-            """
-          st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+          #  footer {visibility: hidden;}
+          #  </style>
+         #   """
+         # st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
-          st.markdown('''
-          <style>
-          .stApp [data-testid="stToolbar"]{
-          display:none;
-          }
-          </style>
-''', unsafe_allow_html=True)
+#          st.markdown('''
+ #         <style>
+  #        .stApp [data-testid="stToolbar"]{
+   #       display:none;
+    #      }
+     #     </style>
+#''', unsafe_allow_html=True)
           
-     hide_streamlit_style = """
-    <style>
+ #    hide_streamlit_style = """
+  #  <style>
     #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    .streamlit-container .element-container:nth-child(2) .stPlot {display: none;}
-    </style>
-"""
+   # footer {visibility: hidden;}
+    #.streamlit-container .element-container:nth-child(2) .stPlot {display: none;}
+    #</style>
+#"""
 
 # Apply the CSS styles using st.markdown
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+#st.markdown(hide_streamlit_style, unsafe_allow_html=True)
