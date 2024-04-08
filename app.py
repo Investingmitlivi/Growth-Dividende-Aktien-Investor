@@ -12126,13 +12126,14 @@ with st.container():
 
                     fig.add_trace(go.Bar(x=data['Date'], y=data['Free Cash Flow'], name='Free Cash Flow'))
                     # Add the Dividends bar plot
-                    fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'], name='Dividends'))
+                    fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'],marker_color='red',  name='Dividends Paid'))
+                    
 
                     # Add the Free Cash Flow bar plot
                     
 
                     # Update layout
-                    fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='Amount (B)', title='Dividends and Free Cash Flow ')
+                    fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='Amount (B)', title='Dividends Paid and Free Cash Flow ')
 
                     fig.update_traces(texttemplate='%{y}', textposition='inside')
 
@@ -12833,7 +12834,7 @@ with st.container():
           # #print("Dividend_ttm",Dividend_ttm)
           # print("Debt_equity_ttm:",Debt_equity_ttm)
           # #print("CIK:",cik)
-          #print("usage:",usage)
+          print("usage:",usage)
           # #print("EPS_ttm",eps_diluted_ttm)
          
           hide_streamlit_style = """
