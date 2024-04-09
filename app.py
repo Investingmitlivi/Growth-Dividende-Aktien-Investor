@@ -52,6 +52,7 @@ from stocknews import StockNews
 
 
 
+
 st.set_page_config(page_title="StockAnalysisTool", page_icon = "📚", layout="wide")
 
 hide_streamlit_style = """
@@ -7887,55 +7888,7 @@ Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuati
 
  #------------------------------------------------------------
  #..........................................................
-from stocknews import StockNews
-with st.container():
-     with news:
-          try:
-               news = stock_info.news[:10]  # Get the top ten news articles
 
-               # Display the news headlines and links
-               for i, item in enumerate(news, 1):
-                    headline = item['title']
-                    link = item['link']
-                    st.write(f"Headline: {headline}")
-                    st.write(f"{link}")
-               
-
-          except Exception as e:    
-          
-               st.error("No news available for this stock:")
-          yf.pdr_override()  # Clear the cached data
-
-
-          # links = quote.outer_news_df[['title', 'link']].head(10)
-
-          # # Display the headlines and links
-          # for i, row in links.iterrows():
-          #      headline = row['title']
-          #      link = row['link']
-          #      st.write(f"Headline: {headline}")
-          #      st.write(f"Link: {link}")
-
-
-
-
-
-        #  link = quote.outer_news_df  # Assuming outer_news_df contains the link information
-
-
-#          st.write(f"[{link}]({link})")        
-          
-
-
-
-#if st.sidebar.button("Open SEC Link 10K"):
-#cik = "your_cik_here"  # Replace with your CIK value
-
-
-        
-           
-
-#--------------------------------------------------------------------------
 with st.container():
      with Metric:  
           #st.write(f'Annual Return is <span style="color:#2E8B57">{aufrundung}%</span>', unsafe_allow_html=True)
@@ -11528,6 +11481,104 @@ with st.container():
                st.write("3 Years")
                st.write(round(FCF_Margin_1, 2))
 
+with st.container():
+     with EPS_Valuation:
+
+          Price_to_earnings = annual_data['price_to_earnings'][-5:]
+
+          high_PE_value = float(max(Price_to_earnings))
+          LOW_PE_value = float(min(Price_to_earnings))
+
+          
+
+
+          col1,col2 = st.columns(2)
+
+          #col1.info("WACC",WACC_prozent)
+          #col1.write(f'WACC: {WACC_prozent}')
+
+          #col1.info(f"WACC: {WACC:.2f}%")
+          #col2.info(f"10 YR T.NOTE: {Average_10years_treasury_rate:.2f}%")
+
+
+          col1,col2,col3,col4,col5= st.columns(5)
+         
+          EPS_ttm = col1.number_input("EPS:", value=eps_diluted_ttm)
+
+          HIGH_5years_PE = col2.number_input("5 Year HIGH PE:", value=high_PE_value)
+          LOW_5years_PE = col3.number_input("5 Year LOW PE:", value=LOW_PE_value)
+
+          average_value = (HIGH_5years_PE + LOW_5years_PE) / 2
+
+          Average_both_high_und_low_PE = col4.number_input("Average PE:", value=average_value)
+
+          Growth_rate = col5.number_input("Growth Rate(%):", value=0.00)
+          Growth_rate=Growth_rate/100
+
+          col1= st.columns(1)
+
+          Discount_rate = st.number_input("Discount Rate(%):", value=WACC)
+          Discount_rate=Discount_rate/100
+          Discount_rate=1+Discount_rate
+
+          col1= st.columns(1)
+          Years = st.number_input("Years:", value=10)
+
+          Future_intrinsic =eps_diluted_ttm*((1 + Growth_rate) ** Years)*average_value
+          Present_intrinsic =Future_intrinsic/(Discount_rate) ** Years
+         
+
+          col11= st.columns(1)
+         
+          #Future_intrinsic_Value = col11.number_input("Future Intrinsic Value:", value=Future_intrinsic)
+          Future_intrinsic_Value = st.number_input("Future Intrinsic Value($):", value=Future_intrinsic)
+
+
+          col1= st.columns(1)
+          Present_intrinsic_Value = st.number_input("Present Iintrinsic Value($):", value=Present_intrinsic)
+
+          col1= st.columns(1)
+
+          Margin_of_safety = st.number_input("Margin of Safety(%):", value=0.00)
+          Margin_of_safety=(1-((Margin_of_safety)/100))
+
+          Buy_price_dollar =Present_intrinsic_Value*Margin_of_safety
+          
+          try:
+               convert = requests.get(f"https://api.frankfurter.app/latest?amount={Buy_price_dollar}&from={base_currency}&to={target_currency}")
+               data14 = convert.json()
+               # Extract the converted amount from the response
+               Euro = data14['rates'][target_currency]
+               dollar = f"{Buy_price_dollar:.2f} $"
+               Buy_price_euro = Euro
+
+          except Exception as e:
+               #print("Error occurred. Using alternative conversion method.")Flax
+               c = CurrencyRates()
+               Buy_price_euro= c.convert("USD", "EUR", Buy_price_dollar)
+               #print(f"{graham_valuation2} USD is approximately {Euro_equivalent_graham_valuation2:.2f} EUR")
+          # Display the result
+     # .......................................DDM...................
+
+        #  print("Margin_of_safety",Margin_of_safety)
+
+          if st.button("Calculate"):
+               
+                         #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+                         #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
+               st.write(f'Current Price: <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True)
+
+               
+
+               if converted_amount < Buy_price_euro:
+                    font_color = "green"
+               else:
+                    font_color = "red"
+
+               st.write(f"Fair Value: <span style='color:{font_color}'>{Buy_price_euro:.2f} €</span>", unsafe_allow_html=True)
+                       
+          
+
 
 
 with st.container():              
@@ -12113,13 +12164,10 @@ with st.container():
                          
                     #dividendPaidInTheLast21Years = abs(annual_data['cff_dividend_paid'][-21:])
                     dividendPaidInTheLast21Years = [abs(value) for value in annual_data['cff_dividend_paid'][-21:]]
-
-                    
-
-
-                    #dividendPaidInTheLast21Years = ["{:.2f}".format(value/1e9) for value in dividendPaidInTheLast21Years]  
                      
                     Free_cash_flow_annual_2003 = annual_data['fcf'][-21:]
+
+                    
                     #Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
                     data = pd.DataFrame({
                     'Date': date_annual_20yrs,
@@ -12596,104 +12644,6 @@ with st.container():
 
 
 
-with st.container():
-     with EPS_Valuation:
-
-          Price_to_earnings = annual_data['price_to_earnings'][-5:]
-
-          high_PE_value = float(max(Price_to_earnings))
-          LOW_PE_value = float(min(Price_to_earnings))
-
-          
-
-
-          col1,col2 = st.columns(2)
-
-          #col1.info("WACC",WACC_prozent)
-          #col1.write(f'WACC: {WACC_prozent}')
-
-          #col1.info(f"WACC: {WACC:.2f}%")
-          #col2.info(f"10 YR T.NOTE: {Average_10years_treasury_rate:.2f}%")
-
-
-          col1,col2,col3,col4,col5= st.columns(5)
-         
-          EPS_ttm = col1.number_input("EPS:", value=eps_diluted_ttm)
-
-          HIGH_5years_PE = col2.number_input("5 Year HIGH PE:", value=high_PE_value)
-          LOW_5years_PE = col3.number_input("5 Year LOW PE:", value=LOW_PE_value)
-
-          average_value = (HIGH_5years_PE + LOW_5years_PE) / 2
-
-          Average_both_high_und_low_PE = col4.number_input("Average PE:", value=average_value)
-
-          Growth_rate = col5.number_input("Growth Rate(%):", value=0.00)
-          Growth_rate=Growth_rate/100
-
-          col1= st.columns(1)
-
-          Discount_rate = st.number_input("Discount Rate(%):", value=WACC)
-          Discount_rate=Discount_rate/100
-          Discount_rate=1+Discount_rate
-
-          col1= st.columns(1)
-          Years = st.number_input("Years:", value=10)
-
-          Future_intrinsic =eps_diluted_ttm*((1 + Growth_rate) ** Years)*average_value
-          Present_intrinsic =Future_intrinsic/(Discount_rate) ** Years
-         
-
-          col11= st.columns(1)
-         
-          #Future_intrinsic_Value = col11.number_input("Future Intrinsic Value:", value=Future_intrinsic)
-          Future_intrinsic_Value = st.number_input("Future Intrinsic Value($):", value=Future_intrinsic)
-
-
-          col1= st.columns(1)
-          Present_intrinsic_Value = st.number_input("Present Iintrinsic Value($):", value=Present_intrinsic)
-
-          col1= st.columns(1)
-
-          Margin_of_safety = st.number_input("Margin of Safety(%):", value=0.00)
-          Margin_of_safety=(1-((Margin_of_safety)/100))
-
-          Buy_price_dollar =Present_intrinsic_Value*Margin_of_safety
-          
-          try:
-               convert = requests.get(f"https://api.frankfurter.app/latest?amount={Buy_price_dollar}&from={base_currency}&to={target_currency}")
-               data14 = convert.json()
-               # Extract the converted amount from the response
-               Euro = data14['rates'][target_currency]
-               dollar = f"{Buy_price_dollar:.2f} $"
-               Buy_price_euro = Euro
-
-          except Exception as e:
-               #print("Error occurred. Using alternative conversion method.")Flax
-               c = CurrencyRates()
-               Buy_price_euro= c.convert("USD", "EUR", Buy_price_dollar)
-               #print(f"{graham_valuation2} USD is approximately {Euro_equivalent_graham_valuation2:.2f} EUR")
-          # Display the result
-     # .......................................DDM...................
-
-        #  print("Margin_of_safety",Margin_of_safety)
-
-          if st.button("Calculate"):
-               
-                         #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-                         #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
-               st.write(f'Current Price: <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True)
-
-               
-
-               if converted_amount < Buy_price_euro:
-                    font_color = "green"
-               else:
-                    font_color = "red"
-
-               st.write(f"Fair Value: <span style='color:{font_color}'>{Buy_price_euro:.2f} €</span>", unsafe_allow_html=True)
-                       
-          
-
 
 with st.container():
      with Retirement_Calculator:
@@ -12755,6 +12705,54 @@ with st.container():
 
 
 
+with st.container():
+     with news:
+          try:
+               news = stock_info.news[:10]  # Get the top ten news articles
+
+               # Display the news headlines and links
+               for i, item in enumerate(news, 1):
+                    headline = item['title']
+                    link = item['link']
+                    st.write(f"Headline: {headline}")
+                    st.write(f"{link}")
+               
+
+          except Exception as e:    
+          
+               st.error("No news available for this stock:")
+          yf.pdr_override()  # Clear the cached data
+
+
+          # links = quote.outer_news_df[['title', 'link']].head(10)
+
+          # # Display the headlines and links
+          # for i, row in links.iterrows():
+          #      headline = row['title']
+          #      link = row['link']
+          #      st.write(f"Headline: {headline}")
+          #      st.write(f"Link: {link}")
+
+
+
+
+
+        #  link = quote.outer_news_df  # Assuming outer_news_df contains the link information
+
+
+#          st.write(f"[{link}]({link})")        
+          
+
+
+
+#if st.sidebar.button("Open SEC Link 10K"):
+#cik = "your_cik_here"  # Replace with your CIK value
+
+
+        
+           
+
+#--------------------------------------------------------------------------
 
 
           
