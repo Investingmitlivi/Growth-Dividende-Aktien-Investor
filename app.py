@@ -7615,6 +7615,8 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig,use_container_width=True,config={'displayModeBar': False})
+
+
 #st.plotly_chart(fig, config={'displayModeBar': False})
 
 
@@ -7671,6 +7673,9 @@ try:
 
 except NameError as ne:
           st.write("")
+
+
+          
 
 #..............................................................
   #st.write(data2)
@@ -7875,6 +7880,7 @@ except (ValueError, KeyError):
 
 
 Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuation,Dividend_Discount_Model,Key_ratios,Charts,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Stock Valuation Tool","Multiple Valuation","EPS Valuation","Dividend Discount Model","Key Ratios","Charts","Calculator","Top 10 News"])
+
 
      #st.header('Price / Total return')
 
@@ -8569,7 +8575,18 @@ with st.container():
           
           
           }
+          #date_obj = datetime.strptime(formatted_date,min_price_date, "%Y/%m/%d")
           date_obj = datetime.strptime(formatted_date, "%Y/%m/%d")
+
+          # Convert 'min_price_date' string to datetime object
+          #min_price_date_obj = datetime.strptime(min_price_date, '%Y/%m/%d')
+
+          # Convert 'min_price_date_obj' datetime object back to string in the format 'YYYY/MM/DD'
+         # min_price_date_str = datetime.strftime(min_price_date_obj, '%Y/%m/%d')
+
+          all_time_high_date = formatted_date
+#          min_price_date = min_price_date
+
 
           data3 = {
           'P/S': [Price_to_sales_last],
@@ -8579,12 +8596,18 @@ with st.container():
           '5 YR ROIC': [Average_ROIC_funf],
           'ROIC': [ROIC_annual_one],
           #'Total Debt | Liabilities': [Total_DEbt_in_billion],
-          "All Time High":[formatted_date],
-          "52wk LOW":[min_price_date.strftime('%Y/%m/%d')],
-          "All Time High": ["$ {:.2f}".format(all_time_high_price)],                     #f"$ {all_time_high_price:.2f}")
-          "All Time Date": [formatted_date],
-          "52wk LOW": ["$ {:.2f}".format(fifty_two_week_low)],
-          "52wk LOW Date": [min_price_date.strftime('%Y/%m/%d')]
+          #'All Time High f“{formatted_date}"':[formatted_date],
+          f'All Time High ({all_time_high_date}'")": ["$ {:.2f}".format(all_time_high_price)],
+          f'52WK LOW ({min_price_date.strftime("%Y/%m/%d")})': ["$ {:.2f}".format(fifty_two_week_low)]
+
+ 
+          
+
+          #"52wk LOW":[min_price_date.strftime('%Y/%m/%d')],
+          #"All Time High": ["$ {:.2f}".format(all_time_high_price)],                     #f"$ {all_time_high_price:.2f}")
+          #'"All Time Date": [formatted_date],
+          #"52wk LOW": ["$ {:.2f}".format(fifty_two_week_low)],
+          #"52wk LOW Date": [min_price_date.strftime('%Y/%m/%d')]
           }       
               #"All Time High": ["$ {:.2f}".format(all_time_high_price)],
 
