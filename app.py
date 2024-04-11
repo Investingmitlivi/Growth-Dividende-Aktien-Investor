@@ -8271,7 +8271,36 @@ with st.container():
          
                #five_Yrs_ROE ="0.00"
               
+          try:
+               
+               forwardPE=quote.fundamental_df.at[0, "Forward P/E"]
+               RSI=quote.fundamental_df.at[0, "RSI (14)"]
+               PEG=quote.fundamental_df.at[0, "PEG"]
+               Beta=quote.fundamental_df.at[0, "Beta"]
+               Earnings = quote.fundamental_df.at[0, "Earnings"]
+               Moving_200=quote.fundamental_df.at[0, "SMA200"]
+               Moving_50=quote.fundamental_df.at[0, "SMA50"]
+               Target_Price = quote.fundamental_df.at[0,"Target Price"] 
+               #Target_Price='{:.2f}'.format(Target_Price)   
+               Dividend_Est = quote.fundamental_df.at[0,"Dividend Est."]
+               Dividend_Ex_Date= quote.fundamental_df.at[0,"Dividend Ex-Date"]
+               Earnings_next_yr=quote.fundamental_df.at[0,"EPS this Y"]
+               Earnings_next_5_yrs=quote.fundamental_df.at[0,"EPS next 5Y"]
+                   
+          except Exception as e: 
 
+               forwardPE ="-"
+               Earnings ="-"
+               RSI="-"
+               PEG="-"
+               Beta=beta
+               Moving_200="-"
+               Moving_50="-"
+               Target_Price ="-"
+               Dividend_Est ="-"
+               Dividend_Ex_Date = "-"
+               Earnings_next_yr="-"
+               Earnings_next_5_yrs="-"
           
 
 
@@ -8514,35 +8543,7 @@ with st.container():
          
                 
 
-          try:
-               
-               forwardPE=quote.fundamental_df.at[0, "Forward P/E"]
-               RSI=quote.fundamental_df.at[0, "RSI (14)"]
-               PEG=quote.fundamental_df.at[0, "PEG"]
-               Beta=quote.fundamental_df.at[0, "Beta"]
-               Earnings = quote.fundamental_df.at[0, "Earnings"]
-               Moving_200=quote.fundamental_df.at[0, "SMA200"]
-               Moving_50=quote.fundamental_df.at[0, "SMA50"]
-               Target_Price = quote.fundamental_df.at[0,"Target Price"] 
-               #Target_Price='{:.2f}'.format(Target_Price)   
-               Dividend_Est = quote.fundamental_df.at[0,"Dividend Est."]
-               Dividend_Ex_Date= quote.fundamental_df.at[0,"Dividend Ex-Date"]
-               #Price_Change =quote.fundamental_df.at[0,"Change"]
-               Earnings_next_5_yrs=quote.fundamental_df.at[0,"EPS next 5Y"]
-                   
-          except Exception as e: 
 
-               forwardPE ="-"
-               Earnings ="-"
-               RSI="-"
-               PEG="-"
-               Beta=beta
-               Moving_200="-"
-               Moving_50="-"
-               Target_Price ="-"
-               Dividend_Est ="-"
-               Dividend_Ex_Date = "-"
-               Earnings_next_5_yrs="-"
           
           data1 = {
           'Market Cap (intraday)': [Marketcap_in_Billion],
@@ -8598,6 +8599,7 @@ with st.container():
 
 
           data3 = {
+          'FCF Yield':[fcf_yield_ttm],
           'P/S': [Price_to_sales_last],
           'ROA': [average_ROA_annual_ttm],
           '5 YR ROE': ["{:.5}%".format(five_ROE)],
@@ -8627,8 +8629,9 @@ with st.container():
             #         RSI="N/A"
 
           data4 = {
-          'FCF Yield':[fcf_yield_ttm],
+          
           'Forward P/E': [forwardPE], 
+          'EPS this YR':[Earnings_next_yr],
           'EPS next 5yrs':[Earnings_next_5_yrs],
           'PEG': [PEG],
           'Beta': [Beta],
