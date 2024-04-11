@@ -1,6 +1,3 @@
-
-
-
 import requests, json, time
 #import streamlit_authenticator as stauth
 #import pickle
@@ -2610,7 +2607,7 @@ ticker_symbol_name = {
      'FNCB':'FNCB Bancorp Inc. ',
      'FNCH':'Finch Therapeutics Group Inc. ',
      'FND':'Floor & Decor Holdings Inc. ',
-     'FNF':'FNF Group of Fidelity National Financial Inc. ',
+     'FNF':'Fidelity National Financial Inc. ',
      'FNGR':'FingerMotion Inc. ',
      'FNKO':'Funko Inc.  ',
      'FNLC':'First Bancorp Inc  (ME) ',
@@ -7408,8 +7405,8 @@ stock_info = yf.Ticker(ticker)
 def get_current_price():
 
      try:
-          #current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
-          current_price = stock_info.history(period="1d")["Close"].iloc[-1]
+          current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
+          #current_price = stock_info.history(period="1d")["Close"].iloc[-1]
 
      except Exception as e: #except all errors
      
@@ -7550,17 +7547,20 @@ except Exception as e:
     
 #...............................................................................................................
 
-
 col2, col3, col4, col5, col6, col7= st.columns(6)
 
-# Create the buttons directly within the columns
-#button1 = col1.button("1D")
-button2 = col2.button("1W")
-button3 = col3.button("1M")
-button4 = col4.button("YTD")
-button5 = col5.button("1Y")
-button6 = col6.button("5Y")
-button7 = col7.button("MAX")
+with col2:
+    button2 = col2.button("1W")
+with col3:
+    button3 = col3.button("1M")
+with col4:
+    button4 = col4.button("YTD")
+with col5:
+    button5 = col5.button("1Y")
+with col6:
+    button6 = col6.button("5Y")
+with col7:
+    button7 = col7.button("MAX")
 
 # Handle button clicks
 # Handle button clicks and update start_date_input
@@ -7897,12 +7897,7 @@ Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuati
 
 with st.container():
      with Metric:  
-          #st.write(f'Annual Return is <span style="color:#2E8B57">{aufrundung}%</span>', unsafe_allow_html=True)
-
-          #st.write("Annual Return is",f'<span style="color:#2E8B57">&dollar; aufrundung,'%')  #st.write(f'<span style="color:#2E8B57">&dollar; {formatted_value}</span> <span style="color:#2E8B57">&euro; {formatted_value2}</span>', unsafe_allow_html=True)
-
-          #basic_shares_last_quarter =quarterly_data['shares_basic'][-1:] 
-          #basic_shares_last_quarter = round((sum(basic_shares_last_quarter) / len(basic_shares_last_quarter)) / 1000000000, 2)
+ 
 
           stock_info = yf.Ticker(ticker)
 
@@ -7918,13 +7913,13 @@ with st.container():
  
                #print("10-year Treasury yield:", treasury_yield)
 
-          except HTTPError as e:
+          except Exception as e:
                st.write("     ")
                #print(f"yfinance: HTTP Error: {e}")
                #print("     ")
 
-          except (KeyError, TypeError):
-               st.write("     ")
+          #except (KeyError, TypeError):
+           #    st.write("     ")
                #print("Yfinace: Error: No data found for Marketcap.")
                #print("     ")
 
@@ -7945,7 +7940,7 @@ with st.container():
                except Exception as e:
                      Marketcap_in_Billion=market_cap_original   
                     
-          except (KeyError, TypeError, AttributeError) as e:
+          except Exception as e:
                # Handle the specific exceptions here
                Forward_PE="NA"   
                RSI="N/A"
@@ -7980,14 +7975,6 @@ with st.container():
           EPS_growth_10yrs =EPS_growth_10yrs*100
 
 
-         
-
-          Revenue_last = annual_data['revenue'][-1:]
-          average_Revenue_last_ohne_billion = (sum(Revenue_last) / len(Revenue_last))/1000000000
-          average_Revenue_last = "{:.2f}B".format(round(((sum(Revenue_last) / len(Revenue_last)))/1000000000, 2))
-
-          
-
           #Neticome_five = annual_data['revenue'][-5:]
           #average_Revenue_five =round(((sum(Revenue_five) / len(Revenue_five)))/1000000000, 2)
 
@@ -8006,12 +7993,18 @@ with st.container():
 
           #average_FCF_annual_five_rounded = "{:.2f}B".format(average_FCF_annual_five)
 
+        
+
+          ROIC_annual_one = "{:.2f}%".format(annual_data['roic'][-1]*100)
+
           ROIC_annual_funf =annual_data['roic'][-5:]
+          #ROIC_annual_funf =annual_data['roic'][-5:]
           Average_ROIC_funf = "{:.2f}%".format((sum(ROIC_annual_funf) / len(ROIC_annual_funf))*100)
 
      
-
-          ROIC_annual_one = "{:.2f}%".format(annual_data['roic'][-1]*100)
+          ROIC_annual_3years = annual_data['roic'][-3:]
+          ROIC_annual_3years=sum(ROIC_annual_3years)/len(ROIC_annual_3years)
+          ROIC_annual_3years = "{:.2f}%".format(ROIC_annual_3years*100)
           
 
           net_income_annual_funf = annual_data['net_income'][-5:] 
@@ -8020,22 +8013,25 @@ with st.container():
 
           #fcf_ttm =fcf_ttm*1000000000
           Average_netIncome_annual_we ="{:.2f}B".format(Average_netIncome_annual_we/ 1000000000) if abs(Average_netIncome_annual_we) >= 1000000000 else "{:,.1f}M".format(Average_netIncome_annual_we / 1000000)
+          #Avg_netincome = "{:.2f}B".format(Average_netIncome_annual)
 
           net_income_annual_one = annual_data['net_income'][-1:]
           Average_net_income_annual_one = "{:.2f}B".format((sum(net_income_annual_one) / len(net_income_annual_one)) / 1000000000) 
+          
           round_net_income_annual_one =round((sum(net_income_annual_one) / len(net_income_annual_one)) / 1000000000,2) 
+
+         # Revenue_last = annual_data['revenue'][-1:]
+          #average_Revenue_last_ohne_billion = (sum(Revenue_last) / len(Revenue_last))/1000000000
+          #average_Revenue_last = "{:.2f}B".format(round(((sum(Revenue_last) / len(Revenue_last)))/1000000000, 2))
+
+          revenue_annual_ttm = annual_data['revenue'][-1:] 
+          average_revenue_annual_ttm = round((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000, 2)
 
           revenue_annual_funf = annual_data['revenue'][-5:] 
           average_revenue_annual = round((sum(revenue_annual_funf) / len(revenue_annual_funf)) / 1000000000, 2)
           
 
-          revenue_annual_ttm = annual_data['revenue'][-1:] 
-          average_revenue_annual_ttm = round((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000, 2)
-
-          ROIC_annual_3years = annual_data['roic'][-3:]
-          ROIC_annual_3years=sum(ROIC_annual_3years)/len(ROIC_annual_3years)
-
-          ROIC_annual_3years = "{:.2f}%".format(ROIC_annual_3years*100)
+          
 
           Revenue_growth_3years = annual_data['revenue_growth'][-3:]
           Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
@@ -8046,7 +8042,21 @@ with st.container():
           Revenue_growth_5years = (Revenue_growth_5years*100)
 
           Revenue_growth_10years = annual_data['revenue_growth'][-10:]
-          
+
+          One_YR_ROCE = annual_data['roce'][-1:]  
+          One_YR_ROCE=sum(One_YR_ROCE)/len(One_YR_ROCE)
+          One_YR_ROCE = (One_YR_ROCE*100)
+
+          five_yrs_ROCE = annual_data['roce'][-5:]
+          five_yrs_ROCE=sum(five_yrs_ROCE)/len(five_yrs_ROCE)
+          five_yrs_ROCE = (five_yrs_ROCE*100)
+
+
+      
+         
+
+         
+     
 
           #Revenue_growth_3years = annual_data['revenue_growth'][-3:]
           #Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
@@ -8074,10 +8084,8 @@ with st.container():
           average_ROA_annual_ttm = "{:.2f}%".format((sum(ROA_annual_ttm) / len(ROA_annual_ttm))*100)
 
           Total_Equity_annual_one = annual_data['total_equity'][-1:]
-          #Price_to_sales =annual_data['price_to_sales'][-1:]
-          #Average_Price_to_sales = round((sum(Price_to_sales) / len(Price_to_sales)), 2)
-          #print(Price_to_sales)
-
+          Average_total_equity_annual = round((sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000, 2)
+         
 
           
           if Revenue_ttm!=0 and average_revenue_annual !=0 :
@@ -8089,13 +8097,13 @@ with st.container():
                five_yrs_Nettomarge ="NA"
                Net_margin_ttm="NA"
           
-          Average_total_equity_annual = round((sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000, 2)
+          
           
 
          
           
-          Avg_netincome = "{:.2f}B".format(Average_netIncome_annual)
-          ROIC_annual_funf =annual_data['roic'][-5:]
+          
+          
 
           #pe_ttm = round(amount/eps_diluted_ttm,2) #amount = current_price eps_basic_ttm
           #pe_ttm = round(Marketcap/netincome_ttm,2)
@@ -8107,7 +8115,7 @@ with st.container():
                try:
                     pe_ttm =quote.fundamental_df.at[0, "P/E"]
 
-               except(AttributeError):
+               except Exception as e:
                     pe_ttm = "{:.2f} ".format(Marketcap / netincome_ttm)
                     
                pfcf_ttm="{:.2f} ".format(Marketcap / fcf_ttm)  
@@ -8138,7 +8146,7 @@ with st.container():
                     pfcf_ttm="{:.2f} ".format(Marketcap / fcf_ttm) 
              
 
-          except NameError:
+          except Exception as a:
                 
                pfcf_ttm="-"
                 
@@ -8205,6 +8213,7 @@ with st.container():
                     Average_fcf_growth_five =  "{:.2f}%".format(((sum(fcf_growth_five) / len(fcf_growth_five)))*100)
                     five_yrs_Nettomarge =  "{:.2f}".format((Average_netIncome_annual/average_revenue_annual)*100)  
                     Average_pe_five =  "{:.2f}".format(((sum(pe_five) / len(pe_five)))) 
+                    
 
                     if Average_netIncome_annual==0.0 or Average_netIncome_annual==-0.0:
                              KGV = round(amount/eps_5years_average_diluted_annual, 2)
@@ -8234,7 +8243,7 @@ with st.container():
                   
           
 
-          except ZeroDivisionError:
+          except Exception as e:
                eps_diluted_annual=annual_data['eps_diluted'][-5:]
                eps_5years_average_diluted_annual=sum(eps_diluted_annual)/len(eps_diluted_annual)
 
@@ -8416,7 +8425,7 @@ with st.container():
           
 
 
-          except KeyError:    #if "Consumer Finance" in Industry or "Banks" in Industry or "Insurance" in Industry or "Health Care Providers & Services" in Industry:
+          except Exception as e:    #if "Consumer Finance" in Industry or "Banks" in Industry or "Insurance" in Industry or "Health Care Providers & Services" in Industry:
                Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
                LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
 
@@ -8467,7 +8476,7 @@ with st.container():
                enter=((Marketcap)+Total_Debt_from_all_calc-Total_cash_last_years)
                Enterprise_value_in_Billion = "{:.2f}T".format(enter/1000) if abs(enter) >= 1000 else "{:,.2f}B".format(enter / 1)
 
-          except (KeyError, TypeError):
+          except Exception as e:
      # Handle KeyError or TypeError here
                Enterprise_value = "N/A"
                Enterprise_value_in_Billion = "N/A"
@@ -8595,19 +8604,11 @@ with st.container():
           'ROE': [ROE_ttm],
           '5 YR ROIC': [Average_ROIC_funf],
           'ROIC': [ROIC_annual_one],
-          #'Total Debt | Liabilities': [Total_DEbt_in_billion],
-          #'All Time High f“{formatted_date}"':[formatted_date],
+          '5 YR ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
+          'ROCE ':[ "{:.2f}%".format(One_YR_ROCE)],
           f'All Time High ({all_time_high_date}'")": ["$ {:.2f}".format(all_time_high_price)],
           f'52WK LOW ({min_price_date.strftime("%Y/%m/%d")})': ["$ {:.2f}".format(fifty_two_week_low)]
-
- 
           
-
-          #"52wk LOW":[min_price_date.strftime('%Y/%m/%d')],
-          #"All Time High": ["$ {:.2f}".format(all_time_high_price)],                     #f"$ {all_time_high_price:.2f}")
-          #'"All Time Date": [formatted_date],
-          #"52wk LOW": ["$ {:.2f}".format(fifty_two_week_low)],
-          #"52wk LOW Date": [min_price_date.strftime('%Y/%m/%d')]
           }       
               #"All Time High": ["$ {:.2f}".format(all_time_high_price)],
 
@@ -10584,7 +10585,7 @@ with st.container():
 
                if net_income_annual_funf[0] ==0:
                     netincome_annual_funf_growth =0
-          except (IndexError, ZeroDivisionError):  
+          except Exception as e:  
 
                netincome_annual_funf_growth_ =0    
      #...............................................................................................................................
@@ -10858,7 +10859,7 @@ with st.container():
           try:          
                interest_expense_annual_one = annual_data['interest_expense'][-1:]
                Average_interest_expense_annual_one = round(((sum(interest_expense_annual_one) / len(interest_expense_annual_one)))/-1000000000, 2)
-          except KeyError:     
+          except Exception as e:     
                Average_interest_expense_annual_one=0.0
 
 
@@ -10904,7 +10905,7 @@ with st.container():
                Effective_tax_rate = round((Average_Income_tax_annual_one/Average_Pretax_annual_one)*100,2)
                Effective_tax_rate_with_percentage = f"{ Effective_tax_rate:.2f}%"
 
-          except ZeroDivisionError:
+          except Exception as e:
                Income_tax_annual_one = annual_data['income_tax'][-1:]
                Average_Income_tax_annual_one = round(((sum(Income_tax_annual_one) / len(Income_tax_annual_one)))/-1, 2)
                Pretax_income_annual_one = annual_data['pretax_income'][-1:]
@@ -11002,7 +11003,7 @@ with st.container():
                value_at_index_4 = Free_cash_flow_annual[4]
                value_at_index_9 = Free_cash_flow_annual[9]
 
-          except IndexError:
+          except Exception as e:
                value_at_index_4 = 0
                value_at_index_9 = 0
           try:
@@ -11020,10 +11021,10 @@ with st.container():
                               else:
                                    CAGR = round(CAGR, 2)
 
-                         except (ZeroDivisionError, ValueError):
+                         except Exception as e:
                               CAGR = 0
 
-          except IndexError:  
+          except Exception as e:  
 
                CAGR =0;    
                
@@ -11038,7 +11039,7 @@ with st.container():
                value_at_index_4 = eps_basic_annual[4]
                value_at_index_9 = eps_basic_annual[9]
 
-          except IndexError:
+          except Exception as e:
                value_at_index_4 = 0
                value_at_index_9 = 0
           try:
@@ -11056,10 +11057,10 @@ with st.container():
                               else:
                                    EPS_CAGR = round(EPS_CAGR, 2)
 
-                         except (ZeroDivisionError, ValueError):
+                         except Exception as e:
                               EPS_CAGR = 0
 
-          except IndexError:  
+          except Exception as e:  
 
                EPS_CAGR =0;    
                
@@ -11749,7 +11750,7 @@ with st.container():
                #    c = CurrencyRates()
                #   DDM_intrinsic_value3 = c.convert("USD", "EUR", intrinsic_value3)
 
-               except:
+               except Exception as e:
                     url = 'https://www.alphavantage.co/query?function=intrinsic_value3&from_currency=USD&to_currency=target_currency&apikey=NLEU37NOPD4HYBPZ'
                     r = requests.get(url)
                     intrinsic_value3 = r.json()
@@ -11856,7 +11857,7 @@ with st.container():
                          #Cash_Dividends_paid_Total_annual = annual_data['cff_dividend_paid'][-10:]
                          #Shares_basic_annual = annual_data['shares_basic'][-10:]
                               
-                    except KeyError:  
+                    except Exception as e:  
                          Operating_Margin =0 
                          gross_margin  =0 
 
@@ -11976,7 +11977,7 @@ with st.container():
                                              #Cash_Dividends_paid_Total_annual = annual_data['cff_dividend_paid'][-10:]
                                              #Shares_basic_annual = annual_data['shares_basic'][-10:]
                                                   
-                                        except KeyError:  
+                                        except Exception as e:  
                                              Operating_Margin_quarter =0 
                                              gross_margin_quarter  =0 
 
@@ -12299,7 +12300,7 @@ with st.container():
                     ROIC_annual_21years = annual_data['roic'][-21:]
                     try:
                          ROIC_annual_21years = ["{:.2f}%".format(ROIC_annual_21years * 100) for ROIC_annual_21years in ROIC_annual_21years]
-                    except TypeError:
+                    except Exception as e:
                          ROIC_annual_21years = 0.0
                          
                     data = pd.DataFrame({
@@ -12324,7 +12325,7 @@ with st.container():
 
                     try:
                          ROE_annual_21years = ["{:.2f}%".format(ROE_annual_21years * 100) for ROE_annual_21years in ROE_annual_21years]
-                    except TypeError:
+                    except Exception as e:
                          ROE_annual_21years = 0.0
                          
                     data = pd.DataFrame({
@@ -12358,7 +12359,7 @@ with st.container():
 #-------------------------------------------------------------------------------------------------
                     try:
                          gross_margin = ["{:.2f}%".format(gross_margin * 100) for gross_margin in gross_margin]
-                    except TypeError:
+                    except Exception as e:
                          gross_margin = 0.0
                          
                     data = pd.DataFrame({
@@ -12383,7 +12384,7 @@ with st.container():
 
                     try:
                          Operating_Margin = ["{:.2f}%".format(Operating_Margin * 100) for Operating_Margin in Operating_Margin]
-                    except TypeError:
+                    except Exception as e:
                          Operating_Margin = 0.0
                          
                     data = pd.DataFrame({
@@ -12595,6 +12596,10 @@ with st.container():
                           
                     with col2:
                          st.plotly_chart(fig12,use_container_width=True,config=config)
+#.........
+
+
+                         
 
 #...........................................................................................................
                    
