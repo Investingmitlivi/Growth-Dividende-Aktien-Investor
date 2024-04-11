@@ -12516,7 +12516,7 @@ with st.container():
                     
                     fig11 = px.bar(data, x='Date', y='Price to Tangible Book Value',               
                               labels={'value': 'Ratio'},
-                              title=f'Price to Tangible Book Value(P/TBV):  Average P/TBV: {Average_Price_to_tangible_book:.2f}  Current P/TBV: {PTBVPS:.2f}')  # Use 'group' to display bars side by side
+                              title=f'10 P/TBV: {Average_Price_to_tangible_book:.2f}  Current P/TBV: {PTBVPS:.2f}')  # Use 'group' to display bars side by side
                     
                     fig11.add_shape(
                     type='line',
@@ -12561,7 +12561,7 @@ with st.container():
                     fig12 = px.bar(data, x='Date', y='Price to Book Value',
                               labels={'value': 'Ratio'},
                               #title='Price to Book Value,{average_price_to_book:.2f}')
-                              title=f'Price to Book Value (P/BV):  Average P/BV: {average_price_to_book:.2f}  Current P/B: {PBVPS:.2f}')
+                              title=f'10 P/BV: {average_price_to_book:.2f}  Current P/B: {PBVPS:.2f}')
      # Use 'group' to display bars side by side
                     
                     fig12.add_shape(
@@ -12636,34 +12636,34 @@ with st.container():
                                                             
 #.......................................................................................................
 
-                    with Quarter:
-                                            #revenue_2013 = annual_data['revenue'][-10:] 
-                         date_quarter_20yrs = quarterly_data['period_end_date'][-21:] 
+                    # with Quarter:
+                    #                         #revenue_2013 = annual_data['revenue'][-10:] 
+                    #      date_quarter_20yrs = quarterly_data['period_end_date'][-21:] 
                          
-                         revenue_quarter_2003= quarterly_data['revenue'][-21:]                    
-                         #revenue_2003 = [round(value, 2) for value in revenue_2003]
-                         revenue_quarter_2003 = ["{:.2f}".format(value) for value in revenue_quarter_2003]
+                    #      revenue_quarter_2003= quarterly_data['revenue'][-21:]                    
+                    #      #revenue_2003 = [round(value, 2) for value in revenue_2003]
+                    #      revenue_quarter_2003 = ["{:.2f}".format(value) for value in revenue_quarter_2003]
 
-                    # Create a DataFrame for the data
-                         data = pd.DataFrame({
-                         'Date': date_quarter_20yrs,
-                         #'Free Cash Flow': Free_cash_flow_annual_2003,
-                         'Revenue':revenue_quarter_2003,
-                         })
+                    # # Create a DataFrame for the data
+                    #      data = pd.DataFrame({
+                    #      'Date': date_quarter_20yrs,
+                    #      #'Free Cash Flow': Free_cash_flow_annual_2003,
+                    #      'Revenue':revenue_quarter_2003,
+                    #      })
 
-                         # Create a Streamlit app
-                         #st.title('Free Cash Flow and Revenue Data')
+                    #      # Create a Streamlit app
+                    #      #st.title('Free Cash Flow and Revenue Data')
 
-                         # Create a Plotly Express bar chart with side-by-side bars
-                         fig = px.bar(data, x='Date', y='Revenue',
-                                   labels={'value': 'Amount'},
-                                   title='Annual Revenue',
-                                   barmode='group')  # Use 'group' to display bars side by side
+                    #      # Create a Plotly Express bar chart with side-by-side bars
+                    #      fig = px.bar(data, x='Date', y='Revenue',
+                    #                labels={'value': 'Amount'},
+                    #                title='Annual Revenue',
+                    #                barmode='group')  # Use 'group' to display bars side by side
 
                                    
-                         #fig.update_traces(marker_color='royalblue')
-                         # Display the chart using Streamlit
-                         st.plotly_chart(fig,use_container_width=True, config=config)
+                    #      #fig.update_traces(marker_color='royalblue')
+                    #      # Display the chart using Streamlit
+                    #      st.plotly_chart(fig,use_container_width=True, config=config)
 
 
 
