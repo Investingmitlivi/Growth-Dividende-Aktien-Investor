@@ -12229,7 +12229,7 @@ with st.container():
 
                     try:
                          value_at_index_10 = dividendPaidInTheLast21Years[10]
-                         value_at_index_20 = dividendPaidInTheLast21Years[20]
+                         #value_at_index_20 = dividendPaidInTheLast21Years[20]
 
                     except Exception as e:
                          value_at_index_10 = 0
@@ -12260,7 +12260,7 @@ with st.container():
 
                     try:
                          value_at_index_0 = dividendPaidInTheLast21Years[0]
-                         value_at_index_20 = dividendPaidInTheLast21Years[20]
+                         #value_at_index_20 = dividendPaidInTheLast21Years[20]
 
                     except Exception as e:
                          value_at_index_0 = 0
