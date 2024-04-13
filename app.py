@@ -31,7 +31,7 @@ from numpy_financial import npv
 from pathlib import Path
 from googletrans import Translator, LANGUAGES
 from translate import Translator
-from transformers import pipeline
+#from transformers import pipeline
 from forex_python.converter import CurrencyRates
 from forex_python.converter import RatesNotAvailableError
 from googlefinance import getQuotes
@@ -12197,20 +12197,20 @@ with st.container():
           #.................................5  Dividend CAGR............................................
                               
                     try:
-                         value_at_index_4 = dividendPaidInTheLast21Years[4]
-                         value_at_index_9 = dividendPaidInTheLast21Years[9]
+                         value_at_index_15 = dividendPaidInTheLast21Years[15]
+                         value_at_index_20 = dividendPaidInTheLast21Years[20]
 
                     except Exception as e:
-                         value_at_index_4 = 0
-                         value_at_index_9 = 0
+                         value_at_index_15 = 0
+                         value_at_index_20 = 0
                     try:
                          
-                         if value_at_index_4 == 0:
+                         if value_at_index_15 == 0:
                               Dividend_5_CAGR = 0
 
                          else:
                                    try:
-                                        Dividend_5_CAGR = (pow((value_at_index_9 / value_at_index_4), 0.2) - 1) * 100
+                                        Dividend_5_CAGR = (pow((value_at_index_20 / value_at_index_15), 0.2) - 1) * 100
                                         #CAGR = round(CAGR, 2)
 
                                         if isinstance(Dividend_5_CAGR, complex):
@@ -12224,6 +12224,7 @@ with st.container():
                     except Exception as e:  
 
                          Dividend_5_CAGR =0; 
+                   
   #.................................10  Dividend CAGR............................................                    
 
                     try:
@@ -12254,7 +12255,37 @@ with st.container():
                     except Exception as e:  
 
                          Dividend_10_CAGR =0; 
+                    
+  #.................................20  Dividend CAGR............................................                    
 
+                    try:
+                         value_at_index_0 = dividendPaidInTheLast21Years[0]
+                         value_at_index_20 = dividendPaidInTheLast21Years[20]
+
+                    except Exception as e:
+                         value_at_index_0 = 0
+                         value_at_index_20 = 0
+                    try:
+                         
+                         if value_at_index_0 == 0:
+                              Dividend_20_CAGR = 0
+
+                         else:
+                                   try:
+                                        Dividend_20_CAGR = (pow((value_at_index_20 / value_at_index_0), 0.05) - 1) * 100
+                                        #CAGR = round(CAGR, 2)
+
+                                        if isinstance(Dividend_20_CAGR, complex):
+                                                  Dividend_20_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                                        else:
+                                             Dividend_20_CAGR = round(Dividend_20_CAGR, 2)
+
+                                   except Exception as e:
+                                        Dividend_20_CAGR = 0
+
+                    except Exception as e:  
+
+                         Dividend_20_CAGR =0; 
 
                     
                     #Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
@@ -12275,7 +12306,7 @@ with st.container():
                     
 
                     # Update layout
-                    title_text = f"Dividends Paid and Free Cash Flow: Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
+                    title_text = f"Dividend 20 CAGR: {Dividend_20_CAGR}% Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
                     fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='Amount (B)', title=title_text)
 
                     fig.update_traces(texttemplate='%{y}', textposition='inside')
