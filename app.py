@@ -11001,7 +11001,7 @@ with st.container():
           EPS_Cagr_10 = sum(EPS_Cagr_10)/len(EPS_Cagr_10)
           EPS_Cagr_10 =round((EPS_Cagr_10*100),2)
      #...........................................................................
-          Free_cash_flow_annual = annual_data['fcf'][-10:]
+          #Free_cash_flow_annual = annual_data['fcf'][-10:]
           try:
                value_at_index_4 = Free_cash_flow_annual[4]
                value_at_index_9 = Free_cash_flow_annual[9]
@@ -11031,11 +11031,7 @@ with st.container():
 
                CAGR =0;    
                
-          #print("Value at index 4:", value_at_index_4)
-          #print("Value at index 9:", value_at_index_9)
-          
-          #print("CAGR:",CAGR)
-
+        
      #......................................................................................................................     
           #Free_cash_flow_annual = annual_data['fcf'][-10:]
           try:
@@ -11073,7 +11069,11 @@ with st.container():
           #print("EPS_CAGR:",EPS_CAGR)
 
 
-     #........................................................................................................................     
+     #........................................................................................................................
+
+
+                 
+     #-------------------------------   
 
           col1, col2,col3,col4 = st.columns(4)
 
@@ -12194,6 +12194,68 @@ with st.container():
                      
                     Free_cash_flow_annual_2003 = annual_data['fcf'][-21:]
 
+          #.................................5  Dividend CAGR............................................
+                              
+                    try:
+                         value_at_index_4 = dividendPaidInTheLast21Years[4]
+                         value_at_index_9 = dividendPaidInTheLast21Years[9]
+
+                    except Exception as e:
+                         value_at_index_4 = 0
+                         value_at_index_9 = 0
+                    try:
+                         
+                         if value_at_index_4 == 0:
+                              Dividend_5_CAGR = 0
+
+                         else:
+                                   try:
+                                        Dividend_5_CAGR = (pow((value_at_index_9 / value_at_index_4), 0.2) - 1) * 100
+                                        #CAGR = round(CAGR, 2)
+
+                                        if isinstance(Dividend_5_CAGR, complex):
+                                                  Dividend_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                                        else:
+                                             Dividend_5_CAGR = round(Dividend_5_CAGR, 2)
+
+                                   except Exception as e:
+                                        Dividend_5_CAGR = 0
+
+                    except Exception as e:  
+
+                         Dividend_5_CAGR =0; 
+  #.................................10  Dividend CAGR............................................                    
+
+                    try:
+                         value_at_index_10 = dividendPaidInTheLast21Years[10]
+                         value_at_index_20 = dividendPaidInTheLast21Years[20]
+
+                    except Exception as e:
+                         value_at_index_10 = 0
+                         value_at_index_20 = 0
+                    try:
+                         
+                         if value_at_index_10 == 0:
+                              Dividend_10_CAGR = 0
+
+                         else:
+                                   try:
+                                        Dividend_10_CAGR = (pow((value_at_index_20 / value_at_index_10), 0.1) - 1) * 100
+                                        #CAGR = round(CAGR, 2)
+
+                                        if isinstance(Dividend_10_CAGR, complex):
+                                                  Dividend_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                                        else:
+                                             Dividend_10_CAGR = round(Dividend_10_CAGR, 2)
+
+                                   except Exception as e:
+                                        Dividend_10_CAGR = 0
+
+                    except Exception as e:  
+
+                         Dividend_10_CAGR =0; 
+
+
                     
                     #Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
                     data = pd.DataFrame({
@@ -12213,7 +12275,8 @@ with st.container():
                     
 
                     # Update layout
-                    fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='Amount (B)', title='Dividends Paid and Free Cash Flow ')
+                    title_text = f"Dividends Paid and Free Cash Flow: Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
+                    fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='Amount (B)', title=title_text)
 
                     fig.update_traces(texttemplate='%{y}', textposition='inside')
 
@@ -12241,6 +12304,9 @@ with st.container():
                     st.plotly_chart(fig,use_container_width=True,config=config)
                     #with col2:
                     #st.plotly_chart(fig2,use_container_width=True,config=config)
+#------------------------------------------------------------------------------------------------------------------------------------
+                            
+   
 
           #-------------------------------------------------------------------------------------------------
  
