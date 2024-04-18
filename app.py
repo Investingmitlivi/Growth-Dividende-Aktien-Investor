@@ -8582,8 +8582,8 @@ with st.container():
           'Net Profit Margin (TTM)': [Net_margin_ttm]
           #'P_B_ttm': [Total_Equity_ttm],
           
-          
-          
+      
+        
           }
           #date_obj = datetime.strptime(formatted_date,min_price_date, "%Y/%m/%d")
           date_obj = datetime.strptime(formatted_date, "%Y/%m/%d")
@@ -12308,6 +12308,14 @@ with st.container():
                     # Update layout
                     title_text = f"Dividend 20 CAGR: {Dividend_20_CAGR}% Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
                     fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='Amount (B)', title=title_text)
+                                        # Update legend placement
+                    fig.update_layout(legend=dict(
+                    orientation="h",
+                    yanchor="top",
+                    y=1.1,
+                    xanchor="center",
+                    x=0.5
+                    ))
 
                     fig.update_traces(texttemplate='%{y}', textposition='inside')
 
