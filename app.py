@@ -8552,6 +8552,7 @@ with st.container():
           'Revenue (TTM)': [revenue_ttm],      
           '5 YR Net Income': [Average_netIncome_annual_we], 
           'Net Income (TTM)': [netincome_ttm], 
+          'Forward P/E': [forwardPE], 
           'P/E (TTM)': [pe_ttm],
           '5 YR P/E': [pe_five_],
           '10 YR P/E': [average_PE_historical],
@@ -8630,7 +8631,7 @@ with st.container():
 
           data4 = {
           
-          'Forward P/E': [forwardPE], 
+          #'Forward P/E': [forwardPE], 
           'EPS this YR':[Earnings_next_yr],
           'EPS next 5yrs':[Earnings_next_5_yrs],
           'PEG': [PEG],
@@ -12098,7 +12099,7 @@ with st.container():
                               labels={'value': 'Amount()'},
                               title='Revenue in Billions($)')
                    
-                    fig1.update_layout(title_x=0.5)              
+                    fig1.update_layout(title_align='center')          
                     
                     revenue_growth_2003= annual_data['revenue_growth'][-21:]                    
                     #revenue_2003 = [round(value, 2) for value in revenue_2003]
