@@ -12099,7 +12099,7 @@ with st.container():
                               labels={'value': 'Amount()'},
                               title='Revenue in Billions($)')
                    
-                    fig1.update_layout(title_align='center')          
+                    fig1.update_layout(title_x=0.5)         
                     
                     revenue_growth_2003= annual_data['revenue_growth'][-21:]                    
                     #revenue_2003 = [round(value, 2) for value in revenue_2003]
