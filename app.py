@@ -8865,7 +8865,7 @@ with st.container():
                     Net_investing_CashFlow_annual_df = pd.DataFrame(Net_investing_CashFlow_annual_table, index=date_list_annual,  columns=["Net Investing Cash Flow"])
                     Net_investing_CashFlow_annual_df = Net_investing_CashFlow_annual_df.transpose()
 
-                    Cash_Dividends_paid_Total_annual_table= ["{:.2f}B".format(cff_dividend_paid / 1000000000) if abs(cff_dividend_paid) >= 1000000000 else "{:,.0f}M".format(cff_dividend_paid / 1000000)for cff_dividend_paid in Cash_Dividends_paid_Total_annual]
+                    Cash_Dividends_paid_Total_annual_table= ["{:.2f}B".format(abs(cff_dividend_paid) / 1000000000) if abs(cff_dividend_paid) >= 1000000000 else "{:,.0f}M".format(abs(cff_dividend_paid) / 1000000)for cff_dividend_paid in Cash_Dividends_paid_Total_annual]
                     Cash_Dividends_paid_Total_annual_df = pd.DataFrame(Cash_Dividends_paid_Total_annual_table, index=date_list_annual,  columns=["Cash Dividends Paid"])
                     Cash_Dividends_paid_Total_annual_df = Cash_Dividends_paid_Total_annual_df.transpose()
 
@@ -8978,7 +8978,7 @@ with st.container():
                          Net_investing_CashFlow_quarter_df = pd.DataFrame(Net_investing_CashFlow_quarter_table, index=date_list_quarter,  columns=["Net Investing Cash Flow"])
                          Net_investing_CashFlow_quarter_df = Net_investing_CashFlow_quarter_df.transpose()
 
-                         Cash_Dividends_paid_Total_quarter_table= ["{:.2f}B".format(cff_dividend_paid / 1000000000) if abs(cff_dividend_paid) >= 1000000000 else "{:,.0f}M".format(cff_dividend_paid / 1000000)for cff_dividend_paid in Cash_Dividends_paid_Total_quarter]
+                         Cash_Dividends_paid_Total_quarter_table= ["{:.2f}B".format(abs(cff_dividend_paid) / 1000000000) if abs(cff_dividend_paid) >= 1000000000 else "{:,.0f}M".format(abs(cff_dividend_paid) / 1000000)for cff_dividend_paid in Cash_Dividends_paid_Total_quarter]
                          Cash_Dividends_paid_Total_quarter_df = pd.DataFrame(Cash_Dividends_paid_Total_quarter_table, index=date_list_quarter,  columns=["Cash Dividends Paid"])
                          Cash_Dividends_paid_Total_quarter_df = Cash_Dividends_paid_Total_quarter_df.transpose()
 
