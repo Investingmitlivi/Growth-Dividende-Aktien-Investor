@@ -12788,11 +12788,11 @@ with st.container():
           # image = st.image('NPV.png', caption='Net Present Value', use_column_width=True)
           
 
-          st.write("FCF Projection")
-          st.image('fcf estimate.png', use_column_width=True)
+          #st.write("FCF Projection")
+          #st.image('fcf estimate.png', use_column_width=True)
 
-          st.write("Discount Rate Calculation")
-          st.image('WACC!.png', use_column_width=True)
+          st.write("DCF Calculation")
+          st.image('WACCDCF.png', use_column_width=True)
 
           st.write("Terminal Value")
           st.image('Terminal-Value.png', use_column_width=True)
