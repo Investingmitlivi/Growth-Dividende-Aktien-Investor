@@ -8031,7 +8031,7 @@ with st.container():
           average_revenue_annual = round((sum(revenue_annual_funf) / len(revenue_annual_funf)) / 1000000000, 2)
           
 
-          
+          Revenue_growth = annual_data['revenue_growth'][-10:] #10years
 
           Revenue_growth_3years = annual_data['revenue_growth'][-3:]
           Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
@@ -8041,7 +8041,14 @@ with st.container():
           Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
           Revenue_growth_5years = (Revenue_growth_5years*100)
 
-          Revenue_growth_10years = annual_data['revenue_growth'][-10:]
+          FCF_Margin = annual_data['fcf_margin'][-10:] #10years
+          FCF_Margin_10 =sum(FCF_Margin)/len(FCF_Margin)
+
+          FCF_Margin_5 = annual_data['fcf_margin'][-5:] 
+          FCF_Margin_5=sum(FCF_Margin_5)/len(FCF_Margin_5)
+
+          FCF_Margin_1 = annual_data['fcf_margin'][-1:]
+          FCF_Margin_1=sum(FCF_Margin_1)/len(FCF_Margin_1)
 
           One_YR_ROCE = annual_data['roce'][-1:]  
           One_YR_ROCE=sum(One_YR_ROCE)/len(One_YR_ROCE)
@@ -8086,15 +8093,22 @@ with st.container():
           Total_Equity_annual_one = annual_data['total_equity'][-1:]
           Average_total_equity_annual = round((sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000, 2)
          
+          Net_income_margin_10 = annual_data['net_income_margin'][-10:]
+          Net_income_margin_10 = sum(Net_income_margin_10)/len(Net_income_margin_10)
 
+          Net_income_margin_5 = annual_data['net_income_margin'][-5:]
+          Net_income_margin_5 = sum(Net_income_margin_5)/len(Net_income_margin_5)
+
+          Net_income_margin_1 = annual_data['net_income_margin'][-1:]
+          Net_income_margin_1 = sum(Net_income_margin_1)/len(Net_income_margin_1)
           
           if Revenue_ttm!=0 and average_revenue_annual !=0 :
                Price_to_sales_last = "{:.2f}".format(Marketcap/(Revenue_ttm/1000000000))
-               five_yrs_Nettomarge = "{:.2f}%".format((Average_netIncome_annual/average_revenue_annual)*100)
-               Net_margin_ttm ="{:.2f}%".format((netincome_ttm/revenue_ttm)*100)
+               #five_yrs_Nettomarge = "{:.2f}%".format((Net_income_margin_5)*100)
+               Net_margin_ttm ="{:.2f}%".format((Net_income_margin_1)*100)
           else:
                Price_to_sales_last = "NA"
-               five_yrs_Nettomarge ="NA"
+               #five_yrs_Nettomarge ="NA"
                Net_margin_ttm="NA"
           
           
@@ -8169,9 +8183,10 @@ with st.container():
                Average_fcf_growth_ten =  "{:.2f}".format(((sum(fcf_growth_ten) / len(fcf_growth_ten)))*100)
                average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
                pfcf_ten="{:.2f}".format(Marketcap/(average_FCF_annual_ten/1000000000))
-               Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
+               Revenue_growth_10years=sum(Revenue_growth)/len(Revenue_growth)
                Revenue_growth_10years = "{:.2f}%".format(Revenue_growth_10years*100)
-
+               Net_income_margin_10 = "{:.2f}".format((Net_income_margin_10)*100)
+               FCF_Margin_10 = "{:.2f}".format((FCF_Margin_10)*100)
                EPS_growth_10yrs=round(EPS_growth_10yrs,2)
                Average_pe_ten = "{:.2f}".format(sum(pe_ten) / len(pe_ten))
 
@@ -8183,8 +8198,11 @@ with st.container():
                Average_pe_ten = "0.00"
                average_PE_historical = "-"
                pfcf_ten = "-"
+               Net_income_margin_10 ="-"
+               FCF_Margin_10 ="-"
+               
             
-           # 
+           
         
 
           fcf_growth_3years =annual_data['fcf_growth'][-3:]
@@ -8211,8 +8229,12 @@ with st.container():
                     #five_Yrs_ROE = round((Average_netIncome_annual/Average_total_equity_annual)*100,2)
                     five_Yrs_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
                     Average_fcf_growth_five =  "{:.2f}%".format(((sum(fcf_growth_five) / len(fcf_growth_five)))*100)
-                    five_yrs_Nettomarge =  "{:.2f}".format((Average_netIncome_annual/average_revenue_annual)*100)  
-                    Average_pe_five =  "{:.2f}".format(((sum(pe_five) / len(pe_five)))) 
+                    #five_yrs_Nettomarge =  "{:.2f}".format((Average_netIncome_annual/average_revenue_annual)*100)  
+                    Average_pe_five =  "{:.2f}".format(((sum(pe_five) /len(pe_five)))) 
+                    five_yrs_Nettomarge = "{:.2f}".format((Net_income_margin_5)*100)
+                    FCF_Margin_5 = "{:.2f}%".format((FCF_Margin_5)*100)
+              
+               
                     
 
                     if Average_netIncome_annual==0.0 or Average_netIncome_annual==-0.0:
@@ -8237,6 +8259,7 @@ with st.container():
                     five_Yrs_ROE=0.0
                     Average_fcf_growth_five = "0.00"
                     Average_pe_five = "0.00"
+                    FCF_Margin_5 ="-"
 
 
 
@@ -8562,8 +8585,10 @@ with st.container():
           '5 YR Gross Profit Margin': [five_yrs_average_gross_margin],
           'Gross Profit Margin (TTM)': [rounded_gross_margin],
           
+         
                  
           }
+         
 
           data2 = {
           '5 YR Dividend Yield': [Dividend_yield_average], 
@@ -8581,7 +8606,6 @@ with st.container():
           'Operating Margin': [rounded_operating_margin],
           '5 YR Net Profit Margin':f"{five_yrs_Nettomarge}%",
           'Net Profit Margin (TTM)': [Net_margin_ttm]
-          #'P_B_ttm': [Total_Equity_ttm],
           
       
         
@@ -11485,29 +11509,29 @@ with st.container():
 
           with col1:
                st.write("10 Years")
-               st.write(round(Net_profit_margin_annual_10, 2))
+               st.write(Net_income_margin_10)
 
           with col2:
                st.write("5 Years")
                st.write(five_yrs_Nettomarge)
 
           with col3:
-               st.write("3 Years")
-               st.write(round(FCF_Margin_1, 2))
+               st.write("1 Year")
+               st.write(Net_income_margin_1)
 
           col1, col2, col3 = st.columns(3)
 
           with col1:
                st.write("10 Years")
-               st.write(round(FCF_Margin_10, 2))
+               st.write(FCF_Margin_10)
 
           with col2:
                st.write("5 Years")
-               st.write(round(FCF_Margin_5, 2))
+               st.write(FCF_Margin_5)
 
           with col3:
-               st.write("3 Years")
-               st.write(round(FCF_Margin_1, 2))
+               st.write("1 Year")
+               st.write(FCF_Margin_1)
 
 with st.container():
      with EPS_Valuation:
@@ -11832,7 +11856,7 @@ with st.container():
                 #    Annual,Quarterly = st.tabs(["Annual","Quarterly"])
                     
           with Annual:
-                    FCF_Margin = annual_data['fcf_margin'][-10:]
+                    #FCF_Margin = annual_data['fcf_margin'][-10:]
                     debt_equity_annual =annual_data['debt_to_equity'][-10:]
                     Price_to_tangible_book = annual_data['price_to_tangible_book'][-10:]
                     EBITDA_growth = annual_data['ebitda_growth'][-10:]
@@ -11842,7 +11866,7 @@ with st.container():
                     fcf_per_share_annual = annual_data['fcf_per_share'][-10:]
                     ROE_annual = annual_data['roe'][-10:]
                     Payout_ratio_annual = annual_data['payout_ratio'][-10:]
-                    Revenue_growth = annual_data['revenue_growth'][-10:]
+                    #Revenue_growth = annual_data['revenue_growth'][-10:]
                     NetIncome_growth = annual_data['net_income_growth'][-10:]
                     FCF_growth = annual_data['fcf_growth'][-10:]
                     Book_Value_growth = annual_data['book_value'][-10:]
