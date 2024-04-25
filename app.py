@@ -8633,7 +8633,7 @@ with st.container():
           'ROIC': [ROIC_annual_one],
           '5 YR ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
           'ROCE ':[ "{:.2f}%".format(One_YR_ROCE)],
-          f'All Time High ({all_time_high_date}'")": ["$ {:.2f}".format(all_time_high_price)],
+          f'ATH ({all_time_high_date}'")": ["$ {:.2f}".format(all_time_high_price)],
           f'52WK LOW ({min_price_date.strftime("%Y/%m/%d")})': ["$ {:.2f}".format(fifty_two_week_low)]
           
           }       
@@ -11781,7 +11781,7 @@ with st.container():
                except Exception as e:
                     url = 'https://www.alphavantage.co/query?function=intrinsic_value3&from_currency=USD&to_currency=target_currency&apikey=NLEU37NOPD4HYBPZ'
                     r = requests.get(url)
-                    intrinsic_value3 = r.json()
+                    DDM_intrinsic_value3 = r.json()
                     #print("data",data)
                     
          # except Exception as e:
@@ -11789,28 +11789,28 @@ with st.container():
 
           
           
-               col2,col5 = st.columns([1, 1])
-               font_color = "green"
-               
-               col2.write("Current Price:")
-               col5.write(f"<span style='color:{font_color}'>{converted_amount:.2f} €</span>", unsafe_allow_html=True)
+               col1,col2 = st.columns(2)
 
-                    
-               if intrinsic_value3 > converted_amount:
-                    col1, col2= st.columns([1, 1])  # Create three columns
+
+               if converted_amount < DDM_intrinsic_value3:
                     font_color = "green"
-                    col1.write("Intrinsic Value (DDM):")                    
-                    col2.write(f"<span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True)
-                         
+
+                    with col1:
+                         st.write(f'Current Price:    <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
+                    with col2:
+                         st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
                else:
-                    col1, col2= st.columns([1, 1])  # Create three columns
                     font_color = "red"
-                    col1.write("Intrinsic Value (DDM):")
-                    col2.write(f"<span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True)
+
+                    with col1:
+                         st.write(f'Current Price:    <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
+                    with col2:
+                         st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
+
                          
                               
-          else:     
-               st.write("")
+         # else:     
+          #     st.write("")
                
 
                          
@@ -12325,7 +12325,7 @@ with st.container():
 
                     fig.add_trace(go.Bar(x=data['Date'], y=data['Free Cash Flow'], name='Free Cash Flow'))
                     # Add the Dividends bar plot
-                    fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'],marker_color='red',  name='Dividends Paid'))
+                    fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'],marker_color='black',  name='Dividends Paid'))
                     
 
                     # Add the Free Cash Flow bar plot
