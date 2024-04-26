@@ -11495,21 +11495,6 @@ with st.container():
 
           #Growth_rate1 = col9.number_input("Wachstumsrate (Base Case) in %:", value=0.00, key="growth_rate1")
 
-          
-
-          col1,col2,col3,col9,col10,col11 = st.columns(6)
-
-          # Display the values in colored boxes
-          #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-          col1.info(f"FCF Margin: {FCF_Margin_1:2f}%")
-          col2.info(f"FCF Margin: {FCF_Margin_5}%") 
-          col3.info(f"FCF Margin: {FCF_Margin_10}")
-
-          Growth_rate_fcf_margin_LOW = col9.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW")
-          Growth_rate_fcf_margin_middle = col10.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle")
-          Growth_rate_fcf_margin_high = col11.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_high")
-
-
           col1,col2,col3,col9,col10,col11 = st.columns(6)
 
           # Display the values in colored boxes
@@ -11521,6 +11506,22 @@ with st.container():
           Growth_rate_net_profit_LOW = col9.number_input(" ", value=0.00,key="Growth_rate_net_profit_LOW")
           Growth_rate__net_profit_middle = col10.number_input(" ", value=0.00,key="Growth_rate__net_profit_middle")
           Growth_rate__net_profit_high = col11.number_input(" ", value=0.00,key="Growth_rate__net_profit_high")
+
+
+          col1,col2,col3,col9,col10,col11 = st.columns(6)
+
+          # Display the values in colored boxes
+          #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
+          col1.info(f"FCF Margin: {FCF_Margin_1:.2f}%")
+          col2.info(f"FCF Margin: {FCF_Margin_5}%") 
+          col3.info(f"FCF Margin: {FCF_Margin_10}")
+
+          Growth_rate_fcf_margin_LOW = col9.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW")
+          Growth_rate_fcf_margin_middle = col10.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle")
+          Growth_rate_fcf_margin_high = col11.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_high")
+
+
+         
 
           col1,col2,col3,col9,col10,col11 = st.columns(6)
 
