@@ -8025,10 +8025,10 @@ with st.container():
           #average_Revenue_last = "{:.2f}B".format(round(((sum(Revenue_last) / len(Revenue_last)))/1000000000, 2))
 
           revenue_annual_ttm = annual_data['revenue'][-1:] 
-          average_revenue_annual_ttm = round((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000, 2)
+          average_revenue_annual_ttm = ((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000)
 
-          revenue_annual_funf = annual_data['revenue'][-5:] 
-          average_revenue_annual = round((sum(revenue_annual_funf) / len(revenue_annual_funf)) / 1000000000, 2)
+          #revenue_annual_funf = annual_data['revenue'][-5:] 
+          #average_revenue_annual = round((sum(revenue_annual_funf) / len(revenue_annual_funf)) / 1000000000, 2)
           
 
           Revenue_growth = annual_data['revenue_growth'][-10:] #10years
@@ -8041,14 +8041,21 @@ with st.container():
           Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
           Revenue_growth_5years = (Revenue_growth_5years*100)
 
+          Revenue_growth_1year = annual_data['revenue_growth'][-1:]
+          Revenue_growth_1year=sum(Revenue_growth_1year)/len(Revenue_growth_1year)
+          Revenue_growth_1year = (Revenue_growth_1year*100)
+
           FCF_Margin = annual_data['fcf_margin'][-10:] #10years
           FCF_Margin_10 =sum(FCF_Margin)/len(FCF_Margin)
+          #FCF_Margin_10 = (FCF_Margin_10*100)
 
           FCF_Margin_5 = annual_data['fcf_margin'][-5:] 
           FCF_Margin_5=sum(FCF_Margin_5)/len(FCF_Margin_5)
+          #FCF_Margin_5 = (FCF_Margin_5*100)
 
           FCF_Margin_1 = annual_data['fcf_margin'][-1:]
           FCF_Margin_1=sum(FCF_Margin_1)/len(FCF_Margin_1)
+          FCF_Margin_1 = (FCF_Margin_1*100)
 
           One_YR_ROCE = annual_data['roce'][-1:]  
           One_YR_ROCE=sum(One_YR_ROCE)/len(One_YR_ROCE)
@@ -8057,12 +8064,6 @@ with st.container():
           five_yrs_ROCE = annual_data['roce'][-5:]
           five_yrs_ROCE=sum(five_yrs_ROCE)/len(five_yrs_ROCE)
           five_yrs_ROCE = (five_yrs_ROCE*100)
-
-
-      
-         
-
-         
      
 
           #Revenue_growth_3years = annual_data['revenue_growth'][-3:]
@@ -8102,7 +8103,7 @@ with st.container():
           Net_income_margin_1 = annual_data['net_income_margin'][-1:]
           Net_income_margin_1 = sum(Net_income_margin_1)/len(Net_income_margin_1)
           
-          if Revenue_ttm!=0 and average_revenue_annual !=0 :
+          if Revenue_ttm!=0 and average_revenue_annual_ttm !=0 :
                Price_to_sales_last = "{:.2f}".format(Marketcap/(Revenue_ttm/1000000000))
                #five_yrs_Nettomarge = "{:.2f}%".format((Net_income_margin_5)*100)
                Net_margin_ttm ="{:.2f}%".format((Net_income_margin_1)*100)
@@ -8232,7 +8233,7 @@ with st.container():
                     #five_yrs_Nettomarge =  "{:.2f}".format((Average_netIncome_annual/average_revenue_annual)*100)  
                     Average_pe_five =  "{:.2f}".format(((sum(pe_five) /len(pe_five)))) 
                     five_yrs_Nettomarge = "{:.2f}".format((Net_income_margin_5)*100)
-                    FCF_Margin_5 = "{:.2f}%".format((FCF_Margin_5)*100)
+                    FCF_Margin_5 = "{:.2f}".format((FCF_Margin_5)*100)
               
                
                     
@@ -10512,7 +10513,7 @@ with st.container():
           Average_Free_cash_flow_annual_one_one =Average_Free_cash_flow_annual_one
 
    
-          average_revenue_annual = round((sum(revenue_annual_funf) / len(revenue_annual_funf)) / 1000000000, 2)
+          #average_revenue_annual = round((sum(revenue_annual_funf) / len(revenue_annual_funf)) / 1000000000, 2)
           average_fcf_Annual_funf = ((sum(Free_cash_flow_annual_funf) / len(Free_cash_flow_annual_funf)) / 1000000000)
           Average_netIncome_annual = round((sum(net_income_annual_funf) / len(net_income_annual_funf)) / 1000000000, 2)
         
@@ -11364,7 +11365,7 @@ with st.container():
           #Average_both_multiples =average_sum1+average_sum2
           #Average_both_multiples_sum = Average_both_multiples/2
 
-          if st.button("Analyze"):
+          if st.button("Calculate", key="Calculate_DCF"):
                col11, col12,col13, col14= st.columns(4)
                #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
                #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
@@ -11437,44 +11438,6 @@ with st.container():
 with st.container():
      with Multiple_Valuation:
 
-          Revenue_annaul_10 =annual_data['revenue'][-10:]
-          Revenue_annaul_10=sum(Revenue_annaul_10)/len(Revenue_annaul_10)
-
-          Revenue_annual_5 =annual_data['revenue'][-5:]
-
-          Netincome_annual_10 =annual_data['net_income'][-10:]
-          Netincome_annual_10=sum(Netincome_annual_10)/len(Netincome_annual_10)
-
-
-          Net_profit_margin_annual_10 =Revenue_annaul_10/Netincome_annual_10
-       #    if Revenue_ttm!=0 and average_revenue_annual !=0 :
-        #       Price_to_sales_last = "{:.2f}".format(Marketcap/(Revenue_ttm/1000000000))
-         #      five_yrs_Nettomarge = "{:.2f}%".format((Average_netIncome_annual/average_revenue_annual)*100)
-          #     Net_margin_ttm ="{:.2f}%".format((netincome_ttm/revenue_ttm)*100)
-        #  else:
-         #      Price_to_sales_last = "NA"
-          #     five_yrs_Nettomarge ="NA"
-           #    Net_margin_ttm="NA"
-
-       
-
-          #Revenue_growth_10years = annual_data['revenue_growth'][-10:]
-          #Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
-          #Revenue_growth_10years = round((Revenue_growth_10years*100),2)
-
-
-          FCF_Margin_10 = annual_data['fcf_margin'][-10:]
-          FCF_Margin_10=sum(FCF_Margin_10)/len(FCF_Margin_10)
-          FCF_Margin_10 = (FCF_Margin_10*100)
-
-          FCF_Margin_5 = annual_data['fcf_margin'][-5:]   
-          FCF_Margin_5=sum(FCF_Margin_5)/len(FCF_Margin_5)
-          FCF_Margin_5 = (FCF_Margin_5*100)
-
-          FCF_Margin_1 = annual_data['fcf_margin'][-1:]     
-          FCF_Margin_1=sum(FCF_Margin_1)/len(FCF_Margin_1)
-          FCF_Margin_1 = (FCF_Margin_1*100)
-     
 
           #Profit_Margin_10 = annual_data['fcf_margin'][-10:]
           #Profit_Margin_10=sum(Profit_Margin_10)/len(Profit_Margin_10)
@@ -11488,50 +11451,234 @@ with st.container():
           Profit_Margin_1=sum(Profit_Margin_1)/len(Profit_Margin_1)
           Profit_Margin_1 = (Profit_Margin_1*100)
 
+          col1,col2 = st.columns(2)
+
+          # Display the values in colored boxes
+          #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
+          with col1:
+               st.write(f"Historical")
+
+          with col2:
+               st.write(f"My Assumptions")
+          with col2:
+               My_assumption = st.number_input("Years:", value=int(5), key="unique_key_here")
+
+          col1,col2,col3,col4,col5,col6 = st.columns(6)
+
+          # Display the values in colored boxes
+          #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
+          with col1:
+               st.write(f"1yr:")
+          with col2:
+               st.write(f"5yrs") 
+          with col3:
+               st.write(f"10yr")
+          with col4:
+               st.write(f"LOW")
+          with col5:
+               st.write(f"MID") 
+          with col6:
+               st.write(f"HIGH")
+
+
+          col1,col2,col3,col9,col10,col11 = st.columns(6)
+
+          # Display the values in colored boxes
+          #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
+          col1.info(f"Revenue Growth: {Revenue_growth_1year:.2f}%")
+          col2.info(f"Revenue Growth: {Revenue_growth_5years:.2f}%") 
+          col3.info(f"Revenue Growth: {Revenue_growth_10years}")
+
+          Growth_rate_revenue_LOW = col9.number_input(" ", value=0.00,key="Growth_rate_revenue_LOW")
+          Growth_rate_revenue_middle = col10.number_input(" ", value=0.00,key="Growth_rate_revenue_middle")
+          Growth_rate_revenue_high = col11.number_input(" ", value=0.00,key="Growth_rate_revenue_high")
+
+          #Growth_rate1 = col9.number_input("Wachstumsrate (Base Case) in %:", value=0.00, key="growth_rate1")
 
           
 
-          col1, col2, col3 = st.columns(3)
+          col1,col2,col3,col9,col10,col11 = st.columns(6)
+
+          # Display the values in colored boxes
+          #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
+          col1.info(f"FCF Margin: {FCF_Margin_1:2f}%")
+          col2.info(f"FCF Margin: {FCF_Margin_5}%") 
+          col3.info(f"FCF Margin: {FCF_Margin_10}")
+
+          Growth_rate_fcf_margin_LOW = col9.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW")
+          Growth_rate_fcf_margin_middle = col10.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle")
+          Growth_rate_fcf_margin_high = col11.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_high")
+
+
+          col1,col2,col3,col9,col10,col11 = st.columns(6)
+
+          # Display the values in colored boxes
+          #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
+          col1.info(f"Net Profit Margin:{Net_margin_ttm}") 
+          col2.info(f"Net Profit Margin: {five_yrs_Nettomarge}%") 
+          col3.info(f"Net Profit Margin: {Net_income_margin_10}%")
+
+          Growth_rate_net_profit_LOW = col9.number_input(" ", value=0.00,key="Growth_rate_net_profit_LOW")
+          Growth_rate__net_profit_middle = col10.number_input(" ", value=0.00,key="Growth_rate__net_profit_middle")
+          Growth_rate__net_profit_high = col11.number_input(" ", value=0.00,key="Growth_rate__net_profit_high")
+
+          col1,col2,col3,col9,col10,col11 = st.columns(6)
+
+          col1.info(f"Price/OCF: {P_OCF_ttm}")
+          col2.info(f"Price/OCF: {P_OCF_5}") 
+          col3.info(f"Price/OCF: {P_OCF_10}")
+
+          Growth_rate_P_OCF_low = col9.number_input(" ", value=0.00,key="Growth_rate_P_OCF_low")
+          Growth_rate_P_OCF_middle = col10.number_input(" ", value=0.00,key="Growth_rate_P_OCF_middle")
+          Growth_rate_P_OCF_high = col11.number_input(" ", value=0.00,key="Growth_rate_P_OCF_high")
+
+          col1,col2,col3,col9,col10,col11 = st.columns(6)
+
+          col1.info(f"Price/FCF: {pfcf_ttm}")
+          col2.info(f"Price/FCF: {pfcf_funf}") 
+          col3.info(f"Price/FCF: {pfcf_ten}")
+
+          Growth_rate_P_FCF_low = col9.number_input(" ", value=0.00,key="Growth_rate_P_FCF_low")
+          Growth_rate_P_FCF_middle = col10.number_input(" ", value=0.00,key="Growth_rate_P_FCF_middle")
+          Growth_rate_P_FCF_high = col11.number_input(" ", value=0.00,key="Growth_rate_P_FCF_high")
+
+
+
+          col1,col2,colx,cola, colb, colc= st.columns(6)
+          col1.info('-')
+          col2.info('-')
+          colx.info('Margin Of Safety')
+          #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+          Margin_of_safety_low = cola.number_input(" ", value=0.00,key="Margin_of_safety_low")
+          Margin_of_safety_mid = colb.number_input(" ", value=0.00,key="Margin_of_safety_mid")
+          Margin_of_safety_high = colc.number_input(" ", value=0.00,key="Margin_of_safety_high")
+# -----------------------------LOW-------------
+          average_FCF_Profit_margin_low=((Growth_rate_fcf_margin_LOW+Growth_rate_net_profit_LOW)/2)/100
+
+          average_PFCF_POCF_low=(Growth_rate_P_OCF_low+Growth_rate_P_FCF_low)/2
+
+          Revenue_assumption_low=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_LOW/100),My_assumption)
+          #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
+          #st.write("Revenue_assumption_low",Revenue_assumption_low)
+
+          Assumption_low=(Revenue_assumption_low*average_FCF_Profit_margin_low)*average_PFCF_POCF_low
+          #st.write("Assumption_low_all margins",Assumption_low)
+          Assumption_low_inklu_shares_outstanding_low =Assumption_low/Average_shares_basic_annual_one
+          #st.write("Assumption_low_inklu_shares_outstanding",Assumption_low_inklu_shares_outstanding_low)
+
+          Assumption_low_inklu_shares_outstanding_MarginofSafety_low="{:.2f}".format(Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100)))
+          #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_low",Assumption_low_inklu_shares_outstanding_MarginofSafety_low)
+
+          try:
+               try:
+                    convert = requests.get(f"https://api.frankfurter.app/latest?amount={Assumption_low_inklu_shares_outstanding_MarginofSafety_low}&from={base_currency}&to={target_currency}")
+                    datarevenue_low = convert.json()
+                    # Extract the converted amount from the response
+                    Revenue_low_Euro = datarevenue_low['rates'][target_currency]
+          
+
+               except Exception as e:
+                    #print("Error occurred. Using alternative conversion method.")
+                    c = CurrencyRates()
+                    Revenue_low_Euro = c.convert("USD", "EUR", Assumption_low_inklu_shares_outstanding_MarginofSafety_low)
+          except Exception as e:
+                st.write("")
+# -----------------------------MIDDLE-------------
+          average_FCF_Profit_margin_mid=((Growth_rate_fcf_margin_middle+Growth_rate__net_profit_middle)/2)/100
+
+          average_PFCF_POCF_mid=(Growth_rate_P_OCF_middle+Growth_rate_P_FCF_middle)/2
+
+          Revenue_assumption_mid=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_middle/100),My_assumption)
+          #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
+          #st.write("Revenue_assumption_low",Revenue_assumption_mid)
+
+          Assumption_mid=(Revenue_assumption_mid*average_FCF_Profit_margin_mid)*average_PFCF_POCF_mid
+
+          Assumption_mid_inklu_shares_outstanding_mid =Assumption_mid/Average_shares_basic_annual_one
+          #st.write("Assumption_low_inklu_shares_outstanding",Assumption_mid_inklu_shares_outstanding_mid)
+
+          Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid="{:.2f}".format(Assumption_mid_inklu_shares_outstanding_mid*(1-(Margin_of_safety_mid/100)))
+          #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_mid",Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid)
+          try:
+               try:
+                    convert = requests.get(f"https://api.frankfurter.app/latest?amount={Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid}&from={base_currency}&to={target_currency}")
+                    datarevenue_mid = convert.json()
+                    # Extract the converted amount from the response
+                    Revenue_mid_Euro = datarevenue_mid['rates'][target_currency]
+          
+
+               except Exception as e:
+                    #print("Error occurred. Using alternative conversion method.")
+                    c = CurrencyRates()
+                    Revenue_mid_Euro = c.convert("USD", "EUR", Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid)
+          except Exception as e:
+               st.write("")
+# -----------------------------HIGH-------------
+
+          average_FCF_Profit_margin_high=((Growth_rate_fcf_margin_high+Growth_rate__net_profit_high)/2)/100
+
+          average_PFCF_POCF_high=(Growth_rate_P_OCF_high+Growth_rate_P_FCF_high)/2
+
+          Revenue_assumption_high=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_high/100),My_assumption)
+          #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
+          #st.write("Revenue_assumption_low",Revenue_assumption_high)
+
+          Assumption_high=(Revenue_assumption_high*average_FCF_Profit_margin_high)*average_PFCF_POCF_high
+
+          Assumption_high_inklu_shares_outstanding_high =Assumption_high/Average_shares_basic_annual_one
+          #st.write("Assumption_low_inklu_shares_outstanding",Assumption_high_inklu_shares_outstanding_high)
+
+          Assumption_high_inklu_shares_outstanding_MarginofSafety_high="{:.2f}".format(Assumption_high_inklu_shares_outstanding_high*(1-(Margin_of_safety_high/100)))
+          #st.write("Assumption_high_inklu_shares_outstanding_MarginofSafety_high",Assumption_high_inklu_shares_outstanding_MarginofSafety_high)
+          try:
+               try:
+                    convert = requests.get(f"https://api.frankfurter.app/latest?amount={Assumption_high_inklu_shares_outstanding_MarginofSafety_high}&from={base_currency}&to={target_currency}")
+                    datarevenue_high = convert.json()
+                    # Extract the converted amount from the response
+                    Revenue_high_Euro = datarevenue_high['rates'][target_currency]
+          
+
+               except Exception as e:
+                    #print("Error occurred. Using alternative conversion method.")
+                    c = CurrencyRates()
+                    Revenue_high_Euro = c.convert("USD", "EUR", Assumption_high_inklu_shares_outstanding_MarginofSafety_high)
+
+               col1.write(f'Current Price: <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True)    
+               st.markdown('</div>', unsafe_allow_html=True)
+
+          except Exception as e:
+                Revenue_low_Euro=0
+                Revenue_mid_Euro=0
+                Revenue_high_Euro=0
 
           with col1:
-               st.write("10 Years")
-               st.write(Revenue_growth_10years)
+               if st.button("Calculate", key="Calculate_revenue"):
+                    
+                              #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+                              #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
+               
+                    colx.write(f"Multiples of Earnings Value:")
+                    #col20.write(f"{low_DCF:.2f} €")
+                    if Revenue_low_Euro > converted_amount:
+                              font_color = "green"
+                    else:
+                         font_color = "red"
+                    cola.write(f"<span style='color:{font_color}'>{Revenue_low_Euro:.2f} €</span>", unsafe_allow_html=True)
+                    #col21.write(f"{Average_Middle_DCF:.2f} €")
 
-          with col2:
-               st.write("5 Years")
-               st.write(Revenue_growth_5years)
+                    if Revenue_mid_Euro > converted_amount:
+                              font_color = "green"
+                    else:
+                         font_color = "red"
+                    colb.write(f"<span style='color:{font_color}'>{Revenue_mid_Euro:.2f} €</span>", unsafe_allow_html=True)
+                    #col22.write(f"{high_DCF:.2f} €")
 
-          with col3:
-               st.write("3 Years")
-               st.write(round(Revenue_growth_3years, 2))
+                    if Revenue_high_Euro > converted_amount:
+                              font_color = "green"
+                    else:
+                         font_color = "red"
+                    colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro:.2f} €</span>", unsafe_allow_html=True)
 
-          col1, col2, col3 = st.columns(3)
-
-          with col1:
-               st.write("10 Years")
-               st.write(Net_income_margin_10)
-
-          with col2:
-               st.write("5 Years")
-               st.write(five_yrs_Nettomarge)
-
-          with col3:
-               st.write("1 Year")
-               st.write(Net_income_margin_1)
-
-          col1, col2, col3 = st.columns(3)
-
-          with col1:
-               st.write("10 Years")
-               st.write(FCF_Margin_10)
-
-          with col2:
-               st.write("5 Years")
-               st.write(FCF_Margin_5)
-
-          with col3:
-               st.write("1 Year")
-               st.write(FCF_Margin_1)
 
 with st.container():
      with EPS_Valuation:
@@ -11624,6 +11771,8 @@ with st.container():
 
                if converted_amount < Buy_price_euro:
                     font_color = "green"
+                    st.write(f"Fair Value: <span style='color:{font_color}'>{Buy_price_euro:.2f} €</span>", unsafe_allow_html=True)
+
                else:
                     font_color = "red"
 
@@ -11764,7 +11913,8 @@ with st.container():
           #st.write(intrinsic_value3)
 
           #try:
-          if st.button("Calculate (DDM)"):
+          if st.button("Calculate", key="Calculate_DDM"):
+    
                try:
                     convert = requests.get(f"https://api.frankfurter.app/latest?amount={intrinsic_value3}&from={base_currency}&to={target_currency}")
                     data14 = convert.json()
