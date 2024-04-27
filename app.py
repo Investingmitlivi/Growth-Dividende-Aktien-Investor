@@ -2371,20 +2371,14 @@ ticker_symbol_name = {
      'ESTE':'Earthstone Energy Inc.  ',
      'ET':'Energy Transfer LP Common Units',
      'ETAO':'Etao International Co. Ltd. ',
-     'ETB':'Eaton Vance Tax-Managed Buy-Write Income Fund Eaton Vance Tax-Managed Buy-Write Income Fund  of Beneficial Interest',
      'ETD':'Ethan Allen Interiors Inc. ',
-     'ETG':'Eaton Vance Tax-Advantaged Global Dividend Income Fund  of Beneficial Interest',
-     'ETJ':'Eaton Vance Risk-Managed Diversified Equity Income Fund  of Beneficial Interest',
      'ETN':'Eaton Corporation PLC ',
      'ETNB':'89bio Inc. ',
-     'ETO':'Eaton Vance Tax-Advantage Global Dividend Opp ',
      'ETON':'Eton Pharmaceuticals Inc. ',
      'ETR':'Entergy Corporation ',
      'ETRN':'Equitrans Midstream Corporation ',
      'ETSY':'Etsy Inc. ',
      'ETWO':'E2open Parent Holdings Inc. ',
-     'ETX':'Eaton Vance Municipal Income 2028 Term Trust  of Beneficial Interest',
-     'ETY':'Eaton Vance Tax-Managed Diversified Equity Income Fund  of Beneficial Interest',
      'EU':'enCore Energy Corp. ',
      'EUDA':'EUDA Health Holdings Limited ',
      'EUDAW':'EUDA Health Holdings Limited ',
@@ -5941,6 +5935,7 @@ ticker_symbol_name = {
      'SOL':'Emeren Group Ltd  each representing 10 shares',
      'SOLO':'Electrameccanica Vehicles Corp. Ltd. ',
      'SOLOW':'Electrameccanica Vehicles Corp. Ltd. s',
+     'SOLV':'Solventum Corporation',
      'SON':'Sonoco Products Company ',
      'SOND':'Sonder Holdings Inc.  ',
      'SONDW':'Sonder Holdings Inc. s',
@@ -7879,7 +7874,7 @@ except (ValueError, KeyError):
 
 
 
-Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuation,Dividend_Discount_Model,Key_ratios,Charts,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Stock Valuation Tool","Multiple Valuation","EPS Valuation","Dividend Discount Model","Key Ratios","Charts","Calculator","Top 10 News"])
+Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuation,Dividend_Discount_Model,Key_ratios,Charts,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Stock Valuation Tool","Multiple of Earnings Valuation","EPS Valuation","Dividend Discount Model","Key Ratios","Charts","Calculator","Top 10 News"])
 
 
      #st.header('Price / Total return')
@@ -8094,8 +8089,8 @@ with st.container():
           Total_Equity_annual_one = annual_data['total_equity'][-1:]
           Average_total_equity_annual = round((sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000, 2)
          
-          Net_income_margin_10 = annual_data['net_income_margin'][-10:]
-          Net_income_margin_10 = sum(Net_income_margin_10)/len(Net_income_margin_10)
+          Net_income_margin_10_ = annual_data['net_income_margin'][-10:]
+          Net_income_margin_10 = sum(Net_income_margin_10_)/len(Net_income_margin_10_)
 
           Net_income_margin_5 = annual_data['net_income_margin'][-5:]
           Net_income_margin_5 = sum(Net_income_margin_5)/len(Net_income_margin_5)
@@ -12693,7 +12688,64 @@ with st.container():
                          st.plotly_chart(fig2,use_container_width=True,config=config)
 
 
-#------------------------------------------------------------                    
+#------------------------------------------------------------  
+                    try:
+                         Net_income_margin_10_ = ["{:.2f}%".format(Net_income_margin_10_ * 100) for Net_income_margin_10_ in Net_income_margin_10_]
+                    except Exception as e:
+                        Net_income_margin_10_ = 0.0
+                         
+                    data = pd.DataFrame({
+                    'Date': date_annual,
+                    'Net Profit Margin': Net_income_margin_10_,
+                    })
+
+                    # Create a Streamlit app
+                    #st.title('Free Cash Flow and Revenue Data')                                    
+                    
+                    # Create a Plotly Express bar chart with side-by-side bars
+                    
+               
+                    fig1 = px.bar(data, x='Date', y='Net Profit Margin',
+                              text='Net Profit Margin',  # Display the value on top of each bar
+                              labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                              title='Net Profit Margin')
+
+
+                    fig1.update_layout(title_x=0.5)
+
+                    try:
+                         FCF_Margin = ["{:.2f}%".format(FCF_Margin * 100) for FCF_Margin in FCF_Margin]
+                    except Exception as e:
+                         FCF_Margin = 0.0
+                         
+                    data = pd.DataFrame({
+                    'Date': date_annual,
+                    'FCF Margin': FCF_Margin,
+                    })
+
+                    # Create a Streamlit app
+                    #st.title('Free Cash Flow and Revenue Data')                                    
+                    
+                    # Create a Plotly Express bar chart with side-by-side bars
+                    
+               
+                    fig2 = px.bar(data, x='Date', y='FCF Margin',
+                              text='FCF Margin',  # Display the value on top of each bar
+                              labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                              title='FCF Margin')
+                    
+                    fig2.update_layout(title_x=0.5)
+
+
+                    col1, col2 = st.columns(2)
+                    with col1:
+
+                         st.plotly_chart(fig1,use_container_width=True,config=config)
+
+                    with col2:
+                         st.plotly_chart(fig2,use_container_width=True,config=config)
+ 
+#........  ...................................................................................................................               
                          #Price_to_earnings=annual_data['price_to_earnings'][-10:]
                     Price_to_earnings = ["{:.2f}".format(value) for value in Price_to_earnings]
                     #Price_to_earnings = "{:.2f}".format((Price_to_earnings))
