@@ -12478,7 +12478,9 @@ with st.container():
                     
 
                     # Update layout
-                    title_text = f"Dividend 20 CAGR: {Dividend_20_CAGR}% Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
+                    title_text = f" 20YR Dividend CAGR : {Dividend_20_CAGR}%    10YR Dividend CAGR: {Dividend_10_CAGR}%     5YR Dividend CAGR: {Dividend_5_CAGR}%    ->   10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {CAGR:.2f}%"
+
+                    #title_text = f"Dividend 20 CAGR: {Dividend_20_CAGR}% Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
                     fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='Amount (B)', title=title_text)
                                         # Update legend placement
                     fig.update_layout(legend=dict(
