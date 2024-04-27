@@ -11639,7 +11639,8 @@ with st.container():
                     c = CurrencyRates()
                     Revenue_high_Euro = c.convert("USD", "EUR", Assumption_high_inklu_shares_outstanding_MarginofSafety_high)
 
-               col1.write(f'Current Price: <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True)    
+               col1.write(f'Current Price: <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True) 
+                  
                st.markdown('</div>', unsafe_allow_html=True)
 
           except Exception as e:
@@ -12401,6 +12402,8 @@ with st.container():
 
                     try:
                          value_at_index_10 = dividendPaidInTheLast21Years[10]
+                         #st.write(value_at_index_10)
+                         #st.write(value_at_index_20)
                          #value_at_index_20 = dividendPaidInTheLast21Years[20]
 
                     except Exception as e:
@@ -12417,7 +12420,7 @@ with st.container():
                                         #CAGR = round(CAGR, 2)
 
                                         if isinstance(Dividend_10_CAGR, complex):
-                                                  Dividend_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                                                  Dividend_10_CAGR = 0  # Set CAGR to 0 if it's a complex number
                                         else:
                                              Dividend_10_CAGR = round(Dividend_10_CAGR, 2)
 
@@ -13026,7 +13029,8 @@ with st.container():
           st.write("Terminal Value")
           st.image('Terminal-Value.png', use_column_width=True)
 
-          
+          st.write("Multiple of Earnings Valuation")
+          st.image('Multiples of Earnings.png', use_column_width=True)
 
           st.write("Net Present Value")
           st.image('NPV.png', use_column_width=True)
