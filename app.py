@@ -11432,7 +11432,9 @@ with st.container():
 
 with st.container():
      with Multiple_Valuation:
+          #load = st.button ('')
 
+          #st.session_state = False
 
           #Profit_Margin_10 = annual_data['fcf_margin'][-10:]
           #Profit_Margin_10=sum(Profit_Margin_10)/len(Profit_Margin_10)
@@ -11451,11 +11453,12 @@ with st.container():
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
           with col1:
-               st.write(f"Historical")
+               st.write(f"Historical:")
 
           with col2:
-               st.write(f"My Assumptions")
-          with col2:
+               st.write(f"My Assumptions:")
+
+          #with col2:
                My_assumption = st.number_input("Years:", value=int(5), key="unique_key_here")
 
           col1,col2,col3,col4,col5,col6 = st.columns(6)
@@ -11465,9 +11468,9 @@ with st.container():
           with col1:
                st.write(f"1yr:")
           with col2:
-               st.write(f"5yrs") 
+               st.write(f"5yrs:") 
           with col3:
-               st.write(f"10yr")
+               st.write(f"10yr:")
           with col4:
                st.write(f"LOW")
           with col5:
@@ -11509,7 +11512,7 @@ with st.container():
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
           col1.info(f"FCF Margin: {FCF_Margin_1:.2f}%")
           col2.info(f"FCF Margin: {FCF_Margin_5}%") 
-          col3.info(f"FCF Margin: {FCF_Margin_10}")
+          col3.info(f"FCF Margin: {FCF_Margin_10}%")
 
           Growth_rate_fcf_margin_LOW = col9.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW")
           Growth_rate_fcf_margin_middle = col10.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle")
@@ -11544,6 +11547,7 @@ with st.container():
           col1.info('-')
           col2.info('-')
           colx.info('Margin Of Safety')
+          colx.write(f"Multiples of Earnings Value:")
           #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
           Margin_of_safety_low = cola.number_input(" ", value=0.00,key="Margin_of_safety_low")
           Margin_of_safety_mid = colb.number_input(" ", value=0.00,key="Margin_of_safety_mid")
@@ -11647,14 +11651,16 @@ with st.container():
                 Revenue_low_Euro=0
                 Revenue_mid_Euro=0
                 Revenue_high_Euro=0
-
+          #st.session_state = True
           with col1:
                if st.button("Calculate", key="Calculate_revenue"):
+
+                    
                     
                               #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
                               #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
                
-                    colx.write(f"Multiples of Earnings Value:")
+                    #colx.write(f"Multiples of Earnings Value:")
                     #col20.write(f"{low_DCF:.2f} €")
                     if Revenue_low_Euro > converted_amount:
                               font_color = "green"
@@ -13067,6 +13073,8 @@ with st.container():
 
           st.write(short_description)
 
+
+ 
 
 
 with st.container():
