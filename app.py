@@ -11107,13 +11107,14 @@ with st.container():
        
 
 
-          col1,col2,col3 = st.columns(3)
+          col1,col2,col3,col4 = st.columns(4)
 
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
           col1.info(f"EPS Growth YOY: {EPS_growth_10yrs}%")
           col2.info(f"5 Yr EPS Growth YOY: {EPS_growth_5yrs:.2f}%") 
           col3.info(f"3 Yr EPS Growth YOY: {EPS_growth_3years:.2f}%") 
+          col4.info(f" EPS Growth next 5YR : {Earnings_next_5_yrs}")
 
 
           col1,col2,col3 = st.columns(3)
@@ -11140,7 +11141,7 @@ with st.container():
           col2.info(f"3 YR ROIC: {ROIC_annual_3years}")
           #col3.info(f"3 YR ROIC: {ROIC_annual_3years}")
           WACC = col5.number_input("WACC (%):", value=WACC)
-          FCF_discount_in_years = col4.number_input("Years:", value=int(5))
+          FCF_discount_in_years = col4.number_input("Years:", value=int(10))
           #Average_10years_treasury_rate = col6.number_input("10 YR T.NOTE:(%):", value=Average_10years_treasury_rate)
           
           
@@ -11459,7 +11460,7 @@ with st.container():
                st.write(f"My Assumptions:")
 
           #with col2:
-               My_assumption = st.number_input("Years:", value=int(5), key="unique_key_here")
+               My_assumption = st.number_input("Years:", value=int(10), key="My_assumption")
 
           col1,col2,col3,col4,col5,col6 = st.columns(6)
 
@@ -11724,7 +11725,7 @@ with st.container():
           Discount_rate=1+Discount_rate
 
           col1= st.columns(1)
-          Years = st.number_input("Years:", value=10)
+          Years = st.number_input("Years:", value=10,key="Years")
 
           Future_intrinsic =eps_diluted_ttm*((1 + Growth_rate) ** Years)*average_value
           Present_intrinsic =Future_intrinsic/(Discount_rate) ** Years
@@ -13017,6 +13018,11 @@ with st.container():
 with st.container():
      with Retirement_Calculator:
 
+
+          #if 'keys_type' not in st.session_state:
+           #     st.session_state.key_type='values'
+
+
           # image = st.image('fcf estimate.png', caption='FCF projection', use_column_width=True)
 
           # image = st.image('Terminal-Value.png', caption='Terminal Value', use_column_width=True)
@@ -13074,8 +13080,7 @@ with st.container():
           st.write(short_description)
 
 
- 
-
+               
 
 with st.container():
      with news:
