@@ -12296,7 +12296,7 @@ with st.container():
                               labels={'value': 'Amount()'},
                               title='Revenue in Billions($)')
                    
-                    fig1.update_layout(title_x=0.2)         
+                    fig1.update_layout(title_x=0.05)         
                     
                     revenue_growth_2003= annual_data['revenue_growth'][-21:]                    
                     #revenue_2003 = [round(value, 2) for value in revenue_2003]
@@ -12321,7 +12321,7 @@ with st.container():
                               title=f"10 YR Revenue Growth: {Revenue_growth_10years}    5YR Revenue Growth: {Revenue_growth_5years:.2f}%") 
           #colr3.info(f"Revenue Growth: {Revenue_growth_10years}")
                                             #barmode='group')  # Use 'group' to display bars side by side
-                    fig2.update_layout(title_x=0.2)
+                    fig2.update_layout(title_x=0.05)
                               
                     #fig.update_traces(marker_color='royalblue')
                     # Display the chart using Streamlit
@@ -12357,7 +12357,7 @@ with st.container():
 
                     # Display the chart using Streamlit
                     
-                    fig1.update_layout(title_x=0.2)
+                    fig1.update_layout(title_x=0.05)
 
                     shares_diluted_2003=annual_data['shares_diluted'][-21:]
                     shares_diluted_2003 = ["{:.2f}".format(value/1e9) for value in shares_diluted_2003]
@@ -12378,7 +12378,7 @@ with st.container():
                               title='Shares Outstanding') # Use 'group' to display bars side by side
                     
                     #fig2.update_traces(texttemplate='%{y}', textposition='outside')
-                    fig2.update_layout(title_x=0.5)
+                    fig2.update_layout(title_x=0.05)
                     # Display the chart using Streamlit
                     col1,col2 = st.columns(2)
 
@@ -12577,7 +12577,7 @@ with st.container():
                                    labels={'value': 'Amount($)'},  # Include the percentage sign in the label
                                    title='Dividend per Share')
 
-                    fig1.update_layout(title_x=0.2)
+                    fig1.update_layout(title_x=0.05)
           
                   # Extract the last 21 years of dividends per share growth data
                     Dividends_per_share_growth_annual_2003 = annual_data['dividends_per_share_growth'][-21:]
@@ -12597,7 +12597,7 @@ with st.container():
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                               title='Dividends per Share growth')
 
-                    fig2.update_layout(title_x=0.2)
+                    fig2.update_layout(title_x=0.05)
 
                     col1, col2 =st.columns(2)
                     with col1:
@@ -12629,7 +12629,7 @@ with st.container():
                               title= f"5 YR ROIC Growth: {Average_ROIC_funf}    Current ROIC Growth: {ROIC_annual_one}") 
                     
                     
-                    fig1.update_layout(title_x=0.2)
+                    fig1.update_layout(title_x=0.05)
 
                     try:
                          ROE_annual_21years = ["{:.2f}%".format(ROE_annual_21years * 100) for ROE_annual_21years in ROE_annual_21years]
@@ -12652,7 +12652,7 @@ with st.container():
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                               title=f"5 YR ROE Growth: {five_ROE}%    Current ROE Growth: {ROE_ttm}") 
                     
-                    fig2.update_layout(title_x=0.2)
+                    fig2.update_layout(title_x=0.05)
 
                     col1, col2 = st.columns(2)
                     with col1:
@@ -12685,7 +12685,7 @@ with st.container():
                               title=f"5 YR Gross Margin: {five_yrs_average_gross_margin}    Current Gross Margin: {rounded_gross_margin}") 
 
 
-                    fig1.update_layout(title_x=0.2)
+                    fig1.update_layout(title_x=0.05)
 
                     try:
                          Operating_Margin = ["{:.2f}%".format(Operating_Margin * 100) for Operating_Margin in Operating_Margin]
@@ -12713,7 +12713,7 @@ with st.container():
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                               title=f"5 YR Operating Margin: {rounded_operating_margin_five}    Current Operating Margin: {rounded_operating_margin}") 
                     
-                    fig2.update_layout(title_x=0.2)
+                    fig2.update_layout(title_x=0.05)
 
 
                     col1, col2 = st.columns(2)
@@ -12749,7 +12749,7 @@ with st.container():
 
 
 
-                    fig1.update_layout(title_x=0.2)
+                    fig1.update_layout(title_x=0.05)
 
                     try:
                          FCF_Margin = ["{:.2f}%".format(FCF_Margin * 100) for FCF_Margin in FCF_Margin]
@@ -12774,7 +12774,7 @@ with st.container():
                     
 
                     
-                    fig2.update_layout(title_x=0.2)
+                    fig2.update_layout(title_x=0.05)
 
 
                     col1, col2 = st.columns(2)
@@ -12853,7 +12853,7 @@ with st.container():
                               title=f'Market Cap:  Current Market Cap: {Marketcap_in_Billion}')
                               #barmode='group')  # Use 'group' to display bars side by side
 
-                    fig22.update_layout(title_x=0.2)
+                    fig22.update_layout(title_x=0.05)
 
                     # Display the chart using Streamlit
 
@@ -12933,7 +12933,7 @@ with st.container():
                               #title='Price to Book Value,{average_price_to_book:.2f}')
                               title=f'10 P/BV: {average_price_to_book:.2f}  Current P/B: {PBVPS:.2f}')
                     
-                    fig12.update_layout(title_x=0.2)
+                    fig12.update_layout(title_x=0.05)
 
                     fig12.add_shape(
                     type='line',
