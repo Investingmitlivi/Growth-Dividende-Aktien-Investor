@@ -8185,7 +8185,7 @@ with st.container():
                Revenue_growth_10years = "{:.2f}%".format(Revenue_growth_10years*100)
                Net_income_margin_10 = "{:.2f}".format((Net_income_margin_10)*100)
                FCF_Margin_10 = "{:.2f}".format((FCF_Margin_10)*100)
-               EPS_growth_10yrs=round(EPS_growth_10yrs,2)
+               EPS_growth_10yrs="{:.2f}".format(EPS_growth_10yrs)
                Average_pe_ten = "{:.2f}".format(sum(pe_ten) / len(pe_ten))
 
           else:
@@ -8636,23 +8636,6 @@ with st.container():
           
           }   
 
-        
-         
-              #"All Time High": ["$ {:.2f}".format(all_time_high_price)],
-
-         # data3["All Time Date"] = [f"{date_obj.strftime('%Y/%m/%d')}"]  # Adjust the format as needed
-
-          #try:
-              
-               #fundamental_df = quote.fundamental_df
-               #st.write("P/E:", quote.fundamental_df.at[0, "Forward P/E"])   
-           #    Forward_PE = quote.fundamental_df.at[0, "Forward P/E"]
-            #   RSI = quote.fundamental_df.at[0, "RSI(14)"]
-              #print("Forward_PE",Forward_PE)
-          
-          #except Exception as e:
-           #          Forward_PE="NA"  
-            #         RSI="N/A"
 
           data4 = {
           
@@ -12353,7 +12336,11 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='EPS',
                               text='EPS',  # Display the value on top of each bar
                               labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                              title='EPS') # Use 'group' to display bars side by side
+                              title= f"10YR EPS Growth: {EPS_growth_10yrs}%   5YR EPS Growth: {EPS_growth_5yrs:.2f}%   EPS this YR: {Earnings_next_yr}") 
+                   
+
+
+
 
                     # Display the chart using Streamlit
                     
