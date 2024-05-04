@@ -7406,7 +7406,9 @@ def get_current_price():
      except Exception as e: #except all errors
      
           current_price = quote.fundamental_df.at[0, "Price"]
-          current_price = 23
+          #current_price = 23
+     else:   
+           current_price = 23  
 
      return current_price 
 
@@ -7763,9 +7765,9 @@ try:
      market_variance = np.var(market_returns)
 
      # Calculate beta
-     beta = round(covariance / market_variance,2)
+     beta =(covariance / market_variance)
 
-except (ValueError, KeyError):
+except Exception as e:
     # Handle ValueError (e.g., division by zero) or KeyError (data not found) by setting beta to 1
      beta = 1
      #print(f"Beta of {ticker} could not be calculated. Using default value: {beta:.2f}")
@@ -11480,68 +11482,54 @@ with st.container():
                st.write(f"HIGH")
 
 
-          col1,col2,col3,col9,col10,col11 = st.columns(6)
+          colr1,colr2,colr3,colr9,colr10,colr11 = st.columns(6)
 
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-          col1.info(f"Revenue Growth: {Revenue_growth_1year:.2f}%")
-          col2.info(f"Revenue Growth: {Revenue_growth_5years:.2f}%") 
-          col3.info(f"Revenue Growth: {Revenue_growth_10years}")
+          colr1.info(f"Revenue Growth: {Revenue_growth_1year:.2f}%")
+          colr2.info(f"Revenue Growth: {Revenue_growth_5years:.2f}%") 
+          colr3.info(f"Revenue Growth: {Revenue_growth_10years}")
 
-          Growth_rate_revenue_LOW = col9.number_input(" ", value=0.00,key="Growth_rate_revenue_LOW")
-          Growth_rate_revenue_middle = col10.number_input(" ", value=0.00,key="Growth_rate_revenue_middle")
-          Growth_rate_revenue_high = col11.number_input(" ", value=0.00,key="Growth_rate_revenue_high")
-
+          
           #Growth_rate1 = col9.number_input("Wachstumsrate (Base Case) in %:", value=0.00, key="growth_rate1")
 
-          col1,col2,col3,col9,col10,col11 = st.columns(6)
+          coln1,coln2,coln3,coln9,coln10,coln11 = st.columns(6)
 
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-          col1.info(f"Net Profit Margin:{Net_margin_ttm}") 
-          col2.info(f"Net Profit Margin: {five_yrs_Nettomarge}%") 
-          col3.info(f"Net Profit Margin: {Net_income_margin_10}%")
-
-          Growth_rate_net_profit_LOW = col9.number_input(" ", value=0.00,key="Growth_rate_net_profit_LOW")
-          Growth_rate__net_profit_middle = col10.number_input(" ", value=0.00,key="Growth_rate__net_profit_middle")
-          Growth_rate__net_profit_high = col11.number_input(" ", value=0.00,key="Growth_rate__net_profit_high")
+          coln1.info(f"Net Profit Margin:{Net_margin_ttm}") 
+          coln2.info(f"Net Profit Margin: {five_yrs_Nettomarge}%") 
+          coln3.info(f"Net Profit Margin: {Net_income_margin_10}%")
 
 
-          col1,col2,col3,col9,col10,col11 = st.columns(6)
+          colf1,colf2,colf3,colf9,colf10,colf11 = st.columns(6)
 
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-          col1.info(f"FCF Margin: {FCF_Margin_1:.2f}%")
-          col2.info(f"FCF Margin: {FCF_Margin_5}%") 
-          col3.info(f"FCF Margin: {FCF_Margin_10}%")
+          colf1.info(f"FCF Margin: {FCF_Margin_1:.2f}%")
+          colf2.info(f"FCF Margin: {FCF_Margin_5}%") 
+          colf3.info(f"FCF Margin: {FCF_Margin_10}%")
 
-          Growth_rate_fcf_margin_LOW = col9.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW")
-          Growth_rate_fcf_margin_middle = col10.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle")
-          Growth_rate_fcf_margin_high = col11.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_high")
+
+
 
 
          
 
-          col1,col2,col3,col9,col10,col11 = st.columns(6)
+          colcf1,colcf2,colcf3,colcf9,colcf10,colcf11 = st.columns(6)
 
-          col1.info(f"Price/OCF: {P_OCF_ttm}")
-          col2.info(f"Price/OCF: {P_OCF_5}") 
-          col3.info(f"Price/OCF: {P_OCF_10}")
+          colcf1.info(f"Price/OCF: {P_OCF_ttm}")
+          colcf2.info(f"Price/OCF: {P_OCF_5}") 
+          colcf3.info(f"Price/OCF: {P_OCF_10}")
 
-          Growth_rate_P_OCF_low = col9.number_input(" ", value=0.00,key="Growth_rate_P_OCF_low")
-          Growth_rate_P_OCF_middle = col10.number_input(" ", value=0.00,key="Growth_rate_P_OCF_middle")
-          Growth_rate_P_OCF_high = col11.number_input(" ", value=0.00,key="Growth_rate_P_OCF_high")
 
-          col1,col2,col3,col9,col10,col11 = st.columns(6)
 
-          col1.info(f"Price/FCF: {pfcf_ttm}")
-          col2.info(f"Price/FCF: {pfcf_funf}") 
-          col3.info(f"Price/FCF: {pfcf_ten}")
+          colfcf1,colfcf2,colfcf3,colfcf9,colfcf10,colfcf11 = st.columns(6)
 
-          Growth_rate_P_FCF_low = col9.number_input(" ", value=0.00,key="Growth_rate_P_FCF_low")
-          Growth_rate_P_FCF_middle = col10.number_input(" ", value=0.00,key="Growth_rate_P_FCF_middle")
-          Growth_rate_P_FCF_high = col11.number_input(" ", value=0.00,key="Growth_rate_P_FCF_high")
-
+          colfcf1.info(f"Price/FCF: {pfcf_ttm}")
+          colfcf2.info(f"Price/FCF: {pfcf_funf}") 
+          colfcf3.info(f"Price/FCF: {pfcf_ten}")
+          
 
 
           col1,col2,colx,cola, colb, colc= st.columns(6)
@@ -11549,10 +11537,38 @@ with st.container():
           col2.info('-')
           colx.info('Margin Of Safety')
           colx.write(f"Multiples of Earnings Value:")
+
+
+
+
+
+          Growth_rate_revenue_LOW = colr9.number_input(" ", value=0.00,key="Growth_rate_revenue_LOW")
+          Growth_rate_revenue_middle = colr10.number_input(" ", value=0.00,key="Growth_rate_revenue_middle")
+          Growth_rate_revenue_high = colr11.number_input(" ", value=0.00,key="Growth_rate_revenue_high")
+
+          Growth_rate_net_profit_LOW = coln9.number_input(" ", value=0.00,key="Growth_rate_net_profit_LOW")
+          Growth_rate__net_profit_middle = coln10.number_input(" ", value=0.00,key="Growth_rate__net_profit_middle")
+          Growth_rate__net_profit_high = coln11.number_input(" ", value=0.00,key="Growth_rate__net_profit_high")
+
+          Growth_rate_fcf_margin_LOW = colf9.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW")
+          Growth_rate_fcf_margin_middle = colf10.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle")
+          Growth_rate_fcf_margin_high = colf11.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_high")
+
+          Growth_rate_P_OCF_low = colcf9.number_input(" ", value=0.00,key="Growth_rate_P_OCF_low")
+          Growth_rate_P_OCF_middle = colcf10.number_input(" ", value=0.00,key="Growth_rate_P_OCF_middle")
+          Growth_rate_P_OCF_high = colcf11.number_input(" ", value=0.00,key="Growth_rate_P_OCF_high")
+
+          Growth_rate_P_FCF_low = colfcf9.number_input(" ", value=0.00,key="Growth_rate_P_FCF_low")
+          Growth_rate_P_FCF_middle = colfcf10.number_input(" ", value=0.00,key="Growth_rate_P_FCF_middle")
+          Growth_rate_P_FCF_high = colfcf11.number_input(" ", value=0.00,key="Growth_rate_P_FCF_high")
+
           #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
           Margin_of_safety_low = cola.number_input(" ", value=0.00,key="Margin_of_safety_low")
           Margin_of_safety_mid = colb.number_input(" ", value=0.00,key="Margin_of_safety_mid")
           Margin_of_safety_high = colc.number_input(" ", value=0.00,key="Margin_of_safety_high")
+
+
+          
 # -----------------------------LOW-------------
           average_FCF_Profit_margin_low=((Growth_rate_fcf_margin_LOW+Growth_rate_net_profit_LOW)/2)/100
 
@@ -12283,6 +12299,8 @@ with st.container():
                     #revenue_2003 = [round(value, 2) for value in revenue_2003]
                     revenue_growth_2003 = ["{:.2f} %".format(value*100) for value in revenue_growth_2003]
 
+
+
                # Create a DataFrame for the data
                     data = pd.DataFrame({
                     'Date': date_annual_20yrs,
@@ -12297,10 +12315,10 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='Revenue Growth',
                               text='Revenue Growth', 
                               labels={'value': 'Amount'},
-                              title='Revenue Growth ')
-                    
+                              title=f"10 YR Revenue Growth: {Revenue_growth_10years}    5YR Revenue Growth: {Revenue_growth_5years:.2f}%") 
+          #colr3.info(f"Revenue Growth: {Revenue_growth_10years}")
                                             #barmode='group')  # Use 'group' to display bars side by side
-                    fig2.update_layout(title_x=0.5)
+                    fig2.update_layout(title_x=0.2)
                               
                     #fig.update_traces(marker_color='royalblue')
                     # Display the chart using Streamlit
@@ -12336,7 +12354,7 @@ with st.container():
 
                     # Display the chart using Streamlit
                     
-                    fig1.update_layout(title_x=0.5)
+                    fig1.update_layout(title_x=0.2)
 
                     shares_diluted_2003=annual_data['shares_diluted'][-21:]
                     shares_diluted_2003 = ["{:.2f}".format(value/1e9) for value in shares_diluted_2003]
@@ -12488,7 +12506,11 @@ with st.container():
                     
 
                     # Update layout
-                    title_text = f" 20YR Dividend CAGR : {Dividend_20_CAGR}%    10YR Dividend CAGR: {Dividend_10_CAGR}%     5YR Dividend CAGR: {Dividend_5_CAGR}%    ->   10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {CAGR:.2f}%"
+                    title_text = f" 20YR Dividend CAGR: {Dividend_20_CAGR}%  10YR Dividend CAGR: {Dividend_10_CAGR}%     5YR Dividend CAGR: {Dividend_5_CAGR}%     ->  <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {CAGR:.2f}%</span> "
+
+                    #title_text = f"<span style='color:dodgerblue'>20YR Dividend CAGR: {Dividend_20_CAGR}%</span>"
+
+                    
 
                     #title_text = f"Dividend 20 CAGR: {Dividend_20_CAGR}% Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
                     fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='Amount (B)', title=title_text)
@@ -12552,7 +12574,7 @@ with st.container():
                                    labels={'value': 'Amount($)'},  # Include the percentage sign in the label
                                    title='Dividend per Share')
 
-                    fig1.update_layout(title_x=0.5)
+                    fig1.update_layout(title_x=0.2)
           
                   # Extract the last 21 years of dividends per share growth data
                     Dividends_per_share_growth_annual_2003 = annual_data['dividends_per_share_growth'][-21:]
@@ -12572,7 +12594,7 @@ with st.container():
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                               title='Dividends per Share growth')
 
-                    fig2.update_layout(title_x=0.5)
+                    fig2.update_layout(title_x=0.2)
 
                     col1, col2 =st.columns(2)
                     with col1:
@@ -12609,7 +12631,7 @@ with st.container():
                               title='ROIC')
                     
                     
-                    fig1.update_layout(title_x=0.5)
+                    fig1.update_layout(title_x=0.2)
 
                     try:
                          ROE_annual_21years = ["{:.2f}%".format(ROE_annual_21years * 100) for ROE_annual_21years in ROE_annual_21years]
@@ -12632,7 +12654,7 @@ with st.container():
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                               title='ROE')
                     
-                    fig2.update_layout(title_x=0.5)
+                    fig2.update_layout(title_x=0.2)
 
                     col1, col2 = st.columns(2)
                     with col1:
@@ -12665,7 +12687,7 @@ with st.container():
                               title='Gross Margin')
 
 
-                    fig1.update_layout(title_x=0.5)
+                    fig1.update_layout(title_x=0.2)
 
                     try:
                          Operating_Margin = ["{:.2f}%".format(Operating_Margin * 100) for Operating_Margin in Operating_Margin]
@@ -12688,7 +12710,7 @@ with st.container():
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                               title='Operating Margin')
                     
-                    fig2.update_layout(title_x=0.5)
+                    fig2.update_layout(title_x=0.2)
 
 
                     col1, col2 = st.columns(2)
@@ -12723,7 +12745,7 @@ with st.container():
                               title='Net Profit Margin')
 
 
-                    fig1.update_layout(title_x=0.5)
+                    fig1.update_layout(title_x=0.2)
 
                     try:
                          FCF_Margin = ["{:.2f}%".format(FCF_Margin * 100) for FCF_Margin in FCF_Margin]
@@ -12746,7 +12768,7 @@ with st.container():
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                               title='FCF Margin')
                     
-                    fig2.update_layout(title_x=0.5)
+                    fig2.update_layout(title_x=0.2)
 
 
                     col1, col2 = st.columns(2)
@@ -12825,7 +12847,7 @@ with st.container():
                               title=f'Market Cap:  Current Market Cap: {Marketcap_in_Billion}')
                               #barmode='group')  # Use 'group' to display bars side by side
 
-                    fig22.update_layout(title_x=0.5)
+                    fig22.update_layout(title_x=0.2)
 
                     # Display the chart using Streamlit
 
@@ -12905,7 +12927,7 @@ with st.container():
                               #title='Price to Book Value,{average_price_to_book:.2f}')
                               title=f'10 P/BV: {average_price_to_book:.2f}  Current P/B: {PBVPS:.2f}')
                     
-                    fig12.update_layout(title_x=0.5)
+                    fig12.update_layout(title_x=0.2)
 
                     fig12.add_shape(
                     type='line',
@@ -13080,7 +13102,9 @@ with st.container():
           st.write(short_description)
 
 
-               
+          
+      
+                         
 
 with st.container():
      with news:
