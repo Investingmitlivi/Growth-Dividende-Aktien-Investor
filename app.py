@@ -8634,7 +8634,10 @@ with st.container():
           f'ATH ({all_time_high_date}'")": ["$ {:.2f}".format(all_time_high_price)],
           f'52WK LOW ({min_price_date.strftime("%Y/%m/%d")})': ["$ {:.2f}".format(fifty_two_week_low)]
           
-          }       
+          }   
+
+        
+         
               #"All Time High": ["$ {:.2f}".format(all_time_high_price)],
 
          # data3["All Time Date"] = [f"{date_obj.strftime('%Y/%m/%d')}"]  # Adjust the format as needed
@@ -12619,16 +12622,11 @@ with st.container():
                     'ROIC': ROIC_annual_21years,
                     })
 
-                    # Create a Streamlit app
-                    #st.title('Free Cash Flow and Revenue Data')                                    
-                    
-                    # Create a Plotly Express bar chart with side-by-side bars
-                    
-               
+            
                     fig1 = px.bar(data, x='Date', y='ROIC',
                               text='ROIC',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title='ROIC')
+                              title= f"5 YR ROIC Growth: {Average_ROIC_funf}    Current ROIC Growth: {ROIC_annual_one}") 
                     
                     
                     fig1.update_layout(title_x=0.2)
@@ -12652,7 +12650,7 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='ROE',
                               text='ROE',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title='ROE')
+                              title=f"5 YR ROE Growth: {five_ROE}%    Current ROE Growth: {ROE_ttm}") 
                     
                     fig2.update_layout(title_x=0.2)
 
@@ -12684,7 +12682,7 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='Gross Margin',
                               text='Gross Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title='Gross Margin')
+                              title=f"5 YR Gross Margin: {five_yrs_average_gross_margin}    Current Gross Margin: {rounded_gross_margin}") 
 
 
                     fig1.update_layout(title_x=0.2)
@@ -12699,16 +12697,21 @@ with st.container():
                     'Operating Margin': Operating_Margin,
                     })
 
-                    # Create a Streamlit app
-                    #st.title('Free Cash Flow and Revenue Data')                                    
-                    
-                    # Create a Plotly Express bar chart with side-by-side bars
+
+                
+          
+          
+          
+         
+                  
+          
+               
                     
                
                     fig2 = px.bar(data, x='Date', y='Operating Margin',
                               text='Operating Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title='Operating Margin')
+                              title=f"5 YR Operating Margin: {rounded_operating_margin_five}    Current Operating Margin: {rounded_operating_margin}") 
                     
                     fig2.update_layout(title_x=0.2)
 
@@ -12742,7 +12745,8 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='Net Profit Margin',
                               text='Net Profit Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title='Net Profit Margin')
+                              title=f"5 YR Net Profit Margin: {five_yrs_Nettomarge}%    Current Net Profit Margin: {Net_margin_ttm}") 
+
 
 
                     fig1.update_layout(title_x=0.2)
@@ -12766,7 +12770,9 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='FCF Margin',
                               text='FCF Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title='FCF Margin')
+                              title=f"5 YR FCF Margin: {FCF_Margin_5}%    Current FCF Margin: {FCF_Margin_1}%") 
+                    
+
                     
                     fig2.update_layout(title_x=0.2)
 
