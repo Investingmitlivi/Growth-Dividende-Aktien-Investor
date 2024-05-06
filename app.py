@@ -1296,7 +1296,6 @@ ticker_symbol_name = {
      'CADE':'Cadence Bank ',
      'CADL':'Candel Therapeutics Inc. ',
      'CAE':'CAE Inc. ',
-     'CAF':'Morgan Stanley China A Share Fund Inc. ',
      'CAG':'ConAgra Brands Inc. ',
      'CAH':'Cardinal Health Inc. ',
      'CAKE':'Cheesecake Factory Incorporated ',
@@ -1313,7 +1312,6 @@ ticker_symbol_name = {
      'CANF':'Can-Fite Biopharma Ltd Sponsored ADR (Israel)',
      'CANG':'Cango Inc.   each representing two (2) ',
      'CANO':'Cano Health Inc.  ',
-     'CAPL':'CrossAmerica Partners LP Common Units representing limited partner interests',
      'CAPR':'Capricor Therapeutics Inc. ',
      'CAR':'Avis Budget Group Inc. ',
      'CARA':'Cara Therapeutics Inc. ',
@@ -2176,7 +2174,6 @@ ticker_symbol_name = {
      'EDAP':'EDAP TMS S.A. ',
      'EDBL':'Edible Garden AG Incorporated ',
      'EDBLW':'Edible Garden AG Incorporated ',
-     'EDD':'Morgan Stanley Emerging Markets Domestic Debt Fund Inc. ',
      'EDF':'Virtus Stone Harbor Emerging Markets Income Fund  of Beneficial Interest',
      'EDI':'Virtus Stone Harbor Emerging Markets Total Income Fund  of Beneficial Interest',
      'EDIT':'Editas Medicine Inc. ',
@@ -3363,7 +3360,6 @@ ticker_symbol_name = {
      'IHS':'IHS Holding Limited ',
      'IHT':'InnSuites Hospitality Trust Shares of Beneficial Interest',
      'IHTA':'Invesco High Income 2024 Target Term Fund  of Beneficial Interest No par value per share',
-     'IIF':'Morgan Stanley India Investment Fund Inc. ',
      'III':'Information Services Group Inc. ',
      'IIIN':'Insteel Industries Inc. ',
      'IIIV':'i3 Verticals Inc.  ',
@@ -4328,7 +4324,6 @@ ticker_symbol_name = {
      'MSBI':'Midland States Bancorp Inc. ',
      'MSC':'Studio City International Holdings Limited  each representing four  ',
      'MSCI':'MSCI Inc. ',
-     'MSD':'Morgan Stanley Emerging Markets Debt Fund Inc. ',
      'MSEX':'Middlesex Water Company ',
      'MSFT':'Microsoft Corporation ',
      'MSGE':'Madison Square Garden Entertainment Corp.  ',
@@ -6455,11 +6450,11 @@ ticker_symbol_name = {
      'TWO':'Two Harbors Investment Corp',
      'TWOU':'2U Inc. ',
      'TWST':'Twist Bioscience Corporation ',
-     'TX':'Ternium S.A. Ternium S.A.  (each representing ten shares USD1.00 par value)',
+     'TX':'Ternium S.A. Ternium S.A. ',
      'TXG':'10x Genomics Inc.  ',
      'TXMD':'TherapeuticsMD Inc. ',
      'TXN':'Texas Instruments Incorporated ',
-     'TXO':'TXO Partners L.P. Common Units Representing Limited Partner Interests',
+     'TXO':'TXO Partners L.P.',
      'TXRH':'Texas Roadhouse Inc. ',
      'TXT':'Textron Inc. ',
      'TY':'Tri Continental Corporation ',
@@ -6928,7 +6923,6 @@ ticker_symbol_name = {
      'WULF':'TeraWulf Inc. ',
      'WVE':'Wave Life Sciences Ltd. ',
      'WVVI':'Willamette Valley Vineyards Inc. ',
-     'WVVIP':'Willamette Valley Vineyards Inc. Series A Redeemable Preferred Stock',
      'WW':'WW International Inc. ',
      'WWAC':'Worldwide Webb Acquisition Corp.',
      'WWACU':'Worldwide Webb Acquisition Corp. Unit',
@@ -6948,7 +6942,6 @@ ticker_symbol_name = {
      'XCUR':'Exicure Inc. ',
      'XEL':'Xcel Energy Inc. ',
      'XELA':'Exela Technologies Inc. ',
-     'XELAP':'Exela Technologies Inc. 6.00% Series B Cumulative Convertible Perpetual Preferred Stock',
      'XELB':'Xcel Brands Inc. ',
      'XENE':'Xenon Pharmaceuticals Inc. ',
      'XERS':'Xeris Biopharma Holdings Inc. ',
@@ -7876,7 +7869,7 @@ except Exception as e:
 
 
 
-Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuation,Dividend_Discount_Model,Key_ratios,Charts,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Stock Valuation Tool","Multiple of Earnings Valuation","EPS Valuation","Dividend Discount Model","Key Ratios","Charts","Calculator","Top 10 News"])
+Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuation,Dividend_Discount_Model,Key_ratios,Charts,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","EPS Valuation","Dividend Discount Model","Key Ratios","Charts","Calculator","Top 10 News"])
 
 
      #st.header('Price / Total return')
@@ -11369,7 +11362,7 @@ with st.container():
                # col18.write(f"{average_sum_both2:.2f} €")
                
                               # Display number outputs for each estimate
-               col15.write(f" Multiple Valuation Method:  ")
+               col15.write(f" Benjamin Graham + DCF:  ")
                #col16.write(f"{average_sum_both1:.2f} €")
 
                if average_sum_both1 > converted_amount:
@@ -11396,7 +11389,7 @@ with st.container():
                     # Display number outputs for each estimate
                col19, col20, col21, col22 = st.columns(4)
 
-               col19.write(f"Discounted Cash Flow Valuation:")
+               col19.write(f"Discounted Cash Flow Analysis (DCF):")
                #col20.write(f"{low_DCF:.2f} €")
                if low_DCF > converted_amount:
                          font_color = "green"
@@ -12448,34 +12441,34 @@ with st.container():
                     
   #.................................20  Dividend CAGR............................................                    
 
-                    try:
-                         value_at_index_0 = dividendPaidInTheLast21Years[0]
-                         #value_at_index_20 = dividendPaidInTheLast21Years[20]
+                    # try:
+                    #      value_at_index_0 = dividendPaidInTheLast21Years[0]
+                    #      #value_at_index_20 = dividendPaidInTheLast21Years[20]
 
-                    except Exception as e:
-                         value_at_index_0 = 0
-                         value_at_index_20 = 0
-                    try:
+                    # except Exception as e:
+                    #      value_at_index_0 = 0
+                    #      value_at_index_20 = 0
+                    # try:
                          
-                         if value_at_index_0 == 0:
-                              Dividend_20_CAGR = 0
+                    #      if value_at_index_0 == 0:
+                    #           Dividend_20_CAGR = 0
 
-                         else:
-                                   try:
-                                        Dividend_20_CAGR = (pow((value_at_index_20 / value_at_index_0), 0.05) - 1) * 100
-                                        #CAGR = round(CAGR, 2)
+                    #      else:
+                    #                try:
+                    #                     Dividend_20_CAGR = (pow((value_at_index_20 / value_at_index_0), 0.05) - 1) * 100
+                    #                     #CAGR = round(CAGR, 2)
 
-                                        if isinstance(Dividend_20_CAGR, complex):
-                                                  Dividend_20_CAGR = 0  # Set CAGR to 0 if it's a complex number
-                                        else:
-                                             Dividend_20_CAGR = round(Dividend_20_CAGR, 2)
+                    #                     if isinstance(Dividend_20_CAGR, complex):
+                    #                               Dividend_20_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                    #                     else:
+                    #                          Dividend_20_CAGR = round(Dividend_20_CAGR, 2)
 
-                                   except Exception as e:
-                                        Dividend_20_CAGR = 0
+                    #                except Exception as e:
+                    #                     Dividend_20_CAGR = 0
 
-                    except Exception as e:  
+                    # except Exception as e:  
 
-                         Dividend_20_CAGR =0; 
+                    #      Dividend_20_CAGR =0; 
 
                     
                     #Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
@@ -12496,7 +12489,7 @@ with st.container():
                     
 
                     # Update layout
-                    title_text = f" 20YR Dividend CAGR: {Dividend_20_CAGR}%  10YR Dividend CAGR: {Dividend_10_CAGR}%     5YR Dividend CAGR: {Dividend_5_CAGR}%     ->  <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {CAGR:.2f}%</span> "
+                    title_text = f"10YR Dividend CAGR: {Dividend_10_CAGR}%     5YR Dividend CAGR: {Dividend_5_CAGR}%     ->  <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {CAGR:.2f}%</span> "
 
                     #title_text = f"<span style='color:dodgerblue'>20YR Dividend CAGR: {Dividend_20_CAGR}%</span>"
 
@@ -13094,6 +13087,8 @@ with st.container():
 
           st.write(short_description)
 
+          Net_debt =annual_data['net_debt'][-5:]
+          st.write("Net_debt",Net_debt)
 
           
       
