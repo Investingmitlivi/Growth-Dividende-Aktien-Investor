@@ -141,6 +141,28 @@ with st.container():
 #finnhub_client = finnhub.Client(api_key="ckse5rhr01qjpllh316gckse5rhr01qjpllh3170")
 
 
+     def get_exchange_rate(base_currency, target_currency):
+                    try:
+                         url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
+                         response = requests.get(url)
+                         data = response.json()
+                         exchange_rate = data['rates'][target_currency]
+                         return exchange_rate
+                    
+                    except Exception as e:
+                         url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
+                         response = requests.get(url)
+                         data = response.json()
+                         exchange_rate = data['rates'][target_currency]
+                         return exchange_rate
+
+                    # Get the exchange rate for USD to EUR
+     usd_to_eur_rate = get_exchange_rate("USD", "EUR")
+
+               # Display the rate in Streamlit
+     #st.write(f"1 USD is equivalent to {usd_to_eur_rate} EUR")
+
+
 #------------------------------------------------------------------------
 
 ticker_symbol_name = {
@@ -7470,6 +7492,8 @@ try:
      current_price = stock_info.history(period="1d",interval="1m")["Close"].iloc[-1] 
 
      percentage_difference = round(((current_price - close_price) / close_price) * 100,2)
+     amount = current_price 
+     converted_amount = "{:.2f}".format(amount * usd_to_eur_rate)
 except Exception as e:
       st.write(" ")
 # Determine text color based on percentage_difference
@@ -7478,31 +7502,34 @@ except Exception as e:
 # Display the percentage difference with the specified text color
 #st.write(f"Percentage Difference: <span style='color:{text_color};'>{percentage_difference:.2f}%</span>", unsafe_allow_html=True)
 
-try:
-     base_currency = 'USD'
-     target_currency ='EUR'
-     amount = current_price 
-     convert = requests.get(f"https://api.frankfurter.app/latest?amount={amount}&from={base_currency}&to={target_currency}")
-     data10 = convert.json()
-     # Extract the converted amount from the response
-     converted_amount = data10['rates'][target_currency]
-     #st.write(f"{current_price} USD is approximately {converted_amount:.2f} EUR")
+# try:
+#      base_currency = 'USD'
+#      target_currency ='EUR'
+#      amount = current_price 
+#      convert = requests.get(f"https://api.frankfurter.app/latest?amount={amount}&from={base_currency}&to={target_currency}")
+#      data10 = convert.json()
+#      # Extract the converted amount from the response
+#      converted_amount = data10['rates'][target_currency]
+#      #st.write(f"{current_price} USD is approximately {converted_amount:.2f} EUR")
 
-except Exception as e:
-     st.warning("Error occurred. Using alternative conversion method.")
+# except Exception as e:
+#      st.warning("Error occurred. Using alternative conversion method.")
         
-     c = CurrencyRates()
-     converted_amount = c.convert("USD", "EUR", current_price)
+#      c = CurrencyRates()
+     #converted_amount = amount * usd_to_eur_rate
      #print(f"{current_price} USD is approximately {converted_amount:.2f} EUR")
 
 #..........................................................................................................   
-formatted_value = f"{current_price:.2f} "
-formatted_value2 = f"{converted_amount:.2f} "
+#formatted_value = f"{current_price:.2f} "
+
 green_style = "color: green;"
 
 
 formatted_value = f"{current_price:.2f} $"
 formatted_price_with_color = f"<span style='{green_style}'>{formatted_value}</span>"
+
+formatted_value2 = f"{converted_amount} €"
+formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
 
      # Display the metric with the formatted price and green font color using st.markdown
     #st.markdown("Current Price: " + formatted_price_with_color, unsafe_allow_html=True)
@@ -7517,18 +7544,19 @@ try:
 
 
      text_color = "green" if percentage_difference >= 0 else "red"
-     formatted_value = f" {converted_amount:.2f} €"
+     #formatted_value2 = f" {converted_amount} €"
           #formatted_price_euro = "&euro; {:.2f}".format(formatted_value2)  # Format with Euro sign
 
-     formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value}</span>"    
      st.markdown(
-     f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}                          Aktueller Preis: {formatted_price_with_color2} "
+    f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
      f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
      unsafe_allow_html=True
 ) 
 except Exception as e:
      st.markdown(
-    f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color} ",
+    f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
+     f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
+     #unsafe_allow_html=True
     unsafe_allow_html=True
 )
     
@@ -11171,18 +11199,7 @@ with st.container():
           Intrinsic_value =Equity_value/Average_shares_basic_annual_one
           #st.write(npv_result)
 
-          try:
-               convert = requests.get(f"https://api.frankfurter.app/latest?amount={Intrinsic_value}&from={base_currency}&to={target_currency}")
-               data11 = convert.json()
-               # Extract the converted amount from the response
-               Euro_equivalent = data11['rates'][target_currency]
-               formatted_value = f"{Intrinsic_value:.2f} $"
-               formatted_value2 = f" {Euro_equivalent:.2f} €"
-          
-          except Exception as e:
-               #print("Error occurred. Using alternative conversion method.")
-               c = CurrencyRates()
-               Euro_equivalent = c.convert("USD", "EUR", Intrinsic_value)
+          Euro_equivalent = Intrinsic_value*usd_to_eur_rate
                #print(f"{Intrinsic_value} USD is approximately {Euro_equivalent:.2f} EUR")
           # Display the result
           #print(f"{amount} {base_currency} is equal to {converted_amount} {target_currency}")
@@ -11222,18 +11239,7 @@ with st.container():
           Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
           #st.write(npv_result)
 
-          try:
-               convert = requests.get(f"https://api.frankfurter.app/latest?amount={Intrinsic_value2}&from={base_currency}&to={target_currency}")
-               data12 = convert.json()
-               # Extract the converted amount from the response
-               Euro_equivalent2 = data12['rates'][target_currency]
-               formatted_value1 = f"{Intrinsic_value2:.2f} $"
-               formatted_value3 = f" {Euro_equivalent2:.2f} €"
-
-          except Exception as e:
-               #print("Error occurred. Using alternative conversion method.")
-               c = CurrencyRates()
-               Euro_equivalent2 = c.convert("USD", "EUR", Intrinsic_value2)
+          Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
                #print(f"{Intrinsic_value2} USD is approximately {Euro_equivalent2:.2f} EUR")
           # Display the result
 
@@ -11251,18 +11257,8 @@ with st.container():
                EPS_last_average = Average_eps_basic_annual_five
 
           graham_valuation = (EPS_last_average * (7+1.5*Growth_rate1)*4.4)/(Average_10years_treasury_rate)
-          try:
-               convert = requests.get(f"https://api.frankfurter.app/latest?amount={graham_valuation}&from={base_currency}&to={target_currency}")
-               data13 = convert.json()
-               # Extract the converted amount from the response
-               Euro_equivalent_graham_valuation = data13['rates'][target_currency]
-               graham_valuation = f"{graham_valuation:.2f} $"
-               graham_valuation_formated = f" {Euro_equivalent_graham_valuation:.2f} €"
           
-          except Exception as e:
-               #print("Error occurred. Using alternative conversion method.")
-               c = CurrencyRates()
-               Euro_equivalent_graham_valuation = c.convert("USD", "EUR", graham_valuation)
+          Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
                #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
           # Display the result
      # .   ...........................................Graham 2.Estimate.........................................   
@@ -11270,18 +11266,8 @@ with st.container():
           if EPS_last_average_one < 0:
                EPS_last_average_one = Average_eps_basic_annual_five
           graham_valuation2 = (EPS_last_average_one * (7+1.5*Growth_rate2)*4.4)/(Average_10years_treasury_rate)
-          try:
-               convert = requests.get(f"https://api.frankfurter.app/latest?amount={graham_valuation2}&from={base_currency}&to={target_currency}")
-               data14 = convert.json()
-               # Extract the converted amount from the response
-               Euro_equivalent_graham_valuation2 = data14['rates'][target_currency]
-               graham_valuation2 = f"{graham_valuation2:.2f} $"
-               graham_valuation_formated2 = f" {Euro_equivalent_graham_valuation2:.2f} €"
-
-          except Exception as e:
-               #print("Error occurred. Using alternative conversion method.")
-               c = CurrencyRates()
-               Euro_equivalent_graham_valuation2 = c.convert("USD", "EUR", graham_valuation2)
+        
+          Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
                #print(f"{graham_valuation2} USD is approximately {Euro_equivalent_graham_valuation2:.2f} EUR")
           # Display the result
     
@@ -11559,23 +11545,14 @@ with st.container():
           Assumption_low_inklu_shares_outstanding_low =Assumption_low/Average_shares_basic_annual_one
           #st.write("Assumption_low_inklu_shares_outstanding",Assumption_low_inklu_shares_outstanding_low)
 
-          Assumption_low_inklu_shares_outstanding_MarginofSafety_low="{:.2f}".format(Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100)))
+          Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
           #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_low",Assumption_low_inklu_shares_outstanding_MarginofSafety_low)
 
-          try:
-               try:
-                    convert = requests.get(f"https://api.frankfurter.app/latest?amount={Assumption_low_inklu_shares_outstanding_MarginofSafety_low}&from={base_currency}&to={target_currency}")
-                    datarevenue_low = convert.json()
-                    # Extract the converted amount from the response
-                    Revenue_low_Euro = datarevenue_low['rates'][target_currency]
-          
 
-               except Exception as e:
-                    #print("Error occurred. Using alternative conversion method.")
-                    c = CurrencyRates()
-                    Revenue_low_Euro = c.convert("USD", "EUR", Assumption_low_inklu_shares_outstanding_MarginofSafety_low)
-          except Exception as e:
-                st.write("")
+          Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
+          #st.write(Revenue_low_Euro)
+          #st.write(converted_amount)
+
 # -----------------------------MIDDLE-------------
           average_FCF_Profit_margin_mid=((Growth_rate_fcf_margin_middle+Growth_rate__net_profit_middle)/2)/100
 
@@ -11590,22 +11567,14 @@ with st.container():
           Assumption_mid_inklu_shares_outstanding_mid =Assumption_mid/Average_shares_basic_annual_one
           #st.write("Assumption_low_inklu_shares_outstanding",Assumption_mid_inklu_shares_outstanding_mid)
 
-          Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid="{:.2f}".format(Assumption_mid_inklu_shares_outstanding_mid*(1-(Margin_of_safety_mid/100)))
+          Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid=Assumption_mid_inklu_shares_outstanding_mid*(1-(Margin_of_safety_mid/100))
           #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_mid",Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid)
-          try:
-               try:
-                    convert = requests.get(f"https://api.frankfurter.app/latest?amount={Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid}&from={base_currency}&to={target_currency}")
-                    datarevenue_mid = convert.json()
-                    # Extract the converted amount from the response
-                    Revenue_mid_Euro = datarevenue_mid['rates'][target_currency]
+      
+
+          Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*usd_to_eur_rate)
           
 
-               except Exception as e:
-                    #print("Error occurred. Using alternative conversion method.")
-                    c = CurrencyRates()
-                    Revenue_mid_Euro = c.convert("USD", "EUR", Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid)
-          except Exception as e:
-               st.write("")
+          
 # -----------------------------HIGH-------------
 
           average_FCF_Profit_margin_high=((Growth_rate_fcf_margin_high+Growth_rate__net_profit_high)/2)/100
@@ -11621,29 +11590,18 @@ with st.container():
           Assumption_high_inklu_shares_outstanding_high =Assumption_high/Average_shares_basic_annual_one
           #st.write("Assumption_low_inklu_shares_outstanding",Assumption_high_inklu_shares_outstanding_high)
 
-          Assumption_high_inklu_shares_outstanding_MarginofSafety_high="{:.2f}".format(Assumption_high_inklu_shares_outstanding_high*(1-(Margin_of_safety_high/100)))
+          Assumption_high_inklu_shares_outstanding_MarginofSafety_high=Assumption_high_inklu_shares_outstanding_high*(1-(Margin_of_safety_high/100))
           #st.write("Assumption_high_inklu_shares_outstanding_MarginofSafety_high",Assumption_high_inklu_shares_outstanding_MarginofSafety_high)
-          try:
-               try:
-                    convert = requests.get(f"https://api.frankfurter.app/latest?amount={Assumption_high_inklu_shares_outstanding_MarginofSafety_high}&from={base_currency}&to={target_currency}")
-                    datarevenue_high = convert.json()
-                    # Extract the converted amount from the response
-                    Revenue_high_Euro = datarevenue_high['rates'][target_currency]
+        
+          Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*usd_to_eur_rate)
           
 
-               except Exception as e:
-                    #print("Error occurred. Using alternative conversion method.")
-                    c = CurrencyRates()
-                    Revenue_high_Euro = c.convert("USD", "EUR", Assumption_high_inklu_shares_outstanding_MarginofSafety_high)
+          
 
-               col1.write(f'Current Price: <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True) 
+          col1.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True) 
                   
-               st.markdown('</div>', unsafe_allow_html=True)
+          st.markdown('</div>', unsafe_allow_html=True)
 
-          except Exception as e:
-                Revenue_low_Euro=0
-                Revenue_mid_Euro=0
-                Revenue_high_Euro=0
           #st.session_state = True
           with col1:
                if st.button("Calculate", key="Calculate_revenue"):
@@ -11657,21 +11615,21 @@ with st.container():
                               font_color = "green"
                     else:
                          font_color = "red"
-                    cola.write(f"<span style='color:{font_color}'>{Revenue_low_Euro:.2f} €</span>", unsafe_allow_html=True)
+                    cola.write(f"<span style='color:{font_color}'>{Revenue_low_Euro} €</span>", unsafe_allow_html=True)
                     #col21.write(f"{Average_Middle_DCF:.2f} €")
 
                     if Revenue_mid_Euro > converted_amount:
                               font_color = "green"
                     else:
                          font_color = "red"
-                    colb.write(f"<span style='color:{font_color}'>{Revenue_mid_Euro:.2f} €</span>", unsafe_allow_html=True)
+                    colb.write(f"<span style='color:{font_color}'>{Revenue_mid_Euro} €</span>", unsafe_allow_html=True)
                     #col22.write(f"{high_DCF:.2f} €")
 
                     if Revenue_high_Euro > converted_amount:
                               font_color = "green"
                     else:
                          font_color = "red"
-                    colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro:.2f} €</span>", unsafe_allow_html=True)
+                    colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro} €</span>", unsafe_allow_html=True)
 
 
  #with st.container():
@@ -11909,30 +11867,9 @@ with st.container():
           #try:
           if st.button("Calculate", key="Calculate_DDM"):
     
-               try:
-                    convert = requests.get(f"https://api.frankfurter.app/latest?amount={intrinsic_value3}&from={base_currency}&to={target_currency}")
-                    data14 = convert.json()
-                    # Extract the converted amount from the response
-                    DDM_intrinsic_value3 = data14['rates'][target_currency]
-                    #graham_valuation2 = f"{graham_valuation2:.2f} $"
-                    #graham_valuation_formated2 = f" {Euro_equivalent_graham_valuation2:.2f} €"
-
-               #except Exception as e:
-                    #print("Error occurred. Using alternative conversion method.")
-               #    c = CurrencyRates()
-               #   DDM_intrinsic_value3 = c.convert("USD", "EUR", intrinsic_value3)
-
-               except Exception as e:
-                    url = 'https://www.alphavantage.co/query?function=intrinsic_value3&from_currency=USD&to_currency=target_currency&apikey=NLEU37NOPD4HYBPZ'
-                    r = requests.get(url)
-                    DDM_intrinsic_value3 = r.json()
-                    #print("data",data)
-                    
-         # except Exception as e:
-          #     print(f"Error occurred during currency exchange rate retrieval: {e}")
-
-          
-          
+            
+               DDM_intrinsic_value3 = intrinsic_value3*usd_to_eur_rate
+                 
                col1,col2 = st.columns(2)
 
 
@@ -12687,15 +12624,6 @@ with st.container():
                     })
 
 
-                
-          
-          
-          
-         
-                  
-          
-               
-                    
                
                     fig2 = px.bar(data, x='Date', y='Operating Margin',
                               text='Operating Margin',  # Display the value on top of each bar
@@ -13099,6 +13027,8 @@ with st.container():
           Net_debt =annual_data['net_debt'][-5:]
           st.write("Net_debt",Net_debt)
 
+
+          st.write(f"1 USD is equivalent to {usd_to_eur_rate} EUR")
           
       
                          
@@ -13132,6 +13062,8 @@ with st.container():
           #      st.write(f"Link: {link}")
 
 
+
+          
 
 
 
