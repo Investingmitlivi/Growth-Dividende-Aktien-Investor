@@ -310,7 +310,6 @@ ticker_symbol_name = {
      'AEYE':'AudioEye Inc. ',
      'AEZS':'Aeterna Zentaris Inc. ',
      'AFAR':'Aura FAT Projects Acquisition Corp ',
-     'AFB':'AllianceBernstein National Municipal Income Fund Inc',
      'AFBI':'Affinity Bancshares Inc.  (MD)',
      'AFCG':'AFC Gamma Inc. ',
      'AFG':'American Financial Group Inc. ',
@@ -771,7 +770,6 @@ ticker_symbol_name = {
      'AUGX':'Augmedix Inc. ',
      'AUID':'authID Inc. ',
      'AULT':'Ault Alliance Inc. ',
-     'AULT^D':'Ault Alliance Inc. 13.00% Series D Cumulative Redeemable Perpetual Preferred Stock',
      'AUMN':'Golden Minerals Company ',
      'AUPH':'Aurinia Pharmaceuticals Inc ',
      'AUR':'Aurora Innovation Inc.  ',
@@ -813,7 +811,6 @@ ticker_symbol_name = {
      'AVTX':'Avalo Therapeutics Inc. ',
      'AVXL':'Anavex Life Sciences Corp. ',
      'AVY':'Avery Dennison Corporation ',
-     'AWF':'Alliancebernstein Global High Income Fund',
      'AWH':'Aspira Womens Health Inc. ',
      'AWI':'Armstrong World Industries Inc ',
      'AWIN':'AERWINS Technologies Inc. ',
@@ -11005,66 +11002,68 @@ with st.container():
           EPS_Cagr_10 =round((EPS_Cagr_10*100),2)
      #...........................................................................
           #Free_cash_flow_annual = annual_data['fcf'][-10:]
+
+          
           try:
-               value_at_index_4 = Free_cash_flow_annual[4]
-               value_at_index_9 = Free_cash_flow_annual[9]
+               value_at_index_6 = Free_cash_flow_annual[-6]
+               value_at_index_last  = Free_cash_flow_annual[-1]
 
           except Exception as e:
-               value_at_index_4 = 0
-               value_at_index_9 = 0
+               value_at_index_6 = 0
+               value_at_index_last = 0
           try:
                
-               if value_at_index_4 == 0:
-                    CAGR = 0
+               if value_at_index_6 == 0:
+                    FCF_5_CAGR = 0
 
                else:
                          try:
-                              CAGR = (pow((value_at_index_9 / value_at_index_4), 0.2) - 1) * 100
+                              FCF_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
                               #CAGR = round(CAGR, 2)
 
-                              if isinstance(CAGR, complex):
-                                        CAGR = 0  # Set CAGR to 0 if it's a complex number
+                              if isinstance(FCF_5_CAGR, complex):
+                                        FCF_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
                               else:
-                                   CAGR = round(CAGR, 2)
+                                   FCF_5_CAGR = "{:.2f}".format(FCF_5_CAGR)
 
                          except Exception as e:
-                              CAGR = 0
+                              FCF_5_CAGR = 0
 
           except Exception as e:  
 
-               CAGR =0;    
+               FCF_5_CAGR =0;    
                
         
      #......................................................................................................................     
           #Free_cash_flow_annual = annual_data['fcf'][-10:]
           try:
-               value_at_index_4 = eps_basic_annual[4]
-               value_at_index_9 = eps_basic_annual[9]
+               value_at_index_6 = eps_basic_annual[-6]
+               value_at_index_last = eps_basic_annual[-1]
 
           except Exception as e:
-               value_at_index_4 = 0
-               value_at_index_9 = 0
+               value_at_index_6 = 0
+               value_at_index_last = 0
           try:
                
-               if value_at_index_4 == 0:
-                    EPS_CAGR = 0
+               if value_at_index_6 == 0:
+                    EPS_5_CAGR = 0
 
                else:
                          try:
-                              EPS_CAGR = (pow((value_at_index_9 / value_at_index_4), 0.2) - 1) * 100
+                              EPS_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
                               #CAGR = round(CAGR, 2)
 
-                              if isinstance(EPS_CAGR, complex):
-                                        EPS_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                              if isinstance(EPS_5_CAGR, complex):
+                                        EPS_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
                               else:
-                                   EPS_CAGR = round(EPS_CAGR, 2)
+                                   EPS_5_CAGR = "{:.2f}".format(EPS_5_CAGR)
 
                          except Exception as e:
-                              EPS_CAGR = 0
+                              EPS_5_CAGR = 0
 
           except Exception as e:  
 
-               EPS_CAGR =0;    
+               EPS_5_CAGR =0;    
                
           #print("Value at index 4:", value_at_index_4)
           #print("Value at index 9:", value_at_index_9)
@@ -11081,12 +11080,9 @@ with st.container():
           col1, col2,col3,col4 = st.columns(4)
 
           col1.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
-          col2.info(f"EPS 5 CAGR: {EPS_CAGR}%")
+          col2.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
           col3.info(f"FCF 10 CAGR: {FCF_Cagr_10}%")
-          col4.info(f"FCF 5 CAGR: {CAGR:.2f}%")
-
-
-       
+          col4.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
 
 
           col1,col2,col3,col4 = st.columns(4)
@@ -11513,9 +11509,9 @@ with st.container():
 
 
           col1,col2,colx,cola, colb, colc= st.columns(6)
-          col1.info('-')
+          col1.info('Margin Of Safety')
           col2.info('-')
-          colx.info('Margin Of Safety')
+          colx.info('-')
           colx.write(f"Multiples of Earnings Value:")
 
 
@@ -11652,9 +11648,7 @@ with st.container():
           with col1:
                if st.button("Calculate", key="Calculate_revenue"):
 
-                    
-                    
-                              #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+                                  #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
                               #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
                
                     #colx.write(f"Multiples of Earnings Value:")
@@ -12377,22 +12371,33 @@ with st.container():
                     Free_cash_flow_annual_2003 = annual_data['fcf'][-21:]
 
           #.................................5  Dividend CAGR............................................
-                              
-                    try:
-                         value_at_index_15 = dividendPaidInTheLast21Years[15]
-                         value_at_index_20 = dividendPaidInTheLast21Years[20]
+                         #dividendPaidInTheLast21Years = [abs(value) for value in annual_data['cff_dividend_paid'][-21:]]
 
+                    # Wert an der 6. Position von hinten erhalten
+                    #value_at_index_6 = dividendPaidInTheLast21Years[-6]
+                    #value_at_index_11  = dividendPaidInTheLast21Years[-11]
+                    #value_at_index_last  = dividendPaidInTheLast21Years[-1]
+                     
+
+                    #print("Wert an der 6. Position von hinten in der Liste:", value_at_sixth_from_last)
+                    #print("Wert an der 11. Position von hinten in der Liste:", value_at_eleven_from_last)
+                    #print("Wert an der last Position :", value_at_last_position)
+     
+
+                    try:
+                         value_at_index_6 = dividendPaidInTheLast21Years[-6]
+                         value_at_index_last  = dividendPaidInTheLast21Years[-1]
                     except Exception as e:
-                         value_at_index_15 = 0
-                         value_at_index_20 = 0
+                         value_at_index_6 = 0
+                         value_at_index_last = 0
                     try:
                          
-                         if value_at_index_15 == 0:
+                         if value_at_index_6 == 0:
                               Dividend_5_CAGR = 0
 
                          else:
                                    try:
-                                        Dividend_5_CAGR = (pow((value_at_index_20 / value_at_index_15), 0.2) - 1) * 100
+                                        Dividend_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
                                         #CAGR = round(CAGR, 2)
 
                                         if isinstance(Dividend_5_CAGR, complex):
@@ -12410,22 +12415,22 @@ with st.container():
   #.................................10  Dividend CAGR............................................                    
 
                     try:
-                         value_at_index_10 = dividendPaidInTheLast21Years[10]
+                         value_at_index_11  = dividendPaidInTheLast21Years[-11]
                          #st.write(value_at_index_10)
                          #st.write(value_at_index_20)
                          #value_at_index_20 = dividendPaidInTheLast21Years[20]
 
                     except Exception as e:
-                         value_at_index_10 = 0
-                         value_at_index_20 = 0
+                         value_at_index_11 = 0
+                         value_at_index_last = 0
                     try:
                          
-                         if value_at_index_10 == 0:
+                         if value_at_index_11 == 0:
                               Dividend_10_CAGR = 0
 
                          else:
                                    try:
-                                        Dividend_10_CAGR = (pow((value_at_index_20 / value_at_index_10), 0.1) - 1) * 100
+                                        Dividend_10_CAGR = (pow((value_at_index_last / value_at_index_11), 0.1) - 1) * 100
                                         #CAGR = round(CAGR, 2)
 
                                         if isinstance(Dividend_10_CAGR, complex):
@@ -12490,7 +12495,8 @@ with st.container():
                     
 
                     # Update layout
-                    title_text = f"10YR Dividend CAGR: {Dividend_10_CAGR}%     5YR Dividend CAGR: {Dividend_5_CAGR}%     ->  <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {CAGR:.2f}%</span> "
+                    title_text = f"10YR Dividend CAGR: {Dividend_10_CAGR}%     5YR Dividend CAGR: {Dividend_5_CAGR}%     ->  <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {FCF_5_CAGR}%</span> "  
+
 
                     #title_text = f"<span style='color:dodgerblue'>20YR Dividend CAGR: {Dividend_20_CAGR}%</span>"
 
@@ -12539,12 +12545,12 @@ with st.container():
 
           #-------------------------------------------------------------------------------------------------
  
-                    Dividend_per_share = annual_data['dividends'][-21:]
+                    Dividend_per_share = annual_data['dividends'][-10:]
                     Dividend_per_share = ["${:.2f}".format(value * 1) for value in Dividend_per_share]
                     
                          #Price_to_earnings=annual_data['price_to_earnings'][-10:]
                     data = pd.DataFrame({
-                    'Date': date_annual_20yrs,
+                    'Date': date_annual,
                     'Dividend per Share': Dividend_per_share,
                     })
 
@@ -12561,12 +12567,12 @@ with st.container():
                     fig1.update_layout(title_x=0.05)
           
                   # Extract the last 21 years of dividends per share growth data
-                    Dividends_per_share_growth_annual_2003 = annual_data['dividends_per_share_growth'][-21:]
+                    Dividends_per_share_growth_annual_2003 = annual_data['dividends_per_share_growth'][-10:]
                     Dividends_per_share_growth_annual_2003 = ["{:.2f}%".format(value * 100) for value in Dividends_per_share_growth_annual_2003]
 
                     # Create a DataFrame
                     data = pd.DataFrame({
-                    'Date': date_annual_20yrs,
+                    'Date': date_annual,
                     'Dividends per Share growth': Dividends_per_share_growth_annual_2003,
                     })
 
@@ -12753,7 +12759,7 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='FCF Margin',
                               text='FCF Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title=f"5 YR FCF Margin: {FCF_Margin_5}%    Current FCF Margin: {FCF_Margin_1}%") 
+                              title=f"5 YR FCF Margin: {FCF_Margin_5}%    Current FCF Margin: {FCF_Margin_1:.2f}%") 
                     
 
                     
