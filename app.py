@@ -7869,8 +7869,9 @@ except Exception as e:
 
 
 
-Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuation,Dividend_Discount_Model,Key_ratios,Charts,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","EPS Valuation","Dividend Discount Model","Key Ratios","Charts","Calculator","Top 10 News"])
+#Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuation,Dividend_Discount_Model,Key_ratios,Charts,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","EPS Valuation","Dividend Discount Model","Key Ratios","Charts","Calculator","Top 10 News"])
 
+Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,Dividend_Discount_Model,Key_ratios,Charts,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","Dividend Discount Model","Key Ratios","Charts","Calculator","Top 10 News"])
 
      #st.header('Price / Total return')
 
@@ -11679,103 +11680,103 @@ with st.container():
                     colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro:.2f} €</span>", unsafe_allow_html=True)
 
 
-with st.container():
-     with EPS_Valuation:
+ #with st.container():
+#      with EPS_Valuation:
 
-          Price_to_earnings = annual_data['price_to_earnings'][-5:]
+#           Price_to_earnings = annual_data['price_to_earnings'][-5:]
 
-          high_PE_value = float(max(Price_to_earnings))
-          LOW_PE_value = float(min(Price_to_earnings))
+#           high_PE_value = float(max(Price_to_earnings))
+#           LOW_PE_value = float(min(Price_to_earnings))
 
           
 
 
-          col1,col2 = st.columns(2)
+#           col1,col2 = st.columns(2)
 
-          #col1.info("WACC",WACC_prozent)
-          #col1.write(f'WACC: {WACC_prozent}')
+#           #col1.info("WACC",WACC_prozent)
+#           #col1.write(f'WACC: {WACC_prozent}')
 
-          #col1.info(f"WACC: {WACC:.2f}%")
-          #col2.info(f"10 YR T.NOTE: {Average_10years_treasury_rate:.2f}%")
+#           #col1.info(f"WACC: {WACC:.2f}%")
+#           #col2.info(f"10 YR T.NOTE: {Average_10years_treasury_rate:.2f}%")
 
 
-          col1,col2,col3,col4,col5= st.columns(5)
+#           col1,col2,col3,col4,col5= st.columns(5)
          
-          EPS_ttm = col1.number_input("EPS:", value=eps_diluted_ttm)
+#           EPS_ttm = col1.number_input("EPS:", value=eps_diluted_ttm)
 
-          HIGH_5years_PE = col2.number_input("5 Year HIGH PE:", value=high_PE_value)
-          LOW_5years_PE = col3.number_input("5 Year LOW PE:", value=LOW_PE_value)
+#           HIGH_5years_PE = col2.number_input("5 Year HIGH PE:", value=high_PE_value)
+#           LOW_5years_PE = col3.number_input("5 Year LOW PE:", value=LOW_PE_value)
 
-          average_value = (HIGH_5years_PE + LOW_5years_PE) / 2
+#           average_value = (HIGH_5years_PE + LOW_5years_PE) / 2
 
-          Average_both_high_und_low_PE = col4.number_input("Average PE:", value=average_value)
+#           Average_both_high_und_low_PE = col4.number_input("Average PE:", value=average_value)
 
-          Growth_rate = col5.number_input("Growth Rate(%):", value=0.00)
-          Growth_rate=Growth_rate/100
+#           Growth_rate = col5.number_input("Growth Rate(%):", value=0.00)
+#           Growth_rate=Growth_rate/100
 
-          col1= st.columns(1)
+#           col1= st.columns(1)
 
-          Discount_rate = st.number_input("Discount Rate(%):", value=WACC)
-          Discount_rate=Discount_rate/100
-          Discount_rate=1+Discount_rate
+#           Discount_rate = st.number_input("Discount Rate(%):", value=WACC)
+#           Discount_rate=Discount_rate/100
+#           Discount_rate=1+Discount_rate
 
-          col1= st.columns(1)
-          Years = st.number_input("Years:", value=10,key="Years")
+#           col1= st.columns(1)
+#           Years = st.number_input("Years:", value=10,key="Years")
 
-          Future_intrinsic =eps_diluted_ttm*((1 + Growth_rate) ** Years)*average_value
-          Present_intrinsic =Future_intrinsic/(Discount_rate) ** Years
+#           Future_intrinsic =eps_diluted_ttm*((1 + Growth_rate) ** Years)*average_value
+#           Present_intrinsic =Future_intrinsic/(Discount_rate) ** Years
          
 
-          col11= st.columns(1)
+#           col11= st.columns(1)
          
-          #Future_intrinsic_Value = col11.number_input("Future Intrinsic Value:", value=Future_intrinsic)
-          Future_intrinsic_Value = st.number_input("Future Intrinsic Value($):", value=Future_intrinsic)
+#           #Future_intrinsic_Value = col11.number_input("Future Intrinsic Value:", value=Future_intrinsic)
+#           Future_intrinsic_Value = st.number_input("Future Intrinsic Value($):", value=Future_intrinsic)
 
 
-          col1= st.columns(1)
-          Present_intrinsic_Value = st.number_input("Present Iintrinsic Value($):", value=Present_intrinsic)
+#           col1= st.columns(1)
+#           Present_intrinsic_Value = st.number_input("Present Iintrinsic Value($):", value=Present_intrinsic)
 
-          col1= st.columns(1)
+#           col1= st.columns(1)
 
-          Margin_of_safety = st.number_input("Margin of Safety(%):", value=0.00)
-          Margin_of_safety=(1-((Margin_of_safety)/100))
+#           Margin_of_safety = st.number_input("Margin of Safety(%):", value=0.00)
+#           Margin_of_safety=(1-((Margin_of_safety)/100))
 
-          Buy_price_dollar =Present_intrinsic_Value*Margin_of_safety
+#           Buy_price_dollar =Present_intrinsic_Value*Margin_of_safety
           
-          try:
-               convert = requests.get(f"https://api.frankfurter.app/latest?amount={Buy_price_dollar}&from={base_currency}&to={target_currency}")
-               data14 = convert.json()
-               # Extract the converted amount from the response
-               Euro = data14['rates'][target_currency]
-               dollar = f"{Buy_price_dollar:.2f} $"
-               Buy_price_euro = Euro
+#           try:
+#                convert = requests.get(f"https://api.frankfurter.app/latest?amount={Buy_price_dollar}&from={base_currency}&to={target_currency}")
+#                data14 = convert.json()
+#                # Extract the converted amount from the response
+#                Euro = data14['rates'][target_currency]
+#                dollar = f"{Buy_price_dollar:.2f} $"
+#                Buy_price_euro = Euro
 
-          except Exception as e:
-               #print("Error occurred. Using alternative conversion method.")Flax
-               c = CurrencyRates()
-               Buy_price_euro= c.convert("USD", "EUR", Buy_price_dollar)
-               #print(f"{graham_valuation2} USD is approximately {Euro_equivalent_graham_valuation2:.2f} EUR")
-          # Display the result
-     # .......................................DDM...................
+#           except Exception as e:
+#                #print("Error occurred. Using alternative conversion method.")Flax
+#                c = CurrencyRates()
+#                Buy_price_euro= c.convert("USD", "EUR", Buy_price_dollar)
+#                #print(f"{graham_valuation2} USD is approximately {Euro_equivalent_graham_valuation2:.2f} EUR")
+#           # Display the result
+#      # .......................................DDM...................
 
-        #  print("Margin_of_safety",Margin_of_safety)
+#         #  print("Margin_of_safety",Margin_of_safety)
 
-          if st.button("Calculate"):
+#           if st.button("Calculate"):
                
-                         #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-                         #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
-               st.write(f'Current Price: <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True)
+#                          #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+#                          #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
+#                st.write(f'Current Price: <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True)
 
                
 
-               if converted_amount < Buy_price_euro:
-                    font_color = "green"
-                    st.write(f"Fair Value: <span style='color:{font_color}'>{Buy_price_euro:.2f} €</span>", unsafe_allow_html=True)
+#                if converted_amount < Buy_price_euro:
+#                     font_color = "green"
+#                     st.write(f"Fair Value: <span style='color:{font_color}'>{Buy_price_euro:.2f} €</span>", unsafe_allow_html=True)
 
-               else:
-                    font_color = "red"
+#                else:
+#                     font_color = "red"
 
-               st.write(f"Fair Value: <span style='color:{font_color}'>{Buy_price_euro:.2f} €</span>", unsafe_allow_html=True)
+#                st.write(f"Fair Value: <span style='color:{font_color}'>{Buy_price_euro:.2f} €</span>", unsafe_allow_html=True)
                        
           
 
@@ -12590,16 +12591,16 @@ with st.container():
 
                          #------------------------------------------------------------------------------------------------------------
                          
-                    ROE_annual_21years = annual_data['roe'][-21:]
-                    ROIC_annual_21years = annual_data['roic'][-21:]
+                    ROE_annual_10years = annual_data['roe'][-10:]
+                    ROIC_annual_10years = annual_data['roic'][-10:]
                     try:
-                         ROIC_annual_21years = ["{:.2f}%".format(ROIC_annual_21years * 100) for ROIC_annual_21years in ROIC_annual_21years]
+                         ROIC_annual_10years = ["{:.2f}%".format(ROIC_annual_10years * 100) for ROIC_annual_10years in ROIC_annual_10years]
                     except Exception as e:
-                         ROIC_annual_21years = 0.0
+                         ROIC_annual_10years = 0.0
                          
                     data = pd.DataFrame({
-                    'Date': date_annual_20yrs,
-                    'ROIC': ROIC_annual_21years,
+                    'Date': date_annual,
+                    'ROIC': ROIC_annual_10years,
                     })
 
             
@@ -12611,14 +12612,16 @@ with st.container():
                     
                     fig1.update_layout(title_x=0.05)
 
+
+
                     try:
-                         ROE_annual_21years = ["{:.2f}%".format(ROE_annual_21years * 100) for ROE_annual_21years in ROE_annual_21years]
+                         ROE_annual_10years = ["{:.2f}%".format(ROE_annual_10years * 100) for ROE_annual_10years in ROE_annual_10years]
                     except Exception as e:
-                         ROE_annual_21years = 0.0
+                         ROE_annual_10years = 0.0
                          
                     data = pd.DataFrame({
-                    'Date': date_annual_20yrs,
-                    'ROE': ROE_annual_21years,
+                    'Date': date_annual,
+                    'ROE': ROE_annual_10years,
                     })
 
                     # Create a Streamlit app
@@ -12781,7 +12784,7 @@ with st.container():
                     
                     fig21 = px.bar(data, x='Date', y='PE Ratio',
                               labels={'value': 'Ratio'},
-                              title=f'10 YR PE: {average_PE_historical}  5 YR PE: {pe_five_}  Current PE: {pe_ttm}  Forward P/E: {forwardPE}')  # Use 'group' to display bars side by side
+                              title=f"-><span style='color:dodgerblue'>10 YR PE:</span> {average_PE_historical}  -><span style='color:dodgerblue'>5 YR PE: </span> {pe_five_}  -><span style='color:dodgerblue'>Current PE: </span> {pe_ttm}  -><span style='color:dodgerblue'>Forward P/E:</span>  {forwardPE}")  # Use 'group' to display bars side by side
 
                                                                                                                                  
                     fig21.add_shape(
