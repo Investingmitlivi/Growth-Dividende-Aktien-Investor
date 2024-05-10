@@ -669,7 +669,7 @@ ticker_symbol_name = {
      'ARKR':'Ark Restaurants Corp. ',
      'ARL':'American Realty Investors Inc. ',
      'ARLO':'Arlo Technologies Inc. ',
-     'ARLP':'Alliance Resource Partners L.P. Common Units representing Limited Partners Interests',
+     'ARLP':'Alliance Resource Partners L.P.',
      'ARM':'Arm Holdings plc ',
      'ARMK':'Aramark ',
      'ARMP':'Armata Pharmaceuticals Inc. ',
@@ -7997,7 +7997,7 @@ with st.container():
           
 
           FCF_annual_one =annual_data['fcf'][-1:]
-          average_fcf_Annual_one = round((sum(FCF_annual_one) / len(FCF_annual_one)) / 1000000000, 2)
+          average_fcf_Annual_one = (sum(FCF_annual_one) / len(FCF_annual_one)) / 1000000000
           rounded = "{:.2f}B".format(average_fcf_Annual_one)
           
           FCF_annual_five =annual_data['fcf'][-5:]
@@ -8024,8 +8024,8 @@ with st.container():
           
 
           net_income_annual_funf = annual_data['net_income'][-5:] 
-          Average_netIncome_annual = round((sum(net_income_annual_funf) / len(net_income_annual_funf)) / 1000000000, 2)
-          Average_netIncome_annual_we = round((sum(net_income_annual_funf) / len(net_income_annual_funf)))
+          Average_netIncome_annual = (sum(net_income_annual_funf) / len(net_income_annual_funf)) / 1000000000
+          Average_netIncome_annual_we = (sum(net_income_annual_funf) / len(net_income_annual_funf))
 
           #fcf_ttm =fcf_ttm*1000000000
           Average_netIncome_annual_we ="{:.2f}B".format(Average_netIncome_annual_we/ 1000000000) if abs(Average_netIncome_annual_we) >= 1000000000 else "{:,.1f}M".format(Average_netIncome_annual_we / 1000000)
@@ -8034,7 +8034,7 @@ with st.container():
           net_income_annual_one = annual_data['net_income'][-1:]
           Average_net_income_annual_one = "{:.2f}B".format((sum(net_income_annual_one) / len(net_income_annual_one)) / 1000000000) 
           
-          round_net_income_annual_one =round((sum(net_income_annual_one) / len(net_income_annual_one)) / 1000000000,2) 
+          round_net_income_annual_one =(sum(net_income_annual_one) / len(net_income_annual_one)) / 1000000000
 
          # Revenue_last = annual_data['revenue'][-1:]
           #average_Revenue_last_ohne_billion = (sum(Revenue_last) / len(Revenue_last))/1000000000
@@ -8108,7 +8108,7 @@ with st.container():
           average_ROA_annual_ttm = "{:.2f}%".format((sum(ROA_annual_ttm) / len(ROA_annual_ttm))*100)
 
           Total_Equity_annual_one = annual_data['total_equity'][-1:]
-          Average_total_equity_annual = round((sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000, 2)
+          Average_total_equity_annual = (sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000
          
           Net_income_margin_10_ = annual_data['net_income_margin'][-10:]
           Net_income_margin_10 = sum(Net_income_margin_10_)/len(Net_income_margin_10_)
@@ -8258,7 +8258,7 @@ with st.container():
                              KGV = round(amount/eps_5years_average_diluted_annual, 2)
                     else:
                          KGV = round(Marketcap/Average_netIncome_annual, 2)
-                 
+                
                
                else:
                     Average_ROIC_funf ="NA"
@@ -11290,8 +11290,12 @@ with st.container():
                Euro_equivalent2=Euro_equivalent_graham_valuation2
 
           Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
+         
           average_sum1 = Multiples_valuation1 / 2
-          average_sum_both1 = average_sum1*(1-Margin_of_safety1/100)     
+          average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
+          
+          #st.write(average_sum_both1,converted_amount)
+
 
           Multiples_valuation2 =Euro_equivalent2+Euro_equivalent_graham_valuation2
           average_sum2 = Multiples_valuation2 / 2
@@ -11301,7 +11305,7 @@ with st.container():
           #average_Middle_multiple_value =Middle_multiple_value/2
           #average_Middle_multiple_value=average_Middle_multiple_value*(1-Margin_of_safety2/100)
           Middle_multiple_value = average_sum_both1+average_sum_both2
-          average_Middle_multiple_value =Middle_multiple_value/2
+          average_Middle_multiple_value =round(Middle_multiple_value/2,2)
 
           #Middle_DCF =Euro_equivalent+Euro_equivalent2
           #Average_Middle_DCF =Middle_DCF/2
@@ -11329,7 +11333,7 @@ with st.container():
                col11, col12,col13, col14= st.columns(4)
                #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
                #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
-               col11.write(f'Current Price: <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True)
+               col11.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
 
                col12.write(f"Low Estimate:")
                col13.write(f"Middle Estimate: ")
@@ -11347,14 +11351,14 @@ with st.container():
                               # Display number outputs for each estimate
                col15.write(f" Benjamin Graham + DCF:  ")
                #col16.write(f"{average_sum_both1:.2f} €")
-
-               if average_sum_both1 > converted_amount:
+               
+               if average_sum_both1 > float(converted_amount):
                     font_color = "green"
                else:
                     font_color = "red"
                col16.write(f"<span style='color:{font_color}'>{average_sum_both1:.2f} €</span>", unsafe_allow_html=True)
 
-               if average_Middle_multiple_value > converted_amount:
+               if average_Middle_multiple_value > float(converted_amount):
                          font_color = "green"
                else:
                     font_color = "red"
@@ -11363,7 +11367,7 @@ with st.container():
                #col18.write(f"{average_sum_both2:.2f} €")
                
 
-               if average_sum_both2 > converted_amount:
+               if average_sum_both2 > float(converted_amount):
                          font_color = "green"
                else:
                     font_color = "red"
@@ -11374,21 +11378,21 @@ with st.container():
 
                col19.write(f"Discounted Cash Flow Analysis (DCF):")
                #col20.write(f"{low_DCF:.2f} €")
-               if low_DCF > converted_amount:
+               if low_DCF > float(converted_amount):
                          font_color = "green"
                else:
                     font_color = "red"
                col20.write(f"<span style='color:{font_color}'>{low_DCF:.2f} €</span>", unsafe_allow_html=True)
                #col21.write(f"{Average_Middle_DCF:.2f} €")
 
-               if Average_Middle_DCF > converted_amount:
+               if Average_Middle_DCF > float(converted_amount):
                          font_color = "green"
                else:
                     font_color = "red"
                col21.write(f"<span style='color:{font_color}'>{Average_Middle_DCF:.2f} €</span>", unsafe_allow_html=True)
                #col22.write(f"{high_DCF:.2f} €")
 
-               if high_DCF > converted_amount:
+               if high_DCF > float(converted_amount):
                          font_color = "green"
                else:
                     font_color = "red"
@@ -11873,18 +11877,18 @@ with st.container():
                col1,col2 = st.columns(2)
 
 
-               if converted_amount < DDM_intrinsic_value3:
+               if float(converted_amount) < DDM_intrinsic_value3:
                     font_color = "green"
 
                     with col1:
-                         st.write(f'Current Price:    <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
+                         st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
                     with col2:
                          st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
                else:
                     font_color = "red"
 
                     with col1:
-                         st.write(f'Current Price:    <span style="color: green;">{converted_amount:.2f} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
+                         st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
                     with col2:
                          st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
 
@@ -12340,7 +12344,7 @@ with st.container():
                                         if isinstance(Dividend_5_CAGR, complex):
                                                   Dividend_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
                                         else:
-                                             Dividend_5_CAGR = round(Dividend_5_CAGR, 2)
+                                             Dividend_5_CAGR = "{:.2f}".format(Dividend_5_CAGR)
 
                                    except Exception as e:
                                         Dividend_5_CAGR = 0
@@ -12373,7 +12377,7 @@ with st.container():
                                         if isinstance(Dividend_10_CAGR, complex):
                                                   Dividend_10_CAGR = 0  # Set CAGR to 0 if it's a complex number
                                         else:
-                                             Dividend_10_CAGR = round(Dividend_10_CAGR, 2)
+                                             Dividend_10_CAGR = "{:.2f}".format(Dividend_10_CAGR, 2)
 
                                    except Exception as e:
                                         Dividend_10_CAGR = 0
