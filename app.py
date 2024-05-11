@@ -8622,7 +8622,11 @@ with st.container():
           '5 YR Operating Margin': [rounded_operating_margin_five],
           'Operating Margin': [rounded_operating_margin],
           '5 YR Net Profit Margin':f"{five_yrs_Nettomarge}%",
-          'Net Profit Margin (TTM)': [Net_margin_ttm]
+          'Net Profit Margin (TTM)': [Net_margin_ttm],
+          '5 YR FCF Margin':f"{FCF_Margin_5}%",
+          'FCF Margin (TTM)': ' {:.2f}%'.format(FCF_Margin_1)
+          
+          
           
       
         
@@ -11506,7 +11510,7 @@ with st.container():
 
 
 
-
+          
 
           Growth_rate_revenue_LOW = colr9.number_input(" ", value=0.00,key="Growth_rate_revenue_LOW")
           Growth_rate_revenue_middle = colr10.number_input(" ", value=0.00,key="Growth_rate_revenue_middle")
