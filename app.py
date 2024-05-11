@@ -143,14 +143,14 @@ with st.container():
 
      def get_exchange_rate(base_currency, target_currency):
                     try:
-                         url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
+                         url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
                          response = requests.get(url)
                          data = response.json()
                          exchange_rate = data['rates'][target_currency]
                          return exchange_rate
                     
                     except Exception as e:
-                         url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
+                         url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
                          response = requests.get(url)
                          data = response.json()
                          exchange_rate = data['rates'][target_currency]
@@ -5318,7 +5318,6 @@ ticker_symbol_name = {
      'PWUPU':'PowerUp Acquisition Corp. Unit',
      'PWUPW':'PowerUp Acquisition Corp. ',
      'PX':'P10 Inc.  ',
-     'PXD':'Pioneer Natural Resources Company ',
      'PXLW':'Pixelworks Inc.  ',
      'PXMD':'PaxMedica Inc. ',
      'PXS':'Pyxis Tankers Inc. ',
@@ -8655,7 +8654,7 @@ with st.container():
           '5 YR ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
           'ROCE ':[ "{:.2f}%".format(One_YR_ROCE)],
           f'ATH ({all_time_high_date}'")": ["$ {:.2f}".format(all_time_high_price)],
-          f'52WK LOW ({min_price_date.strftime("%Y/%m/%d")})': ["$ {:.2f}".format(fifty_two_week_low)]
+          f'52WK LOW ( {min_price_date.strftime("%Y/%m/%d")})': ["$ {:.2f}".format(fifty_two_week_low)]
           
           }   
 
@@ -10583,7 +10582,7 @@ with st.container():
                
      #--------------------------------------------------------------------------------------------------------------------------------
           try:
-               revenue_annual_funf_Growth =(revenue_annual_funf[4]-revenue_annual_funf[0])/abs(revenue_annual_funf[0])*100
+               revenue_annual_funf_Growth =(revenue_annual_funf[-1]-revenue_annual_funf[-5])/abs(revenue_annual_funf[-5])*100
 
                if revenue_annual_funf[0] ==0:
                     revenue_annual_funf_Growth=0
@@ -10594,7 +10593,7 @@ with st.container():
      #-----------------------------------------------------------------------------------------------------------------------------
 
           try:
-               FCF_funf_growth = ((Free_cash_flow_annual_funf[4]-Free_cash_flow_annual_funf[0])/abs(Free_cash_flow_annual_funf[0]))*100
+               FCF_funf_growth = ((Free_cash_flow_annual_funf[-1]-Free_cash_flow_annual_funf[-5])/abs(Free_cash_flow_annual_funf[-5]))*100
 
                if Free_cash_flow_annual_funf[0] ==0:
                     FCF_funf_growth=0
@@ -10605,7 +10604,9 @@ with st.container():
           try:
                #for value in shares_basic_annual_funf:
                #    print(value(int[4]))
-               Shares_outstanding_funf_growth = ((shares_basic_annual_funf[4]-shares_basic_annual_funf[0])/abs(shares_basic_annual_funf[0]))*100
+               Shares_outstanding_funf_growth = ((shares_basic_annual_funf[-1]-shares_basic_annual_funf[-5])/abs(shares_basic_annual_funf[-5]))*100
+              # st.write(shares_basic_annual_funf[-5])
+               #st.write(shares_basic_annual_funf[-1])
                if shares_basic_annual_funf[0] ==0:
                     
                     Shares_outstanding_funf_growth=0
@@ -10616,7 +10617,7 @@ with st.container():
      #------------------------------------------------------------------------------------------------------------------
 
           try:
-               netincome_annual_funf_growth_ = ((net_income_annual_funf[4] - net_income_annual_funf[0])/abs(net_income_annual_funf[0]))*100
+               netincome_annual_funf_growth_ = ((net_income_annual_funf[-1] - net_income_annual_funf[-5])/abs(net_income_annual_funf[-5]))*100
 
                if net_income_annual_funf[0] ==0:
                     netincome_annual_funf_growth =0
@@ -11122,8 +11123,8 @@ with st.container():
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
           col1.info(f"EPS Growth YOY: {EPS_growth_10yrs}%")
-          col2.info(f"5 Yr EPS Growth YOY: {EPS_growth_5yrs:.2f}%") 
-          col3.info(f"3 Yr EPS Growth YOY: {EPS_growth_3years:.2f}%") 
+          col2.info(f"5 YR EPS Growth YOY: {EPS_growth_5yrs:.2f}%") 
+          col3.info(f"3 YR EPS Growth YOY: {EPS_growth_3years:.2f}%") 
           col4.info(f" EPS Growth next 5YR : {Earnings_next_5_yrs}")
 
 
@@ -11132,8 +11133,8 @@ with st.container():
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
           col1.info(f"Revenue Growth YOY: {Revenue_growth_10years}%")
-          col2.info(f"5 Yr Revenue Growth YOY: {Revenue_growth_5years:.2f}%") 
-          col3.info(f"3 Yr Revenue Growth YOY: {Revenue_growth_3years:.2f}%")
+          col2.info(f"5 YR Revenue Growth YOY: {Revenue_growth_5years:.2f}%") 
+          col3.info(f"3 YR Revenue Growth YOY: {Revenue_growth_3years:.2f}%")
 
 
           col1, col2,col3 = st.columns(3)
@@ -11142,8 +11143,8 @@ with st.container():
      # Display the values in colored boxes
           
           col1.info(f"FCF Growth YOY: {Average_fcf_growth_ten}%")
-          col2.info(f"5 Yr FCF Growth YOY: {Average_fcf_growth_five}")
-          col3.info(f"3 Yr FCF Growth YOY: {Average_fcf_growth_3years}")
+          col2.info(f"5 YR FCF Growth YOY: {Average_fcf_growth_five}")
+          col3.info(f"3 YR FCF Growth YOY: {Average_fcf_growth_3years}")
 
 
           col1,col2,col5,col4= st.columns(4)
@@ -11169,7 +11170,7 @@ with st.container():
 
           cola, colb, colc= st.columns(3)
           #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-          Margin_of_safety1 = cola.number_input("1.Margin of Safety (%):", value=8.50)
+          Margin_of_safety1 = cola.number_input("1.Margin of Safety (%):", value=9.00)
      # Margin_of_safety2 = colb.number_input("2.Margin of Safety %:", value=8.50)
           Margin_of_safety3 = colc.number_input("2.Margin of Safety (%):", value=9.00)
      #-------------------------------------------------------------------------------------------------------------------------------------------
@@ -11439,11 +11440,11 @@ with st.container():
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
           with col1:
-               st.write(f"1yr:")
+               st.write(f"1YR:")
           with col2:
-               st.write(f"5yrs:") 
+               st.write(f"5YR:") 
           with col3:
-               st.write(f"10yr:")
+               st.write(f"10YR:")
           with col4:
                st.write(f"LOW")
           with col5:
@@ -11467,7 +11468,7 @@ with st.container():
 
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-          coln1.info(f"Net Profit Margin:{Net_margin_ttm}") 
+          coln1.info(f"Net Profit Margin: {Net_margin_ttm}") 
           coln2.info(f"Net Profit Margin: {five_yrs_Nettomarge}%") 
           coln3.info(f"Net Profit Margin: {Net_income_margin_10}%")
 
@@ -11506,11 +11507,11 @@ with st.container():
           col1.info('Margin Of Safety')
           col2.info('-')
           colx.info('-')
-          colx.write(f"Multiples of Earnings Value:")
+          colx.write(f"Multiple of Earnings Valuation:")
 
 
 
-          
+         
 
           Growth_rate_revenue_LOW = colr9.number_input(" ", value=0.00,key="Growth_rate_revenue_LOW")
           Growth_rate_revenue_middle = colr10.number_input(" ", value=0.00,key="Growth_rate_revenue_middle")
@@ -11533,9 +11534,9 @@ with st.container():
           Growth_rate_P_FCF_high = colfcf11.number_input(" ", value=0.00,key="Growth_rate_P_FCF_high")
 
           #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-          Margin_of_safety_low = cola.number_input(" ", value=0.00,key="Margin_of_safety_low")
-          Margin_of_safety_mid = colb.number_input(" ", value=0.00,key="Margin_of_safety_mid")
-          Margin_of_safety_high = colc.number_input(" ", value=0.00,key="Margin_of_safety_high")
+          Margin_of_safety_low = cola.number_input(" ", value=9.00,key="Margin_of_safety_low")
+          Margin_of_safety_mid = colb.number_input(" ", value=9.00,key="Margin_of_safety_mid")
+          Margin_of_safety_high = colc.number_input(" ", value=9.00,key="Margin_of_safety_high")
 
 
           
@@ -11619,24 +11620,24 @@ with st.container():
                
                     #colx.write(f"Multiples of Earnings Value:")
                     #col20.write(f"{low_DCF:.2f} €")
-                    if Revenue_low_Euro > converted_amount:
-                              font_color = "green"
-                    else:
+                    if float(Revenue_low_Euro) < float(converted_amount):
                          font_color = "red"
+                    else:
+                         font_color = "green"
                     cola.write(f"<span style='color:{font_color}'>{Revenue_low_Euro} €</span>", unsafe_allow_html=True)
                     #col21.write(f"{Average_Middle_DCF:.2f} €")
 
-                    if Revenue_mid_Euro > converted_amount:
-                              font_color = "green"
-                    else:
+                    if float(Revenue_mid_Euro) < float(converted_amount):
                          font_color = "red"
+                    else:
+                         font_color = "green"
                     colb.write(f"<span style='color:{font_color}'>{Revenue_mid_Euro} €</span>", unsafe_allow_html=True)
                     #col22.write(f"{high_DCF:.2f} €")
 
-                    if Revenue_high_Euro > converted_amount:
-                              font_color = "green"
-                    else:
+                    if float(Revenue_high_Euro) < float(converted_amount):
                          font_color = "red"
+                    else:
+                         font_color = "green"
                     colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro} €</span>", unsafe_allow_html=True)
 
 
@@ -12137,7 +12138,7 @@ with st.container():
 
                                         # Create a DataFrame for the metrics
                                         metrics = [
-                                        ('Revenue growth', Revenue_growth_quarter),
+                                        ('Revenue growth ', Revenue_growth_quarter),
                                         ('Net Income growth', NetIncome_growth_quarter),
                                         ('FCF growth', FCF_growth_quarter),
                                         ('EPS growth',EPS_growth_quarter),
@@ -12237,7 +12238,7 @@ with st.container():
                               title=f"10 YR Revenue Growth: {Revenue_growth_10years}    5YR Revenue Growth: {Revenue_growth_5years:.2f}%") 
           #colr3.info(f"Revenue Growth: {Revenue_growth_10years}")
                                             #barmode='group')  # Use 'group' to display bars side by side
-                    fig2.update_layout(title_x=0.05)
+                    #fig2.update_layout(title_x=0.05)
                               
                     #fig.update_traces(marker_color='royalblue')
                     # Display the chart using Streamlit
@@ -12269,7 +12270,7 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='EPS',
                               text='EPS',  # Display the value on top of each bar
                               labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                              title= f"10YR EPS Growth: {EPS_growth_10yrs}%   5YR EPS Growth: {EPS_growth_5yrs:.2f}%   EPS this YR: {Earnings_next_yr}") 
+                              title= f"10YR EPS Growth: {EPS_growth_10yrs}%   5YR: {EPS_growth_5yrs:.2f}%  EPS(ttm): {eps_diluted_ttm}  This YR: {Earnings_next_yr}") 
                    
 
 
@@ -12277,10 +12278,10 @@ with st.container():
 
                     # Display the chart using Streamlit
                     
-                    fig1.update_layout(title_x=0.05)
+                    #fig1.update_layout(title_x=0.05)
 
                     shares_diluted_2003=annual_data['shares_diluted'][-21:]
-                    shares_diluted_2003 = ["{:.2f}".format(value/1e9) for value in shares_diluted_2003]
+                    shares_diluted_2003 = ["{:.3f}".format(value/1e9) for value in shares_diluted_2003]
 
                     data = pd.DataFrame({
                     'Date': date_annual_20yrs,
@@ -12295,7 +12296,8 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='Shares Outstanding',
                               text='Shares Outstanding',  # Display the value on top of each bar
                               labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                              title='Shares Outstanding') # Use 'group' to display bars side by side
+                              title=f"Shares Outstanding 5 YR:  {Shares_outstanding_funf_growth:.2f}%")
+
                     
                     #fig2.update_traces(texttemplate='%{y}', textposition='outside')
                     fig2.update_layout(title_x=0.05)
@@ -12337,7 +12339,7 @@ with st.container():
                          value_at_index_last = 0
                     try:
                          
-                         if value_at_index_6 == 0:
+                         if value_at_index_6 == 0 or value_at_index_last ==0:
                               Dividend_5_CAGR = 0
 
                          else:
@@ -12370,7 +12372,7 @@ with st.container():
                          value_at_index_last = 0
                     try:
                          
-                         if value_at_index_11 == 0:
+                         if value_at_index_11 == 0 or value_at_index_last == 0:
                               Dividend_10_CAGR = 0
 
                          else:
@@ -12507,7 +12509,7 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='Dividend per Share',
                                    text='Dividend per Share',  # Display the value on top of each bar
                                    labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                                   title='Dividend per Share')
+                                   title=f"Current Dividend yield: {Dividend_per_share_yield}")
 
                     fig1.update_layout(title_x=0.05)
           
