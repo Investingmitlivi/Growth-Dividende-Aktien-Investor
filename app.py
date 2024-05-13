@@ -127,7 +127,7 @@ with st.container():
      st.write("##")
      st.write(
         """
-        Livi | Stock Nerd | Fundamental Analysis | Learning, Understanding & Proper Application | Buy & Hold
+        Stock Nerd | Fundamental Analysis | Learning, Understanding & Proper Application | Buy & Hold
         Stock Analysis.
 
         - I share my experiences on how to evaluate a stock or a company.
@@ -8323,7 +8323,8 @@ with st.container():
                #Target_Price='{:.2f}'.format(Target_Price)   
                Dividend_Est = quote.fundamental_df.at[0,"Dividend Est."]
                Dividend_Ex_Date= quote.fundamental_df.at[0,"Dividend Ex-Date"]
-               Earnings_next_yr=quote.fundamental_df.at[0,"EPS this Y"]
+               Earnings_this_yr=quote.fundamental_df.at[0,"EPS this Y"]
+               Earnings_next_yr_in_prozent=quote.fundamental_df.at[0,"EPS next Y - EPS growth next year"]
                Earnings_next_5_yrs=quote.fundamental_df.at[0,"EPS next 5Y"]
                    
           except Exception as e: 
@@ -8338,7 +8339,8 @@ with st.container():
                Target_Price ="-"
                Dividend_Est ="-"
                Dividend_Ex_Date = "-"
-               Earnings_next_yr="-"
+               Earnings_this_yr="-"
+               Earnings_next_yr_in_prozent="-"
                Earnings_next_5_yrs="-"
           
 
@@ -8613,9 +8615,9 @@ with st.container():
           'Dividend/Share (TTM)': '$ {:.2f}'.format(Dividend_current_dividend),
           'Dividend Estimate':f"$ {Dividend_Est}",
           'Dividend Ex-Date':[Dividend_Ex_Date],
-          '5YR Avg FCF': [average_FCF_annual_five_we], 
+          '5 YR Avg FCF': [average_FCF_annual_five_we], 
           'Free Cash Flow (TTM)': [fcf_ttm],
-          'P/FCF (TTM)': [pfcf_ttm], 
+          'Price/FCF (TTM)': [pfcf_ttm], 
           '5 YR Avg P/FCF':[pfcf_funf],
           '10 YR Avg P/FCF':[pfcf_ten],
           '5 YR Operating Margin': [rounded_operating_margin_five],
@@ -8657,13 +8659,15 @@ with st.container():
           f'52WK LOW ( {min_price_date.strftime("%Y/%m/%d")})': ["$ {:.2f}".format(fifty_two_week_low)]
           
           }   
-
-
+         # eps_basic_ttm =Financial_data['ttm']['eps_basic']
+          #st.write("eps_basic_ttm",eps_basic_ttm)
           data4 = {
           
           #'Forward P/E': [forwardPE], 
-          'EPS this YR':[Earnings_next_yr],
-          'EPS next 5yrs':[Earnings_next_5_yrs],
+          'EPS (TTM)':["$ {:.2f}".format(eps_diluted_ttm)],
+          'EPS Estimate this YR':[Earnings_this_yr],
+          'EPS Estimate next YR':[Earnings_next_yr_in_prozent],
+          'EPS Estimate 5 YR':[Earnings_next_5_yrs],
           'PEG': [PEG],
           'Beta': [Beta],
           'RSI (14)': [RSI],
@@ -12253,6 +12257,7 @@ with st.container():
                
 
           #-------------------------------------------------------------------------------------------------
+          
                     
                     eps_diluted_annual_2003=annual_data['eps_diluted'][-21:]
                     eps_diluted_annual_2003 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_2003]
@@ -12270,7 +12275,7 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='EPS',
                               text='EPS',  # Display the value on top of each bar
                               labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                              title= f"10YR EPS Growth: {EPS_growth_10yrs}%   5YR: {EPS_growth_5yrs:.2f}%  EPS(ttm): {eps_diluted_ttm}  This YR: {Earnings_next_yr}") 
+                              title= f"10YR EPS Growth: {EPS_growth_10yrs}%   5YR: {EPS_growth_5yrs:.2f}%  EPS(ttm): {eps_diluted_ttm}  This YR: {Earnings_this_yr}") 
                    
 
 
@@ -12845,7 +12850,7 @@ with st.container():
                     #st.write("BVPS",BVPS)
                     #st.write("PBVPS",PBVPS)
                     data = pd.DataFrame({
-                    'Date': date_annual,
+                    'Date': list(date_annual),
                     'Price to Book Value': Price_to_book,
                     })
 
@@ -13039,7 +13044,39 @@ with st.container():
 
 
           st.write(f"1 USD is equivalent to {usd_to_eur_rate} EUR")
+
+
+
+
+          eps_diluted_ttm = 16.0
+
+          if isinstance(eps_diluted_ttm, float):
+               eps_diluted_ttm = [eps_diluted_ttm]
+
+          # Merge the datasets
+          data = pd.DataFrame({
+          'Date': ['TTM'] * len(eps_diluted_ttm) + list(date_annual_20yrs),
+          'EPS': [eps_diluted_ttm[0]] * len(eps_diluted_ttm) + eps_diluted_annual_2003
+          })
           
+
+          # Sort the dataframe so that TTM value appears last
+          
+
+          # Create the Plotly Express bar chart
+          fig11 = px.bar(data, x='Date', y='EPS', text='EPS',
+                    labels={'value': 'EPS'},
+                    title='EPS Diluted TTM vs EPS Diluted Annual 2003',
+                    hover_data={'EPS': True},
+                    color='Date')
+          # Show the plot
+          st.plotly_chart(fig11, use_container_width=True, config=config)
+
+
+          ## Convert single EPS value to a list
+     #if isinstance(eps_diluted_ttm, float):
+# Convert single EPS value to a list
+      
       
                          
 
@@ -13107,7 +13144,7 @@ with st.container():
 
 # available variables:
           #print("Does Data exist:",quote.exists) 
-          #print("Fundamental",quote.fundamental_df)
+          st.write("Fundamental",quote.fundamental_df)
           
 
 # Display the "Market Cap" using Streamlit
