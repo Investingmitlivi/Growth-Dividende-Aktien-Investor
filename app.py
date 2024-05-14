@@ -7561,45 +7561,39 @@ except Exception as e:
     
 #...............................................................................................................
 
-col2, col3, col4, col5, col6, col7= st.columns(6)
+# col2, col3, col4, col5, col6, col7= st.columns(6)
 
-with col2:
-    button2 = col2.button("1W")
-with col3:
-    button3 = col3.button("1M")
-with col4:
-    button4 = col4.button("YTD")
-with col5:
-    button5 = col5.button("1Y")
-with col6:
-    button6 = col6.button("5Y")
-with col7:
-    button7 = col7.button("MAX")
+# with col2:
+#     button2 = col2.button("1W")
+# with col3:
+#     button3 = col3.button("1M")
+# with col4:
+#     button4 = col4.button("YTD")
+# with col5:
+#     button5 = col5.button("1Y")
+# with col6:
+#     button6 = col6.button("5Y")
+# with col7:
+#     button7 = col7.button("MAX")
 
-# Handle button clicks
-# Handle button clicks and update start_date_input
 
-#if button1:
- #    start_date = datetime.now() - timedelta(days=1)
-if button2:
-    start_date = datetime.now() - timedelta(days=5)
+# if button2:
+#     start_date = datetime.now() - timedelta(days=5)
     
-elif button3:
-    start_date = datetime.now() - timedelta(days=31)
-elif button4:
-    start_date = datetime(datetime.now().year, 1, 1)
-elif button5:
-    start_date = datetime.now() - timedelta(days=365)
-elif button6:
-    #start_date = datetime.now() - timedelta(days=1825)
-    #start_date = datetime(1984, 1, 1)
-    start_date = datetime.now() - timedelta(days=5 * 365)
-elif button7:
-        #start_date = datetime.now() - timedelta(days=1825)
-    #start_date = datetime(1984, 1, 1)
-    start_date = datetime(1984, 1, 1)
-#---------------..........................................
-#---------------...........................................
+# elif button3:
+#     start_date = datetime.now() - timedelta(days=31)
+# elif button4:
+#     start_date = datetime(datetime.now().year, 1, 1)
+# elif button5:
+#     start_date = datetime.now() - timedelta(days=365)
+# elif button6:
+  
+#     start_date = datetime.now() - timedelta(days=5 * 365)
+# elif button7:
+        
+#     start_date = datetime(1984, 1, 1)
+# #---------------..........................................
+# #---------------...........................................
 
 
 
@@ -7665,28 +7659,28 @@ formatted_percentage_return = "{:,.2f}%".format(percentage_return)
 aufrundung = round(percentage_return, 2)
 
 color = "#2E8B57" if aufrundung >= 0 else "red"
-try:
+# try:
 
-     if button2:
-          st.write(f'5 Days Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
+#      if button2:
+#           st.write(f'5 Days Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
 
-     elif button3:
-          st.write(f'1 Month Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
+#      elif button3:
+#           st.write(f'1 Month Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
 
-     elif button4:
-          st.write(f'YTD Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
+#      elif button4:
+#           st.write(f'YTD Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
 
-     elif button5:
-          st.write(f'1 YR Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
+#      elif button5:
+#           st.write(f'1 YR Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
 
-     elif button6:
-          st.write(f'5 YR Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)  
+#      elif button6:
+#           st.write(f'5 YR Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)  
 
-     elif button7:
-          st.write(f'MAX Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True) 
+#      elif button7:
+#           st.write(f'MAX Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True) 
 
-except NameError as ne:
-          st.write("")
+# except NameError as ne:
+#           st.write("")
 
 
           
