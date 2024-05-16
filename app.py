@@ -8319,6 +8319,7 @@ with st.container():
                Dividend_Ex_Date= quote.fundamental_df.at[0,"Dividend Ex-Date"]
                Earnings_this_yr=quote.fundamental_df.at[0,"EPS this Y"]
                Earnings_next_yr_in_prozent=quote.fundamental_df.at[0,"EPS next Y - EPS growth next year"]
+               Earnings_next_yr_in_value=quote.fundamental_df.at[0,"EPS next Y - EPS estimate for next year"]
                Earnings_next_5_yrs=quote.fundamental_df.at[0,"EPS next 5Y"]
                    
           except Exception as e: 
@@ -8335,6 +8336,7 @@ with st.container():
                Dividend_Ex_Date = "-"
                Earnings_this_yr="-"
                Earnings_next_yr_in_prozent="-"
+               Earnings_next_yr_in_value ="-"
                Earnings_next_5_yrs="-"
           
 
@@ -8659,8 +8661,10 @@ with st.container():
           
           #'Forward P/E': [forwardPE], 
           'EPS (TTM)':["$ {:.2f}".format(eps_diluted_ttm)],
-          'EPS Estimate this YR':[Earnings_this_yr],
-          'EPS Estimate next YR':[Earnings_next_yr_in_prozent],
+          'EPS Estimate this YR': f"{Earnings_this_yr}",
+         # 'EPS Estimate next YR':[Earnings_next_yr_in_prozent],
+         'EPS Estimate next YR': f"$ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
+          #'EPS Estimate next YR':f"$ {Earnings_next_yr_in_value}",
           'EPS Estimate 5 YR':[Earnings_next_5_yrs],
           'PEG': [PEG],
           'Beta': [Beta],
