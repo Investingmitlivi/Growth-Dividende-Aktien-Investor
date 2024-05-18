@@ -8036,9 +8036,81 @@ with st.container():
           revenue_annual_ttm = annual_data['revenue'][-1:] 
           average_revenue_annual_ttm = ((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000)
 
-          #revenue_annual_funf = annual_data['revenue'][-5:] 
-          #average_revenue_annual = round((sum(revenue_annual_funf) / len(revenue_annual_funf)) / 1000000000, 2)
+          eps_basic_annual = annual_data['eps_basic'][-10:]
+
+           #...........................................CAGR..........................................................................
+          FCF_Cagr_10 = sum(FCF_Cagr_10)/len(FCF_Cagr_10)
+          FCF_Cagr_10 =round((FCF_Cagr_10*100),2)
+
+     #........................................................................................................................
+          EPS_Cagr_10 = sum(EPS_Cagr_10)/len(EPS_Cagr_10)
+          EPS_Cagr_10 =round((EPS_Cagr_10*100),2)
+     #...........................................................................
+
+   
+
           
+          try:
+               value_at_index_6 = FCF_annual_ten[-6]
+               value_at_index_last  = FCF_annual_ten[-1]
+
+          except Exception as e:
+               value_at_index_6 = 0
+               value_at_index_last = 0
+          try:
+               
+               if value_at_index_6 == 0:
+                    FCF_5_CAGR = 0
+
+               else:
+                         try:
+                              FCF_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
+                              #CAGR = round(CAGR, 2)
+
+                              if isinstance(FCF_5_CAGR, complex):
+                                        FCF_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                              else:
+                                   FCF_5_CAGR = "{:.2f}".format(FCF_5_CAGR)
+
+                         except Exception as e:
+                              FCF_5_CAGR = 0
+
+          except Exception as e:  
+
+               FCF_5_CAGR =0;    
+               
+        
+     #......................................................................................................................     
+          #Free_cash_flow_annual = annual_data['fcf'][-10:]
+          try:
+               value_at_index_6 = eps_basic_annual[-6]
+               value_at_index_last = eps_basic_annual[-1]
+
+          except Exception as e:
+               value_at_index_6 = 0
+               value_at_index_last = 0
+          try:
+               
+               if value_at_index_6 == 0:
+                    EPS_5_CAGR = 0
+
+               else:
+                         try:
+                              EPS_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
+                              #CAGR = round(CAGR, 2)
+
+                              if isinstance(EPS_5_CAGR, complex):
+                                        EPS_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                              else:
+                                   EPS_5_CAGR = "{:.2f}".format(EPS_5_CAGR)
+
+                         except Exception as e:
+                              EPS_5_CAGR = 0
+
+          except Exception as e:  
+
+               EPS_5_CAGR =0;    
+               
 
           Revenue_growth = annual_data['revenue_growth'][-10:] #10years
 
@@ -8667,6 +8739,7 @@ with st.container():
          'EPS Estimate next YR': f"$ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
           #'EPS Estimate next YR':f"$ {Earnings_next_yr_in_value}",
           'EPS Estimate 5 YR':[Earnings_next_5_yrs],
+          'EPS past 5 YR':f"{EPS_5_CAGR}% ",
           'Beta': [Beta],
           'RSI (14)': [RSI],
           '50 SMA' : [Moving_50],
@@ -11029,77 +11102,7 @@ with st.container():
         
 
           
-     #...........................................CAGR..........................................................................
-          FCF_Cagr_10 = sum(FCF_Cagr_10)/len(FCF_Cagr_10)
-          FCF_Cagr_10 =round((FCF_Cagr_10*100),2)
-     #........................................................................................................................
-          EPS_Cagr_10 = sum(EPS_Cagr_10)/len(EPS_Cagr_10)
-          EPS_Cagr_10 =round((EPS_Cagr_10*100),2)
-     #...........................................................................
-          #Free_cash_flow_annual = annual_data['fcf'][-10:]
-
-          
-          try:
-               value_at_index_6 = Free_cash_flow_annual[-6]
-               value_at_index_last  = Free_cash_flow_annual[-1]
-
-          except Exception as e:
-               value_at_index_6 = 0
-               value_at_index_last = 0
-          try:
-               
-               if value_at_index_6 == 0:
-                    FCF_5_CAGR = 0
-
-               else:
-                         try:
-                              FCF_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
-                              #CAGR = round(CAGR, 2)
-
-                              if isinstance(FCF_5_CAGR, complex):
-                                        FCF_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
-                              else:
-                                   FCF_5_CAGR = "{:.2f}".format(FCF_5_CAGR)
-
-                         except Exception as e:
-                              FCF_5_CAGR = 0
-
-          except Exception as e:  
-
-               FCF_5_CAGR =0;    
-               
-        
-     #......................................................................................................................     
-          #Free_cash_flow_annual = annual_data['fcf'][-10:]
-          try:
-               value_at_index_6 = eps_basic_annual[-6]
-               value_at_index_last = eps_basic_annual[-1]
-
-          except Exception as e:
-               value_at_index_6 = 0
-               value_at_index_last = 0
-          try:
-               
-               if value_at_index_6 == 0:
-                    EPS_5_CAGR = 0
-
-               else:
-                         try:
-                              EPS_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
-                              #CAGR = round(CAGR, 2)
-
-                              if isinstance(EPS_5_CAGR, complex):
-                                        EPS_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
-                              else:
-                                   EPS_5_CAGR = "{:.2f}".format(EPS_5_CAGR)
-
-                         except Exception as e:
-                              EPS_5_CAGR = 0
-
-          except Exception as e:  
-
-               EPS_5_CAGR =0;    
-               
+    
           #print("Value at index 4:", value_at_index_4)
           #print("Value at index 9:", value_at_index_9)
           
@@ -11124,10 +11127,10 @@ with st.container():
 
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-          col1.info(f"EPS Growth YOY: {EPS_growth_10yrs}%")
-          col2.info(f"5 YR EPS Growth YOY: {EPS_growth_5yrs:.2f}%") 
-          col3.info(f"3 YR EPS Growth YOY: {EPS_growth_3years:.2f}%") 
-          col4.info(f" EPS Growth next 5YR : {Earnings_next_5_yrs}")
+          #col1.info(f"EPS Growth YOY: {EPS_growth_10yrs}%")
+          #col2.info(f"5 YR EPS Growth YOY: {EPS_growth_5yrs:.2f}%") 
+          #col3.info(f"3 YR EPS Growth YOY: {EPS_growth_3years:.2f}%") 
+          #col4.info(f" EPS Growth next 5YR : {Earnings_next_5_yrs}")
 
 
           col1,col2,col3 = st.columns(3)
@@ -12237,7 +12240,7 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='Revenue Growth',
                               text='Revenue Growth', 
                               labels={'value': 'Amount'},
-                              title=f"10 YR Revenue Growth: {Revenue_growth_10years}    5YR Revenue Growth: {Revenue_growth_5years:.2f}%") 
+                              title=f"10 YR Revenue Y/Y: {Revenue_growth_10years}    5YR Revenue Y/Y: {Revenue_growth_5years:.2f}%") 
           #colr3.info(f"Revenue Growth: {Revenue_growth_10years}")
                                             #barmode='group')  # Use 'group' to display bars side by side
                     #fig2.update_layout(title_x=0.05)
@@ -12273,7 +12276,7 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='EPS',
                               text='EPS',  # Display the value on top of each bar
                               labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                              title= f"10YR EPS Growth: {EPS_growth_10yrs}%   5YR: {EPS_growth_5yrs:.2f}%  EPS(ttm): {eps_diluted_ttm}  This YR: {Earnings_this_yr}") 
+                              title= f"10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(ttm): $ {eps_diluted_ttm}  This YR: {Earnings_this_yr}") 
                    
 
 
@@ -12563,7 +12566,7 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='ROIC',
                               text='ROIC',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title= f"5 YR ROIC Growth: {Average_ROIC_funf}    Current ROIC Growth: {ROIC_annual_one}") 
+                              title= f"5 YR ROIC Y/Y: {Average_ROIC_funf}    Current ROIC: {ROIC_annual_one}") 
                     
                     
                     fig1.update_layout(title_x=0.05)
@@ -12589,7 +12592,7 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='ROE',
                               text='ROE',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title=f"5 YR ROE Growth: {five_ROE}%    Current ROE Growth: {ROE_ttm}") 
+                              title=f"5 YR ROE Y/Y: {five_ROE}%    Current ROE: {ROE_ttm}") 
                     
                     fig2.update_layout(title_x=0.05)
 
@@ -12621,7 +12624,7 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='Gross Margin',
                               text='Gross Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title=f"5 YR Gross Margin: {five_yrs_average_gross_margin}    Current Gross Margin: {rounded_gross_margin}") 
+                              title=f"5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}    Current Gross Margin: {rounded_gross_margin}") 
 
 
                     fig1.update_layout(title_x=0.05)
@@ -12641,7 +12644,7 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='Operating Margin',
                               text='Operating Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title=f"5 YR Operating Margin: {rounded_operating_margin_five}    Current Operating Margin: {rounded_operating_margin}") 
+                              title=f"5 YR Operating Margin Y/Y: {rounded_operating_margin_five}    Current Operating Margin: {rounded_operating_margin}") 
                     
                     fig2.update_layout(title_x=0.05)
 
@@ -12675,7 +12678,7 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='Net Profit Margin',
                               text='Net Profit Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title=f"5 YR Net Profit Margin: {five_yrs_Nettomarge}%    Current Net Profit Margin: {Net_margin_ttm}") 
+                              title=f"5 YR Net Profit Margin Y/Y: {five_yrs_Nettomarge}%    Current Net Profit Margin: {Net_margin_ttm}") 
 
 
 
@@ -12700,7 +12703,7 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='FCF Margin',
                               text='FCF Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title=f"5 YR FCF Margin: {FCF_Margin_5}%    Current FCF Margin: {FCF_Margin_1:.2f}%") 
+                              title=f"5 YR FCF Margin Y/Y: {FCF_Margin_5}%    Current FCF Margin: {FCF_Margin_1:.2f}%") 
                     
 
                     
