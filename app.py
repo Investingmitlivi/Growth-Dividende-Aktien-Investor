@@ -8589,6 +8589,7 @@ with st.container():
           'Revenue (TTM)': [revenue_ttm],      
           '5 YR Net Income': [Average_netIncome_annual_we], 
           'Net Income (TTM)': [netincome_ttm], 
+          'PEG': [PEG],
           'Forward P/E': [forwardPE], 
           'P/E (TTM)': [pe_ttm],
           '5 YR P/E': [pe_five_],
@@ -8666,7 +8667,6 @@ with st.container():
          'EPS Estimate next YR': f"$ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
           #'EPS Estimate next YR':f"$ {Earnings_next_yr_in_value}",
           'EPS Estimate 5 YR':[Earnings_next_5_yrs],
-          'PEG': [PEG],
           'Beta': [Beta],
           'RSI (14)': [RSI],
           '50 SMA' : [Moving_50],
@@ -12994,7 +12994,7 @@ with st.container():
           #st.image('fcf estimate.png', use_column_width=True)
 
           st.write("DCF Calculation")
-          st.image('WACCDCF.png', use_column_width=True)
+          st.image('DCF Update.png', use_column_width=True)
 
           st.write("Terminal Value")
           st.image('Terminal-Value.png', use_column_width=True)
@@ -13046,7 +13046,6 @@ with st.container():
 
 
 
-          eps_diluted_ttm = 16.0
 
           if isinstance(eps_diluted_ttm, float):
                eps_diluted_ttm = [eps_diluted_ttm]
@@ -13142,7 +13141,7 @@ with st.container():
 
 # available variables:
           #print("Does Data exist:",quote.exists) 
-          st.write("Fundamental",quote.fundamental_df)
+          #st.write("Fundamental",quote.fundamental_df)
           
 
 # Display the "Market Cap" using Streamlit
