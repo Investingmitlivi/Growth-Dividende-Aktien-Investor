@@ -7343,6 +7343,7 @@ Industry=data["data"]["metadata"]["industry"]
 cik=data["data"]["metadata"]["CIK"]
 FCF_Cagr_10 = annual_data['fcf_cagr_10'][-1:]
 EPS_Cagr_10 = annual_data['eps_diluted_cagr_10'][-1:]
+Revenue_Cagr_10 = annual_data['revenue_cagr_10'][-1:]
 date_list_quarter = [period_end_date for period_end_date in date_quarter]
 date_list_annual = [period_end_date for period_end_date in date_annual]
 #---------------------------pyfinanz-----------------------------------
@@ -7776,11 +7777,12 @@ try:
      market_variance = np.var(market_returns)
 
      # Calculate beta
-     beta =(covariance / market_variance)
+     beta ="{:,.2f}".format((covariance / market_variance))
+     #st.write("beta",beta)
 
 except Exception as e:
     # Handle ValueError (e.g., division by zero) or KeyError (data not found) by setting beta to 1
-     beta = 1
+     beta = "{:,.2f}".format(1.0)
      #print(f"Beta of {ticker} could not be calculated. Using default value: {beta:.2f}")
 
 
@@ -8037,6 +8039,8 @@ with st.container():
           average_revenue_annual_ttm = ((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000)
 
           eps_basic_annual = annual_data['eps_basic'][-10:]
+          Revenue_growth = annual_data['revenue_growth'][-10:]
+          revenue_2013 = annual_data['revenue'][-10:] 
 
            #...........................................CAGR..........................................................................
           FCF_Cagr_10 = sum(FCF_Cagr_10)/len(FCF_Cagr_10)
@@ -8046,8 +8050,10 @@ with st.container():
           EPS_Cagr_10 = sum(EPS_Cagr_10)/len(EPS_Cagr_10)
           EPS_Cagr_10 =round((EPS_Cagr_10*100),2)
      #...........................................................................
+          Revenue_Cagr_10 = sum(Revenue_Cagr_10)/len(Revenue_Cagr_10)
+          Revenue_Cagr_10= round((Revenue_Cagr_10*100),2)
 
-   
+     #....................................................
 
           
           try:
@@ -8081,7 +8087,7 @@ with st.container():
                
         
      #......................................................................................................................     
-          #Free_cash_flow_annual = annual_data['fcf'][-10:]
+          
           try:
                value_at_index_6 = eps_basic_annual[-6]
                value_at_index_last = eps_basic_annual[-1]
@@ -8111,20 +8117,53 @@ with st.container():
 
                EPS_5_CAGR =0;    
                
+#------------------------------------------------------------------------------------------------------------------------------------------------------------
+          
 
-          Revenue_growth = annual_data['revenue_growth'][-10:] #10years
+               
+          try:
+               value_at_index_6 = revenue_2013[-6]
+               value_at_index_last = revenue_2013[-1]
+
+          except Exception as e:
+               value_at_index_6 = 0
+               value_at_index_last = 0
+          try:
+               
+               if value_at_index_6 == 0:
+                    Revenue_5_CAGR = 0
+
+               else:
+                         try:
+                              Revenue_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
+                              #CAGR = round(CAGR, 2)
+
+                              if isinstance(Revenue_5_CAGR, complex):
+                                        Revenue_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                              else:
+                                   Revenue_5_CAGR = "{:.2f}".format(Revenue_5_CAGR)
+
+                         except Exception as e:
+                              Revenue_5_CAGR = 0
+
+          except Exception as e:  
+
+               Revenue_5_CAGR =0;    
+               
+#------------------------------------------------------------------------------------------------------------------------------------------------------------
+          
+          #10years
 
           Revenue_growth_3years = annual_data['revenue_growth'][-3:]
           Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
           Revenue_growth_3years = (Revenue_growth_3years*100)
 
-          Revenue_growth_5years = annual_data['revenue_growth'][-5:]
-          Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
-          Revenue_growth_5years = (Revenue_growth_5years*100)
 
           Revenue_growth_1year = annual_data['revenue_growth'][-1:]
           Revenue_growth_1year=sum(Revenue_growth_1year)/len(Revenue_growth_1year)
           Revenue_growth_1year = (Revenue_growth_1year*100)
+
+         
 
           FCF_Margin = annual_data['fcf_margin'][-10:] #10years
           FCF_Margin_10 =sum(FCF_Margin)/len(FCF_Margin)
@@ -8151,9 +8190,9 @@ with st.container():
           #Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
           #Revenue_growth_3years = (Revenue_growth_3years*100)
 
-          #Revenue_growth_5years = annual_data['revenue_growth'][-5:]
-          #Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
-          #Revenue_growth_5years = (Revenue_growth_5years*100)
+          Revenue_growth_5years = annual_data['revenue_growth'][-5:]
+          Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
+          Revenue_growth_5years = (Revenue_growth_5years*100)
 
           try:
                fcf_yield_ttm = "{:.2f}%".format((fcf_per_share/amount)*100)
@@ -8265,8 +8304,8 @@ with st.container():
                Average_fcf_growth_ten =  "{:.2f}".format(((sum(fcf_growth_ten) / len(fcf_growth_ten)))*100)
                average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
                pfcf_ten="{:.2f}".format(Marketcap/(average_FCF_annual_ten/1000000000))
-               Revenue_growth_10years=sum(Revenue_growth)/len(Revenue_growth)
-               Revenue_growth_10years = "{:.2f}%".format(Revenue_growth_10years*100)
+               #Revenue_growth_10years=sum(Revenue_growth)/len(Revenue_growth)
+               #Revenue_growth_10years = "{:.2f}%".format(Revenue_growth_10years*100)
                Net_income_margin_10 = "{:.2f}".format((Net_income_margin_10)*100)
                FCF_Margin_10 = "{:.2f}".format((FCF_Margin_10)*100)
                EPS_growth_10yrs="{:.2f}".format(EPS_growth_10yrs)
@@ -8275,7 +8314,7 @@ with st.container():
           else:
                P_OCF_10= "-"
                Average_fcf_growth_ten = "0.00"
-               Revenue_growth_10years= "0.00"
+               #Revenue_growth_10years= "0.00"
                EPS_growth_10yrs="0.00"
                Average_pe_ten = "0.00"
                average_PE_historical = "-"
@@ -8641,10 +8680,11 @@ with st.container():
 
           
           #Net_Operating_CashFlow_ttm = Financial_data['ttm']['cf_cfo'] 
-          
+          current_Operating_cash_Flow =Financial_data['ttm']['cf_cfo']
+          current_Operating_cash_Flow_Value ="{:.2f}B".format(current_Operating_cash_Flow/ 1000000000) if abs(current_Operating_cash_Flow) >= 1000000000 else "{:,.1f}M".format(current_Operating_cash_Flow / 1000000)
 
           if Financial_data['ttm']['cf_cfo'] !=0:
-               P_OCF_ttm = "{:.2f}".format(Marketcap/(Financial_data['ttm']['cf_cfo']/1000000000))
+               P_OCF_ttm = "{:.2f}".format(Marketcap/(current_Operating_cash_Flow/1000000000))
 
           else:
                P_OCF_ttm = "-"
@@ -8666,9 +8706,10 @@ with st.container():
           'P/E (TTM)': [pe_ttm],
           '5 YR P/E': [pe_five_],
           '10 YR P/E': [average_PE_historical],
-          'P/OCF (TTM)':[P_OCF_ttm],  
-          '5 YR P/OCF ':[P_OCF_5],  
-          '10 YR P/OCF':[P_OCF_10],  
+          'Operating Cash Flow (TTM)': [current_Operating_cash_Flow_Value], 
+          'Price/OCF (TTM)':[P_OCF_ttm],  
+          '5 YR Price/OCF ':[P_OCF_5],  
+          '10 YR Price/OCF':[P_OCF_10],  
           '5 YR Gross Profit Margin': [five_yrs_average_gross_margin],
           'Gross Profit Margin (TTM)': [rounded_gross_margin],
           
@@ -8687,8 +8728,8 @@ with st.container():
           '5 YR Avg FCF': [average_FCF_annual_five_we], 
           'Free Cash Flow (TTM)': [fcf_ttm],
           'Price/FCF (TTM)': [pfcf_ttm], 
-          '5 YR Avg P/FCF':[pfcf_funf],
-          '10 YR Avg P/FCF':[pfcf_ten],
+          '5 YR Avg Price/FCF':[pfcf_funf],
+          '10 YR Avg Price/FCF':[pfcf_ten],
           '5 YR Operating Margin': [rounded_operating_margin_five],
           'Operating Margin': [rounded_operating_margin],
           '5 YR Net Profit Margin':f"{five_yrs_Nettomarge}%",
@@ -10980,7 +11021,7 @@ with st.container():
           #eps_basic_quarter = [int(eps_basic) for eps_basic in eps_basic_quarter]
 
 
-          Average_stock_market_beta = beta
+          Average_stock_market_beta = float(beta)
                
           Market_return = 8.51
           #total =annual_data['fcf'][-1:]
@@ -11115,12 +11156,14 @@ with st.container():
                  
      #-------------------------------   
 
-          col1, col2,col3,col4 = st.columns(4)
+          col1, col2,col3,col4,col5 = st.columns(5)
 
-          col1.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
-          col2.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
-          col3.info(f"FCF 10 CAGR: {FCF_Cagr_10}%")
-          col4.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
+          col1.info(f"FCF 10 CAGR: {FCF_Cagr_10}%")
+          col2.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
+          col3.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
+          col4.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
+          col5.info(f"EPS next 5 YR: {Earnings_next_5_yrs}")
+          
 
 
           col1,col2,col3,col4 = st.columns(4)
@@ -11137,9 +11180,9 @@ with st.container():
 
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-          col1.info(f"Revenue Growth YOY: {Revenue_growth_10years}%")
-          col2.info(f"5 YR Revenue Growth YOY: {Revenue_growth_5years:.2f}%") 
-          col3.info(f"3 YR Revenue Growth YOY: {Revenue_growth_3years:.2f}%")
+          col1.info(f"Revenue Growth: {Revenue_Cagr_10}%")
+          col2.info(f"5 YR Revenue: {Revenue_5_CAGR}%") 
+          col3.info(f"1 YR Revenue Growth YOY: {Revenue_growth_1year:.2f}%")
 
 
           col1, col2,col3 = st.columns(3)
@@ -11463,8 +11506,8 @@ with st.container():
           # Display the values in colored boxes
           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
           colr1.info(f"Revenue Growth: {Revenue_growth_1year:.2f}%")
-          colr2.info(f"Revenue Growth: {Revenue_growth_5years:.2f}%") 
-          colr3.info(f"Revenue Growth: {Revenue_growth_10years}")
+          colr2.info(f"Revenue Growth: {Revenue_5_CAGR}%") 
+          colr3.info(f"Revenue Growth: {Revenue_Cagr_10}%")
 
           
           #Growth_rate1 = col9.number_input("Wachstumsrate (Base Case) in %:", value=0.00, key="growth_rate1")
@@ -11516,8 +11559,11 @@ with st.container():
 
 
 
-         
+          load =st.button('Calculate')
+          if "load_state" not in st.session_state:
+               st.session_state.load_state =False
 
+         
           Growth_rate_revenue_LOW = colr9.number_input(" ", value=0.00,key="Growth_rate_revenue_LOW")
           Growth_rate_revenue_middle = colr10.number_input(" ", value=0.00,key="Growth_rate_revenue_middle")
           Growth_rate_revenue_high = colr11.number_input(" ", value=0.00,key="Growth_rate_revenue_high")
@@ -11618,7 +11664,9 @@ with st.container():
 
           #st.session_state = True
           with col1:
-               if st.button("Calculate", key="Calculate_revenue"):
+               #if st.button("Calculate", key="Calculate_revenue"):
+               if load or st.session_state.load_state:
+                    st.session_state.load_state = True
 
                                   #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
                               #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
@@ -12206,6 +12254,10 @@ with st.container():
                     #revenue_2003 = [round(value, 2) for value in revenue_2003]
                     revenue_2003 = ["{:.2f}".format(value/1e9) for value in revenue_2003]
 
+                    #revenue_2003 = [(value) for value in annual_data['revenue'][-21:]]
+
+                    #dividendPaidInTheLast21Years = [abs(value) for value in annual_data['cff_dividend_paid'][-21:]]
+
                     # Create a DataFrame for the data
                     data = pd.DataFrame({
                     'Date': date_annual_20yrs,
@@ -12216,9 +12268,10 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='Revenue',
                               text='Revenue',    
                               labels={'value': 'Amount()'},
-                              title='Revenue in Billions($)')
+                              title=f"Revenue in Billions USD: 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%") 
                    
-                    fig1.update_layout(title_x=0.05)         
+                    fig1.update_layout(title_x=0.05)     
+
                     
                     revenue_growth_2003= annual_data['revenue_growth'][-21:]                    
                     #revenue_2003 = [round(value, 2) for value in revenue_2003]
@@ -12240,7 +12293,10 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='Revenue Growth',
                               text='Revenue Growth', 
                               labels={'value': 'Amount'},
-                              title=f"10 YR Revenue Y/Y: {Revenue_growth_10years}    5YR Revenue Y/Y: {Revenue_growth_5years:.2f}%") 
+                              title=f"5 YR Revenue Y/Y: {Revenue_growth_5years:.2f}%    1 YR Revenue: {Revenue_growth_1year:.2f}%") 
+                    
+                     
+          
           #colr3.info(f"Revenue Growth: {Revenue_growth_10years}")
                                             #barmode='group')  # Use 'group' to display bars side by side
                     #fig2.update_layout(title_x=0.05)
@@ -12713,10 +12769,10 @@ with st.container():
                     col1, col2 = st.columns(2)
                     with col1:
 
-                         st.plotly_chart(fig1,use_container_width=True,config=config)
+                         st.plotly_chart(fig2,use_container_width=True,config=config)
 
                     with col2:
-                         st.plotly_chart(fig2,use_container_width=True,config=config)
+                         st.plotly_chart(fig1,use_container_width=True,config=config)
  
 #........  ...................................................................................................................               
                          #Price_to_earnings=annual_data['price_to_earnings'][-10:]
@@ -13041,10 +13097,10 @@ with st.container():
           st.write(short_description)
 
           Net_debt =annual_data['net_debt'][-5:]
-          st.write("Net_debt",Net_debt)
+          #st.write("Net_debt",Net_debt)
 
 
-          st.write(f"1 USD is equivalent to {usd_to_eur_rate} EUR")
+          #st.write(f"1 USD is equivalent to {usd_to_eur_rate} EUR")
 
 
 
@@ -13053,30 +13109,23 @@ with st.container():
           if isinstance(eps_diluted_ttm, float):
                eps_diluted_ttm = [eps_diluted_ttm]
 
-          # Merge the datasets
           data = pd.DataFrame({
           'Date': ['TTM'] * len(eps_diluted_ttm) + list(date_annual_20yrs),
           'EPS': [eps_diluted_ttm[0]] * len(eps_diluted_ttm) + eps_diluted_annual_2003
           })
           
 
-          # Sort the dataframe so that TTM value appears last
-          
-
-          # Create the Plotly Express bar chart
+         
           fig11 = px.bar(data, x='Date', y='EPS', text='EPS',
                     labels={'value': 'EPS'},
                     title='EPS Diluted TTM vs EPS Diluted Annual 2003',
                     hover_data={'EPS': True},
                     color='Date')
           # Show the plot
-          st.plotly_chart(fig11, use_container_width=True, config=config)
+         # st.plotly_chart(fig11, use_container_width=True, config=config)
 
 
-          ## Convert single EPS value to a list
-     #if isinstance(eps_diluted_ttm, float):
-# Convert single EPS value to a list
-      
+     
       
                          
 
@@ -13107,10 +13156,6 @@ with st.container():
           #      link = row['link']
           #      st.write(f"Headline: {headline}")
           #      st.write(f"Link: {link}")
-
-
-
-          
 
 
 
