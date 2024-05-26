@@ -13096,23 +13096,23 @@ with st.container():
 
 
 
-          if isinstance(eps_diluted_ttm, float):
-               eps_diluted_ttm = [eps_diluted_ttm]
+          # if isinstance(eps_diluted_ttm, float):
+          #      eps_diluted_ttm = [eps_diluted_ttm]
 
-          data = pd.DataFrame({
-          'Date': ['TTM'] * len(eps_diluted_ttm) + list(date_annual_20yrs),
-          'EPS': [eps_diluted_ttm[0]] * len(eps_diluted_ttm) + eps_diluted_annual_2003
-          })
+          # data = pd.DataFrame({
+          # 'Date': ['TTM'] * len(eps_diluted_ttm) + list(date_annual_20yrs),
+          # 'EPS': [eps_diluted_ttm[0]] * len(eps_diluted_ttm) + eps_diluted_annual_2003
+          # })
           
 
          
-          fig11 = px.bar(data, x='Date', y='EPS', text='EPS',
-                    labels={'value': 'EPS'},
-                    title='EPS Diluted TTM vs EPS Diluted Annual 2003',
-                    hover_data={'EPS': True},
-                    color='Date')
-          # Show the plot
-         # st.plotly_chart(fig11, use_container_width=True, config=config)
+          # fig11 = px.bar(data, x='Date', y='EPS', text='EPS',
+          #           labels={'value': 'EPS'},
+          #           title='EPS Diluted TTM vs EPS Diluted Annual 2003',
+          #           hover_data={'EPS': True},
+          #           color='Date')
+          # # Show the plot
+          # st.plotly_chart(fig11, use_container_width=True, config=config)
 
 
      
