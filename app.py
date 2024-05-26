@@ -10201,69 +10201,69 @@ with st.container():
                                                             Total_Non_interest_revenue_quarterly = annual_data['total_noninterest_revenue'][-10:]
                                                        #....................................................................................................
                                                             revenue_quarterly_list_billion = ["{:.2f}B".format(revenue / 1000000000) if abs(revenue)>= 1000000000 else "{:,.0f}M".format(revenue / 1000000) for revenue in revenue_2013_quarterly]
-                                                            revenue_quarterly_df = pd.DataFrame(revenue_quarterly_list_billion, index=date_list_quarter,  columns=["Revenue"])
+                                                            revenue_quarterly_df = pd.DataFrame(revenue_quarterly_list_billion, index=date_list_annual,  columns=["Revenue"])
                                                             revenue_quarterly_df = revenue_quarterly_df.transpose()
                                                        #..........................................................................................................................................
                                                             Pretax_income_quarterly_table = ["{:.2f}B".format(pretax_income / 1000000000) if abs(pretax_income) >= 1000000000 else "{:,.0f}M".format(pretax_income / 1000000) for pretax_income in Pretax_income_quarterly]
-                                                            Pretax_income_quarterly_df = pd.DataFrame(Pretax_income_quarterly_table, index=date_list_quarter,  columns=["Pre_Tax Income"])
+                                                            Pretax_income_quarterly_df = pd.DataFrame(Pretax_income_quarterly_table, index=date_list_annual,  columns=["Pre_Tax Income"])
                                                             Pretax_income_quarterly_df = Pretax_income_quarterly_df.transpose()
                                                        #----------------------------------------------------------------    
                                                             
                                                             net_income_quarterly_table = ["{:.2f}B".format(net_income / 1000000000) if abs(net_income) >= 1000000000 else "{:,.0f}M".format(net_income / 1000000) for net_income in net_income_quarterly]
-                                                            net_income_quarterly_df = pd.DataFrame(net_income_quarterly_table, index=date_list_quarter,  columns=["Net Income"])
+                                                            net_income_quarterly_df = pd.DataFrame(net_income_quarterly_table, index=date_list_annual,  columns=["Net Income"])
                                                             net_income_quarterly_df = net_income_quarterly_df.transpose()
                                                        #----------------------------------------------------------------   
                                                             eps_basic_quarterly_table = ["{:.2f}".format(eps_basic) for eps_basic in eps_basic_quarterly]
                                                                       #eps_basic_table = [int(eps_basic) for eps_basic in eps_basic_annual]
-                                                            eps_basic_quarterly_df = pd.DataFrame(eps_basic_quarterly_table, index=date_list_quarter,  columns=["EPS(basic)"])
+                                                            eps_basic_quarterly_df = pd.DataFrame(eps_basic_quarterly_table, index=date_list_annual,  columns=["EPS(basic)"])
                                                             eps_basic_quarterly_df = eps_basic_quarterly_df.transpose()
                                                        #----------------------------------------------------------------    
                                                             shares_basic_quarterly_table = ["{:.2f}B".format(shares_basic / 1000000000) if shares_basic >= 1000000000 else "{:,.0f}M".format(shares_basic / 1000000) for shares_basic in shares_basic_quarterly]
-                                                            shares_basic_quarterly_df = pd.DataFrame(shares_basic_quarterly_table, index=date_list_quarter,  columns=["Basic Shares Outstanding"])
+                                                            shares_basic_quarterly_df = pd.DataFrame(shares_basic_quarterly_table, index=date_list_annual,  columns=["Basic Shares Outstanding"])
                                                             shares_basic_quarterly_df = shares_basic_quarterly_df.transpose()
                                                        #----------------------------------------------------------------    
                                                             eps_diluted_quarterly_table = ["{:.2f}".format(eps_diluted / 1) for eps_diluted in eps_diluted_quarterly]
-                                                            eps_diluted_quarterly_df = pd.DataFrame(eps_diluted_quarterly_table, index=date_list_quarter,  columns=["EPS(diluted)"])
+                                                            eps_diluted_quarterly_df = pd.DataFrame(eps_diluted_quarterly_table, index=date_list_annual,  columns=["EPS(diluted)"])
                                                             eps_diluted_quarterly_df = eps_diluted_quarterly_df.transpose()
                                                        #----------------------------------------------------------------    
                                                             shares_diluted_quarterly_table = ["{:.2f}B".format(shares_diluted / 1000000000) if shares_diluted >= 1000000000 else "{:,.0f}M".format(shares_diluted / 1000000) for shares_diluted in shares_diluted_quarterly]
-                                                            shares_diluted_quarterly_df = pd.DataFrame(shares_diluted_quarterly_table, index=date_list_quarter,  columns=["Diluted Shares Outstanding"])
+                                                            shares_diluted_quarterly_df = pd.DataFrame(shares_diluted_quarterly_table, index=date_list_annual,  columns=["Diluted Shares Outstanding"])
                                                             shares_diluted_quarterly_df = shares_diluted_quarterly_df.transpose()
                                                        #----------------------------------------------------------------      
                                                        
                                                             # Convert interest income values to billion USD and round to 3 decimal places
                                                             Total_interestincome_list_quarterly_billion = ["{:.2f}B".format(total_interest_income / 1000000000) if abs(total_interest_income) >= 1000000000 else "{:,.0f}M".format(total_interest_income / 1000000) for total_interest_income in Total_interest_income_list_quarterly]
-                                                            total_interestincome_quarterly_df = pd.DataFrame(Total_interestincome_list_quarterly_billion,  index=date_list_quarter, columns=["Total Interest Income"])
+                                                            total_interestincome_quarterly_df = pd.DataFrame(Total_interestincome_list_quarterly_billion,  index=date_list_annual, columns=["Total Interest Income"])
                                                             total_interestincome_quarterly_df = total_interestincome_quarterly_df.transpose()
                                                             #-------------------------------------------------------------
                                                                                                          # Convert interest income values to billion USD and round to 3 decimal places
                                                             Total_interest_expense_list_quarterly_billion = ["{:.2f}B".format(total_interest_expense / 1000000000) if abs(total_interest_expense) >= 1000000000 else "{:,.0f}M".format(total_interest_expense / 1000000) for total_interest_expense in Total_interest_expense_list_quarterly]
-                                                            total_interest_expense_quarterly_df = pd.DataFrame(Total_interest_expense_list_quarterly_billion,  index=date_list_quarter, columns=["Total Interest Expense"])
+                                                            total_interest_expense_quarterly_df = pd.DataFrame(Total_interest_expense_list_quarterly_billion,  index=date_list_annual, columns=["Total Interest Expense"])
                                                             total_interest_expense_quarterly_df = total_interest_expense_quarterly_df.transpose()
                                                             #-------------------------------------------------------------
                                         
                                                             Net_interest_Income_list_quarterly_billion = ["{:.2f}B".format(net_interest_income / 1000000000) if abs(net_interest_income) >= 1000000000 else "{:,.0f}M".format(net_interest_income / 1000000) for net_interest_income in Total_interest_income_list_quarterly]
-                                                            Net_interest_Income_quarterly_df = pd.DataFrame(Net_interest_Income_list_quarterly_billion,  index=date_list_quarter, columns=["Net Interest Income"])
+                                                            Net_interest_Income_quarterly_df = pd.DataFrame(Net_interest_Income_list_quarterly_billion,  index=date_list_annual, columns=["Net Interest Income"])
                                                             Net_interest_Income_quarterly_df = Net_interest_Income_quarterly_df.transpose()
                                                             #-------------------------------------------------------------
                                                                       
                                                             Prov_Credit_losses_list_quarterly_billion = ["{:.2f}B".format(credit_losses_provision / 1000000000) if abs(credit_losses_provision) >= 1000000000 else "{:,.0f}M".format(credit_losses_provision / 1000000) for credit_losses_provision in Prov_Credit_losses_quarterly]
-                                                            Prov_Credit_losses_quarterly_df = pd.DataFrame(Prov_Credit_losses_list_quarterly_billion,  index=date_list_quarter, columns=["Provision for Credit Losses"])
+                                                            Prov_Credit_losses_quarterly_df = pd.DataFrame(Prov_Credit_losses_list_quarterly_billion,  index=date_list_annual, columns=["Provision for Credit Losses"])
                                                             Prov_Credit_losses_quarterly_df = Prov_Credit_losses_quarterly_df.transpose()
                                                             #-------------------------------------------------------------
                                                             Netinterest_Prov_Credit_losses_list_quarterly_billion = ["{:.2f}B".format(net_interest_income_after_credit_losses_provision / 1000000000) if abs(net_interest_income_after_credit_losses_provision) >= 1000000000 else "{:,.0f}M".format(net_interest_income_after_credit_losses_provision / 1000000) for net_interest_income_after_credit_losses_provision in Netinterest_Prov_Credit_losses_quarterly]
-                                                            Netinterest_Prov_Credit_losses_quarterly_df = pd.DataFrame(Netinterest_Prov_Credit_losses_list_quarterly_billion,  index=date_list_quarter, columns=["Net Interest Income After Provision"])
+                                                            Netinterest_Prov_Credit_losses_quarterly_df = pd.DataFrame(Netinterest_Prov_Credit_losses_list_quarterly_billion,  index=date_list_annual, columns=["Net Interest Income After Provision"])
                                                             Netinterest_Prov_Credit_losses_quarterly_df = Netinterest_Prov_Credit_losses_quarterly_df.transpose()
                                                             #-------------------------------------------------------------
                                                             
                                                                       
                                                             Total_Non_interest_expenses_list_quarterly_billion = ["{:.2f}B".format(total_noninterest_expense / 1000000000) if abs(total_noninterest_expense) >= 1000000000 else "{:,.0f}M".format(total_noninterest_expense / 1000000) for total_noninterest_expense in Total_Non_interest_expenses_quarterly]
-                                                            Total_Non_interest_expenses_quarterly_df = pd.DataFrame(Total_interestincome_list_quarterly_billion,  index=date_list_quarter, columns=["Non Interest Expense"])
+                                                            Total_Non_interest_expenses_quarterly_df = pd.DataFrame(Total_interestincome_list_quarterly_billion,  index=date_list_annual, columns=["Non Interest Expense"])
                                                             Total_Non_interest_expenses_quarterly_df = Total_Non_interest_expenses_quarterly_df.transpose()
                                                             #-------------------------------------------------------------
                                         
                                                             Total_Non_interest_revenue_list_quarterly_billion = ["{:.2f}B".format(total_noninterest_revenue / 1000000000) if abs(total_noninterest_revenue) >= 1000000000 else "{:,.0f}M".format(total_noninterest_revenue / 1000000) for total_noninterest_revenue in Total_Non_interest_revenue_quarterly]
-                                                            Total_Non_interest_revenue_quarterly_df = pd.DataFrame(Total_Non_interest_revenue_list_quarterly_billion,  index=date_list_quarter, columns=["Non Interest Revenue"])
+                                                            Total_Non_interest_revenue_quarterly_df = pd.DataFrame(Total_Non_interest_revenue_list_quarterly_billion,  index=date_list_annual, columns=["Non Interest Revenue"])
                                                             Total_Non_interest_revenue_quarterly_df =Total_Non_interest_revenue_quarterly_df.transpose()
                                                             #-------------------------------------------------------------
 
@@ -10294,56 +10294,56 @@ with st.container():
                                                                            Income_tax_annual = annual_data['income_tax'][-10:]
 
                                                                            Net_premiums_earned_list_billion = ["{:.2f}B".format(premiums_earned / 1000000000) if abs(premiums_earned) >= 1000000000 else "{:,.0f}M".format(premiums_earned / 1000000) for premiums_earned in Net_premiums_earned]
-                                                                           net_premiums_earned_df = pd.DataFrame(Net_premiums_earned_list_billion, index=date_list_quarter,  columns=["Net Premiums Earned"])
+                                                                           net_premiums_earned_df = pd.DataFrame(Net_premiums_earned_list_billion, index=date_list_annual,  columns=["Net Premiums Earned"])
                                                                            net_premiums_earned_df = net_premiums_earned_df.transpose()
                                                                            #....................................................................................................
                                                                            #Net_investment_income = quarterly_data['net_investment_income'][-10:] 
                                                                       
                                                                            Net_investment_income_list_billion = ["{:.2f}B".format(net_investment_income / 1000000000) if abs(net_investment_income) >= 1000000000 else "{:,.0f}M".format(net_investment_income / 1000000) for net_investment_income in Net_investment_income]
-                                                                           net_investment_income_df = pd.DataFrame(Net_investment_income_list_billion, index=date_list_quarter,  columns=["Net Investment Income"])
+                                                                           net_investment_income_df = pd.DataFrame(Net_investment_income_list_billion, index=date_list_annual,  columns=["Net Investment Income"])
                                                                            net_investment_income_df = net_investment_income_df.transpose()
                                                                            #....................................................................................................
                                                                                 #Fees_and_other_income = quarterly_data['fees_and_other_income'][-10:] 
                                                                            
                                                                            Fees_and_other_income_list_billion = ["{:.2f}B".format(fees_and_other_income / 1000000000) if abs(fees_and_other_income) >= 1000000000 else "{:,.0f}M".format(fees_and_other_income / 1000000) for fees_and_other_income in Fees_and_other_income]
-                                                                           Fees_and_other_income_df = pd.DataFrame(Fees_and_other_income_list_billion, index=date_list_quarter,  columns=["Fees And Other Income"])
+                                                                           Fees_and_other_income_df = pd.DataFrame(Fees_and_other_income_list_billion, index=date_list_annual,  columns=["Fees And Other Income"])
                                                                            Fees_and_other_income_df = Fees_and_other_income_df.transpose()
                                                                            #....................................................................................................
                                                                            #Interest_Expense_insurance = quarterly_data['interest_Expense_insurance'][-10:] 
                                                                            Interest_Expense_insurance_list_billion = ["{:.2f}B".format(interest_expense_insurance / 1000000000) if abs(interest_expense_insurance) >= 1000000000 else "{:,.0f}M".format(interest_expense_insurance / 1000000) for interest_expense_insurance in Interest_Expense_insurance]
-                                                                           Interest_Expense_insurance_df = pd.DataFrame(Interest_Expense_insurance_list_billion, index=date_list_quarter,  columns=["Interest Expense"])
+                                                                           Interest_Expense_insurance_df = pd.DataFrame(Interest_Expense_insurance_list_billion, index=date_list_annual,  columns=["Interest Expense"])
                                                                            Interest_Expense_insurance_df = Interest_Expense_insurance_df.transpose()
                                                                            
                                                                            #....................................................................................................
                                                                            revenue_list_billion = ["{:.2f}B".format(revenue / 1000000000) if abs(revenue) >= 1000000000 else "{:,.0f}M".format(revenue / 1000000) for revenue in revenue_2013]
-                                                                           revenue_df = pd.DataFrame(revenue_list_billion, index=date_list_quarter,  columns=["Total Revenue"])
+                                                                           revenue_df = pd.DataFrame(revenue_list_billion, index=date_list_annual,  columns=["Total Revenue"])
                                                                            revenue_df = revenue_df.transpose()
                                                                            
                                                                            #..........................................................................................................................................
                                                                            Pretax_income_table = ["{:.2f}B".format(pretax_income / 1000000000) if abs(pretax_income) >= 1000000000 else "{:,.0f}M".format(pretax_income / 1000000) for pretax_income in Pretax_income_annual]
-                                                                           Pretax_income_df = pd.DataFrame(Pretax_income_table, index=date_list_quarter,  columns=["Pre-Tax Income"])
+                                                                           Pretax_income_df = pd.DataFrame(Pretax_income_table, index=date_list_annual,  columns=["Pre-Tax Income"])
                                                                            Pretax_income_df = Pretax_income_df.transpose()
                                                             #----------------------------------------------------------------    
                                                                  
                                                                            net_income_table = ["{:.2f}B".format(net_income / 1000000000) if abs(net_income) >= 1000000000 else "{:,.0f}M".format(net_income / 1000000) for net_income in net_income_annual]
-                                                                           net_income_df = pd.DataFrame(net_income_table, index=date_list_quarter,  columns=["Net Income"])
+                                                                           net_income_df = pd.DataFrame(net_income_table, index=date_list_annual,  columns=["Net Income"])
                                                                            net_income_df = net_income_df.transpose()
                                                             #----------------------------------------------------------------   
                                                                            eps_basic_table = ["{:.2f}".format(eps_basic) for eps_basic in eps_basic_annual]
                                                                            #eps_basic_table = [int(eps_basic) for eps_basic in eps_basic_annual]
-                                                                           eps_basic_df = pd.DataFrame(eps_basic_table, index=date_list_quarter,  columns=["EPS(basic)"])
+                                                                           eps_basic_df = pd.DataFrame(eps_basic_table, index=date_list_annual,  columns=["EPS(basic)"])
                                                                            eps_basic_df = eps_basic_df.transpose()
                                                             #----------------------------------------------------------------    
                                                                            shares_basic_table = ["{:.2f}B".format(shares_basic / 1000000000) if shares_basic >= 1000000000 else "{:,.0f}M".format(shares_basic / 1000000) for shares_basic in shares_basic_annual]
-                                                                           shares_basic_df = pd.DataFrame(shares_basic_table, index=date_list_quarter,  columns=["Basic Shares Outstanding"])
+                                                                           shares_basic_df = pd.DataFrame(shares_basic_table, index=date_list_annual,  columns=["Basic Shares Outstanding"])
                                                                            shares_basic_df = shares_basic_df.transpose()
                                                             #----------------------------------------------------------------    
                                                                            eps_diluted_table = ["{:.2f}".format(eps_diluted / 1) for eps_diluted in eps_diluted_annual]
-                                                                           eps_diluted_df = pd.DataFrame(eps_diluted_table, index=date_list_quarter,  columns=["EPS(diluted)"])
+                                                                           eps_diluted_df = pd.DataFrame(eps_diluted_table, index=date_list_annual,  columns=["EPS(diluted)"])
                                                                            eps_diluted_df = eps_diluted_df.transpose()
                                                             #----------------------------------------------------------------    
                                                                            shares_diluted_table = ["{:.2f}B".format(shares_diluted / 1000000000) if shares_diluted >= 1000000000 else "{:,.0f}M".format(shares_diluted / 1000000) for shares_diluted in shares_diluted_annual]
-                                                                           shares_diluted_df = pd.DataFrame(shares_diluted_table, index=date_list_quarter,  columns=["Diluted Shares Outstanding"])
+                                                                           shares_diluted_df = pd.DataFrame(shares_diluted_table, index=date_list_annual,  columns=["Diluted Shares Outstanding"])
                                                                            shares_diluted_df = shares_diluted_df.transpose()
                                                        
                                                                            merged_df_insurance = pd.concat([net_premiums_earned_df,net_investment_income_df,Fees_and_other_income_df,revenue_df,Interest_Expense_insurance_df,Pretax_income_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df]) 
@@ -10475,75 +10475,75 @@ with st.container():
                                                             operating_income_list = annual_data['operating_income'][-10:]                                   
                                                        #....................................................................................................
                                                             revenue_list_billion = ["{:.2f}B".format(revenue / 1000000000) if abs(revenue) >= 1000000000 else "{:,.0f}M".format(revenue / 1000000) for revenue in revenue_2013]
-                                                            revenue_df = pd.DataFrame(revenue_list_billion, index=date_list_quarter,  columns=["Revenue"])
+                                                            revenue_df = pd.DataFrame(revenue_list_billion, index=date_list_annual,  columns=["Revenue"])
                                                             revenue_df = revenue_df.transpose()
 
                                                        #-----------------------------------------------------------
                                                        # Convert cogs values to billion USD and round to 3 decimal places
                                                                       #cogs_list_billion = ["{:.2f}B".format(cogs / 1000000000) for cogs in cogs_list]
                                                             cogs_list_billion = ["{:.2f}B".format(cogs / 1000000000) if abs(cogs) >= 1000000000 else "{:,.0f}M".format(cogs / 1000000) for cogs in cogs_list]
-                                                            cogs_df = pd.DataFrame(cogs_list_billion,  index=date_list_quarter, columns=["Cost of Goods Sold"])
+                                                            cogs_df = pd.DataFrame(cogs_list_billion,  index=date_list_annual, columns=["Cost of Goods Sold"])
                                                             cogs_df = cogs_df.transpose()
                                                        #----------------------------------------------------------
                                                        # Convert gross profit values to billion USD and round to 3 decimal places
                                                             gross_profit_list_billion = ["{:.2f}B".format(gross_profit / 1000000000) if abs(gross_profit) >= 1000000000 else "{:,.0f}M".format(gross_profit / 1000000) for gross_profit in gross_profit_2013]
-                                                            gross_profit_df = pd.DataFrame(gross_profit_list_billion, index=date_list_quarter,  columns=["Gross Profit"])
+                                                            gross_profit_df = pd.DataFrame(gross_profit_list_billion, index=date_list_annual,  columns=["Gross Profit"])
                                                             gross_profit_df = gross_profit_df.transpose()
                                                        #----------------------------------------------------------------
 
                                                             SGA_Expense_table = ["{:.2f}B".format(total_opex / 1000000000) if abs(total_opex) >= 1000000000 else "{:,.0f}M".format(total_opex / 1000000) for total_opex in SGA_Expense_annual]
-                                                            SGA_Expense_df = pd.DataFrame(SGA_Expense_table, index=date_list_quarter,  columns=["Operating Expense"])
+                                                            SGA_Expense_df = pd.DataFrame(SGA_Expense_table, index=date_list_annual,  columns=["Operating Expense"])
                                                             SGA_Expense_df = SGA_Expense_df.transpose()
                                                        #----------------------------------------------------------------
                                                             Research_Dev_table = ["{:.2f}B".format(rnd / 1000000000) if abs(rnd) >= 1000000000 else "{:,.0f}M".format(rnd / 1000000) for rnd in Research_Dev_annual]
-                                                            Research_Dev_df = pd.DataFrame(Research_Dev_table, index=date_list_quarter,  columns=["Research & Development"])
+                                                            Research_Dev_df = pd.DataFrame(Research_Dev_table, index=date_list_annual,  columns=["Research & Development"])
                                                             Research_Dev_df = Research_Dev_df.transpose()
                                                        #----------------------------------------------------------------    
                                                             interestexpense_list_billion = ["{:.2f}B".format(interest_expense / -1000000000) if abs(interest_expense) >= 1000000000 else "{:,.0f}M".format(interest_expense / -1000000) for interest_expense in interest_expense_list]
-                                                            interestexxpense_df = pd.DataFrame(interestexpense_list_billion, index=date_list_quarter, columns=["Interest Expense"])                                   
+                                                            interestexxpense_df = pd.DataFrame(interestexpense_list_billion, index=date_list_annual, columns=["Interest Expense"])                                   
                                                             interestexxpense_df = interestexxpense_df.transpose()                                                                  
                                                        # -------------------------------------------------------------------
                                                             Pretax_income_table = ["{:.2f}B".format(pretax_income / 1000000000) if abs(pretax_income) >= 1000000000 else "{:,.0f}M".format(pretax_income / 1000000) for pretax_income in Pretax_income_annual]
-                                                            Pretax_income_df = pd.DataFrame(Pretax_income_table, index=date_list_quarter,  columns=["Pre-Tax Income"])
+                                                            Pretax_income_df = pd.DataFrame(Pretax_income_table, index=date_list_annual,  columns=["Pre-Tax Income"])
                                                             Pretax_income_df = Pretax_income_df.transpose()
                                                        #----------------------------------------------------------------    
                                                             Income_tax_table = ["{:.2f}B".format(income_tax / -1000000000) if abs(income_tax) >= 1000000000 else "{:,.0f}M".format(income_tax / -1000000) for income_tax in Income_tax_annual]
-                                                            Income_tax_df = pd.DataFrame(Income_tax_table, index=date_list_quarter,  columns=["Income Tax"])
+                                                            Income_tax_df = pd.DataFrame(Income_tax_table, index=date_list_annual,  columns=["Income Tax"])
                                                             Income_tax_df = Income_tax_df.transpose()
                                                        #----------------------------------------------------------------       
                                                             net_income_table = ["{:.2f}B".format(net_income / 1000000000) if abs(net_income) >= 1000000000 else "{:,.0f}M".format(net_income / 1000000) for net_income in net_income_annual]
-                                                            net_income_df = pd.DataFrame(net_income_table, index=date_list_quarter,  columns=["Net Income"])
+                                                            net_income_df = pd.DataFrame(net_income_table, index=date_list_annual,  columns=["Net Income"])
                                                             net_income_df = net_income_df.transpose()
                                                        #----------------------------------------------------------------   
                                                             eps_basic_table = ["{:.2f}".format(eps_basic) for eps_basic in eps_basic_annual]
                                                                       #eps_basic_table = [int(eps_basic) for eps_basic in eps_basic_annual]
-                                                            eps_basic_df = pd.DataFrame(eps_basic_table, index=date_list_quarter,  columns=["EPS(basic)"])
+                                                            eps_basic_df = pd.DataFrame(eps_basic_table, index=date_list_annual,  columns=["EPS(basic)"])
                                                             eps_basic_df = eps_basic_df.transpose()
                                                        #----------------------------------------------------------------    
                                                             shares_basic_table = ["{:.2f}B".format(shares_basic / 1000000000) if shares_basic >= 1000000000 else "{:,.0f}M".format(shares_basic / 1000000) for shares_basic in shares_basic_annual]
-                                                            shares_basic_df = pd.DataFrame(shares_basic_table, index=date_list_quarter,  columns=["Basic Shares Outstanding"])
+                                                            shares_basic_df = pd.DataFrame(shares_basic_table, index=date_list_annual,  columns=["Basic Shares Outstanding"])
                                                             shares_basic_df = shares_basic_df.transpose()
                                                        #----------------------------------------------------------------    
                                                             eps_diluted_table = ["{:.2f}".format(eps_diluted / 1) for eps_diluted in eps_diluted_annual]
-                                                            eps_diluted_df = pd.DataFrame(eps_diluted_table, index=date_list_quarter,  columns=["EPS(diluted)"])
+                                                            eps_diluted_df = pd.DataFrame(eps_diluted_table, index=date_list_annual,  columns=["EPS(diluted)"])
                                                             eps_diluted_df = eps_diluted_df.transpose()
                                                        #----------------------------------------------------------------    
                                                             shares_diluted_table = ["{:.2f}B".format(shares_diluted / 1000000000) if shares_diluted >= 1000000000 else "{:,.0f}M".format(shares_diluted / 1000000) for shares_diluted in shares_diluted_annual]
-                                                            shares_diluted_df = pd.DataFrame(shares_diluted_table, index=date_list_quarter,  columns=["Diluted Shares Outstanding"])
+                                                            shares_diluted_df = pd.DataFrame(shares_diluted_table, index=date_list_annual,  columns=["Diluted Shares Outstanding"])
                                                             shares_diluted_df = shares_diluted_df.transpose()
                                                        #----------------------------------------------------------------      
                                                             Ebitda_table = ["{:.2f}B".format(ebitda / 1000000000) if abs(ebitda) >= 1000000000 else "{:,.0f}M".format(ebitda / 1000000) for ebitda in Ebita_annual]
-                                                            Ebitda_df = pd.DataFrame(Ebitda_table, index=date_list_quarter,  columns=["EBITDA"])
+                                                            Ebitda_df = pd.DataFrame(Ebitda_table, index=date_list_annual,  columns=["EBITDA"])
                                                             Ebitda_df = Ebitda_df.transpose()
                                                        #----------------------------------------------------------------                                    
                                                             operatingincome_list_billion = ["{:.2f}B".format(operating_income / 1000000000) if abs(operating_income) >= 1000000000 else "{:,.0f}M".format(operating_income / 1000000) for operating_income in operating_income_list]
-                                                            operatingincome_df = pd.DataFrame(operatingincome_list_billion,  index=date_list_quarter, columns=["Operating Income"])
+                                                            operatingincome_df = pd.DataFrame(operatingincome_list_billion,  index=date_list_annual, columns=["Operating Income"])
                                                             operatingincome_df = operatingincome_df.transpose()
                                                        #-------------------------------------------------------------
 
                                                        # Convert interest income values to billion USD and round to 3 decimal places
                                                             interestincome_list_billion = ["{:.2f}B".format(interest_income / 1000000000) if abs(interest_income) >= 1000000000 else "{:,.0f}M".format(interest_income / 1000000) for interest_income in interest_income_list]
-                                                            interestincome_df = pd.DataFrame(interestincome_list_billion,  index=date_list_quarter, columns=["Non-Operating Interest Income"])
+                                                            interestincome_df = pd.DataFrame(interestincome_list_billion,  index=date_list_annual, columns=["Non-Operating Interest Income"])
                                                             interestincome_df = interestincome_df.transpose()
                                                             #------------------------------------------------------------
 
