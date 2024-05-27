@@ -8042,6 +8042,11 @@ with st.container():
           Revenue_growth = annual_data['revenue_growth'][-10:]
           revenue_2013 = annual_data['revenue'][-10:] 
 
+
+          Dividend_per_share = annual_data['dividends'][-10:]
+          Dividend_per_share = Financial_data['ttm']['dividends']
+         
+
            #...........................................CAGR..........................................................................
           FCF_Cagr_10 = sum(FCF_Cagr_10)/len(FCF_Cagr_10)
           FCF_Cagr_10 =round((FCF_Cagr_10*100),2)
@@ -8426,6 +8431,7 @@ with st.container():
                Moving_50=quote.fundamental_df.at[0, "SMA50"]
                Target_Price = quote.fundamental_df.at[0,"Target Price"] 
                #Target_Price='{:.2f}'.format(Target_Price)   
+               Dividend_TTM = quote.fundamental_df.at[0,"Dividend TTM"]
                Dividend_Est = quote.fundamental_df.at[0,"Dividend Est."]
                Dividend_Ex_Date= quote.fundamental_df.at[0,"Dividend Ex-Date"]
                Earnings_this_yr=quote.fundamental_df.at[0,"EPS this Y"]
@@ -8440,6 +8446,7 @@ with st.container():
                RSI="-"
                PEG="-"
                Beta=beta
+               Dividend_TTM = Dividend_per_share
                Moving_200="-"
                Moving_50="-"
                Target_Price ="-"
@@ -8722,7 +8729,7 @@ with st.container():
           '5 YR Dividend Yield': [Dividend_yield_average], 
           'Dividend Yield': [Dividend_per_share_yield],
           'Dividend Paid (TTM)': [Dividend_ttm], 
-          'Dividend/Share (TTM)': '$ {:.2f}'.format(Dividend_current_dividend),
+          'Dividend/Share (TTM)': [Dividend_TTM],
           'Dividend Estimate':f"$ {Dividend_Est}",
           'Dividend Ex-Date':[Dividend_Ex_Date],
           '5 YR Avg FCF': [average_FCF_annual_five_we], 
@@ -11995,7 +12002,7 @@ with st.container():
                     EBITDA_growth = annual_data['ebitda_growth'][-10:]
                     Price_to_book = annual_data['price_to_book'][-10:]
                     #Price_to_book = annual_data['price_to_book'][-10:]
-                    Dividend_per_share = annual_data['dividends'][-10:]
+                    #Dividend_per_share = annual_data['dividends'][-10:]
                     fcf_per_share_annual = annual_data['fcf_per_share'][-10:]
                     ROE_annual = annual_data['roe'][-10:]
                     Payout_ratio_annual = annual_data['payout_ratio'][-10:]
@@ -12322,7 +12329,7 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='EPS',
                               text='EPS',  # Display the value on top of each bar
                               labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                              title= f"10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(ttm): $ {eps_diluted_ttm}  This YR: {Earnings_this_yr}") 
+                              title= f"10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(ttm): $ {eps_diluted_ttm}  Next YR: $ {Earnings_next_yr_in_value}") 
                    
 
 
@@ -13185,7 +13192,7 @@ with st.container():
 # Display the "Market Cap" using Streamlit
 
           #try:
-           #    st.write("Fundamental",quote.fundamental_df)
+          #st.write("Fundamental",quote.fundamental_df)
             #   st.write("Market Cap:", quote.fundamental_df.at[0, "Market Cap"])
              #  st.write("Forward P/E:", quote.fundamental_df.at[0, "Forward P/E"])
 
