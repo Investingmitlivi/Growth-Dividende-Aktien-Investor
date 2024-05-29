@@ -731,7 +731,7 @@ ticker_symbol_name = {
      'ASTS':'AST SpaceMobile Inc.  ',
      'ASTSW':'AST SpaceMobile Inc. ',
      'ASUR':'Asure Software Inc ',
-     'ASX':'ASE Technology Holding Co. Ltd.  (each representing Two )',
+     'ASX':'ASE Technology Holding Co. Ltd.',
      'ASXC':'Asensus Surgical Inc. ',
      'ASYS':'Amtech Systems Inc. ',
      'ATAI':'ATAI Life Sciences N.V. ',
@@ -7891,7 +7891,7 @@ except Exception as e:
 
 #Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuation,Dividend_Discount_Model,Key_ratios,Charts,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","EPS Valuation","Dividend Discount Model","Key Ratios","Charts","Calculator","Top 10 News"])
 
-Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,Dividend_Discount_Model,Key_ratios,Charts,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","Dividend Discount Model","Key Ratios","Charts","Calculator","Top 10 News"])
+Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,Dividend_Discount_Model,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","Dividend Discount Model","Charts","Key Ratios","Calculator","Top 10 News"])
 
      #st.header('Price / Total return')
 
@@ -8696,6 +8696,19 @@ with st.container():
           else:
                P_OCF_ttm = "-"
           #print(P_OCF_ttm)
+          try:
+                # Calculate the percentage increase
+               percentage_difference_52_week_low = "{:.2f}%".format(((current_price - fifty_two_week_low) / fifty_two_week_low) * 100)
+
+               percentage_diff_ATH = "{:.2f}%".format(((current_price - all_time_high_price) / all_time_high_price) * 100)
+            
+             
+               
+          except Exception as e:
+               percentage_difference_52_week_low =""
+               percentage_difference_ATH=""
+              
+          
          
                 
 
@@ -8729,7 +8742,7 @@ with st.container():
           '5 YR Dividend Yield': [Dividend_yield_average], 
           'Dividend Yield': [Dividend_per_share_yield],
           'Dividend Paid (TTM)': [Dividend_ttm], 
-          'Dividend/Share (TTM)': [Dividend_TTM],
+          'Dividend/Share (TTM)':f"$ {Dividend_TTM}",
           'Dividend Estimate':f"$ {Dividend_Est}",
           'Dividend Ex-Date':[Dividend_Ex_Date],
           '5 YR Avg FCF': [average_FCF_annual_five_we], 
@@ -8761,7 +8774,6 @@ with st.container():
           all_time_high_date = formatted_date
 #          min_price_date = min_price_date
 
-
           data3 = {
           'FCF Yield':[fcf_yield_ttm],
           'P/S': [Price_to_sales_last],
@@ -8772,10 +8784,17 @@ with st.container():
           'ROIC': [ROIC_annual_one],
           '5 YR ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
           'ROCE ':[ "{:.2f}%".format(One_YR_ROCE)],
-          f'ATH ({all_time_high_date}'")": ["$ {:.2f}".format(all_time_high_price)],
-          f'52WK LOW ( {min_price_date.strftime("%Y/%m/%d")})': ["$ {:.2f}".format(fifty_two_week_low)]
-          
+          #f'ATH ({all_time_high_date}'")": ["$ {:.2f}".format(all_time_high_price)],
+          f'ATH ({all_time_high_date}'")": f"$ {all_time_high_price:.2f} ({percentage_diff_ATH})",
+         
+
+          #f'52WK LOW ( {min_price_date.strftime("%Y/%m/%d")})': ["$ {:.2f}".format(fifty_two_week_low)]
+          #f'52WK LOW ({min_price_date.strftime("%Y/%m/%d")}): $ {fifty_two_week_low:.2f} ({percentage_difference_52_week_low})'
+          f'52WK LOW ({min_price_date.strftime("%Y/%m/%d")})': f"$ {fifty_two_week_low:.2f} ({percentage_difference_52_week_low})"
+ 
           }   
+
+
          # eps_basic_ttm =Financial_data['ttm']['eps_basic']
           #st.write("eps_basic_ttm",eps_basic_ttm)
           data4 = {
@@ -12004,6 +12023,7 @@ with st.container():
                     #Price_to_book = annual_data['price_to_book'][-10:]
                     #Dividend_per_share = annual_data['dividends'][-10:]
                     fcf_per_share_annual = annual_data['fcf_per_share'][-10:]
+                    revenue_per_share_annual = annual_data['revenue_per_share'][-10:]
                     ROE_annual = annual_data['roe'][-10:]
                     Payout_ratio_annual = annual_data['payout_ratio'][-10:]
                     #Revenue_growth = annual_data['revenue_growth'][-10:]
@@ -12061,6 +12081,7 @@ with st.container():
                     'PE ratio':Price_to_earnings,
                     'Dividend per share':Dividend_per_share,
                     'FCF per share':fcf_per_share_annual,
+                    'Revenue per share':revenue_per_share_annual,
                     'Payout ratio': Payout_ratio_annual,
                     'ROIC':ROIC_annual,
                     'ROE':ROE_annual
@@ -12086,6 +12107,7 @@ with st.container():
                     ('PE ratio',Price_to_earnings ),
                     ('Dividend per share',Dividend_per_share),
                     ('FCF per share',fcf_per_share_annual),
+                    ('Revenue per share',revenue_per_share_annual),
                     ('Payout ratio', Payout_ratio_annual),
                     ('ROIC',ROIC_annual ),
                     ('ROE',ROE_annual)
@@ -12125,6 +12147,7 @@ with st.container():
                                         #Price_to_book_quarter = quarterly_data['price_to_book'][-10:]
                                         Dividend_per_share_quarter = quarterly_data['dividends'][-10:]
                                         fcf_per_share_quarter = quarterly_data['fcf_per_share'][-10:]
+                                        revenue_per_share_quarter = quarterly_data['revenue_per_share'][-10:]
                                         ROE_quarter = quarterly_data['roe'][-10:]
                                         Payout_ratio_quarter = quarterly_data['payout_ratio'][-10:]
                                         Revenue_growth_quarter = quarterly_data['revenue_growth'][-10:]
@@ -12181,6 +12204,7 @@ with st.container():
                                         'PE ratio':Price_to_earnings_quarter,
                                         'Dividend per share':Dividend_per_share_quarter,
                                         'FCF per share':fcf_per_share_quarter,
+                                        'Revenue per share':revenue_per_share_quarter, 
                                         'Payout ratio': Payout_ratio_quarter,
                                         'ROIC':ROIC_quarter,
                                         'ROE':ROE_quarter
@@ -12205,6 +12229,7 @@ with st.container():
                                         ('PE ratio',Price_to_earnings_quarter ),
                                         ('Dividend per share',Dividend_per_share_quarter),
                                         ('FCF per share',fcf_per_share_quarter),
+                                        ('Revenue per share',revenue_per_share_quarter), 
                                         ('Payout ratio', Payout_ratio_quarter),
                                         ('ROIC',ROIC_quarter),
                                         ('ROE',ROE_quarter)
@@ -13120,6 +13145,7 @@ with st.container():
           #           color='Date')
           # # Show the plot
           # st.plotly_chart(fig11, use_container_width=True, config=config)
+
 
 
      
