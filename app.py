@@ -8339,7 +8339,7 @@ with st.container():
           pe_one =annual_data['price_to_earnings'][-1:]
           Average_pe_one =  "{:.2f}".format(((sum(pe_one) / len(pe_one))))
 
-          
+
           try:
                average_end_price_five = annual_data['period_end_price'][-5:]
                average_end_price_five = sum(average_end_price_five) / len(average_end_price_five)
@@ -12535,7 +12535,7 @@ with st.container():
                     
 
                     # Update layout
-                    title_text = f"10YR Dividend CAGR: {Dividend_10_CAGR}%     5YR Dividend CAGR: {Dividend_5_CAGR}%     ->  <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {FCF_5_CAGR}%</span> "  
+                    title_text = f"10YR Dividend: {Dividend_10_CAGR}%     5YR Dividend: {Dividend_5_CAGR}%       <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {FCF_5_CAGR}%</span> "  
 
 
                     #title_text = f"<span style='color:dodgerblue'>20YR Dividend CAGR: {Dividend_20_CAGR}%</span>"
