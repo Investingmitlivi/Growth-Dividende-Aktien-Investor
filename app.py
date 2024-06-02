@@ -12676,10 +12676,10 @@ with st.container():
                               text='ROIC',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                               title= f"5 YR ROIC Y/Y: {Average_ROIC_funf}    Current ROIC: {ROIC_annual_one}<br>"
-                              "<span style='font-family: Calibri; font-style: italic;'>Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu <br>erwirtschaften</span>") 
+                              "<span style='font-family: Calibri; font-style: italic;'>Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu <br>erwirtschaften.</span>") 
                     
                     
-                    fig1.update_layout(title_x=0.05)
+                   # fig1.update_layout(title_x=0.05)
 
 
 
@@ -12723,7 +12723,7 @@ with st.container():
 
                     title_text = (
                     f"5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}    Current Gross Margin: {rounded_gross_margin} <br>"
-                    "<span style='font-family: Calibri; font-style: italic;'>Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>vom Umsatz übrig bleibt</span>")          
+                    "<span style='font-family: Calibri; font-style: italic;'>Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>vom Umsatz übrig bleibt.</span>")          
                   
                     data = pd.DataFrame({
                     'Date': date_annual,
@@ -12763,7 +12763,7 @@ with st.container():
                               "<span style='font-family: Calibri; font-style: italic;'>Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>und der Betriebskosten(wie Material-, Produktions-, Verwaltungs- und <br>Vertriebskosten) vom Umsatz übrig bleibt.</span>"
                               ) 
                    
-                    fig2.update_layout(title_x=0.05)
+                    #fig2.update_layout(title_x=0.05)
 
 
                     col1, col2 = st.columns(2)
