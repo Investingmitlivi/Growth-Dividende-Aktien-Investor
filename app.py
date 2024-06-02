@@ -2836,6 +2836,7 @@ ticker_symbol_name = {
      'GES':'Guess? Inc. ',
      'GETR':'Getaround Inc. ',
      'GETY':'Getty Images Holdings Inc.  ',
+     'GEV':'GE Vernova Inc.  ',
      'GEVO':'Gevo Inc. ',
      'GF':'New Germany Fund Inc. ',
      'GFAI':'Guardforce AI Co. Limited ',
@@ -6693,7 +6694,7 @@ ticker_symbol_name = {
      'VIRT':'Virtu Financial Inc.  ',
      'VIRX':'Viracta Therapeutics Inc. ',
      'VISL':'Vislink Technologies Inc. ',
-     'VIST':'Vista Energy S.A.B. de C.V.  each representing one series A share with no par value',
+     'VIST':'Vista Energy S.A.B. de C.V.',
      'VITL':'Vital Farms Inc. ',
      'VIV':'Telefonica Brasil S.A.  (Each representing One Common Share)',
      'VIVK':'Vivakor Inc. ',
@@ -11887,21 +11888,31 @@ with st.container():
              # for i in range(len(Dividend_growth_quarter)):
           #      if i == 0:
           #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
-          Dividend101 = cola.number_input("Year 4", value=Dividend_quarter1*4, key="unique_key_for_Dividend101")
+          try:
+               Dividend101 = cola.number_input("Year 4", value=Dividend_quarter1*4, key="unique_key_for_Dividend101")
           #      elif i == 12-8:
+          except Exception as e:
+                Dividend101 =0
           #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
-          Dividend201 = colb.number_input("Year 3", value=Dividend_quarter2*4, key="unique_key_for_Dividend201")
+          try:
+               Dividend201 = colb.number_input("Year 3", value=Dividend_quarter2*4, key="unique_key_for_Dividend201")
+
+          except Exception as  e:
+                Dividend201 =0
           #      elif i == 12-4:
           #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
-          Dividend301 = colc.number_input("Year 2", value=Dividend_quarter3*4, key="unique_key_for_Dividend301")
+          try:
+               Dividend301 = colc.number_input("Year 2", value=Dividend_quarter3*4, key="unique_key_for_Dividend301")
           #      elif i == 12:
+          except Exception as e:
+               Dividend301=0
           #   
           #         Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
 
           try:
-           Dividend401 = cold.number_input("Year 1", value=Dividend_quarter4*4, key="unique_key_for_Dividend401")
+               Dividend401 = cold.number_input("Year 1", value=Dividend_quarter4*4, key="unique_key_for_Dividend401")
           except Exception as e:
-           Dividend401 = 0
+               Dividend401 = 0
 
           #      elif i == 13:
           #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
