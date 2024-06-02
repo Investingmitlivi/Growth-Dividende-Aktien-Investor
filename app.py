@@ -16,6 +16,8 @@ import altair as alt
 import time
 import firebase_admin
 import math
+import textwrap
+
 #import math
 #import re
 #import finnhub
@@ -8338,7 +8340,34 @@ with st.container():
           Average_pe_one =  "{:.2f}".format(((sum(pe_one) / len(pe_one))))
 
           
-           #    
+          try:
+               average_end_price_five = annual_data['period_end_price'][-5:]
+               average_end_price_five = sum(average_end_price_five) / len(average_end_price_five)
+
+          except Exception as e: 
+                
+               average_end_price_five = 0.0
+
+          Divdends_paid_5years =annual_data['dividends'][-5:]
+
+          try:
+               if len(Divdends_paid_5years) >= 5:
+                    Divdend_per_share_yield_average =sum(Divdends_paid_5years) / len(Divdends_paid_5years)
+                    Dividend_yield_average ="{:.2f}%".format(abs((Divdend_per_share_yield_average)/average_end_price_five)*100)
+
+               else:
+                    
+                    Dividend_yield_average =0.00
+
+                    
+          except Exception as e: 
+                
+               Dividend_yield_average=0.0
+
+
+               
+
+        
 
           try:
                
@@ -8359,6 +8388,7 @@ with st.container():
                     Average_pe_five =  "{:.2f}".format(((sum(pe_five) /len(pe_five)))) 
                     five_yrs_Nettomarge = "{:.2f}".format((Net_income_margin_5)*100)
                     FCF_Margin_5 = "{:.2f}".format((FCF_Margin_5)*100)
+                    
               
                
                     
@@ -8426,7 +8456,7 @@ with st.container():
                RSI=quote.fundamental_df.at[0, "RSI (14)"]
                PEG=quote.fundamental_df.at[0, "PEG"]
                Beta=quote.fundamental_df.at[0, "Beta"]
-               Earnings = quote.fundamental_df.at[0, "Earnings"]
+               #Earnings = quote.fundamental_df.at[0, "Earnings"]
                Moving_200=quote.fundamental_df.at[0, "SMA200"]
                Moving_50=quote.fundamental_df.at[0, "SMA50"]
                Target_Price = quote.fundamental_df.at[0,"Target Price"] 
@@ -8468,31 +8498,9 @@ with st.container():
           Divdend_per_share =Financial_data['ttm']['dividends']
           Dividend_per_share_yield ="{:.2f}%".format(abs((Divdend_per_share)/current_price)*100)
 
-          try:
-               average_end_price_five = annual_data['period_end_price'][-5:]
-               average_end_price_five = sum(average_end_price_five) / len(average_end_price_five)
+         
 
-          except Exception as e: 
-                
-               average_end_price_five = 0.0
-
-          try:
-                
-               Divdends_paid_5years =annual_data['dividends'][-5:]
-               Divdend_per_share_yield_average =sum(Divdends_paid_5years) / len(Divdends_paid_5years)
-                
-          except Exception as e: 
-                
-               Divdend_per_share_yield_average=0.0
-
-          try:
-                
-               Dividend_yield_average ="{:.2f}%".format(abs((Divdend_per_share_yield_average)/average_end_price_five)*100)
-
-          except Exception as e:
-                
-                Dividend_yield_average=0.0
-
+        
 
           #Net_margin ="{:.2f}%".format((round_net_income_annual_one/average_revenue_annual_ttm)*100)
      
@@ -8803,7 +8811,7 @@ with st.container():
           'EPS (TTM)':["$ {:.2f}".format(eps_diluted_ttm)],
           'EPS Estimate this YR': f"{Earnings_this_yr}",
          # 'EPS Estimate next YR':[Earnings_next_yr_in_prozent],
-         'EPS Estimate next YR': f"$ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
+          'EPS Estimate next YR': f"$ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
           #'EPS Estimate next YR':f"$ {Earnings_next_yr_in_value}",
           'EPS Estimate 5 YR':[Earnings_next_5_yrs],
           'EPS past 5 YR':f"{EPS_5_CAGR}% ",
@@ -8811,7 +8819,7 @@ with st.container():
           'RSI (14)': [RSI],
           '50 SMA' : [Moving_50],
           '200 SMA':[Moving_200],
-          'Earnings':[Earnings],
+          #'Earnings':[Earnings],
           'Analyst Target Price':  [f"$ {Target_Price}"],
           'Current price': ["$ {:.2f}".format(amount)] 
           #'Price Change':[Price_Change]      
@@ -9676,6 +9684,8 @@ with st.container():
 
                                         #.............................................quarterly..................................................................................
                                         date_quarterly_Balance_Sheet = quarterly_data['period_end_date'][-10:] 
+
+
                                         cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
                                         st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
                                         Inventories_quarter = quarterly_data['inventories'][-10:]
@@ -11263,7 +11273,7 @@ with st.container():
           
           npv_result = npv(WACC/100,discounted_values)   
           rounded_npv_result = round(npv_result, 2)  
-
+          #st.write(Total_Debt_from_all_calc)
           Equity_value = rounded_npv_result+Total_cash_last_years-Total_Debt_from_all_calc
           Intrinsic_value =Equity_value/Average_shares_basic_annual_one
           #st.write(npv_result)
@@ -12354,9 +12364,8 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='EPS',
                               text='EPS',  # Display the value on top of each bar
                               labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                              title= f"10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(ttm): $ {eps_diluted_ttm}  Next YR: $ {Earnings_next_yr_in_value}") 
+                              title= f"10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(TTM): $ {eps_diluted_ttm}  Next YR: $ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})") 
                    
-
 
 
 
@@ -12593,7 +12602,7 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='Dividend per Share',
                                    text='Dividend per Share',  # Display the value on top of each bar
                                    labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                                   title=f"Current Dividend yield: {Dividend_per_share_yield}")
+                                   title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}")
 
                     fig1.update_layout(title_x=0.05)
           
@@ -12634,6 +12643,8 @@ with st.container():
                          ROIC_annual_10years = ["{:.2f}%".format(ROIC_annual_10years * 100) for ROIC_annual_10years in ROIC_annual_10years]
                     except Exception as e:
                          ROIC_annual_10years = 0.0
+
+                   
                          
                     data = pd.DataFrame({
                     'Date': date_annual,
@@ -12687,7 +12698,12 @@ with st.container():
                          gross_margin = ["{:.2f}%".format(gross_margin * 100) for gross_margin in gross_margin]
                     except Exception as e:
                          gross_margin = 0.0
-                         
+
+
+                    title_text = (
+                    f"5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}    Current Gross Margin: {rounded_gross_margin} <br>"
+                    "<span style='font-family: Calibri; font-style: italic;'>Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>vom Umsatz übrig bleibt</span>")          
+                  
                     data = pd.DataFrame({
                     'Date': date_annual,
                     'Gross Margin': gross_margin,
@@ -12702,7 +12718,7 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='Gross Margin',
                               text='Gross Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title=f"5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}    Current Gross Margin: {rounded_gross_margin}") 
+                              title=title_text) 
 
 
                     fig1.update_layout(title_x=0.05)
@@ -12722,8 +12738,10 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='Operating Margin',
                               text='Operating Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title=f"5 YR Operating Margin Y/Y: {rounded_operating_margin_five}    Current Operating Margin: {rounded_operating_margin}") 
-                    
+                              title=f"5 YR Operating Margin Y/Y: {rounded_operating_margin_five}    Current Operating Margin: {rounded_operating_margin}<br>"
+                              "<span style='font-family: Calibri; font-style: italic;'>Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>und der Betriebskosten(wie Material-, Produktions-, Verwaltungs- und <br>Vertriebskosten) vom Umsatz übrig bleibt.</span>"
+                              ) 
+                   
                     fig2.update_layout(title_x=0.05)
 
 
@@ -12751,16 +12769,22 @@ with st.container():
                     #st.title('Free Cash Flow and Revenue Data')                                    
                     
                     # Create a Plotly Express bar chart with side-by-side bars
-                    
-               
+
+                    title_text = (
+                    f"5 YR Net Profit Margin Y/Y: {five_yrs_Nettomarge}%  Current Net Profit Margin: {Net_margin_ttm} <br>"
+
+                    "  <span style='font-family: Calibri; font-style: italic;'>Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>, Betriebskosten, Zinsen, Steuern und außerordentlichen Posten vom Umsatz <br>übrig bleibt.</span>"
+                    )
+                        
+                    #wrapped_title = "<br>".join(textwrap.wrap(title_text))
+
                     fig1 = px.bar(data, x='Date', y='Net Profit Margin',
                               text='Net Profit Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title=f"5 YR Net Profit Margin Y/Y: {five_yrs_Nettomarge}%    Current Net Profit Margin: {Net_margin_ttm}") 
+                              title=title_text)
 
 
-
-                    fig1.update_layout(title_x=0.05)
+                    #fig1.update_layout(title_x=0.05)
 
                     try:
                          FCF_Margin = ["{:.2f}%".format(FCF_Margin * 100) for FCF_Margin in FCF_Margin]
@@ -12781,7 +12805,8 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='FCF Margin',
                               text='FCF Margin',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title=f"5 YR FCF Margin Y/Y: {FCF_Margin_5}%    Current FCF Margin: {FCF_Margin_1:.2f}%") 
+                              title=f"5 YR FCF Margin Y/Y: {FCF_Margin_5}%    Current FCF Margin: {FCF_Margin_1:.2f}%<br>"
+                              " <span style='font-family: Calibri; font-style: italic;'>Die FCF-Marge (freier Cashflow) ist ein Indikator dafür, <br>wie effizient ein Unternehmen seinen Umsatz in freien Cashflow umwandelt.</span>") 
                     
 
                     
@@ -13218,7 +13243,7 @@ with st.container():
 # Display the "Market Cap" using Streamlit
 
           #try:
-          #st.write("Fundamental",quote.fundamental_df)
+          st.write("Fundamental",quote.fundamental_df)
             #   st.write("Market Cap:", quote.fundamental_df.at[0, "Market Cap"])
              #  st.write("Forward P/E:", quote.fundamental_df.at[0, "Forward P/E"])
 
