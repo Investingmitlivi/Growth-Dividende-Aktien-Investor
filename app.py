@@ -7253,6 +7253,14 @@ ticker_symbol_name = {
 
 #..............................................................
 
+st.markdown("""
+    <style>
+    .stSelectbox > div:first-child {
+        width: 100px;  /* Set the width you want for the selectbox */
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()}     
 selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')    
 
@@ -8349,6 +8357,7 @@ with st.container():
                average_end_price_five = 0.0
 
           Divdends_paid_5years =annual_data['dividends'][-5:]
+          #st.write(Divdends_paid_5years)
 
           try:
                if len(Divdends_paid_5years) >= 5:
@@ -12655,7 +12664,8 @@ with st.container():
                     fig1 = px.bar(data, x='Date', y='ROIC',
                               text='ROIC',  # Display the value on top of each bar
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title= f"5 YR ROIC Y/Y: {Average_ROIC_funf}    Current ROIC: {ROIC_annual_one}") 
+                              title= f"5 YR ROIC Y/Y: {Average_ROIC_funf}    Current ROIC: {ROIC_annual_one}<br>"
+                              "<span style='font-family: Calibri; font-style: italic;'>Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu <br>erwirtschaften</span>") 
                     
                     
                     fig1.update_layout(title_x=0.05)
