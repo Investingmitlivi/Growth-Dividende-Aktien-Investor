@@ -8832,7 +8832,8 @@ with st.container():
           #'EPS Estimate next YR':f"$ {Earnings_next_yr_in_value}",
           'EPS Estimate 5 YR':[Earnings_next_5_yrs],
           'EPS past 5 YR':f"{EPS_5_CAGR}% ",
-          'Beta': [Beta],
+          'Revenue growth 10 YR':f"{Revenue_Cagr_10}%",
+          'Revenue growth 5 YR':f"{Revenue_5_CAGR}%",
           'RSI (14)': [RSI],
           '50 SMA' : [Moving_50],
           '200 SMA':[Moving_200],
@@ -11552,7 +11553,7 @@ with st.container():
           colr2.info(f"Revenue Growth: {Revenue_5_CAGR}%") 
           colr3.info(f"Revenue Growth: {Revenue_Cagr_10}%")
 
-          
+        
           #Growth_rate1 = col9.number_input("Wachstumsrate (Base Case) in %:", value=0.00, key="growth_rate1")
 
           coln1,coln2,coln3,coln9,coln10,coln11 = st.columns(6)
@@ -11968,15 +11969,15 @@ with st.container():
           # else:
           #      st.write("None of the growth rates are greater than 1%.")
           
-          total_dividend_growth = Dividend5 + Dividend4 + Dividend3 + Dividend2
+          # total_dividend_growth = Dividend5 + Dividend4 + Dividend3 + Dividend2
 
-          # Calculate the average dividend growth rate
-          num_dividend_growth_rates = 3  # Total number of dividend growth rates
-          try:
-               Average_dividend_growth_rate = total_dividend_growth / num_dividend_growth_rates
+          # # Calculate the average dividend growth rate
+          # num_dividend_growth_rates = 3  # Total number of dividend growth rates
+          # try:
+          #      Average_dividend_growth_rate = total_dividend_growth / num_dividend_growth_rates
 
-          except Exception as e:
-               Average_dividend_growth_rate=0
+          # except Exception as e:
+          #      Average_dividend_growth_rate=0
                 
           cola,colb = st.columns(2)
           #average_input = cola.number_input("Growth rate YOY (%)", value=Average_dividend_growth_rate)
