@@ -8073,6 +8073,11 @@ with st.container():
           Dividend_per_share_cagr_10= round((Dividend_per_share_cagr_10*100),2)
      #................................................
 
+     #-------------------------------------------------------------------------------------------- 
+          Dividend_per_share_cagr_10_quarter = quarterly_data['dividends_per_share_cagr_10'][-1:]  
+          Dividend_per_share_cagr_10_quarter = sum(Dividend_per_share_cagr_10_quarter)/len(Dividend_per_share_cagr_10_quarter)
+          Dividend_per_share_cagr_10_quarter= round((Dividend_per_share_cagr_10_quarter*100),2)
+
           
           try:
                value_at_index_6 = FCF_annual_ten[-6]
@@ -11974,10 +11979,16 @@ with st.container():
                Average_dividend_growth_rate=0
                 
           cola,colb = st.columns(2)
-          average_input = cola.number_input("Growth rate YOY (%)", value=Average_dividend_growth_rate)
-          Dividend_per_share_cagr_10 = colb.number_input("Dividend per share Cagr 10(%)", value=Dividend_per_share_cagr_10)
+          #average_input = cola.number_input("Growth rate YOY (%)", value=Average_dividend_growth_rate)
+          #Dividend_per_share_cagr_10_quarter =cola.number_input("Quarter Dividend per share Cagr 10 (%)", value=Dividend_per_share_cagr_10_quarter)
+          #Dividend_per_share_cagr_10 = colb.number_input("Annual Dividend per share Cagr 10 (%)", value=Dividend_per_share_cagr_10)
           #Growth_rate_dividend = cola[1].number_input("Growth rate (%)", value=0.00)
           #WACC = cola[2].number_input("WACC (%)", value=WACC)
+
+          cola, colb = st.columns(2)
+
+          cola.write(f"Quarter Dividend per share 10 CAGR: {Dividend_per_share_cagr_10_quarter} %")
+          colb.write(f"Annual Dividend per share 10 CAGR: {Dividend_per_share_cagr_10} %")
 
           col10,col11 =st.columns(2)
           Growth_rate_dividend = col10.number_input("Growth Rate %:", value=0.00)
