@@ -588,7 +588,6 @@ ticker_symbol_name = {
      'APCXW':'AppTech Payments Corp. ',
      'APD':'Air Products and Chemicals Inc. ',
      'APDN':'Applied DNA Sciences Inc. ',
-     'APE':'AMC Entertainment Holdings Inc. AMC Preferred Equity Units each constituting a depositary share representing a 1/100th interest in a share of Series A Convertible Participating Preferred Stock',
      'APEI':'American Public Education Inc. ',
      'APG':'APi Group Corporation ',
      'APGB':'Apollo Strategic Growth Capital II ',
@@ -1814,7 +1813,6 @@ ticker_symbol_name = {
      'CSTR':'CapStar Financial Holdings Inc. ',
      'CSV':'Carriage Services Inc. ',
      'CSWC':'Capital Southwest Corporation ',
-     'CSWCZ':'Capital Southwest Corporation ',
      'CSWI':'CSW Industrials Inc. ',
      'CSX':'CSX Corporation ',
      'CTAS':'Cintas Corporation ',
@@ -2206,7 +2204,7 @@ ticker_symbol_name = {
      'EDTX':'EdtechX Holdings Acquisition Corp. II  ',
      'EDTXU':'EdtechX Holdings Acquisition Corp. II Unit',
      'EDTXW':'EdtechX Holdings Acquisition Corp. II ',
-     'EDU':'New Oriental Education & Technology Group Inc. Sponsored ADR representing 10  (Cayman Islands)',
+     'EDU':'New Oriental Education & Technology Group Inc.',
      'EDUC':'Educational Development Corporation ',
      'EE':'Excelerate Energy Inc.  ',
      'EEA':'The European Equity Fund Inc. ',
@@ -2219,7 +2217,7 @@ ticker_symbol_name = {
      'EFOI':'Energy Focus Inc. ',
      'EFR':'Eaton Vance Senior Floating-Rate Fund  of Beneficial Interest',
      'EFSC':'Enterprise Financial Services Corporation ',
-     'EFSCP':'Enterprise Financial Services Corporation Depositary Shares Each Representing a 1/40th Interest in a Share of 5% Fixed Rate Non-Cumulative Perpetual Preferred Stock Series A',
+     'EFSCP':'Enterprise Financial Services Corp.',
      'EFSH':'1847 Holdings LLC ',
      'EFT':'Eaton Vance Floating Rate Income Trust  of Beneficial Interest',
      'EFTR':'eFFECTOR Therapeutics Inc. ',
@@ -8070,6 +8068,10 @@ with st.container():
           Revenue_Cagr_10= round((Revenue_Cagr_10*100),2)
 
      #....................................................
+          Dividend_per_share_cagr_10 = annual_data['dividends_per_share_cagr_10'][-1:]  
+          Dividend_per_share_cagr_10 = sum(Dividend_per_share_cagr_10)/len(Dividend_per_share_cagr_10)
+          Dividend_per_share_cagr_10= round((Dividend_per_share_cagr_10*100),2)
+     #................................................
 
           
           try:
@@ -11836,7 +11838,7 @@ with st.container():
      with Dividend_Discount_Model:
 
            # .......................................DDM..............................................  
-               
+          
           Dividend_annual = annual_data['dividends'][-4:]     
           Dividend_per_share_quarter = quarterly_data['dividends'][-14:]  
           Dividend_growth_quarter = quarterly_data['dividends_per_share_growth'][-14:]
@@ -11944,19 +11946,36 @@ with st.container():
           #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
           Dividend5 = col2.number_input("Growth Rate(%)", value=percentage_increase_4_5, key="unique_key_for_Dividend5")
 
-       
+          # Check if any of the dividend inputs contain a value greater than 1
+         # List to store the values greater than 1
+          # dividends_greater_than_1 = []
+
+          # # Check if any of the dividend inputs contain a value greater than 1
+          # for dividend, name in zip([Dividend1, Dividend2, Dividend3, Dividend4, Dividend5],
+          #                          ['Dividend1', 'Dividend2', 'Dividend3', 'Dividend4', 'Dividend5']):
+          #      if dividend > 1:
+          #           dividends_greater_than_1.append((name, dividend))
+
+          # if dividends_greater_than_1:
+          #      st.write("The following growth rates are greater than 1%:")
+          # for name, value in dividends_greater_than_1:
+          #      st.write(f"{name}: {value}%")
+          # else:
+          #      st.write("None of the growth rates are greater than 1%.")
+          
           total_dividend_growth = Dividend5 + Dividend4 + Dividend3 + Dividend2
 
           # Calculate the average dividend growth rate
-          num_dividend_growth_rates = 4  # Total number of dividend growth rates
+          num_dividend_growth_rates = 3  # Total number of dividend growth rates
           try:
                Average_dividend_growth_rate = total_dividend_growth / num_dividend_growth_rates
 
           except Exception as e:
                Average_dividend_growth_rate=0
                 
-          cola = st.columns(1)
-          average_input = cola[0].number_input("Average growth rate (%)", value=Average_dividend_growth_rate)
+          cola,colb = st.columns(2)
+          average_input = cola.number_input("Growth rate YOY (%)", value=Average_dividend_growth_rate)
+          Dividend_per_share_cagr_10 = colb.number_input("Dividend per share Cagr 10(%)", value=Dividend_per_share_cagr_10)
           #Growth_rate_dividend = cola[1].number_input("Growth rate (%)", value=0.00)
           #WACC = cola[2].number_input("WACC (%)", value=WACC)
 
@@ -12409,7 +12428,7 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='Shares Outstanding',
                               text='Shares Outstanding',  # Display the value on top of each bar
                               labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                              title=f"Shares Outstanding 5 YR:  {Shares_outstanding_funf_growth:.2f}%")
+                              title=f"Shares Outstanding in (Billion USD):  {Shares_outstanding_funf_growth:.2f}% share Buyback past 5 YR   ")
 
                     
                     #fig2.update_traces(texttemplate='%{y}', textposition='outside')
