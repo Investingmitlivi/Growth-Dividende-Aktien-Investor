@@ -12345,13 +12345,13 @@ with st.container():
                     data = pd.DataFrame({
                     'Date': date_annual_20yrs,
                     #'Free Cash Flow': Free_cash_flow_annual_2003,
-                    'Revenue':revenue_2003,
+                    'Revenue in Billion USD':revenue_2003,
                     })
 
-                    fig1 = px.bar(data, x='Date', y='Revenue',
-                              text='Revenue',    
+                    fig1 = px.bar(data, x='Date', y='Revenue in Billion USD',
+                              text='Revenue in Billion USD',    
                               labels={'value': 'Amount()'},
-                              title=f"Revenue in Billions USD: 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%") 
+                              title=f"Revenue : 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%") 
                    
                     fig1.update_layout(title_x=0.05)     
 
@@ -12429,7 +12429,7 @@ with st.container():
 
                     data = pd.DataFrame({
                     'Date': date_annual_20yrs,
-                    'Shares Outstanding': shares_diluted_2003,
+                    'Shares Outstanding in Billion USD': shares_diluted_2003,
                     })
 
                     # Create a Streamlit app
@@ -12437,10 +12437,10 @@ with st.container():
 
                     # Create a Plotly Express bar chart with side-by-side bars
                     
-                    fig2 = px.bar(data, x='Date', y='Shares Outstanding',
-                              text='Shares Outstanding',  # Display the value on top of each bar
+                    fig2 = px.bar(data, x='Date', y='Shares Outstanding in Billion USD',
+                              text='Shares Outstanding in Billion USD',  # Display the value on top of each bar
                               labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                              title=f"Shares Outstanding in (Billion USD):  {Shares_outstanding_funf_growth:.2f}% share Buyback past 5 YR   ")
+                              title=f" Share Buyback past 5 YR: {Shares_outstanding_funf_growth:.2f}%  ")
 
                     
                     #fig2.update_traces(texttemplate='%{y}', textposition='outside')
@@ -12744,6 +12744,16 @@ with st.container():
 
                     with col2:
                          st.plotly_chart(fig2,use_container_width=True,config=config)
+
+
+                    st.markdown(
+                         f"**5 YR ROIC Y/Y: {Average_ROIC_funf}%**<br>"
+                         f"**Current ROIC: {ROIC_annual_one}%**<br>"
+                         "<span style='font-family: Calibri; font-style: italic;'>"
+                         "Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu <br>"
+                         "erwirtschaften."
+                         "</span>", unsafe_allow_html=True
+                         )     
 
 #-------------------------------------------------------------------------------------------------
                     try:
