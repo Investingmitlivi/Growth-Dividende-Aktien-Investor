@@ -11594,11 +11594,10 @@ with st.container():
           colfcf3.info(f"Price/FCF: {pfcf_ten}")
           
 
-
           col1,col2,colx,cola, colb, colc= st.columns(6)
-          col1.info('Margin Of Safety')
-          col2.info('-')
-          colx.info('-')
+          col1.info('Desired Rate of Return')
+          col2.info('')
+          colx.info('')
           colx.write(f"Multiple of Earnings Valuation:")
 
 
@@ -12594,7 +12593,7 @@ with st.container():
                     
 
                     #title_text = f"Dividend 20 CAGR: {Dividend_20_CAGR}% Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
-                    fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='Amount (B)', title=title_text)
+                    fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='FCF / Dividends Paid in Billion USD', title=title_text)
                                         # Update legend placement
                     fig.update_layout(legend=dict(
                     orientation="h",
