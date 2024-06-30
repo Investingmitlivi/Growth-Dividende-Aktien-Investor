@@ -8314,6 +8314,10 @@ with st.container():
           Net_Operating_CashFlow_annual_5 = annual_data['cf_cfo'][-5:] 
           Net_Operating_CashFlow_annual = annual_data['cf_cfo'][-10:] 
 
+          Revenue_annual_5 = annual_data['revenue'][-5:] 
+          Revenue_annual_10 = annual_data['revenue'][-10:] 
+
+
           fcf_growth_five =annual_data['fcf_growth'][-5:]
           fcf_growth_ten =annual_data['fcf_growth'][-10:]
 
@@ -8324,6 +8328,7 @@ with st.container():
 
           if len(Net_Operating_CashFlow_annual) >= 10:
                P_OCF_10="{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual)/len(Net_Operating_CashFlow_annual))/1000000000))
+               P_sales_10="{:.2f}".format(Marketcap/((sum(Revenue_annual_10)/len(Revenue_annual_10))/1000000000))
                Average_fcf_growth_ten =  "{:.2f}".format(((sum(fcf_growth_ten) / len(fcf_growth_ten)))*100)
                average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
                pfcf_ten="{:.2f}".format(Marketcap/(average_FCF_annual_ten/1000000000))
@@ -8344,6 +8349,7 @@ with st.container():
                pfcf_ten = "-"
                Net_income_margin_10 ="-"
                FCF_Margin_10 ="-"
+               P_sales_10 = "-"
                
             
            
@@ -8405,6 +8411,7 @@ with st.container():
                     Average_pe_five =  "{:.2f}".format(((sum(pe_five) /len(pe_five)))) 
                     five_yrs_Nettomarge = "{:.2f}".format((Net_income_margin_5)*100)
                     FCF_Margin_5 = "{:.2f}".format((FCF_Margin_5)*100)
+                    P_sales_5="{:.2f}".format(Marketcap/((sum(Revenue_annual_5)/len(Revenue_annual_5))/1000000000))
                     
               
                
@@ -8433,6 +8440,7 @@ with st.container():
                     Average_fcf_growth_five = "0.00"
                     Average_pe_five = "0.00"
                     FCF_Margin_5 ="-"
+                    P_sales_5 = "-"
 
 
 
@@ -8802,6 +8810,8 @@ with st.container():
           data3 = {
           'FCF Yield':[fcf_yield_ttm],
           'P/S': [Price_to_sales_last],
+          '5 YR P/S': [P_sales_5],
+          '10 YR P/S': [P_sales_10],
           'ROA': [average_ROA_annual_ttm],
           '5 YR ROE': ["{:.5}%".format(five_ROE)],
           'ROE': [ROE_ttm],
@@ -13304,7 +13314,7 @@ with st.container():
 # Display the "Market Cap" using Streamlit
 
           #try:
-          st.write("Fundamental",quote.fundamental_df)
+          #st.write("Fundamental",quote.fundamental_df)
             #   st.write("Market Cap:", quote.fundamental_df.at[0, "Market Cap"])
              #  st.write("Forward P/E:", quote.fundamental_df.at[0, "Forward P/E"])
 
