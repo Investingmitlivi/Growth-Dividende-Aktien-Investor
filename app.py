@@ -11997,8 +11997,8 @@ with st.container():
 
           cola, colb = st.columns(2)
 
-          cola.write(f"Quarter Dividend per share 10 CAGR: {Dividend_per_share_cagr_10_quarter} %")
-          colb.write(f"Annual Dividend per share 10 CAGR: {Dividend_per_share_cagr_10} %")
+          cola.write(f"10 YR CAGR Quarter Dividend per share : {Dividend_per_share_cagr_10_quarter} %")
+          colb.write(f"10 YR CAGR Annual Dividend per share : {Dividend_per_share_cagr_10} %")
 
           col10,col11 =st.columns(2)
           Growth_rate_dividend = col10.number_input("Growth Rate %:", value=0.00)
@@ -12449,7 +12449,7 @@ with st.container():
                     fig2 = px.bar(data, x='Date', y='Shares Outstanding in Billion USD',
                               text='Shares Outstanding in Billion USD',  # Display the value on top of each bar
                               labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                              title=f" Share Buyback past 5 YR: {Shares_outstanding_funf_growth:.2f}%  ")
+                              title=f" Share Buyback/dilution past 5 YR: {Shares_outstanding_funf_growth:.2f}%  ")
 
                     
                     #fig2.update_traces(texttemplate='%{y}', textposition='outside')
@@ -12753,17 +12753,6 @@ with st.container():
 
                     with col2:
                          st.plotly_chart(fig2,use_container_width=True,config=config)
-
-
-                    st.markdown(
-                         f"**5 YR ROIC Y/Y: {Average_ROIC_funf}%**<br>"
-                         f"**Current ROIC: {ROIC_annual_one}%**<br>"
-                         "<span style='font-family: Calibri; font-style: italic;'>"
-                         "Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu <br>"
-                         "erwirtschaften."
-                         "</span>", unsafe_allow_html=True
-                         )     
-
 #-------------------------------------------------------------------------------------------------
                     try:
                          gross_margin = ["{:.2f}%".format(gross_margin * 100) for gross_margin in gross_margin]
