@@ -97,7 +97,7 @@ try:
 
 except ValueError:
       
-     st.write("")
+     print("-")
 
 
 fig = go.Figure()
@@ -8326,6 +8326,26 @@ with st.container():
 
           ROE_five = annual_data['roe'][-5:]
 
+
+
+
+          Net_debt =annual_data['net_debt'][-1:]
+          Net_debt =sum(Net_debt)/len(Net_debt)
+          #st.write("Net_debt",Net_debt)
+
+          Ebita_annual =annual_data['ebitda'][-1:]
+          Ebita_annual =sum(Ebita_annual)/len(Ebita_annual)
+          #st.write("Ebitda",Ebita_annual)
+
+
+          Net_debt_to_EBITDA = "{:.2f}".format(Net_debt/Ebita_annual)
+
+          if Net_debt < 0:
+               Net_debt_to_EBITDA = "{:.2f}".format(0.0)
+
+          #st.write("Net Debt/ EBITDA",Net_debt_to_EBITDA)
+
+
           if len(Net_Operating_CashFlow_annual) >= 10:
                P_OCF_10="{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual)/len(Net_Operating_CashFlow_annual))/1000000000))
                P_sales_10="{:.2f}".format(Marketcap/((sum(Revenue_annual_10)/len(Revenue_annual_10))/1000000000))
@@ -8461,6 +8481,31 @@ with st.container():
                      
                      pfcf_funf ="-"
 
+          Total_Equity_quarter = quarterly_data['total_equity'][-1:]
+          Total_Equity_quarter = (((sum(Total_Equity_quarter) / len(Total_Equity_quarter))))
+          #st.write("Total_Equity_quarter_raw",Total_Equity_quarter)
+         
+          try:
+               #debt_equity_annual_one =quarterly_data['debt_to_equity'][-1:]
+               debt_equity_annual =annual_data['debt_to_equity'][-1:]
+
+               debt_Assets_annual =annual_data['debt_to_assets'][-1:]
+              
+               Average_debt_equity_annual = round((((sum(debt_equity_annual) / len(debt_equity_annual)))),2)
+               
+               Average_debt_assets_annual = round(((sum(debt_Assets_annual) / len(debt_Assets_annual))), 2)
+
+               #Total_Equity_quarter = quarterly_data['total_equity'][-1:]
+              
+          
+               
+
+          except Exception as e:
+               Average_debt_equity_one=0.00
+               debt_Assets_annual_one = pd.Series()
+               Average_debt_assets_one =0.00
+               Average_debt_equity_annual =0.00
+
                #st.write(Average_netIncome_annual)
                #Marketcap_in_million = round(Marketcap_in_million,2)
                #st.write(Marketcap_in_million)
@@ -8493,6 +8538,17 @@ with st.container():
                Earnings_next_yr_in_prozent=quote.fundamental_df.at[0,"EPS next Y - EPS growth next year"]
                Earnings_next_yr_in_value=quote.fundamental_df.at[0,"EPS next Y - EPS estimate for next year"]
                Earnings_next_5_yrs=quote.fundamental_df.at[0,"EPS next 5Y"]
+               Average_debt_equity_one=quote.fundamental_df.at[0,"Debt/Eq"]
+
+              # try:
+               #     Total_Debt_from_finviz =float(Total_Equity_quarter)*float(Average_debt_equity_one)
+                #      st.write("Total_Debt_from_finviz",Total_Debt_from_finviz)
+                   
+               #except Exception as e: 
+                #    Total_Debt_from_finviz=0
+          
+               
+               #print("Average_debt_equity_one",Average_debt_equity_one)
                    
           except Exception as e: 
 
@@ -8511,6 +8567,7 @@ with st.container():
                Earnings_next_yr_in_prozent="-"
                Earnings_next_yr_in_value ="-"
                Earnings_next_5_yrs="-"
+               Average_debt_equity_one=Average_debt_equity_annual
           
 
 
@@ -8666,6 +8723,12 @@ with st.container():
                total_debt_column = df['Total Debt']
                last_value_total_debt = total_debt_column.iloc[-1]
 
+               #if Total_Debt_from_finviz >0:
+                #     last_value_total_debt=Total_Debt_from_finviz
+               #else:
+                #    last_value_total_debt=last_value_total_debt
+                     
+               #.write("total debt",last_value_total_debt)
                Total_Debt_from_all_calc = last_value_total_debt/ 1000000000
                Total_cash_last_years = round((cash_equiv_quarter),3)
                rounded_gross_margin="-"
@@ -8750,7 +8813,7 @@ with st.container():
           data1 = {
           'Market Cap (intraday)': [Marketcap_in_Billion],
           'Enterprise Value': [Enterprise_value_in_Billion], 
-          #'Debt/EBITDA':[Net_debt_to_Ebitda],
+          'Net Debt/EBITDA':[Net_debt_to_EBITDA],
           'Revenue (TTM)': [revenue_ttm],      
           '5 YR Net Income': [Average_netIncome_annual_we], 
           'Net Income (TTM)': [netincome_ttm], 
@@ -8840,7 +8903,7 @@ with st.container():
          # 'EPS Estimate next YR':[Earnings_next_yr_in_prozent],
           'EPS Estimate next YR': f"$ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
           #'EPS Estimate next YR':f"$ {Earnings_next_yr_in_value}",
-          'EPS Estimate 5 YR':[Earnings_next_5_yrs],
+          'EPS Estimate 5 YR (per annum)':[Earnings_next_5_yrs],
           'EPS past 5 YR':f"{EPS_5_CAGR}% ",
           'Revenue growth 10 YR':f"{Revenue_Cagr_10}%",
           'Revenue growth 5 YR':f"{Revenue_5_CAGR}%",
@@ -10647,7 +10710,7 @@ with st.container():
           try:
                debt_equity_annual_one =quarterly_data['debt_to_equity'][-1:]
                debt_Assets_annual =annual_data['debt_to_assets'][-10:]
-               debt_Assets_annual_one =annual_data['debt_to_assets'][-1:]
+              
                
                Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
           
@@ -10660,7 +10723,7 @@ with st.container():
           except KeyError:
                debt_equity_annual_one = pd.Series()
                debt_Assets_annual = pd.Series()
-               debt_Assets_annual_one = pd.Series()
+              
                interest_expense_yr=pd.Series()
            
 
@@ -10699,17 +10762,7 @@ with st.container():
           Average_total_assets_one = round(((sum(Total_assets_annual_one) / len(Total_assets_annual_one))), 2)
           
 
-          try:
-               #debt_equity_annual_one =quarterly_data['debt_to_equity'][-1:]
-               debt_equity_annual =annual_data['debt_to_equity'][-1:]
-              
-               Average_debt_equity_one = round((((sum(debt_equity_annual) / len(debt_equity_annual)))),2)
-               
-               Average_debt_assets_one = round(((sum(debt_Assets_annual_one) / len(debt_Assets_annual_one))), 2)
-
-          except ZeroDivisionError:
-               Average_debt_equity_one=0.00
-               Average_debt_assets_one =0.00
+  
 
           shares_basic_quarter = quarterly_data['shares_basic'][-1:]
           #DEBT_Equity = round(, 2)
@@ -10904,10 +10957,10 @@ with st.container():
           else:
                     roic= "✅"  # Green checkmark for KGV greater than or equal to 23
 
-          if Average_debt_equity_one > 2:
+          if float(Average_debt_equity_one) > 2:
                     dt_equt = "-🔴"  # Red X for KGV less than 23
 
-          elif Average_debt_equity_one < 0:
+          elif float(Average_debt_equity_one) < 0:
                
                dt_equt = "-🔴"  # Red X for KGV less than 23
 
@@ -11216,7 +11269,7 @@ with st.container():
           col2.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
           col3.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
           col4.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
-          col5.info(f"EPS next 5 YR: {Earnings_next_5_yrs}")
+          col5.info(f"EPS next 5 YR (per annum): {Earnings_next_5_yrs}")
           
 
 
@@ -11940,7 +11993,8 @@ with st.container():
           except Exception as e:
           
            Dividend501 = 0
-
+        
+        
 
           cola, colb, colc, cold,col2 = st.columns(5)
              # for i in range(len(Dividend_growth_quarter)):
@@ -11952,7 +12006,7 @@ with st.container():
           Dividend2 = colb.number_input("Growth Rate(%)", value=percentage_increase_1_2, key="unique_key_for_Dividend2")
           #      elif i == 12-4:
           #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
-          Dividend3 = colc.number_input("Growth Rate(%)", value=percentage_increase_2_3, key="unique_key_for_Dividend3")
+          Dividend3 = colc.number_input("Growth Rate(%)", value=percentage_increase_2_3,key="unique_key_for_Dividend3")
           #      elif i == 12:
           #           Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
           Dividend4 = cold.number_input("Growth Rate(%)", value=percentage_increase_3_4, key="unique_key_for_Dividend4")
@@ -11960,6 +12014,9 @@ with st.container():
           #      elif i == 13:
           #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
           Dividend5 = col2.number_input("Growth Rate(%)", value=percentage_increase_4_5, key="unique_key_for_Dividend5")
+
+
+
 
           # Check if any of the dividend inputs contain a value greater than 1
          # List to store the values greater than 1
@@ -11988,7 +12045,7 @@ with st.container():
           # except Exception as e:
           #      Average_dividend_growth_rate=0
                 
-          cola,colb = st.columns(2)
+          #cola,colb = st.columns(2)
           #average_input = cola.number_input("Growth rate YOY (%)", value=Average_dividend_growth_rate)
           #Dividend_per_share_cagr_10_quarter =cola.number_input("Quarter Dividend per share Cagr 10 (%)", value=Dividend_per_share_cagr_10_quarter)
           #Dividend_per_share_cagr_10 = colb.number_input("Annual Dividend per share Cagr 10 (%)", value=Dividend_per_share_cagr_10)
@@ -12673,16 +12730,16 @@ with st.container():
                     # Create a DataFrame
                     data = pd.DataFrame({
                     'Date': date_annual,
-                    'Dividends per Share growth': Dividends_per_share_growth_annual_2003,
+                    'Dividend per Share growth': Dividends_per_share_growth_annual_2003,
                     })
 
 
 
                     # Create a Plotly Express bar chart
-                    fig2 = px.bar(data, x='Date', y='Dividends per Share growth',
-                              text='Dividends per Share growth',  # Corrected the column name
+                    fig2 = px.bar(data, x='Date', y='Dividend per Share growth',
+                              text='Dividend per Share growth',  # Corrected the column name
                               labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                              title='Dividends per Share growth')
+                              title='Dividend per Share growth')
 
                     fig2.update_layout(title_x=0.05)
 
@@ -13172,6 +13229,7 @@ with st.container():
           st.image('NPV.png', use_column_width=True)
 
           st.write("Dividend Discount Model")
+          st.write("Das Modell basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden")
           st.image('DDM.png', use_column_width=True) 
 
           st.write("CAGR")
@@ -13203,8 +13261,7 @@ with st.container():
 
           st.write(short_description)
 
-          Net_debt =annual_data['net_debt'][-5:]
-          #st.write("Net_debt",Net_debt)
+      
 
 
           #st.write(f"1 USD is equivalent to {usd_to_eur_rate} EUR")
@@ -13358,7 +13415,7 @@ with st.container():
           # print("Total cash",Total_cash_last_years)
           # #st.(WACC_prozent)
           # #print("Intrinsic_Value_DDM",Intrinsic_Value_DDM)
-          # print("Total Debt",Total_DEbt_in_billion)
+          print("Total Debt",Total_DEbt_in_billion)
           #print("Total Discounted value:",discounted_values)
           #print("Total Discounted value2:",discounted_values2)
           # print("Terminal value:",Terminal_Value)
