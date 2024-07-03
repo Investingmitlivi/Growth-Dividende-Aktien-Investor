@@ -8326,7 +8326,13 @@ with st.container():
 
           ROE_five = annual_data['roe'][-5:]
 
+          Debt_issued = quarterly_data['cff_debt_issued'][-2:]
+          Debt_repaid = quarterly_data['cff_debt_repaid'][-2:]
+          Shares_repurchased =quarterly_data['cff_common_stock_repurchased'][-2:]
 
+          #st.write("Debt_issued",Debt_issued)
+          #st.write("debt repaid",Debt_repaid)
+          #st.write("Shares_repurchased",Shares_repurchased)
 
 
           Net_debt =annual_data['net_debt'][-1:]
@@ -8540,12 +8546,11 @@ with st.container():
                Earnings_next_5_yrs=quote.fundamental_df.at[0,"EPS next 5Y"]
                Average_debt_equity_one=quote.fundamental_df.at[0,"Debt/Eq"]
 
-              # try:
-               #     Total_Debt_from_finviz =float(Total_Equity_quarter)*float(Average_debt_equity_one)
-                #      st.write("Total_Debt_from_finviz",Total_Debt_from_finviz)
-                   
-               #except Exception as e: 
-                #    Total_Debt_from_finviz=0
+               try:
+                    float(Average_debt_equity_one) >1
+                    
+               except Exception as e: 
+                    Average_debt_equity_one=Average_debt_equity_annual
           
                
                #print("Average_debt_equity_one",Average_debt_equity_one)
@@ -12160,6 +12165,7 @@ with st.container():
                     Price_to_sales = annual_data['price_to_sales'][-10:]
                     Price_to_earnings=annual_data['price_to_earnings'][-10:]
                     shares_diluted_annual_growth=annual_data['shares_diluted_growth'][-10:]
+                    Dividend_per_share_growth = annual_data['dividends_per_share_growth'][-10:]
 
                      
                     
@@ -12207,6 +12213,7 @@ with st.container():
                     'Price to Book': Price_to_book,
                     'PE ratio':Price_to_earnings,
                     'Dividend per share':Dividend_per_share,
+                    'Dividend per share growth ':Dividend_per_share_growth,
                     'FCF per share':fcf_per_share_annual,
                     'Revenue per share':revenue_per_share_annual,
                     'Payout ratio': Payout_ratio_annual,
@@ -12233,6 +12240,7 @@ with st.container():
                     ('Price to Book', Price_to_book),
                     ('PE ratio',Price_to_earnings ),
                     ('Dividend per share',Dividend_per_share),
+                    ('Dividend per share growth',Dividend_per_share_growth),
                     ('FCF per share',fcf_per_share_annual),
                     ('Revenue per share',revenue_per_share_annual),
                     ('Payout ratio', Payout_ratio_annual),
@@ -12241,13 +12249,13 @@ with st.container():
                     
                
                     ]
-
+                   
                     merged_data = {}
                     for metric_name, metric_data in metrics:
                          if not isinstance(metric_data, list):
                               metric_data = [metric_data]  # Convert non-iterable values to lists
 
-                         if metric_name in ('Revenue growth', 'Net Income growth', 'FCF growth', 'EPS growth','FCF Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Payout ratio','ROIC','ROE'):
+                         if metric_name in ('Revenue growth', 'Net Income growth', 'FCF growth', 'EPS growth','FCF Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
                               formatted_data = ["{:.2f}%".format(data * 100) for data in metric_data]
                          elif metric_name == 'Book Value':
                               formatted_data = ["{:.2f}B".format(data / 1_000_000_000) for data in metric_data]
@@ -12286,6 +12294,8 @@ with st.container():
                                         EPS_growth_quarter=quarterly_data['eps_diluted_growth'][-10:]
                                         ROIC_quarter=quarterly_data['roic'][-10:]
                                         shares_diluted_quarter_growth=quarterly_data['shares_diluted_growth'][-10:]
+                                        Dividend_per_share_growth_quarter = quarterly_data['dividends_per_share_growth'][-10:]
+                 
                                         try:
                                              
                                              Operating_Margin_quarter = quarterly_data['operating_margin'][-10:]
@@ -12355,6 +12365,7 @@ with st.container():
                                         ('Price to Book', Price_to_book_quarter),
                                         ('PE ratio',Price_to_earnings_quarter ),
                                         ('Dividend per share',Dividend_per_share_quarter),
+                                        ('Dividend per share growth',Dividend_per_share_growth_quarter),
                                         ('FCF per share',fcf_per_share_quarter),
                                         ('Revenue per share',revenue_per_share_quarter), 
                                         ('Payout ratio', Payout_ratio_quarter),
@@ -12368,7 +12379,7 @@ with st.container():
                                              if not isinstance(metric_data, list):
                                                   metric_data = [metric_data]  # Convert non-iterable values to lists
 
-                                             if metric_name in ('Revenue growth', 'Net Income growth', 'FCF growth', 'EPS growth','FCF Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Payout ratio','ROIC','ROE'):
+                                             if metric_name in ('Revenue growth', 'Net Income growth', 'FCF growth', 'EPS growth','FCF Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
                                                   formatted_data = ["{:.2f}%".format(data * 100) for data in metric_data]
                                              elif metric_name == 'Book Value':
                                                   formatted_data = ["{:.2f}B".format(data / 1_000_000_000) for data in metric_data]
