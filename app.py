@@ -8326,28 +8326,9 @@ with st.container():
 
           ROE_five = annual_data['roe'][-5:]
 
-          Debt_issued = quarterly_data['cff_debt_issued'][-2:]
-          Debt_repaid = quarterly_data['cff_debt_repaid'][-2:]
-          Shares_repurchased =quarterly_data['cff_common_stock_repurchased'][-2:]
+          #Debt_issued = quarterly_data['cff_debt_issued'][-2:]
+          #Debt_repaid = quarterly_data['cff_debt_repaid'][-2:]
 
-          #st.write("Debt_issued",Debt_issued)
-          #st.write("debt repaid",Debt_repaid)
-          #st.write("Shares_repurchased",Shares_repurchased)
-
-
-          Net_debt =annual_data['net_debt'][-1:]
-          Net_debt =sum(Net_debt)/len(Net_debt)
-          #st.write("Net_debt",Net_debt)
-
-          Ebita_annual =annual_data['ebitda'][-1:]
-          Ebita_annual =sum(Ebita_annual)/len(Ebita_annual)
-          #st.write("Ebitda",Ebita_annual)
-
-
-          Net_debt_to_EBITDA = "{:.2f}".format(Net_debt/Ebita_annual)
-
-          if Net_debt < 0:
-               Net_debt_to_EBITDA = "{:.2f}".format(0.0)
 
           #st.write("Net Debt/ EBITDA",Net_debt_to_EBITDA)
 
@@ -8547,7 +8528,7 @@ with st.container():
                Average_debt_equity_one=quote.fundamental_df.at[0,"Debt/Eq"]
 
                try:
-                    float(Average_debt_equity_one) >1
+                    checking_valid_debt_equity=float(Average_debt_equity_one) >1
                     
                except Exception as e: 
                     Average_debt_equity_one=Average_debt_equity_annual
@@ -8583,8 +8564,30 @@ with st.container():
 
 
           Divdend_per_share =Financial_data['ttm']['dividends']
+          Dividend_per_share_yield_no_percentage =abs((Divdend_per_share)/current_price)*100
           Dividend_per_share_yield ="{:.2f}%".format(abs((Divdend_per_share)/current_price)*100)
 
+
+          Shares_issued=annual_data['cff_common_stock_issued'][-1:]
+          Shares_issued =sum(Shares_issued)/len(Shares_issued)
+          Shares_issued =abs(Shares_issued/1000000000)
+
+          Shares_repurchased =quarterly_data['cff_common_stock_repurchased'][-1:]
+          Shares_repurchased =sum(Shares_repurchased)/len(Shares_repurchased)
+          Shares_repurchased =abs(Shares_repurchased/1000000000)
+
+
+          #Shares_repurchased =Financial_data['ttm']['cff_common_stock_repurchased']
+          #Shares_repurchased =abs(Shares_repurchased/1000000000)
+       
+
+          #print("Debt issued",Debt_issued)
+          #print("debt repaid",Debt_repaid)
+          #st.write("Shares_issued",Shares_issued)
+          #st.write("Shares_repurchased",Shares_repurchased)
+
+          Share_holder_yield="{:.2f}%".format((Dividend_per_share_yield_no_percentage+((Shares_repurchased/Marketcap)*100)))
+          #st.write("Total shareholder yield",Share_holder_yield)
          
 
         
@@ -8813,12 +8816,20 @@ with st.container():
          
                 
 
+          Ebita_ttm =Financial_data['ttm']['ebitda']
+          Ebita_ttm =Ebita_ttm/1000000000
+          #st.write(Ebita_ttm)
+          #st.write(Total_Debt_from_all_calc)
 
+          try:
+                Debt_to_EBITDA = "{:.2f}".format(Total_Debt_from_all_calc/Ebita_ttm)
+          except Exception as e:
+                Debt_to_EBITDA =0.00
           
           data1 = {
           'Market Cap (intraday)': [Marketcap_in_Billion],
           'Enterprise Value': [Enterprise_value_in_Billion], 
-          'Net Debt/EBITDA':[Net_debt_to_EBITDA],
+          'Debt/EBITDA':[Debt_to_EBITDA],
           'Revenue (TTM)': [revenue_ttm],      
           '5 YR Net Income': [Average_netIncome_annual_we], 
           'Net Income (TTM)': [netincome_ttm], 
@@ -8842,6 +8853,7 @@ with st.container():
           data2 = {
           '5 YR Dividend Yield': [Dividend_yield_average], 
           'Dividend Yield': [Dividend_per_share_yield],
+          'Shareholder Yield': [Share_holder_yield],
           'Dividend Paid (TTM)': [Dividend_ttm], 
           'Dividend/Share (TTM)':f"$ {Dividend_TTM}",
           'Dividend Estimate':f"$ {Dividend_Est}",
