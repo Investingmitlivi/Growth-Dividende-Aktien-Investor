@@ -8570,12 +8570,16 @@ with st.container():
 
           Shares_issued=annual_data['cff_common_stock_issued'][-1:]
           Shares_issued =sum(Shares_issued)/len(Shares_issued)
-          Shares_issued =abs(Shares_issued/1000000000)
+          Shares_issued =(Shares_issued/1000000000)
 
           Shares_repurchased =quarterly_data['cff_common_stock_repurchased'][-1:]
           Shares_repurchased =sum(Shares_repurchased)/len(Shares_repurchased)
-          Shares_repurchased =abs(Shares_repurchased/1000000000)
+          Shares_repurchased =(Shares_repurchased/1000000000)
 
+
+          net_issuance_common_stock =quarterly_data['cff_common_stock_net'][-1:]
+          net_issuance_common_stock =sum(net_issuance_common_stock)/len(net_issuance_common_stock)
+          net_issuance_common_stock =(net_issuance_common_stock/1000000000)
 
           #Shares_repurchased =Financial_data['ttm']['cff_common_stock_repurchased']
           #Shares_repurchased =abs(Shares_repurchased/1000000000)
@@ -8585,6 +8589,7 @@ with st.container():
           #print("debt repaid",Debt_repaid)
           #st.write("Shares_issued",Shares_issued)
           #st.write("Shares_repurchased",Shares_repurchased)
+          #st.write("net_issuance_common_stock",net_issuance_common_stock)
 
           Share_holder_yield="{:.2f}%".format((Dividend_per_share_yield_no_percentage+((Shares_repurchased/Marketcap)*100)))
           #st.write("Total shareholder yield",Share_holder_yield)
@@ -9021,9 +9026,9 @@ with st.container():
 
 
 
-          disclaimer = """
-          The information provided on this website is intended for informational purposes only and does not constitute financial advice, investment recommendations, or a solicitation to buy or sell any securities. The content and data presented on this website are not tailored to your specific investment goals, financial situation, or risk tolerance. You should always consult with a qualified financial advisor before making investment decisions.
-          """
+          #disclaimer = """
+          #The information provided on this website is intended for informational purposes only and does not constitute financial advice, investment recommendations, or a solicitation to buy or sell any securities. The content and data presented on this website are not tailored to your specific investment goals, financial situation, or risk tolerance. You should always consult with a qualified financial advisor before making investment decisions.
+          #"""
           # The stock and financial data provided on this website may be delayed, inaccurate, or subject to errors. We make no representations or warranties about the accuracy, completeness, or reliability of the information presented. Any reliance you place on such information is strictly at your own risk.
           # Past performance is not indicative of future results. Investments in stocks, securities, and financial instruments involve risks, including the loss of your invested capital. Market conditions can change rapidly, and investment values can fluctuate.
           # This website may contain links to third-party websites or content. We do not endorse or control the content of these external sites and are not responsible for their accuracy, legality, or availability.
@@ -9033,11 +9038,11 @@ with st.container():
           # For specific legal, tax, and financial advice, you should contact your own attorney, accountant, or other professional advisors..
           
 
-          st.markdown("<style>body { font-family: serif; }</style>", unsafe_allow_html=True)
-          st.markdown("<u><h3 style='color:#FF4B4B;'>Disclaimer</h3></u>", unsafe_allow_html=True)
+          #st.markdown("<style>body { font-family: serif; }</style>", unsafe_allow_html=True)
+          #st.markdown("<u><h3 style='color:#FF4B4B;'>Disclaimer</h3></u>", unsafe_allow_html=True)
           #short_description = disclaimer[:20]
           #with st.expander("Read More"):
-          st.write(disclaimer)
+          #st.write(disclaimer)
           
 
           #st.header("Found an error or have an idea? Write us an email!")
@@ -9046,12 +9051,12 @@ with st.container():
         
 
           # Text mit benutzerdefiniertem CSS und Container-Breite
-          st.markdown(custom_css, unsafe_allow_html=True)
+          #st.markdown(custom_css, unsafe_allow_html=True)
           st.markdown('<div class="my-header">Found an error or have an idea? Write us an Email!</div>', unsafe_allow_html=True)
              
      # ---- Documentation : https://formsubmit.co/
           contact_form = """
-               <form action="https://formsubmit.co/nedumokonkwo@gmail.com" method="POST">
+               <form action="https://formsubmit.co/verstehdieaktie@gmail.com" method="POST">
                     <input type = "hidden" name="_captcha" value="false">
                     <input type="text" name="name" placeholder="Your name" required>
                     <input type="email" name="email" placeholder="Your email" required>
@@ -9064,18 +9069,14 @@ with st.container():
                
           st.markdown(contact_form, unsafe_allow_html = True)
 
-
-
-      
-
           def local_css(file_name):
-                    with open(file_name)as f:
-                         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)      
+                     with open(file_name)as f:
+                          st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)      
           local_css("style.css")
 
-          current_year = datetime.now().year
+          # current_year = datetime.now().year
  
-          st.markdown(f'&copy; {2023} - {current_year} Stock valuation', unsafe_allow_html=True)
+          # st.markdown(f'&copy; {2023} - {current_year} Stock valuation', unsafe_allow_html=True)
      #.............................................................
 # Assuming revenue_list and gross_profit_list are extracted from the API response
 with st.container():
@@ -13476,3 +13477,27 @@ with st.container():
 
 # Apply the CSS styles using st.markdown
 #st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+disclaimer = """
+          The information provided on this website is intended for informational purposes only and does not constitute financial advice, investment recommendations, or a solicitation to buy or sell any securities. The content and data presented on this website are not tailored to your specific investment goals, financial situation, or risk tolerance. You should always consult with a qualified financial advisor before making investment decisions.
+          """
+          # The stock and financial data provided on this website may be delayed, inaccurate, or subject to errors. We make no representations or warranties about the accuracy, completeness, or reliability of the information presented. Any reliance you place on such information is strictly at your own risk.
+          # Past performance is not indicative of future results. Investments in stocks, securities, and financial instruments involve risks, including the loss of your invested capital. Market conditions can change rapidly, and investment values can fluctuate.
+          # This website may contain links to third-party websites or content. We do not endorse or control the content of these external sites and are not responsible for their accuracy, legality, or availability.
+          # We are not licensed financial advisors, and the content provided on this website should not be construed as professional financial advice. You are solely responsible for evaluating the suitability of any investment decisions based on your individual circumstances and objectives.
+          # By using this website, you agree to hold us harmless from any and all claims, losses, liabilities, or damages resulting from your reliance on the information presented herein. We reserve the right to modify or discontinue the content and services offered on this website at any time.
+          # Please consult with a qualified financial professional and conduct your own research before making any investment decisions. We encourage you to review the terms of use and privacy policy of this website for more information about your use of this site.
+          # For specific legal, tax, and financial advice, you should contact your own attorney, accountant, or other professional advisors..
+          
+
+st.markdown("<style>body { font-family: serif; }</style>", unsafe_allow_html=True)
+st.markdown("<u><h3 style='color:#FF4B4B;'>Disclaimer</h3></u>", unsafe_allow_html=True)
+          #short_description = disclaimer[:20]
+          #with st.expander("Read More"):
+st.write(disclaimer)
+          
+st.markdown(custom_css, unsafe_allow_html=True)
+
+
+current_year = datetime.now().year
+ 
+st.markdown(f'&copy; {2023} - {current_year} Stock valuation', unsafe_allow_html=True)
