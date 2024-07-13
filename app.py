@@ -52,7 +52,7 @@ from stocknews import StockNews
 
 
 
-st.set_page_config(page_title="StockAnalysisTool", page_icon = "📚", layout="wide")
+st.set_page_config(page_title="verstehdieaktie", page_icon = "📚", layout="wide")
 
 hide_streamlit_style = """
                 <div style="max-width: 100%;">
@@ -13439,7 +13439,7 @@ with st.container():
           # print("Total cash",Total_cash_last_years)
           # #st.(WACC_prozent)
           # #print("Intrinsic_Value_DDM",Intrinsic_Value_DDM)
-          print("Total Debt",Total_DEbt_in_billion)
+          #print("Total Debt",Total_DEbt_in_billion)
           #print("Total Discounted value:",discounted_values)
           #print("Total Discounted value2:",discounted_values2)
           # print("Terminal value:",Terminal_Value)
