@@ -1,4 +1,6 @@
+
 import requests, json, time
+import requests_html
 #import streamlit_authenticator as stauth
 #import pickle
 import matplotlib.pyplot as plt
@@ -17,6 +19,7 @@ import time
 import firebase_admin
 import math
 import textwrap
+import sklearn
 
 #import math
 #import re
@@ -31,8 +34,8 @@ from PIL import Image,ImageDraw
 from streamlit_lottie import st_lottie
 from numpy_financial import npv
 from pathlib import Path
-from googletrans import Translator, LANGUAGES
-from translate import Translator
+#from googletrans import Translator, LANGUAGES
+#from translate import Translator
 #from transformers import pipeline
 from forex_python.converter import CurrencyRates
 from forex_python.converter import RatesNotAvailableError
@@ -41,7 +44,7 @@ from pandas_market_calendars import get_calendar
 from yahoo_fin import stock_info as si
 from bs4 import BeautifulSoup
 from firebase_admin import credentials
-from firebase_admin import firestore
+#from firebase_admin import firestore
 from firebase_admin import auth
 from pandas_datareader import data
 from finvizfinance.quote import finvizfinance
@@ -49,10 +52,10 @@ from pyfinviz.quote import Quote
 from stocknews import StockNews
 from streamlit_option_menu import option_menu
 
-
-
-
 st.set_page_config(page_title="verstehdieaktie", page_icon = "📚", layout="wide")
+
+
+
 
 hide_streamlit_style = """
                 <div style="max-width: 100%;">
