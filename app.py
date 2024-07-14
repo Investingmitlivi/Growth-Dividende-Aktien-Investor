@@ -1,25 +1,24 @@
 
 import requests, json, time
-import requests_html
 #import streamlit_authenticator as stauth
 #import pickle
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import streamlit as st, pandas as pd, numpy as np, yfinance as yf
 import plotly.express as px
 #import sqlite3 
 #import bcrypt
 import plotly.graph_objs as go
 import plotly.graph_objects as go
-import altair as alt
+#import altair as alt
 #import random
 #import string
 #import uuid  # Import the uuid library
 #import hashlib
 import time
 import firebase_admin
-import math
-import textwrap
-import sklearn
+#import math
+#import textwrap
+#import sklearn
 
 #import math
 #import re
@@ -27,27 +26,27 @@ import sklearn
 
 
 
-from sqlite3 import OperationalError
-from requests.exceptions import HTTPError
+#from sqlite3 import OperationalError
+#from requests.exceptions import HTTPError
 from datetime import datetime, timedelta, date
-from PIL import Image,ImageDraw
-from streamlit_lottie import st_lottie
+#from PIL import Image,ImageDraw
+#from streamlit_lottie import st_lottie
 from numpy_financial import npv
-from pathlib import Path
+#from pathlib import Path
 #from googletrans import Translator, LANGUAGES
 #from translate import Translator
 #from transformers import pipeline
-from forex_python.converter import CurrencyRates
-from forex_python.converter import RatesNotAvailableError
-from googlefinance import getQuotes
-from pandas_market_calendars import get_calendar
-from yahoo_fin import stock_info as si
-from bs4 import BeautifulSoup
+#from forex_python.converter import CurrencyRates
+#from forex_python.converter import RatesNotAvailableError
+#from googlefinance import getQuotes
+#from pandas_market_calendars import get_calendar
+#from yahoo_fin import stock_info as si
+#from bs4 import BeautifulSoup
 from firebase_admin import credentials
 #from firebase_admin import firestore
-from firebase_admin import auth
+#from firebase_admin import auth
 from pandas_datareader import data
-from finvizfinance.quote import finvizfinance
+#from finvizfinance.quote import finvizfinance
 from pyfinviz.quote import Quote
 from stocknews import StockNews
 from streamlit_option_menu import option_menu
