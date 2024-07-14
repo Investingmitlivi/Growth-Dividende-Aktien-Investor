@@ -103,7 +103,16 @@ custom_css = """
                </style>
                """
 
-
+disclaimer = """
+          The information provided on this website is intended for informational purposes only and does not constitute financial advice, investment recommendations, or a solicitation to buy or sell any securities. The content and data presented on this website are not tailored to your specific investment goals, financial situation, or risk tolerance. You should always consult with a qualified financial advisor before making investment decisions.
+          """
+          # The stock and financial data provided on this website may be delayed, inaccurate, or subject to errors. We make no representations or warranties about the accuracy, completeness, or reliability of the information presented. Any reliance you place on such information is strictly at your own risk.
+          # Past performance is not indicative of future results. Investments in stocks, securities, and financial instruments involve risks, including the loss of your invested capital. Market conditions can change rapidly, and investment values can fluctuate.
+          # This website may contain links to third-party websites or content. We do not endorse or control the content of these external sites and are not responsible for their accuracy, legality, or availability.
+          # We are not licensed financial advisors, and the content provided on this website should not be construed as professional financial advice. You are solely responsible for evaluating the suitability of any investment decisions based on your individual circumstances and objectives.
+          # By using this website, you agree to hold us harmless from any and all claims, losses, liabilities, or damages resulting from your reliance on the information presented herein. We reserve the right to modify or discontinue the content and services offered on this website at any time.
+          # Please consult with a qualified financial professional and conduct your own research before making any investment decisions. We encourage you to review the terms of use and privacy policy of this website for more information about your use of this site.
+          # For specific legal, tax, and financial advice, you should contact your own attorney, accountant, or other professional advisors..
 #
 cred = credentials.Certificate('investingmitlivi-firebase key.json')
 try:
@@ -165,7 +174,7 @@ if selected == "Home":
           """
           
           )
-          st.write("[Youtube Channel >](https://www.youtube.com/@Investing_mit_Livi)")
+          st.write("[Youtube Channel >](https://www.youtube.com/@Verstehdieaktie)")
           st.write("---")
 
 #finnhub_client = finnhub.Client(api_key="ckse5rhr01qjpllh316gckse5rhr01qjpllh3170")
@@ -13493,16 +13502,7 @@ if selected == "Stock Analysis Tool":
 
 # Apply the CSS styles using st.markdown
 #st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-disclaimer = """
-          The information provided on this website is intended for informational purposes only and does not constitute financial advice, investment recommendations, or a solicitation to buy or sell any securities. The content and data presented on this website are not tailored to your specific investment goals, financial situation, or risk tolerance. You should always consult with a qualified financial advisor before making investment decisions.
-          """
-          # The stock and financial data provided on this website may be delayed, inaccurate, or subject to errors. We make no representations or warranties about the accuracy, completeness, or reliability of the information presented. Any reliance you place on such information is strictly at your own risk.
-          # Past performance is not indicative of future results. Investments in stocks, securities, and financial instruments involve risks, including the loss of your invested capital. Market conditions can change rapidly, and investment values can fluctuate.
-          # This website may contain links to third-party websites or content. We do not endorse or control the content of these external sites and are not responsible for their accuracy, legality, or availability.
-          # We are not licensed financial advisors, and the content provided on this website should not be construed as professional financial advice. You are solely responsible for evaluating the suitability of any investment decisions based on your individual circumstances and objectives.
-          # By using this website, you agree to hold us harmless from any and all claims, losses, liabilities, or damages resulting from your reliance on the information presented herein. We reserve the right to modify or discontinue the content and services offered on this website at any time.
-          # Please consult with a qualified financial professional and conduct your own research before making any investment decisions. We encourage you to review the terms of use and privacy policy of this website for more information about your use of this site.
-          # For specific legal, tax, and financial advice, you should contact your own attorney, accountant, or other professional advisors..
+
           
 
 st.markdown("<style>body { font-family: serif; }</style>", unsafe_allow_html=True)
