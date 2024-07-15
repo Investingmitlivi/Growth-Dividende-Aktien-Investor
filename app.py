@@ -175,7 +175,24 @@ if selected == "Home":
           
           )
           st.write("[Youtube Channel >](https://www.youtube.com/@Verstehdieaktie)")
-          st.write("---")
+          #st.write("---")
+
+
+          st.write("##")
+          st.write("Tip: To invest in shares, ETFs, Cryptos and funds, you need a securities account. You can find the best providers in the following overview:"
+          )
+          st.write("[Trade Republic >](https://ref.trade.re/6q9kgz11)")
+          st.write("[Scalable Capital >](https://de.scalable.capital/einladung/b9hqfs)")
+          st.write("[Crypto.com >](https://crypto.com/app/7drn8pkx35)")
+          st.write(
+          """
+          Track your portfolio and dividends with this app 
+           """
+          )
+          st.write("[Getquin >](https://getqu.in/xFbQ9n/YqUbcT/)")
+          st.write("[open a free current account: N26>](https://n26.com/r/livinuso3606)")
+          st.write("[Investing in P2P loans Bondora >](https://bondora.com/ref/livinusc)")
+          #st.write("---")
 
 #finnhub_client = finnhub.Client(api_key="ckse5rhr01qjpllh316gckse5rhr01qjpllh3170")
 if selected == "Stock Analysis Tool":
