@@ -143,85 +143,7 @@ config = {'displayModeBar': False}
 
 # ---- Load Assets ----
 
-
-
-selected = option_menu(
-     menu_title= None, #required
-     options=["Home","Stock Analysis Tool","Contacts"], #required
-     icons=["house","book","envelope"],
-     menu_icon="cast", #optional
-     default_index=0,
-     orientation="horizontal", 
-     
-)
-
-if selected == "Home":
-
-     with st.container():
-          
-          #left_column, center_column, right_column = st.columns([1, 2, 1])
-
-          #with left_column:
-          #st.header("what i do")
-          st.write("##")
-          st.write(
-          """
-          Stock Nerd | Fundamental Analysis | Learning, Understanding & Proper Application | Buy & Hold
-          Stock Analysis.
-
-          - I share my experiences on how to evaluate a stock or a company.
-          - First, i take a look at the financial statements to determine if the company is financially sound, and ultimately, i identify potential price targets for the company.
-          """
-          
-          )
-          st.write("[Youtube Channel >](https://www.youtube.com/@Verstehdieaktie)")
-          #st.write("---")
-
-
-          st.write("##")
-          st.write("Tip: To invest in shares, ETFs, Cryptos and funds, you need a securities account. You can find the best providers in the following overview:"
-          )
-          st.write("[Trade Republic >](https://ref.trade.re/6q9kgz11)")
-          st.write("[Scalable Capital >](https://de.scalable.capital/einladung/b9hqfs)")
-          st.write("[Crypto.com >](https://crypto.com/app/7drn8pkx35)")
-          st.write(
-          """
-          Track your portfolio and dividends with this app 
-           """
-          )
-          st.write("[Getquin >](https://getqu.in/xFbQ9n/YqUbcT/)")
-          st.write("[open a free current account: N26>](https://n26.com/r/livinuso3606)")
-          st.write("[Investing in P2P loans Bondora >](https://bondora.com/ref/livinusc)")
-          #st.write("---")
-
-#finnhub_client = finnhub.Client(api_key="ckse5rhr01qjpllh316gckse5rhr01qjpllh3170")
-if selected == "Stock Analysis Tool":
-
-     def get_exchange_rate(base_currency, target_currency):
-                         try:
-                              url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
-                              response = requests.get(url)
-                              data = response.json()
-                              exchange_rate = data['rates'][target_currency]
-                              return exchange_rate
-                         
-                         except Exception as e:
-                              url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
-                              response = requests.get(url)
-                              data = response.json()
-                              exchange_rate = data['rates'][target_currency]
-                              return exchange_rate
-
-                         # Get the exchange rate for USD to EUR
-     usd_to_eur_rate = get_exchange_rate("USD", "EUR")
-
-                    # Display the rate in Streamlit
-          #st.write(f"1 USD is equivalent to {usd_to_eur_rate} EUR")
-
-
-     #------------------------------------------------------------------------
-
-     ticker_symbol_name = {
+ticker_symbol_name = {
           'GOOGL':'Alphabet Inc.  ',
           'A':'Agilent Technologies Inc. ',
           'AA':'Alcoa Corporation ',
@@ -7137,6 +7059,85 @@ if selected == "Stock Analysis Tool":
           'ZYXI':'Zynex Inc. '
      }
 
+def get_exchange_rate(base_currency, target_currency):
+                         try:
+                              url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
+                              response = requests.get(url)
+                              data = response.json()
+                              exchange_rate = data['rates'][target_currency]
+                              return exchange_rate
+                         
+                         except Exception as e:
+                              url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
+                              response = requests.get(url)
+                              data = response.json()
+                              exchange_rate = data['rates'][target_currency]
+                              return exchange_rate
+
+                         # Get the exchange rate for USD to EUR
+usd_to_eur_rate = get_exchange_rate("USD", "EUR")
+
+selected = option_menu(
+     menu_title= None, #required
+     options=["Home","Stock Analysis Tool","Contacts"], #required
+     icons=["house","book","envelope"],
+     menu_icon="cast", #optional
+     default_index=0,
+     orientation="horizontal", 
+     
+)
+
+if selected == "Home":
+
+     with st.container():
+          
+          #left_column, center_column, right_column = st.columns([1, 2, 1])
+
+          #with left_column:
+          #st.header("what i do")
+          st.write("##")
+          st.write(
+          """
+          Stock Nerd | Fundamental Analysis | Learning, Understanding & Proper Application | Buy & Hold
+          Stock Analysis.
+
+          - I share my experiences on how to evaluate a stock or a company.
+          - First, i take a look at the financial statements to determine if the company is financially sound, and ultimately, i identify potential price targets for the company.
+          """
+          
+          )
+          st.write("[Youtube Channel >](https://www.youtube.com/@Verstehdieaktie)")
+          #st.write("---")
+
+
+          st.write("##")
+          st.write("Tip: To invest in shares, ETFs, Cryptos and funds, you need a securities account. You can find the best providers in the following overview:"
+          )
+          st.write("[Trade Republic >](https://ref.trade.re/6q9kgz11)")
+          st.write("[Scalable Capital >](https://de.scalable.capital/einladung/b9hqfs)")
+          st.write("[Crypto.com >](https://crypto.com/app/7drn8pkx35)")
+          st.write(
+          """
+          Track your portfolio and dividends with this app 
+           """
+          )
+          st.write("[Getquin >](https://getqu.in/xFbQ9n/YqUbcT/)")
+          st.write("[open a free current account: N26>](https://n26.com/r/livinuso3606)")
+          st.write("[Investing in P2P loans Bondora >](https://bondora.com/ref/livinusc)")
+          #st.write("---")
+
+#finnhub_client = finnhub.Client(api_key="ckse5rhr01qjpllh316gckse5rhr01qjpllh3170")
+if selected == "Stock Analysis Tool":
+
+ 
+
+                    # Display the rate in Streamlit
+          #st.write(f"1 USD is equivalent to {usd_to_eur_rate} EUR")
+
+
+     #------------------------------------------------------------------------
+
+
      #........................................................................
 
 
@@ -7390,7 +7391,7 @@ if selected == "Stock Analysis Tool":
      Stock_description=data["data"]["metadata"]["description"]
      #gross_margin_ttm=Financial_data['ttm']['gross_margin']
      stock_sector=data["data"]["metadata"]["sector"]
-     Industry=data["data"]["metadata"]["industry"]
+     #Industry=data["data"]["metadata"]["industry"]
      cik=data["data"]["metadata"]["CIK"]
      FCF_Cagr_10 = annual_data['fcf_cagr_10'][-1:]
      EPS_Cagr_10 = annual_data['eps_diluted_cagr_10'][-1:]
@@ -7420,24 +7421,25 @@ if selected == "Stock Analysis Tool":
 
 
 
-     col1, col2,col3 = st.columns(3)
+     
 
      # Display name centered in the first column
-     st.markdown(
-     '<div style="text-align:center;"><b>{}</b></div>'.format(name),
-     unsafe_allow_html=True
-     )
+    
 
      # Add a line break
      st.text("")
-
+     col1, col2,col3 = st.columns(3)
      # Display sector and industry information in the second column
      with col1:
-          st.markdown(f"Sector: {stock_sector}", unsafe_allow_html=True)
+          st.write(f"Sector: {stock_sector}", unsafe_allow_html=True)
      with col2:
-          st.markdown(f"Industry: {Industry}", unsafe_allow_html=True)
+          st.markdown(
+     '<div style="text-align:center;"><b>{}</b></div>'.format(name),
+     unsafe_allow_html=True
+     )
+          #st.write(f"Industry: {Industry}", unsafe_allow_html=True)
      with col3:
-          st.markdown(styled_link, unsafe_allow_html=True)
+          st.write(styled_link, unsafe_allow_html=True)
 
      #.............................................................................................
 
@@ -12483,9 +12485,9 @@ if selected == "Stock Analysis Tool":
                          fig1 = px.bar(data, x='Date', y='Revenue in Billion USD',
                                    text='Revenue in Billion USD',    
                                    labels={'value': 'Amount()'},
-                                   title=f"Revenue : 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%") 
-                    
-                         fig1.update_layout(title_x=0.05)     
+                                  # title=f"Revenue : 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%"
+                                   ) 
+                         #fig1.update_layout(title_x=0.05)     
 
                          
                          revenue_growth_2003= annual_data['revenue_growth'][-21:]                    
@@ -12508,7 +12510,8 @@ if selected == "Stock Analysis Tool":
                          fig2 = px.bar(data, x='Date', y='Revenue Growth',
                                    text='Revenue Growth', 
                                    labels={'value': 'Amount'},
-                                   title=f"5 YR Revenue Y/Y: {Revenue_growth_5years:.2f}%    1 YR Revenue: {Revenue_growth_1year:.2f}%") 
+                                   #title=f"5 YR Revenue Y/Y: {Revenue_growth_5years:.2f}%    1 YR Revenue: {Revenue_growth_1year:.2f}%"
+                                   ) 
                          
                          
                
@@ -12522,9 +12525,16 @@ if selected == "Stock Analysis Tool":
                          col1,col2 = st.columns(2)
 
                          with col1:
+                              st.write(f"""
+                              <b>Revenue : 10 YR: {Revenue_Cagr_10}%
+                              <b>  5 YR: {Revenue_5_CAGR}%
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig1,use_container_width=True, config=config)
 
                          with col2:
+                              st.write(f"""
+                              <b>5 YR Revenue Y/Y: {Revenue_growth_5years:.2f}%  1 YR Revenue: {Revenue_growth_1year:.2f}%
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig2,use_container_width=True, config=config)
                     
 
@@ -12547,7 +12557,8 @@ if selected == "Stock Analysis Tool":
                          fig1 = px.bar(data, x='Date', y='EPS',
                                    text='EPS',  # Display the value on top of each bar
                                    labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                                   title= f"10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(TTM): $ {eps_diluted_ttm}  Next YR: $ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})") 
+                                   #title= f"10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(TTM): $ {eps_diluted_ttm}  Next YR: $ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})"
+                                   ) 
                     
 
 
@@ -12572,17 +12583,24 @@ if selected == "Stock Analysis Tool":
                          fig2 = px.bar(data, x='Date', y='Shares Outstanding in Billion USD',
                                    text='Shares Outstanding in Billion USD',  # Display the value on top of each bar
                                    labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                                   title=f" Share Buyback/dilution past 5 YR: {Shares_outstanding_funf_growth:.2f}%  ")
+                                   #title=f" Share Buyback/dilution past 5 YR: {Shares_outstanding_funf_growth:.2f}%  "
+                                   )
 
                          
                          #fig2.update_traces(texttemplate='%{y}', textposition='outside')
-                         fig2.update_layout(title_x=0.05)
+                         #fig2.update_layout(title_x=0.05)
                          # Display the chart using Streamlit
                          col1,col2 = st.columns(2)
 
                          with col1:
+                              st.write(f"""
+                              <b>10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(TTM):  {eps_diluted_ttm}  Next YR:  {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig1,use_container_width=True,config=config)
                          with col2:
+                              st.write(f"""
+                              <b>Share Buyback/dilution past 5 YR: {Shares_outstanding_funf_growth:.2f}%  
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig2,use_container_width=True,config=config)
                #-------------------------------------------------------------------------------------------------
                # Create a DataFrame for the data
@@ -12718,7 +12736,7 @@ if selected == "Stock Analysis Tool":
                          
 
                          # Update layout
-                         title_text = f"10YR Dividend: {Dividend_10_CAGR}%     5YR Dividend: {Dividend_5_CAGR}%       <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {FCF_5_CAGR}%</span> "  
+                         #title_text = f"10YR Dividend: {Dividend_10_CAGR}%     5YR Dividend: {Dividend_5_CAGR}%       <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {FCF_5_CAGR}%</span> "  
 
 
                          #title_text = f"<span style='color:dodgerblue'>20YR Dividend CAGR: {Dividend_20_CAGR}%</span>"
@@ -12726,7 +12744,9 @@ if selected == "Stock Analysis Tool":
                          
 
                          #title_text = f"Dividend 20 CAGR: {Dividend_20_CAGR}% Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
-                         fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='FCF / Dividends Paid in Billion USD', title=title_text)
+                         fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='FCF / Dividends Paid in Billion USD',
+                                            #title=title_text
+                                            )
                                              # Update legend placement
                          fig.update_layout(legend=dict(
                          orientation="h",
@@ -12759,6 +12779,9 @@ if selected == "Stock Analysis Tool":
                          # Diagramm anzeigen
                          #col1,col2=st.columns(2)
                          #with col1:
+                         st.write(f"""
+                              <b>10YR Dividend: {Dividend_10_CAGR}%     5YR Dividend: {Dividend_5_CAGR}%       <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {FCF_5_CAGR}%
+                              """, unsafe_allow_html=True)
                          st.plotly_chart(fig,use_container_width=True,config=config)
                          #with col2:
                          #st.plotly_chart(fig2,use_container_width=True,config=config)
@@ -12785,9 +12808,10 @@ if selected == "Stock Analysis Tool":
                          fig1 = px.bar(data, x='Date', y='Dividend per Share',
                                         text='Dividend per Share',  # Display the value on top of each bar
                                         labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                                        title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}")
+                                        #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
+                                        )
 
-                         fig1.update_layout(title_x=0.05)
+                         #fig1.update_layout(title_x=0.05)
                
                     # Extract the last 21 years of dividends per share growth data
                          Dividends_per_share_growth_annual_2003 = annual_data['dividends_per_share_growth'][-10:]
@@ -12805,14 +12829,21 @@ if selected == "Stock Analysis Tool":
                          fig2 = px.bar(data, x='Date', y='Dividend per Share growth',
                                    text='Dividend per Share growth',  # Corrected the column name
                                    labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                   title='Dividend per Share growth')
+                                  # title='Dividend per Share growth'
+                                   )
 
-                         fig2.update_layout(title_x=0.05)
+                         #fig2.update_layout(title_x=0.05)
 
                          col1, col2 =st.columns(2)
                          with col1:
+                              st.write(f"""
+                              <b>5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig1, use_container_width=True,config=config)
                          with col2:
+                              st.write(f"""
+                              <b>Dividend per Share growth
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig2, use_container_width=True,config=config)
 
 
@@ -12838,8 +12869,9 @@ if selected == "Stock Analysis Tool":
                          fig1 = px.bar(data, x='Date', y='ROIC',
                                    text='ROIC',  # Display the value on top of each bar
                                    labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                   title= f"5 YR ROIC Y/Y: {Average_ROIC_funf}    Current ROIC: {ROIC_annual_one}<br>"
-                                   "<span style='font-family: Calibri; font-style: italic;'>Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu <br>erwirtschaften.</span>") 
+                                  # title= f"5 YR ROIC Y/Y: {Average_ROIC_funf}    Current ROIC: {ROIC_annual_one}<br>"
+                                  # "<span style='font-family: Calibri; font-style: italic;'>Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu <br>erwirtschaften.</span>"
+                                   ) 
                          
                          
                     # fig1.update_layout(title_x=0.05)
@@ -12865,16 +12897,27 @@ if selected == "Stock Analysis Tool":
                          fig2 = px.bar(data, x='Date', y='ROE',
                                    text='ROE',  # Display the value on top of each bar
                                    labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                   title=f"5 YR ROE Y/Y: {five_ROE}%    Current ROE: {ROE_ttm}") 
+                                   #title=f"5 YR ROE Y/Y: {five_ROE}%    Current ROE: {ROE_ttm}"
+                                   ) 
                          
-                         fig2.update_layout(title_x=0.05)
+                         #fig2.update_layout(title_x=0.05)
 
                          col1, col2 = st.columns(2)
                          with col1:
+                              st.write(f"""
+                              <b>5 YR ROIC Y/Y: {Average_ROIC_funf}</b>
+                              <b> Current ROIC: {ROIC_annual_one}</b><br>
+                              <span style='font-family: Calibri; font-style: italic;'>
+                              Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.
+                              </span>
+                                   """, unsafe_allow_html=True)
 
                               st.plotly_chart(fig1,use_container_width=True,config=config)
 
                          with col2:
+                              st.write(f"""
+                              <b>5 YR ROE Y/Y: {five_ROE}%    Current ROE: {ROE_ttm}
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig2,use_container_width=True,config=config)
      #-------------------------------------------------------------------------------------------------
                          try:
@@ -12883,9 +12926,9 @@ if selected == "Stock Analysis Tool":
                               gross_margin = 0.0
 
 
-                         title_text = (
-                         f"5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}    Current Gross Margin: {rounded_gross_margin} <br>"
-                         "<span style='font-family: Calibri; font-style: italic;'>Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>vom Umsatz übrig bleibt.</span>")          
+                        # title_text = (
+                         #f"5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}    Current Gross Margin: {rounded_gross_margin} <br>"
+                         #"<span style='font-family: Calibri; font-style: italic;'>Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>vom Umsatz übrig bleibt.</span>")          
                     
                          data = pd.DataFrame({
                          'Date': date_annual,
@@ -12901,10 +12944,11 @@ if selected == "Stock Analysis Tool":
                          fig1 = px.bar(data, x='Date', y='Gross Margin',
                                    text='Gross Margin',  # Display the value on top of each bar
                                    labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                   title=title_text) 
+                                   #title=title_text
+                                   ) 
 
 
-                         fig1.update_layout(title_x=0.05)
+                         #fig1.update_layout(title_x=0.05)
 
                          try:
                               Operating_Margin = ["{:.2f}%".format(Operating_Margin * 100) for Operating_Margin in Operating_Margin]
@@ -12918,22 +12962,47 @@ if selected == "Stock Analysis Tool":
 
 
                     
-                         fig2 = px.bar(data, x='Date', y='Operating Margin',
-                                   text='Operating Margin',  # Display the value on top of each bar
-                                   labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                   title=f"5 YR Operating Margin Y/Y: {rounded_operating_margin_five}    Current Operating Margin: {rounded_operating_margin}<br>"
-                                   "<span style='font-family: Calibri; font-style: italic;'>Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>und der Betriebskosten(wie Material-, Produktions-, Verwaltungs- und <br>Vertriebskosten) vom Umsatz übrig bleibt.</span>"
-                                   ) 
+                         #fig2 = px.bar(data, x='Date', y='Operating Margin',
+                          #         text='Operating Margin',  # Display the value on top of each bar
+                           #        labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                            #       title=f"5 YR Operating Margin Y/Y: {rounded_operating_margin_five}    Current Operating Margin: {rounded_operating_margin}<br>"
+                             #      "<span style='font-family: Calibri; font-style: italic;'>Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>und der Betriebskosten(wie Material-, Produktions-, Verwaltungs- und <br>Vertriebskosten) vom Umsatz übrig bleibt.</span>"
+                              #     ) 
                     
                          #fig2.update_layout(title_x=0.05)
 
-
                          col1, col2 = st.columns(2)
-                         with col1:
+                         # Create the figure without a title
+                         fig2 = px.bar(data, x='Date', y='Operating Margin',
+                                   text='Operating Margin',  # Display the value on top of each bar
+                                   labels={'value': 'Amount(%)'}  # Include the percentage sign in the label
+                                   )
 
-                              st.plotly_chart(fig1,use_container_width=True,config=config)
+                         # Display the custom title and description with st.write
+                         #with col2:
+                            
+                              #col1, col2 = st.columns(2)
+                         with col1:
+                              st.write(f"""
+                              <b>5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}</b>
+                              <b> Current Gross Margin: {rounded_gross_margin}</b><br>
+                              <span style='font-family: Calibri; font-style: italic;'>
+                              Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) vom Umsatz übrig bleibt.
+                              </span>
+                                   """, unsafe_allow_html=True)
+
+                              st.plotly_chart(fig1,use_container_width=True,config=config)      
 
                          with col2:
+                              st.write(f"""
+                              <b>5 YR Operating Margin Y/Y: {rounded_operating_margin_five}</b>
+                              <b> Current Operating Margin: {rounded_operating_margin}</b><br>
+                              <span style='font-family: Calibri; font-style: italic;'>
+                              Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) 
+                              und der Betriebskosten (wie Material-, Produktions-, Verwaltungs- und 
+                              Vertriebskosten) vom Umsatz übrig bleibt.
+                              </span>
+                                   """, unsafe_allow_html=True)
                               st.plotly_chart(fig2,use_container_width=True,config=config)
 
 
@@ -12953,18 +13022,13 @@ if selected == "Stock Analysis Tool":
                          
                          # Create a Plotly Express bar chart with side-by-side bars
 
-                         title_text = (
-                         f"5 YR Net Profit Margin Y/Y: {five_yrs_Nettomarge}%  Current Net Profit Margin: {Net_margin_ttm} <br>"
-
-                         "  <span style='font-family: Calibri; font-style: italic;'>Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>, Betriebskosten, Zinsen, Steuern und außerordentlichen Posten vom Umsatz <br>übrig bleibt.</span>"
-                         )
-                         
                          #wrapped_title = "<br>".join(textwrap.wrap(title_text))
 
                          fig1 = px.bar(data, x='Date', y='Net Profit Margin',
                                    text='Net Profit Margin',  # Display the value on top of each bar
                                    labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                   title=title_text)
+                                   #title=title_text
+                                   )
 
 
                          #fig1.update_layout(title_x=0.05)
@@ -12988,20 +13052,34 @@ if selected == "Stock Analysis Tool":
                          fig2 = px.bar(data, x='Date', y='FCF Margin',
                                    text='FCF Margin',  # Display the value on top of each bar
                                    labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                   title=f"5 YR FCF Margin Y/Y: {FCF_Margin_5}%    Current FCF Margin: {FCF_Margin_1:.2f}%<br>"
-                                   " <span style='font-family: Calibri; font-style: italic;'>Die FCF-Marge (freier Cashflow) ist ein Indikator dafür, <br>wie effizient ein Unternehmen seinen Umsatz in freien Cashflow umwandelt.</span>") 
+                                   #title=f"5 YR FCF Margin Y/Y: {FCF_Margin_5}%    Current FCF Margin: {FCF_Margin_1:.2f}%<br>"
+                                   #" <span style='font-family: Calibri; font-style: italic;'>Die FCF-Marge (freier Cashflow) ist ein Indikator dafür, <br>wie effizient ein Unternehmen seinen Umsatz in freien Cashflow umwandelt.</span>"
+                                   ) 
                          
 
                          
-                         fig2.update_layout(title_x=0.05)
+                         #fig2.update_layout(title_x=0.05)
 
 
                          col1, col2 = st.columns(2)
                          with col1:
+                              st.write(f"""
+                              <b>5 YR FCF Margin Y/Y: {FCF_Margin_5}%</b>
+                              <b> Current FCF Margin: {FCF_Margin_1:.2f}%</b><br>
+                              <span style='font-family: Calibri; font-style: italic;'>
+                              Die FCF-Marge (freier Cashflow) ist ein Indikator dafür, wie effizient ein Unternehmen seinen Umsatz in freien Cashflow umwandelt.
+                              </span>
+                                   """, unsafe_allow_html=True)
 
                               st.plotly_chart(fig2,use_container_width=True,config=config)
 
                          with col2:
+                              st.write(f"""
+                              <b>5 YR Net Profit Margin Y/Y: {five_yrs_Nettomarge}% </b>
+                              <b> Current Net Profit Margin: {Net_margin_ttm}</b><br>
+                              <span style='font-family: Calibri; font-style: italic;'>
+                              Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS), Betriebskosten, Zinsen, Steuern und außerordentlichen Posten vom Umsatz übrig bleibt.</span>
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig1,use_container_width=True,config=config)
      
      #........  ...................................................................................................................               
@@ -13020,7 +13098,8 @@ if selected == "Stock Analysis Tool":
                          
                          fig21 = px.bar(data, x='Date', y='PE Ratio',
                                    labels={'value': 'Ratio'},
-                                   title=f"-><span style='color:dodgerblue'>10 YR PE:</span> {average_PE_historical}  -><span style='color:dodgerblue'>5 YR PE: </span> {pe_five_}  -><span style='color:dodgerblue'>Current PE: </span> {pe_ttm}  -><span style='color:dodgerblue'>Forward P/E:</span>  {forwardPE}")  # Use 'group' to display bars side by side
+                                   #title=f"-><span style='color:dodgerblue'>10 YR PE:</span> {average_PE_historical}  -><span style='color:dodgerblue'>5 YR PE: </span> {pe_five_}  -><span style='color:dodgerblue'>Current PE: </span> {pe_ttm}  -><span style='color:dodgerblue'>Forward P/E:</span>  {forwardPE}"
+                                   )  # Use 'group' to display bars side by side
 
                                                                                                                                   
                          fig21.add_shape(
@@ -13069,18 +13148,25 @@ if selected == "Stock Analysis Tool":
                                                                                                                                   
                          fig22 = px.bar(data, x='Date', y='Market Cap',
                                    labels={'value': 'ratio'},
-                                   title=f'Market Cap:  Current Market Cap: {Marketcap_in_Billion}')
+                                   #title=f'Market Cap:  Current Market Cap: {Marketcap_in_Billion}'
+                                   )
                                    #barmode='group')  # Use 'group' to display bars side by side
 
-                         fig22.update_layout(title_x=0.05)
+                         #fig22.update_layout(title_x=0.05)
 
                          # Display the chart using Streamlit
 
                          col2, col3 =st.columns(2)
                          with col2:
+                              st.write(f"""
+                              <b><span style='color:dodgerblue'>10 YR PE:</span> {average_PE_historical}  <span style='color:dodgerblue'>5 YR PE: </span> {pe_five_}  <span style='color:dodgerblue'>Current PE: </span> {pe_ttm}  <span style='color:dodgerblue'>Forward P/E:</span>  {forwardPE}
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig21,use_container_width=True,config=config)
 
                          with col3:
+                              st.write(f"""
+                              <b>Market Cap:  Current Market Cap: {Marketcap_in_Billion}
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig22,use_container_width=True,config=config)
 
 
@@ -13105,7 +13191,8 @@ if selected == "Stock Analysis Tool":
                          
                          fig11 = px.bar(data, x='Date', y='Price to Tangible Book Value',               
                                    labels={'value': 'Ratio'},
-                                   title=f'10 P/TBV: {Average_Price_to_tangible_book:.2f}  Current P/TBV: {PTBVPS:.2f}')  # Use 'group' to display bars side by side
+                                   #title=f'10 P/TBV: {Average_Price_to_tangible_book:.2f}  Current P/TBV: {PTBVPS:.2f}'
+                                   )  # Use 'group' to display bars side by side
                          
                          fig11.add_shape(
                          type='line',
@@ -13150,9 +13237,10 @@ if selected == "Stock Analysis Tool":
                          fig12 = px.bar(data, x='Date', y='Price to Book Value',
                                    labels={'value': 'Ratio'},
                                    #title='Price to Book Value,{average_price_to_book:.2f}')
-                                   title=f'10 P/BV: {average_price_to_book:.2f}  Current P/B: {PBVPS:.2f}')
+                                   #title=f'10 P/BV: {average_price_to_book:.2f}  Current P/B: {PBVPS:.2f}'
+                                   )
                          
-                         fig12.update_layout(title_x=0.05)
+                         #fig12.update_layout(title_x=0.05)
 
                          fig12.add_shape(
                          type='line',
@@ -13181,9 +13269,15 @@ if selected == "Stock Analysis Tool":
 
                          col1, col2 =st.columns(2)
                          with col1:
+                              st.write(f"""
+                              <b>10 P/TBV: {Average_Price_to_tangible_book:.2f}  Current P/TBV: {PTBVPS:.2f}
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig11,use_container_width=True,config=config)
                               
                          with col2:
+                              st.write(f"""
+                              <b>10 P/BV: {average_price_to_book:.2f}  Current P/B: {PBVPS:.2f}
+                              """, unsafe_allow_html=True)
                               st.plotly_chart(fig12,use_container_width=True,config=config)
      #.........
 
