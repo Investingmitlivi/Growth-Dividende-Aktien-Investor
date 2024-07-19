@@ -50,6 +50,8 @@ from pandas_datareader import data
 from pyfinviz.quote import Quote
 from stocknews import StockNews
 from streamlit_option_menu import option_menu
+#from callbacks import supports_callbacks
+
 
 st.set_page_config(page_title="verstehdieaktie", page_icon = "📚", layout="wide")
 
@@ -7059,6 +7061,8 @@ ticker_symbol_name = {
           'ZYXI':'Zynex Inc. '
      }
 
+
+@st.cache_data
 def get_exchange_rate(base_currency, target_currency):
                          try:
                               url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
@@ -7127,8 +7131,12 @@ if selected == "Home":
           #st.write("---")
 
 #finnhub_client = finnhub.Client(api_key="ckse5rhr01qjpllh316gckse5rhr01qjpllh3170")
-if selected == "Stock Analysis Tool":
 
+
+
+if selected == "Stock Analysis Tool":
+     
+    
  
 
                     # Display the rate in Streamlit
@@ -7328,14 +7336,6 @@ if selected == "Stock Analysis Tool":
           ticker = ticker_symbol_name.get(selected_ticker) 
           name, symbol = selected_ticker.split(' : ')
      #st.write(f'Selected Ticker Name: {name}')
-
-
-
-
-
-
-
-
      #............................... quickfs api .................
 
 
@@ -7352,18 +7352,26 @@ if selected == "Stock Analysis Tool":
      response = requests.get(url, headers=header)
      usage_response = requests.get(usage_url, headers=header)
 
-     if response.status_code == 200:
-          data = response.json()
-          usage = usage_response.json()
-     # Continue processing the data as required
-     else:
-          st.write()
+     @st.cache_data
+     def fetch_data_from_api(url, header):
+          response = requests.get(url, headers=header)
+          
+    
+          if response.status_code == 200:
+               st.write()
+          # Continue processing the data as required
+          else:
+               st.write()
 
+
+
+     data = response.json()
      #data = response.json()
      #usage = response.json()
      #st.write(data)
      #st.write(usage)
      #response.json()
+     
      #--------------------------------------------------------------
      #annual_data = data['data']['financials']['annual']
      Financial_data = data['data']['financials']
@@ -7461,7 +7469,7 @@ if selected == "Stock Analysis Tool":
 
 
 
-
+     @st.cache_data
      def get_current_price():
 
           try:
@@ -7478,10 +7486,10 @@ if selected == "Stock Analysis Tool":
           return current_price 
 
      current_price = get_current_price()    
-
+     @st.cache_data
      def format_date(date):
           return date.strftime('%Y/%m/%d')
-
+     @st.cache_data
      def get_all_time_high_and_low_price(ticker):
           data = stock_info.history(period="max", actions=False)  # Exclude dividend data
 
@@ -9112,7 +9120,8 @@ if selected == "Stock Analysis Tool":
 
                     
                st.markdown(contact_form, unsafe_allow_html = True)
-
+               
+               @st.cache_data
                def local_css(file_name):
                          with open(file_name)as f:
                               st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)      
@@ -13471,6 +13480,29 @@ if selected == "Stock Analysis Tool":
                
                     st.error("No news available for this stock:")
                yf.pdr_override()  # Clear the cached data
+
+
+               if "button_clicked" not in st.session_state:
+                    st.session_state.button_clicked = False
+
+               def callback():
+                    st.session_state.button_clicked = True
+
+               load = st.button('Load Data', on_click=callback)
+
+       
+               # Button widget
+               if load or st.session_state.button_clicked:
+                     #st.session_state.button_clicked = True
+                     st.write("Data loaded")
+
+               if not st.session_state.button_clicked:
+                    st.stop()
+
+
+               st.write("This code runs only when the button is clicked")
+
+                   
 
 
                # links = quote.outer_news_df[['title', 'link']].head(10)
