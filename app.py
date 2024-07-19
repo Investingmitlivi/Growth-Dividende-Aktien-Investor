@@ -11683,9 +11683,16 @@ if selected == "Stock Analysis Tool":
 
                # Display the values in colored boxes
                #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-               colr1.info(f"Revenue Growth: {Revenue_growth_1year:.2f}%")
-               colr2.info(f"Revenue Growth: {Revenue_5_CAGR}%") 
-               colr3.info(f"Revenue Growth: {Revenue_Cagr_10}%")
+               #colr1.write(f"Revenue Growth: <br> {Revenue_growth_1year:.2f}%", unsafe_allow_html=True)
+               #colr2.write(f"Revenue Growth: <br> {Revenue_5_CAGR}%", unsafe_allow_html=True)
+               #colr3.write(f"Revenue Growth: <br> {Revenue_Cagr_10}%", unsafe_allow_html=True)
+
+               # Display the values with brown background color using st.write with HTML for line breaks
+               colr1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_growth_1year:.2f}%</div>", unsafe_allow_html=True)
+               colr2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_5_CAGR}%</div>", unsafe_allow_html=True)
+               colr3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_Cagr_10}%</div>", unsafe_allow_html=True)
+
+
 
           
                #Growth_rate1 = col9.number_input("Wachstumsrate (Base Case) in %:", value=0.00, key="growth_rate1")
@@ -11694,44 +11701,71 @@ if selected == "Stock Analysis Tool":
 
                # Display the values in colored boxes
                #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-               coln1.info(f"Net Profit Margin: {Net_margin_ttm}") 
-               coln2.info(f"Net Profit Margin: {five_yrs_Nettomarge}%") 
-               coln3.info(f"Net Profit Margin: {Net_income_margin_10}%")
+               #coln1.write(f"Net Profit Margin: <br> {Net_margin_ttm}", unsafe_allow_html=True) 
+               #coln2.write(f"Net Profit Margin: <br> {five_yrs_Nettomarge}%", unsafe_allow_html=True)
+               #coln3.write(f"Net Profit Margin: <br> {Net_income_margin_10}%", unsafe_allow_html=True)
+
+               coln1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_margin_ttm}</div>", unsafe_allow_html=True)
+               coln2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {five_yrs_Nettomarge}%</div>", unsafe_allow_html=True)
+               coln3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_income_margin_10}%</div>", unsafe_allow_html=True)
+
 
 
                colf1,colf2,colf3,colf9,colf10,colf11 = st.columns(6)
 
                # Display the values in colored boxes
                #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-               colf1.info(f"FCF Margin: {FCF_Margin_1:.2f}%")
-               colf2.info(f"FCF Margin: {FCF_Margin_5}%") 
-               colf3.info(f"FCF Margin: {FCF_Margin_10}%")
+               #colf1.info(f"FCF Margin: {FCF_Margin_1:.2f}%")
+               #colf2.info(f"FCF Margin: {FCF_Margin_5}%") 
+               #colf3.info(f"FCF Margin: {FCF_Margin_10}%")
 
+               # Display the values using st.write in colored boxes
+               #colf1.write(f"FCF Margin: <br> {FCF_Margin_1:.2f}%", unsafe_allow_html=True)
+               #colf2.write(f"FCF Margin: <br> {FCF_Margin_5}%", unsafe_allow_html=True)
+               #colf3.write(f"FCF Margin: <br> {FCF_Margin_10}%", unsafe_allow_html=True)
 
-
-
+               colf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_1:.2f}%</div>", unsafe_allow_html=True)
+               colf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
+               colf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_10}%</div>", unsafe_allow_html=True)      
 
           
 
                colcf1,colcf2,colcf3,colcf9,colcf10,colcf11 = st.columns(6)
 
-               colcf1.info(f"Price/OCF: {P_OCF_ttm}")
-               colcf2.info(f"Price/OCF: {P_OCF_5}") 
-               colcf3.info(f"Price/OCF: {P_OCF_10}")
+               #colcf1.write(f"Price/OCF: <br> {P_OCF_ttm}", unsafe_allow_html=True)
+               #colcf2.write(f"Price/OCF: <br> {P_OCF_5}", unsafe_allow_html=True) 
+               #colcf3.write(f"Price/OCF: <br> {P_OCF_10}", unsafe_allow_html=True)
+
+               colcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_ttm}</div>", unsafe_allow_html=True)
+               colcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_5}</div>", unsafe_allow_html=True)
+               colcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_10}</div>", unsafe_allow_html=True)
 
 
 
                colfcf1,colfcf2,colfcf3,colfcf9,colfcf10,colfcf11 = st.columns(6)
 
-               colfcf1.info(f"Price/FCF: {pfcf_ttm}")
-               colfcf2.info(f"Price/FCF: {pfcf_funf}") 
-               colfcf3.info(f"Price/FCF: {pfcf_ten}")
+               #colfcf1.write(f"Price/FCF: <br> {pfcf_ttm}", unsafe_allow_html=True)
+               #colfcf2.write(f"Price/FCF: <br> {pfcf_funf}", unsafe_allow_html=True) 
+               #colfcf3.write(f"Price/FCF: <br> {pfcf_ten}", unsafe_allow_html=True)
+
+
+               colfcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ttm}</div>", unsafe_allow_html=True)
+               colfcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_funf}</div>", unsafe_allow_html=True)
+               colfcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ten}</div>", unsafe_allow_html=True)
+
                
 
                col1,col2,colx,cola, colb, colc= st.columns(6)
-               col1.info('Desired Rate of Return')
-               col2.info('')
-               colx.info('')
+               #col1.write('Desired Rate of Return')
+               #col1,col2,colx= st.columns(3)
+               col1.write('')               
+               col2.write('')
+               #colx.write('')
+               colx.write(f"<div style='background-color:#333333;padding: 10px; border-radius: 5px; color: white;'>Desired Rate of Return: <br> <br>  {''}</div>", unsafe_allow_html=True)
+
+               #col1,col2,colx= st.columns(3)
+               #col1.write('')               
+               #col2.write('')
                colx.write(f"Multiple of Earnings Valuation:")
 
 
