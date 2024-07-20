@@ -10964,23 +10964,23 @@ if selected == "Stock Analysis Tool":
                
                
                if KGV > 23:
-                         pe = "-🔴"  # Red X for KCV greater than 23
+                         pe = "🔴"  # Red X for KCV greater than 23
                elif KGV < 0:
-                         pe = "-🔴"  # Red X for KCV smaller than 0
+                         pe = "🔴"  # Red X for KCV smaller than 0
                else:
                          pe = "✅"  # Green checkmark for KGV greater than or equal to 23
 
                
                if float(KCV) > 23.00:
-                         pcf = "-🔴"  # Red X for KCV greater than 23
+                         pcf = "🔴"  # Red X for KCV greater than 23
                elif float(KCV) < 0.00:
-                         pcf = "-🔴"  # Red X for KCV smaller than 0
+                         pcf = "🔴"  # Red X for KCV smaller than 0
                else:
                          pcf= "✅"  # Green checkmark for KGV greater than or equal to 23
                          
 
                if float(five_ROE) < 14.00:
-                         roe = "-🔴"  # Red X for KGV less than 23
+                         roe = "🔴"  # Red X for KGV less than 23
                
                else:
                          roe= "✅"  # Green checkmark for KGV greater than or equal to 23          
@@ -10989,60 +10989,60 @@ if selected == "Stock Analysis Tool":
                          
                     netmarge = "✅"  
                else:
-                    netmarge = "-🔴"    
+                    netmarge = "🔴"    
 
 
                if one_FCF_annual_payout > 60:
-                         payout = "-🔴"  # Red X for KGV less than 23
+                         payout = "🔴"  # Red X for KGV less than 23
 
                elif one_FCF_annual_payout < 0:
-                         payout = "-🔴"  # Red X for KCV smaller than 0           
+                         payout = "🔴"  # Red X for KCV smaller than 0           
                else:
                          payout= "✅"  # Green checkmark for KGV greater than or equal to 23
 
                if netincome_annual_funf_growth_ < -1:
-                         netincome = "-🔴"  # Red X for KGV less than 23
+                         netincome = "🔴"  # Red X for KGV less than 23
                else:
                          netincome= "✅"  # Green checkmark for KGV greater than or equal to 23
 
 
                if revenue_annual_funf_Growth < -1:
-                         rev = "-🔴"  # Red X for KGV less than 23
+                         rev = "🔴"  # Red X for KGV less than 23
                else:
                          rev= "✅"  # Green checkmark for KGV greater than or equal to 23
 
 
                if FCF_funf_growth < -1:
-                         fcf = "-🔴"  # Red X for KGV less than 23
+                         fcf = "🔴"  # Red X for KGV less than 23
                else:
                          fcf= "✅"  # Green checkmark for KGV greater than or equal to 23
 
 
                if Shares_outstanding_funf_growth > 0:
-                         share = "-🔴"  # Red X for KGV less than 23
+                         share = "🔴"  # Red X for KGV less than 23
                else:
                          share= "✅"  # Green checkmark for KGV greater than or equal to 23
 
                if Average_ROIC_funf == 'NA' or float(Average_ROIC_funf[:-1]) < 9:
-                         roic = "-🔴"  # Red X for 'NA' or less than 9
+                         roic = "🔴"  # Red X for 'NA' or less than 9
                else:
                          roic= "✅"  # Green checkmark for KGV greater than or equal to 23
 
                if float(Average_debt_equity_one) > 2:
-                         dt_equt = "-🔴"  # Red X for KGV less than 23
+                         dt_equt = "🔴"  # Red X for KGV less than 23
 
                elif float(Average_debt_equity_one) < 0:
                     
-                    dt_equt = "-🔴"  # Red X for KGV less than 23
+                    dt_equt = "🔴"  # Red X for KGV less than 23
 
                else:
                          dt_equt= "✅"  # Gree
 
                if Schuldentillgung > 5:
-                    schuld = "-🔴"  # Red X for KGV less than 23
+                    schuld = "🔴"  # Red X for KGV less than 23
                elif Schuldentillgung < 0:
                     
-                    schuld = "-🔴"  # Red X for KGV less than 23
+                    schuld = "🔴"  # Red X for KGV less than 23
                else:
                     schuld= "✅"  # Gree
 
@@ -11052,35 +11052,209 @@ if selected == "Stock Analysis Tool":
           # Create a red circle image
                #st.write(Sculdentillgung)
                #st.write(LongTerm_debt_annual)
-               col1, col2, col3, col4 = st.columns(4)
+               #col1, col2, col3, col4 = st.columns(4)
 
-               col1.metric("5 YR P/E < 23", KGV,pe)
-               col2.metric("5 YR P/FCF < 23", KCV, pcf)
-               col3.metric("5 YR FCF / DEBT < 5",Schuldentillgung,schuld)
-               col4.metric("DEBT / EQUITY < 2",Average_debt_equity_one,dt_equt)
-          #      metrics_data = [
-          #     {"": "5 Yr KGV < 23:", "Value 1": KGV, "Value 2": pe}
+               #col1.metric("5 YR P/E < 23", KGV,pe)
+               #col2.metric("5 YR P/FCF < 23", KCV, pcf)
+               #col3.metric("5 YR FCF / DEBT < 5",Schuldentillgung,schuld)
+               #col4.metric("DEBT / EQUITY < 2",Average_debt_equity_one,dt_equt)
+
+               #col1,col2,col3,col4 =st.columns(4)
+               
+               #with col1:
+               # with col1:
+               #      st.write("**5 YR P/E < 23**\n\n"
+               #      f"**{KGV}**\n"
+               #      f"{pe}"
+               # )
+
+
+
+
+               # with col2:
+               #      st.write("**5 YR P/FCF < 23**\n\n"
+               #      f"**{KCV}**\n"
+               #      f"{pcf}"
+               #      )
+
+
+               # with col3:
+               #      st.write("**5 YR FCF / DEBT < 5**\n\n"
+               #      f"**{Schuldentillgung}**\n"
+               #      f"{schuld}")
+
+
+               # with col4:
+               #      st.write("**DEBT / EQUITY < 2**\n\n"
+               #      f"**{Average_debt_equity_one}**\n"
+               #      f"{dt_equt}"
+               #      )
+
+               col1,cola,colb,col2=st.columns(4)
+
+
+               with col1:
+                    st.write(
+                    """
+                    **Earnings Multiples** | **Value** | **Change**
+                    --- | --- | ---
+                    5 YR P/E < 23 | **{KGV}** | {pe}
+                    5 YR P/FCF < 23 | **{KCV}** | {pcf}
+     
+                    """.format(
+                         KGV=KGV, pe=pe,
+                         KCV=KCV, pcf=pcf,
+                        
+                    )
+                    )
+
+
+
+               with cola:
+                    st.write(
+                    """
+                    **Gewinnkennzahl/Ausschüttungsquote** | **Value** | **Change**
+                    --- | --- | ---
+                    5 YR ROIC > 9% | **{Average_ROIC_funf}** | {roic}
+                    5 YR ROE > 14% | **{five_Yrs_ROE}%** | {roe}
+                    5 YR NET MARGIN > 5% | **{five_yrs_Nettomarge}%** | {netmarge}
+                    FCF PAYOUT RATIO < 60 % | **{one_FCF_annual_payout}%** | {payout}
+                    """.format(
+                         Average_ROIC_funf=Average_ROIC_funf, roic=roic,
+                         five_Yrs_ROE=five_Yrs_ROE, roe=roe,
+                         five_yrs_Nettomarge=five_yrs_Nettomarge, netmarge=netmarge,
+                         one_FCF_annual_payout=one_FCF_annual_payout, payout=payout
+                    )
+                    )
+
+
+                       
+                       
+               with colb:
+                    st.write(
+                    """
+                    **Wachstum/Aktienrückkauf** | **Value** | **Change**
+                    --- | --- | ---
+                    Revenue Growth 5 YR% | **{revenue_annual_funf_Growth:.2f}%** | {rev}
+                    Net Income Growth 5 YR | **{netincome_annual_funf_growth_:.2f}%** | {netincome}
+                    FCF Growth 5 YR| **{FCF_funf_growth:.2f}%** | {fcf}
+                    Shares Outstanding 5 YR* | **{Shares_outstanding_funf_growth:.2f}%** | {share}
+                    """.format(
+                         revenue_annual_funf_Growth=revenue_annual_funf_Growth, rev=rev,
+                         netincome_annual_funf_growth_=netincome_annual_funf_growth_, netincome=netincome,
+                         FCF_funf_growth=FCF_funf_growth, fcf=fcf,
+                         Shares_outstanding_funf_growth=Shares_outstanding_funf_growth, share=share
+                    )
+                    )
+          # 
+               #col10.metric("Net Income Growth 5 YR",f"{netincome_annual_funf_growth_:.2f}%", netincome)
+                                                                                
+               #col11.metric("FCF Growth 5 YR",f"{FCF_funf_growth:.2f}%",fcf)
+                                                                                
+               
+          # 
+               #col12.metric("Shares Outstanding 5 YR",f"{Shares_outstanding_funf_growth:.2f}%",share)
+            
+               with col2:
+                    st.write(
+                    """
+                    **Leverage ratio/Bilanzkennzahl** | **Value** | **Change**
+                    --- | --- | ---
+                    5 YR FCF / DEBT < 5 | **{Schuldentillgung}** | {schuld}
+                    DEBT / EQUITY < 2 | **{Average_debt_equity_one}** | {dt_equt}
+                    """.format(
+                         Schuldentillgung=Schuldentillgung, schuld=schuld,
+                         Average_debt_equity_one=Average_debt_equity_one, dt_equt=dt_equt
+                    )
+                    )
+                                                       # 
+                         #      metrics_data = [
+                         #     {"": "5 Yr KGV < 23:", "Value 1": KGV, "Value 2": pe}
           
 
 
+              
+                                                       # 
+                         #      metrics_data = [
+                         #     {"": "5 Yr KGV < 23:", "Value 1": KGV, "Value 2": pe}
+          
                
+               st.write("")
                col5, col6, col7, col8 = st.columns(4)
 
                if Average_ROIC_funf == 'NA':
                     Average_ROIC_funf = 0.0
                     
 
-               col5.metric("5 YR ROIC > 9%",f"{Average_ROIC_funf}",roic)
-               col6.metric("5 YR ROE > 14%", f"{five_Yrs_ROE:.5}%",roe)
-               col7.metric("5 YR NET MARGIN > 5%", f"{five_yrs_Nettomarge}%", netmarge)
-               col8.metric("FCF PAYOUT RATIO < 60 %",f"{one_FCF_annual_payout:.2f}%",payout)
+                    
+          #      with col5:
+          #           st.write("**5 YR ROIC > 9%**\n\n"
+          #           f"**{Average_ROIC_funf}**\n"
+          #           f"{roic}"
+          #           )
+          # # 
+          #      #col5.metric("5 YR ROIC > 9%",f"{Average_ROIC_funf}",roic)
+          #      #col6.metric("5 YR ROE > 14%", f"{five_Yrs_ROE:.5}%",roe)
+                                   
+          #      with col6:
+          #           st.write("**5 YR ROE > 14%**\n\n"
+          #           f"**{five_Yrs_ROE}**\n"
+          #           f"{roe}"
+          #           )
+          # # 
+          #      #col7.metric("5 YR NET MARGIN > 5%", f"{five_yrs_Nettomarge}%", netmarge)
+                                                  
+          #      with col7:
+          #           st.write("**5 YR NET MARGIN > 5%**\n\n"
+          #           f"**{five_yrs_Nettomarge}**\n"
+          #           f"{netmarge}"
+          #           )
+          # # 
+          #      #col8.metric("FCF PAYOUT RATIO < 60 %",f"{one_FCF_annual_payout:.2f}%",payout)
+                                                                 
+          #      with col8:
+          #           st.write("**FCF PAYOUT RATIO < 60 %**\n\n"
+          #           f"**{one_FCF_annual_payout}**\n"
+          #           f"{payout}"
+          #           )
+          # # 
+              
+          #      st.write("")
+          #      col9, col10, col11, col12 = st.columns(4)
 
-               col9, col10, col11, col12 = st.columns(4)
+          #     # col9.metric("Revenue Growth 5 YR",f"{revenue_annual_funf_Growth:.2f}%",rev)
+                                                                                
+          #      with col9:
+          #           st.write("**Revenue Growth 5 YR**\n\n"
+          #           f"**{revenue_annual_funf_Growth:.2f}%**\n"
+          #           f"{rev}"
+          #           )
 
-               col9.metric("Revenue Growth 5 YR",f"{revenue_annual_funf_Growth:.2f}%",rev)
-               col10.metric("Net Income Growth 5 YR",f"{netincome_annual_funf_growth_:.2f}%", netincome)
-               col11.metric("FCF Growth 5 YR",f"{FCF_funf_growth:.2f}%",fcf)
-               col12.metric("Shares Outstanding 5 YR",f"{Shares_outstanding_funf_growth:.2f}%",share)
+          # # 
+          #      #col10.metric("Net Income Growth 5 YR",f"{netincome_annual_funf_growth_:.2f}%", netincome)
+                                                                                
+          #      with col10:
+          #           st.write("**Net Income Growth 5 YR**\n\n"
+          #           f"**{netincome_annual_funf_growth_:.2f}%**\n"
+          #           f"{netincome}"
+          #           )
+          # # 
+          #      #col11.metric("FCF Growth 5 YR",f"{FCF_funf_growth:.2f}%",fcf)
+                                                                                
+          #      with col11:
+          #           st.write("**FCF Growth 5 YR**\n\n"
+          #           f"**{FCF_funf_growth:.2f}%**\n"
+          #           f"{fcf}"
+          #           )
+          # # 
+          #      #col12.metric("Shares Outstanding 5 YR",f"{Shares_outstanding_funf_growth:.2f}%",share)
+                                                                                
+          #      with col12:
+          #           st.write("**Shares Outstanding 5 YR**\n\n"
+          #           f"**{Shares_outstanding_funf_growth:.2f}%**\n"
+          #           f"{share}"
+          #           )
+          # # 
 
                #if Average_ROIC_funf == 'NA' or float(Average_ROIC_funf[:-1]) < 9:
                #    roic_text = f"{Average_ROIC_funf[:-1]}% 🟢"  # Green circle for success
@@ -11132,19 +11306,19 @@ if selected == "Stock Analysis Tool":
 
                
 
-               # Create a responsive layout with three columns
-               #col1, col2, col3 = st.columns(3)
-               col1, col2, col3, col4 = st.columns(4)
+               # # Create a responsive layout with three columns
+               # #col1, col2, col3 = st.columns(3)
+               # col1, col2, col3, col4 = st.columns(4)
 
-               # Display the dataframes in each column
-               with col1.container():
-                    st.table(styled_df1)
-               with col2.container():
-                    st.table(styled_df2)
-               with col3.container():
-                    st.table(styled_df3)
-               with col4.container():
-                    st.table(styled_df4)
+               # # Display the dataframes in each column
+               # with col1.container():
+               #      st.table(styled_df1)
+               # with col2.container():
+               #      st.table(styled_df2)
+               # with col3.container():
+               #      st.table(styled_df3)
+               # with col4.container():
+               #      st.table(styled_df4)
                               
 
 
@@ -11336,15 +11510,25 @@ if selected == "Stock Analysis Tool":
 
                col1, col2,col3,col4,col5 = st.columns(5)
 
-               col1.info(f"FCF 10 CAGR: {FCF_Cagr_10}%")
-               col2.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
-               col3.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
-               col4.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
-               col5.info(f"EPS next 5 YR (per annum): {Earnings_next_5_yrs}")
+               #col1.info(f"FCF 10 CAGR: {FCF_Cagr_10}%")
+               col1.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF 10 CAGR:<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
+               
+               #col2.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
+               col2.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF 5 CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
+               
+               #col3.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
+               col3.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS 10 CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
+
+               #col4.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
+               col4.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS 5 CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
+
+               #col5.info(f"EPS next 5 YR (per annum): {Earnings_next_5_yrs}")
+               col5.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
+
                
 
 
-               col1,col2,col3,col4 = st.columns(4)
+               #col1,col2,col3,col4 = st.columns(4)
 
                # Display the values in colored boxes
                #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
@@ -11354,31 +11538,51 @@ if selected == "Stock Analysis Tool":
                #col4.info(f" EPS Growth next 5YR : {Earnings_next_5_yrs}")
 
 
-               col1,col2,col3 = st.columns(3)
+              # col1,col2,col3 = st.columns(3)
 
                # Display the values in colored boxes
                #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-               col1.info(f"Revenue Growth: {Revenue_Cagr_10}%")
-               col2.info(f"5 YR Revenue: {Revenue_5_CAGR}%") 
-               col3.info(f"1 YR Revenue Growth YOY: {Revenue_growth_1year:.2f}%")
+               #col1.info(f"Revenue Growth: {Revenue_Cagr_10}%")
+               #col2.info(f"5 YR Revenue: {Revenue_5_CAGR}%") 
+              # col3.info(f"1 YR Revenue Growth YOY: {Revenue_growth_1year:.2f}%")
+
+              #to add space
+               st.write("")
+               #st.markdown("<br>", unsafe_allow_html=True)
 
 
-               col1, col2,col3 = st.columns(3)
-          # Display the values
-          # Display the values
-          # Display the values in colored boxes
-               
-               col1.info(f"FCF Growth YOY: {Average_fcf_growth_ten}%")
-               col2.info(f"5 YR FCF Growth YOY: {Average_fcf_growth_five}")
-               col3.info(f"3 YR FCF Growth YOY: {Average_fcf_growth_3years}")
+               col1,col2,col3 = st.columns(3)
+               # Display the values
+               # Display the values
+               # Display the values in colored boxes
+               with col1:
+                    st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+                    #col1.info(f"FCF Growth YOY: {Average_fcf_growth_ten}%")
+                    
+               with col2:    
+                    st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
+               # coln1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_margin_ttm}</div>", unsafe_allow_html=True)
 
+                    #col2.info(f"5 YR FCF Growth YOY: {Average_fcf_growth_five}")
+               with col3:    
+                    st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
+                    #col3.info(f"3 YR FCF Growth YOY: {Average_fcf_growth_3years}")
 
-               col1,col2,col5,col4= st.columns(4)
-               col1.info(f"5 YR ROIC: {Average_ROIC_funf}%")
-               col2.info(f"3 YR ROIC: {ROIC_annual_3years}")
+               st.write("")
+               col5,col4= st.columns(2)
+               #col1.info(f"5 YR ROIC: {Average_ROIC_funf}%")
+               #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>5 YR ROIC: <br> {Average_ROIC_funf}%</div>", unsafe_allow_html=True)
+
+               #col2.info(f"3 YR ROIC: {ROIC_annual_3years}")
+               #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+
                #col3.info(f"3 YR ROIC: {ROIC_annual_3years}")
                WACC = col5.number_input("WACC (%):", value=WACC)
+               #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+
                FCF_discount_in_years = col4.number_input("Years:", value=int(10))
+               #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+
                #Average_10years_treasury_rate = col6.number_input("10 YR T.NOTE:(%):", value=Average_10years_treasury_rate)
                
                
@@ -11387,17 +11591,22 @@ if selected == "Stock Analysis Tool":
                
                #st.write(FCF_Cagr_10.2f}%)
           #------------------------------------------------------------------------------------------------------------------------
-               col9, col10= st.columns(2)
+               col9, col8,col34,col10= st.columns(4)
+               
                Growth_rate1 = col9.number_input("Growth Rate (Base Case) in %:", value=0.00,key="growth_rate1")
+               col8.write('')
+               col34.write('')
                Growth_rate2 = col10.number_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2")
 
           
           #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
 
-               cola, colb, colc= st.columns(3)
+               cola, col8,col34,colc= st.columns(4)
                #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
                Margin_of_safety1 = cola.number_input("1.Margin of Safety (%):", value=9.00)
           # Margin_of_safety2 = colb.number_input("2.Margin of Safety %:", value=8.50)
+               col8.write('')
+               col34.write('')
                Margin_of_safety3 = colc.number_input("2.Margin of Safety (%):", value=9.00)
           #-------------------------------------------------------------------------------------------------------------------------------------------
                #print("last FCF:",Average_Free_cash_flow_annual_one_one)
