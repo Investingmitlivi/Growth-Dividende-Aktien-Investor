@@ -8972,10 +8972,10 @@ if selected == "Stock Analysis Tool":
                data4 = {
                
                #'Forward P/E': [forwardPE], 
-               'EPS (TTM)':["$ {:.2f}".format(eps_diluted_ttm)],
+               'EPS (TTM)':[" {:.2f}".format(eps_diluted_ttm)],
                'EPS Estimate this YR': f"{Earnings_this_yr}",
           # 'EPS Estimate next YR':[Earnings_next_yr_in_prozent],
-               'EPS Estimate next YR': f"$ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
+               'EPS Estimate next YR': f" {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
                #'EPS Estimate next YR':f"$ {Earnings_next_yr_in_value}",
                'EPS Estimate 5 YR (per annum)':[Earnings_next_5_yrs],
                'EPS past 5 YR':f"{EPS_5_CAGR}% ",
@@ -11135,10 +11135,10 @@ if selected == "Stock Analysis Tool":
                     """
                     **Wachstum/Aktienrückkauf** | **Value** | **Change**
                     --- | --- | ---
-                    Revenue Growth 5 YR% | **{revenue_annual_funf_Growth:.2f}%** | {rev}
+                    Revenue Growth 5 YR | **{revenue_annual_funf_Growth:.2f}%** | {rev}
                     Net Income Growth 5 YR | **{netincome_annual_funf_growth_:.2f}%** | {netincome}
                     FCF Growth 5 YR| **{FCF_funf_growth:.2f}%** | {fcf}
-                    Shares Outstanding 5 YR* | **{Shares_outstanding_funf_growth:.2f}%** | {share}
+                    Shares Outstanding 5 YR | **{Shares_outstanding_funf_growth:.2f}%** | {share}
                     """.format(
                          revenue_annual_funf_Growth=revenue_annual_funf_Growth, rev=rev,
                          netincome_annual_funf_growth_=netincome_annual_funf_growth_, netincome=netincome,
@@ -11577,10 +11577,10 @@ if selected == "Stock Analysis Tool":
                #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
 
                #col3.info(f"3 YR ROIC: {ROIC_annual_3years}")
-               WACC = col5.number_input("WACC (%):", value=WACC)
+               WACC = float(col5.text_input("WACC (%):", value=f"{WACC:.2f}"))
                #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
 
-               FCF_discount_in_years = col4.number_input("Years:", value=int(10))
+               FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)))
                #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
 
                #Average_10years_treasury_rate = col6.number_input("10 YR T.NOTE:(%):", value=Average_10years_treasury_rate)
@@ -11593,21 +11593,22 @@ if selected == "Stock Analysis Tool":
           #------------------------------------------------------------------------------------------------------------------------
                col9, col8,col34,col10= st.columns(4)
                
-               Growth_rate1 = col9.number_input("Growth Rate (Base Case) in %:", value=0.00,key="growth_rate1")
+               #Growth_rate1 = col9.number_input("Growth Rate (Base Case) in %:", value=0.00,key="growth_rate1")
+               Growth_rate1 = float(col9.text_input("Growth Rate (Base Case) in %:",value=0.00,key="growth_rate1"))
                col8.write('')
                col34.write('')
-               Growth_rate2 = col10.number_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2")
+               Growth_rate2 = float(col10.text_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2"))
 
           
           #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
 
                cola, col8,col34,colc= st.columns(4)
                #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-               Margin_of_safety1 = cola.number_input("1.Margin of Safety (%):", value=9.00)
+               Margin_of_safety1 = float(cola.text_input("1.Margin of Safety (%):", value=9.00))
           # Margin_of_safety2 = colb.number_input("2.Margin of Safety %:", value=8.50)
                col8.write('')
                col34.write('')
-               Margin_of_safety3 = colc.number_input("2.Margin of Safety (%):", value=9.00)
+               Margin_of_safety3 = float(colc.text_input("2.Margin of Safety (%):", value=9.00))
           #-------------------------------------------------------------------------------------------------------------------------------------------
                #print("last FCF:",Average_Free_cash_flow_annual_one_one)
                if Average_Free_cash_flow_annual_one_one < 0:
@@ -11868,7 +11869,7 @@ if selected == "Stock Analysis Tool":
                     st.write(f"My Assumptions:")
 
                #with col2:
-                    My_assumption = st.number_input("Years:", value=int(10), key="My_assumption")
+                    My_assumption = int(st.text_input("Years:", value=int(10), key="My_assumption"))
 
                col1,col2,col3,col4,col5,col6 = st.columns(6)
 
@@ -11984,30 +11985,30 @@ if selected == "Stock Analysis Tool":
                #    st.session_state.load_state =False
 
                
-               Growth_rate_revenue_LOW = colr9.number_input(" ", value=0.00,key="Growth_rate_revenue_LOW")
-               Growth_rate_revenue_middle = colr10.number_input(" ", value=0.00,key="Growth_rate_revenue_middle")
-               Growth_rate_revenue_high = colr11.number_input(" ", value=0.00,key="Growth_rate_revenue_high")
+               Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0.00,key="Growth_rate_revenue_LOW"))
+               Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0.00,key="Growth_rate_revenue_middle"))
+               Growth_rate_revenue_high = float(colr11.text_input(" ", value=0.00,key="Growth_rate_revenue_high"))
 
-               Growth_rate_net_profit_LOW = coln9.number_input(" ", value=0.00,key="Growth_rate_net_profit_LOW")
-               Growth_rate__net_profit_middle = coln10.number_input(" ", value=0.00,key="Growth_rate__net_profit_middle")
-               Growth_rate__net_profit_high = coln11.number_input(" ", value=0.00,key="Growth_rate__net_profit_high")
+               Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0.00,key="Growth_rate_net_profit_LOW"))
+               Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0.00,key="Growth_rate__net_profit_middle"))
+               Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0.00,key="Growth_rate__net_profit_high"))
 
-               Growth_rate_fcf_margin_LOW = colf9.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW")
-               Growth_rate_fcf_margin_middle = colf10.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle")
-               Growth_rate_fcf_margin_high = colf11.number_input(" ", value=0.00,key="Growth_rate_fcf_margin_high")
+               Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW"))
+               Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle"))
+               Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_high"))
 
-               Growth_rate_P_OCF_low = colcf9.number_input(" ", value=0.00,key="Growth_rate_P_OCF_low")
-               Growth_rate_P_OCF_middle = colcf10.number_input(" ", value=0.00,key="Growth_rate_P_OCF_middle")
-               Growth_rate_P_OCF_high = colcf11.number_input(" ", value=0.00,key="Growth_rate_P_OCF_high")
+               Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0.00,key="Growth_rate_P_OCF_low"))
+               Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0.00,key="Growth_rate_P_OCF_middle"))
+               Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0.00,key="Growth_rate_P_OCF_high"))
 
-               Growth_rate_P_FCF_low = colfcf9.number_input(" ", value=0.00,key="Growth_rate_P_FCF_low")
-               Growth_rate_P_FCF_middle = colfcf10.number_input(" ", value=0.00,key="Growth_rate_P_FCF_middle")
-               Growth_rate_P_FCF_high = colfcf11.number_input(" ", value=0.00,key="Growth_rate_P_FCF_high")
+               Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0.00,key="Growth_rate_P_FCF_low"))
+               Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0.00,key="Growth_rate_P_FCF_middle"))
+               Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0.00,key="Growth_rate_P_FCF_high"))
 
                #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-               Margin_of_safety_low = cola.number_input(" ", value=9.00,key="Margin_of_safety_low")
-               Margin_of_safety_mid = colb.number_input(" ", value=9.00,key="Margin_of_safety_mid")
-               Margin_of_safety_high = colc.number_input(" ", value=9.00,key="Margin_of_safety_high")
+               Margin_of_safety_low = float(cola.text_input(" ", value=9.00,key="Margin_of_safety_low"))
+               Margin_of_safety_mid = float(colb.text_input(" ", value=9.00,key="Margin_of_safety_mid"))
+               Margin_of_safety_high = float(colc.text_input(" ", value=9.00,key="Margin_of_safety_high"))
 
 
                
@@ -12237,25 +12238,25 @@ if selected == "Stock Analysis Tool":
                for i in range(len(Dividend_per_share_quarter)):
                     if i == 0:
                          Dividend_quarter1 = Dividend_per_share_quarter[i]
-                         Dividend11 = cola.number_input("quarterly", value=round(Dividend_quarter1,3),key="unique_key1")
+                         Dividend11 = cola.text_input("quarterly", value=round(Dividend_quarter1,3),key="unique_key1")
                     elif i == 12 - 8:
                          Dividend_quarter2 = Dividend_per_share_quarter[i]
-                         Dividend12 = colb.number_input("quarterly", value=Dividend_quarter2,key="unique_key2")
+                         Dividend12 = colb.text_input("quarterly", value=Dividend_quarter2,key="unique_key2")
                          if Dividend_quarter1 != 0:
                               percentage_increase_1_2 = ((Dividend_quarter2 - Dividend_quarter1) / Dividend_quarter1) * 100
                     elif i == 12-4:
                          Dividend_quarter3 = Dividend_per_share_quarter[i] 
-                         Dividend13 = colc.number_input("quarterly", value=Dividend_quarter3,key="unique_key3")
+                         Dividend13 = colc.text_input("quarterly", value=Dividend_quarter3,key="unique_key3")
                          if Dividend_quarter2 != 0:
                               percentage_increase_2_3 = ((Dividend_quarter3 - Dividend_quarter2) / Dividend_quarter2) * 100
                     elif i == 12:
                          Dividend_quarter4 = Dividend_per_share_quarter[i] 
-                         Dividend14 = cold.number_input("quarterly", value=Dividend_quarter4,key="unique_key4")
+                         Dividend14 = cold.text_input("quarterly", value=Dividend_quarter4,key="unique_key4")
                          if Dividend_quarter3 != 0:
                               percentage_increase_3_4 = ((Dividend_quarter4 - Dividend_quarter3) / Dividend_quarter3) * 100
                     elif i == 13:
                          Dividend_quarter5 = Dividend_per_share_quarter[i] 
-                         Dividend15 = col2.number_input("current Dividend", value=Dividend_quarter5,key="unique_key5")
+                         Dividend15 = float(col2.text_input("current Dividend", value=Dividend_quarter5,key="unique_key5"))
                          if Dividend_quarter4 != 0:
                               percentage_increase_4_5 = ((Dividend_quarter5 - Dividend_quarter4) / Dividend_quarter4) * 100
 
@@ -12273,20 +12274,20 @@ if selected == "Stock Analysis Tool":
                #      if i == 0:
                #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
                try:
-                    Dividend101 = cola.number_input("Year 4", value=Dividend_quarter1*4, key="unique_key_for_Dividend101")
+                    Dividend101 = cola.text_input("Year 4", value=Dividend_quarter1*4, key="unique_key_for_Dividend101")
                #      elif i == 12-8:
                except Exception as e:
                     Dividend101 =0
                #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
                try:
-                    Dividend201 = colb.number_input("Year 3", value=Dividend_quarter2*4, key="unique_key_for_Dividend201")
+                    Dividend201 = colb.text_input("Year 3", value=Dividend_quarter2*4, key="unique_key_for_Dividend201")
 
                except Exception as  e:
                     Dividend201 =0
                #      elif i == 12-4:
                #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
                try:
-                    Dividend301 = colc.number_input("Year 2", value=Dividend_quarter3*4, key="unique_key_for_Dividend301")
+                    Dividend301 = colc.text_input("Year 2", value=Dividend_quarter3*4, key="unique_key_for_Dividend301")
                #      elif i == 12:
                except Exception as e:
                     Dividend301=0
@@ -12294,7 +12295,7 @@ if selected == "Stock Analysis Tool":
                #         Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
 
                try:
-                    Dividend401 = cold.number_input("Year 1", value=Dividend_quarter4*4, key="unique_key_for_Dividend401")
+                    Dividend401 = cold.text_input("Year 1", value=Dividend_quarter4*4, key="unique_key_for_Dividend401")
                except Exception as e:
                     Dividend401 = 0
 
@@ -12302,7 +12303,7 @@ if selected == "Stock Analysis Tool":
                #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
                
                try:  
-                    Dividend501 = col2.number_input("Current year", value=Dividend_quarter5*4, key="unique_key_for_Dividend501")
+                    Dividend501 = col2.text_input("Current year", value=Dividend_quarter5*4, key="unique_key_for_Dividend501")
 
                except Exception as e:
                
@@ -12314,20 +12315,20 @@ if selected == "Stock Analysis Tool":
                # for i in range(len(Dividend_growth_quarter)):
                #      if i == 0:
                #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
-               Dividend1 = cola.number_input("Growth Rate(%)", value=None, key="unique_key_for_Dividend1")
+               Dividend1 = cola.text_input("Growth Rate(%)", value=None, key="unique_key_for_Dividend1")
                #      elif i == 12-8:
                #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
-               Dividend2 = colb.number_input("Growth Rate(%)", value=percentage_increase_1_2, key="unique_key_for_Dividend2")
+               Dividend2 = float(colb.text_input("Growth Rate(%)", value=f"{percentage_increase_1_2:.2f}", key="unique_key_for_Dividend2"))
                #      elif i == 12-4:
                #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
-               Dividend3 = colc.number_input("Growth Rate(%)", value=percentage_increase_2_3,key="unique_key_for_Dividend3")
+               Dividend3 = colc.text_input("Growth Rate(%)", value=f"{percentage_increase_2_3:.2f}",key="unique_key_for_Dividend3")
                #      elif i == 12:
                #           Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
-               Dividend4 = cold.number_input("Growth Rate(%)", value=percentage_increase_3_4, key="unique_key_for_Dividend4")
+               Dividend4 = cold.text_input("Growth Rate(%)", value=f"{percentage_increase_3_4:.2f}", key="unique_key_for_Dividend4")
 
                #      elif i == 13:
                #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
-               Dividend5 = col2.number_input("Growth Rate(%)", value=percentage_increase_4_5, key="unique_key_for_Dividend5")
+               Dividend5 = col2.text_input("Growth Rate(%)", value=f"{percentage_increase_4_5:.2f}", key="unique_key_for_Dividend5")
 
 
 
@@ -12372,8 +12373,8 @@ if selected == "Stock Analysis Tool":
                colb.write(f"10 YR CAGR Annual Dividend per share : {Dividend_per_share_cagr_10} %")
 
                col10,col11 =st.columns(2)
-               Growth_rate_dividend = col10.number_input("Growth Rate %:", value=0.00)
-               WACC = col11.number_input("WACC in (%):", value=WACC)
+               Growth_rate_dividend = float(col10.text_input("Growth Rate %:", value=0.00))
+               WACC = float(col11.text_input("WACC in (%):", value=f"{WACC:.2f}"))
 
                try: 
                     intrinsic_value3 = (Dividend15 * 4) * (1 + (Growth_rate_dividend / 100)) / ((WACC / 100) - (Growth_rate_dividend / 100))
@@ -12846,7 +12847,7 @@ if selected == "Stock Analysis Tool":
 
                          with col1:
                               st.write(f"""
-                              <b>10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(TTM):  {eps_diluted_ttm}  Next YR:  {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})
+                              <b>10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(ttm):  {eps_diluted_ttm}    Next YR: {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})
                               """, unsafe_allow_html=True)
                               st.plotly_chart(fig1,use_container_width=True,config=config)
                          with col2:
@@ -13745,6 +13746,7 @@ if selected == "Stock Analysis Tool":
 
                st.write("This code runs only when the button is clicked")
 
+
                    
 
 
@@ -13888,6 +13890,7 @@ if selected == "Stock Analysis Tool":
 
 # Apply the CSS styles using st.markdown
 #st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 
           
 
