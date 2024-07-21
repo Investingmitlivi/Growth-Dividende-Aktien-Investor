@@ -11094,62 +11094,98 @@ if selected == "Stock Analysis Tool":
                #      f"**{Average_debt_equity_one}**\n"
                #      f"{dt_equt}"
                #      )
+               # Apply CSS to make sure the markdown takes full width of the container
+               st.markdown("""
+               <style>
+               .full-width {
+                    width: 100%;
+               }
+               </style>
+               """, unsafe_allow_html=True)
 
-               col1,cola,colb,col2=st.columns(4)
+
+               col1,col2,col3=st.columns(3)
 
 
-               with col1:
-                    st.write(
+               #with col1:
+               col1.write(
                     """
+                    <div style="width: 100%;">
+                    
                     **Earnings Multiples** | **Value** | **Change**
                     --- | --- | ---
                     5 YR P/E < 23 | **{KGV}** | {pe}
                     5 YR P/FCF < 23 | **{KCV}** | {pcf}
-     
+                    </div>
                     """.format(
                          KGV=KGV, pe=pe,
                          KCV=KCV, pcf=pcf,
                         
+                    ),unsafe_allow_html=True
                     )
+               col2.write('')
+               #with col2:
+               col3.write(
+                    """
+                    <div style="width: 100%;">
+                    
+                    **Leverage ratio/Bilanzkennzahl** | **Value** | **Change**
+                    --- | --- | ---
+                    5 YR FCF / DEBT < 5 | **{Schuldentillgung}** | {schuld}
+                    DEBT / EQUITY < 2 | **{Average_debt_equity_one}** | {dt_equt}
+                    </div>
+                    """.format(
+                         Schuldentillgung=Schuldentillgung, schuld=schuld,
+                         Average_debt_equity_one=Average_debt_equity_one, dt_equt=dt_equt
+                    ),unsafe_allow_html=True
                     )
-
-
+                                                       # 
+                        
+               
+               cola,colc,colb=st.columns(3)
 
                with cola:
-                    st.write(
+                    st.markdown(
                     """
+                    <div style="width: 100%;">
+                    
                     **Gewinnkennzahl/Ausschüttungsquote** | **Value** | **Change**
                     --- | --- | ---
                     5 YR ROIC > 9% | **{Average_ROIC_funf}** | {roic}
                     5 YR ROE > 14% | **{five_Yrs_ROE}%** | {roe}
                     5 YR NET MARGIN > 5% | **{five_yrs_Nettomarge}%** | {netmarge}
                     FCF PAYOUT RATIO < 60 % | **{one_FCF_annual_payout}%** | {payout}
+                    </div>
                     """.format(
                          Average_ROIC_funf=Average_ROIC_funf, roic=roic,
                          five_Yrs_ROE=five_Yrs_ROE, roe=roe,
                          five_yrs_Nettomarge=five_yrs_Nettomarge, netmarge=netmarge,
                          one_FCF_annual_payout=one_FCF_annual_payout, payout=payout
-                    )
+                    ),unsafe_allow_html=True
                     )
 
 
-                       
+               colc.write('')  
+                   
                        
                with colb:
-                    st.write(
+                    st.markdown(
                     """
+                    <div style="width: 100%;">
+                    
                     **Wachstum/Aktienrückkauf** | **Value** | **Change**
                     --- | --- | ---
                     Revenue Growth 5 YR | **{revenue_annual_funf_Growth:.2f}%** | {rev}
                     Net Income Growth 5 YR | **{netincome_annual_funf_growth_:.2f}%** | {netincome}
                     FCF Growth 5 YR| **{FCF_funf_growth:.2f}%** | {fcf}
                     Shares Outstanding 5 YR | **{Shares_outstanding_funf_growth:.2f}%** | {share}
+                    </div>
                     """.format(
                          revenue_annual_funf_Growth=revenue_annual_funf_Growth, rev=rev,
                          netincome_annual_funf_growth_=netincome_annual_funf_growth_, netincome=netincome,
                          FCF_funf_growth=FCF_funf_growth, fcf=fcf,
                          Shares_outstanding_funf_growth=Shares_outstanding_funf_growth, share=share
-                    )
+                    ),unsafe_allow_html=True
                     )
           # 
                #col10.metric("Net Income Growth 5 YR",f"{netincome_annual_funf_growth_:.2f}%", netincome)
@@ -11160,20 +11196,7 @@ if selected == "Stock Analysis Tool":
           # 
                #col12.metric("Shares Outstanding 5 YR",f"{Shares_outstanding_funf_growth:.2f}%",share)
             
-               with col2:
-                    st.write(
-                    """
-                    **Leverage ratio/Bilanzkennzahl** | **Value** | **Change**
-                    --- | --- | ---
-                    5 YR FCF / DEBT < 5 | **{Schuldentillgung}** | {schuld}
-                    DEBT / EQUITY < 2 | **{Average_debt_equity_one}** | {dt_equt}
-                    """.format(
-                         Schuldentillgung=Schuldentillgung, schuld=schuld,
-                         Average_debt_equity_one=Average_debt_equity_one, dt_equt=dt_equt
-                    )
-                    )
-                                                       # 
-                         #      metrics_data = [
+ #      metrics_data = [
                          #     {"": "5 Yr KGV < 23:", "Value 1": KGV, "Value 2": pe}
           
 
