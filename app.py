@@ -107,17 +107,7 @@ custom_css = """
                </style>
                """
 
-disclaimer = """
-          The information provided on this website is intended for informational purposes only and does not constitute financial advice, investment recommendations, or a solicitation to buy or sell any securities. The content and data presented on this website are not tailored to your specific investment goals, financial situation, or risk tolerance. You should always consult with a qualified financial advisor before making investment decisions.
-          """
-          # The stock and financial data provided on this website may be delayed, inaccurate, or subject to errors. We make no representations or warranties about the accuracy, completeness, or reliability of the information presented. Any reliance you place on such information is strictly at your own risk.
-          # Past performance is not indicative of future results. Investments in stocks, securities, and financial instruments involve risks, including the loss of your invested capital. Market conditions can change rapidly, and investment values can fluctuate.
-          # This website may contain links to third-party websites or content. We do not endorse or control the content of these external sites and are not responsible for their accuracy, legality, or availability.
-          # We are not licensed financial advisors, and the content provided on this website should not be construed as professional financial advice. You are solely responsible for evaluating the suitability of any investment decisions based on your individual circumstances and objectives.
-          # By using this website, you agree to hold us harmless from any and all claims, losses, liabilities, or damages resulting from your reliance on the information presented herein. We reserve the right to modify or discontinue the content and services offered on this website at any time.
-          # Please consult with a qualified financial professional and conduct your own research before making any investment decisions. We encourage you to review the terms of use and privacy policy of this website for more information about your use of this site.
-          # For specific legal, tax, and financial advice, you should contact your own attorney, accountant, or other professional advisors..
-#
+
 cred = credentials.Certificate('investingmitlivi-firebase key.json')
 try:
      firebase_admin.initialize_app(cred)
@@ -8261,6 +8251,12 @@ if selected == "Stock Analysis Tool":
                five_yrs_ROCE = annual_data['roce'][-5:]
                five_yrs_ROCE=sum(five_yrs_ROCE)/len(five_yrs_ROCE)
                five_yrs_ROCE = (five_yrs_ROCE*100)
+
+
+
+               Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
+               Average_Free_cash_flow_annual_one = ((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000
+               Average_Free_cash_flow_annual_one_one =Average_Free_cash_flow_annual_one
           
 
                #Revenue_growth_3years = annual_data['revenue_growth'][-3:]
@@ -10761,6 +10757,8 @@ if selected == "Stock Analysis Tool":
                                                                  st.write()
                                                                  pass  
 
+
+
           #pillar_analysis_width = 1  # Adjust this value as needed
 
           # Apply custom CSS style to control the width of the content
@@ -10774,7 +10772,7 @@ if selected == "Stock Analysis Tool":
 
                #ROIC_annual_funf =annual_data['roic'][-5:]
                #Average_ROIC_funf = round(((sum(ROIC_annual_funf) / len(ROIC_annual_funf)))*100, 2)
-               Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
+               #Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
                Free_cash_flow_annual_funf = annual_data['fcf'][-5:] 
                Total_assets_annual_one = annual_data['total_assets'][1:]
                Total_Equity_annual_one = annual_data['total_equity'][-1:]
@@ -10785,7 +10783,7 @@ if selected == "Stock Analysis Tool":
                     debt_Assets_annual =annual_data['debt_to_assets'][-10:]
                
                     
-                    Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
+                   
                
                     
                     LongTerm_debt_annual_one =annual_data['lt_debt'][-1:]
@@ -11306,6 +11304,79 @@ if selected == "Stock Analysis Tool":
                styled_df4 = df4.style.applymap(lambda x: style).set_caption("")
 
 
+               treasury = "^TNX"
+               treasury_yield_data = yf.download(treasury)
+
+               # Check if the treasury_yield_data DataFrame is empty
+               if not treasury_yield_data.empty:
+                    treasury_yield = treasury_yield_data['Close'].iloc[-1]
+                    Average_10years_treasury_rate = round(treasury_yield, 2)
+               else:
+                    Average_10years_treasury_rate = 4.25
+
+               try:
+                    interest_expense_annual_one = annual_data['interest_expense'][-1:]
+                    Average_interest_expense_annual_one = round((sum(interest_expense_annual_one) / len(interest_expense_annual_one)) / -1000000000, 2)
+               except Exception as e:
+                    Average_interest_expense_annual_one = 0.0
+
+               Average_stock_market_beta = float(beta)
+               Market_return = 8.51
+
+               Income_tax_annual_one = annual_data['income_tax'][-1:]
+               Average_Income_tax_annual_one = round((sum(Income_tax_annual_one) / len(Income_tax_annual_one)) / -1000000000, 2)
+
+               Pretax_income_annual_one = annual_data['pretax_income'][-1:]
+               Average_Pretax_annual_one = round((sum(Pretax_income_annual_one) / len(Pretax_income_annual_one)) / 1000000000, 2)
+
+               shares_basic_annual_one = annual_data['shares_basic'][-1:]
+               Average_shares_basic_annual_one = round((sum(shares_basic_annual_one) / len(shares_basic_annual_one)) / 1000000000, 2)
+
+               if Total_Debt_from_all_calc != 0:
+                    Cost_of_debt = round((Average_interest_expense_annual_one / Total_Debt_from_all_calc) * 100, 2)
+                    Cost_of_debt_with_percentage = f"{Cost_of_debt:.2f}%"
+               elif Total_debt_ != 0:
+                    Cost_of_debt = round((Average_interest_expense_annual_one / Total_debt_) * 100, 2)
+                    Cost_of_debt_with_percentage = f"{Cost_of_debt:.2f}%"
+               else:
+                    Cost_of_debt = 1
+
+               try:
+                    Effective_tax_rate = round((Average_Income_tax_annual_one / Average_Pretax_annual_one) * 100, 2)
+                    Effective_tax_rate_with_percentage = f"{Effective_tax_rate:.2f}%"
+               except Exception as e:
+                    Average_Income_tax_annual_one = round((sum(Income_tax_annual_one) / len(Income_tax_annual_one)) / -1, 2)
+                    Average_Pretax_annual_one = round((sum(Pretax_income_annual_one) / len(Pretax_income_annual_one)) / 1, 2)
+                    Effective_tax_rate = round((Average_Income_tax_annual_one / Average_Pretax_annual_one) * 100, 2)
+                    Effective_tax_rate = Effective_tax_rate / 1000
+                    Effective_tax_rate_with_percentage = f"{Effective_tax_rate:.2f}%"
+
+               Cost_of_debt_after_Tax = round((Cost_of_debt / 100) * (1 - (Effective_tax_rate / 100)) * 100, 2)
+               Cost_of_debt_after_Tax_with_percentage = f"{Cost_of_debt_after_Tax:.2f}%"
+
+               Cost_of_equity = (Average_10years_treasury_rate + (Average_stock_market_beta * (Market_return - Average_10years_treasury_rate)))
+               Cost_of_equity = round(Cost_of_equity, 2)
+               Cost_of_equity_with_percentage = f"{Cost_of_equity}%"
+
+               Pepetual_growth_rate = 0.025
+               Growth_rate = 8.30
+               Growth_rate_with_percentage = f"{Growth_rate:.2f}%"
+               Growth_input = Growth_rate / 100.00
+
+               Total_Capital = Total_Debt_from_all_calc + Marketcap
+               Total_debt_prozent = Total_Debt_from_all_calc / Total_Capital
+               Marketcap_in_prozent = Marketcap / Total_Capital
+
+                   
+               WACC = round((Total_debt_prozent * Cost_of_debt_after_Tax) + (Marketcap_in_prozent * Cost_of_equity), 3)
+
+               if WACC <= 0:
+                    WACC = 9
+               WACC_prozent = WACC
+                    
+               
+             
+
                
 
                # # Create a responsive layout with three columns
@@ -11328,525 +11399,1128 @@ if selected == "Stock Analysis Tool":
 
      with st.container():   
           with Stock_Analyser:
-               with st.form(key='growth_rate_form2'):
-               # Get the value at index 1 from the Series
-               #10_years_treasury_yield= GOOGLEFINANCE("TNX")/10
-          #      treasury = '^TNX'
-          #      treasury_yield_data = yf.download(treasury, period='1d')
-          #      treasury_yield = treasury_yield_data['Close'].iloc[-1]
+               # with st.form(key='growth_rate_form2'):
+         
+                    
+               #      treasury = "^TNX"
+               #      #treasury_yield_data = yf.download(treasury, period='1d')
+               #      treasury_yield_data = yf.download(treasury)
+                    
 
-          #      #Average_10years_treasury_rate = 4.25
-          #      try:
-          #     # Calculate b based on treasury_yield
-          #           if treasury_yield == 0:
-          #                Average_10years_treasury_rate =  4.25
-          #           else:
+               # # Check if the treasury_yield_data DataFrame is empty
+               #      if not treasury_yield_data.empty:
+               #           treasury_yield = treasury_yield_data['Close'].iloc[-1]
+               #           Average_10years_treasury_rate = round(treasury_yield,2)
+               #           #print("10-year Treasury yield:", treasury_yield)
+               #      else:
+               #           #print("Error: No price data found for the 10-year Treasury yield symbol.")
+               #           Average_10years_treasury_rate = 4.25
+               #      # Check if the treasury_yield_data DataFrame is empty
+
+
+               #           # Display the value of b
+               #      try:          
+               #           interest_expense_annual_one = annual_data['interest_expense'][-1:]
+               #           Average_interest_expense_annual_one = round(((sum(interest_expense_annual_one) / len(interest_expense_annual_one)))/-1000000000, 2)
+               #      except Exception as e:     
+               #           Average_interest_expense_annual_one=0.0
+
+
+
+               #      Average_stock_market_beta = float(beta)
                          
-          #                Average_10years_treasury_rate = round(treasury_yield,2)
-          #      except (ZeroDivisionError, TypeError):
-               #           # Handle the case when treasury_yield is zero or causes an error
+               #      Market_return = 8.51
+             
+
+               #      Income_tax_annual_one = annual_data['income_tax'][-1:]
+               #      Average_Income_tax_annual_one = round(((sum(Income_tax_annual_one) / len(Income_tax_annual_one)))/-1000000000, 2)
+
+               #      Pretax_income_annual_one = annual_data['pretax_income'][-1:]
+               #      Average_Pretax_annual_one = round(((sum(Pretax_income_annual_one) / len(Pretax_income_annual_one)))/1000000000, 2)
+
+               #      shares_basic_annual_one = annual_data['shares_basic'][-1:]
+               #      Average_shares_basic_annual_one= round(((sum(shares_basic_annual_one) / len(shares_basic_annual_one)))/1000000000, 2)
+
+               #      if Total_Debt_from_all_calc != 0:
+               #           Cost_of_debt = round((Average_interest_expense_annual_one/Total_Debt_from_all_calc)*100,2)
+               #           Cost_of_debt_with_percentage = f"{Cost_of_debt:.2f}%"     
+               #      elif Total_debt_ !=0:
+               #      # Cost_of_debt = 0
+               #           Cost_of_debt = round((Average_interest_expense_annual_one/Total_debt_)*100,2)
+               #           Cost_of_debt_with_percentage = f"{Cost_of_debt:.2f}%"
+
+               #      else:
+               #           Cost_of_debt =1
+               #      try:
+               #           Effective_tax_rate = round((Average_Income_tax_annual_one/Average_Pretax_annual_one)*100,2)
+               #           Effective_tax_rate_with_percentage = f"{ Effective_tax_rate:.2f}%"
+
+               #      except Exception as e:
+               #           Income_tax_annual_one = annual_data['income_tax'][-1:]
+               #           Average_Income_tax_annual_one = round(((sum(Income_tax_annual_one) / len(Income_tax_annual_one)))/-1, 2)
+               #           Pretax_income_annual_one = annual_data['pretax_income'][-1:]
+               #           Average_Pretax_annual_one = round(((sum(Pretax_income_annual_one) / len(Pretax_income_annual_one)))/1, 2)
+               #           Effective_tax_rate = round((Average_Income_tax_annual_one/Average_Pretax_annual_one)*100,2)
+               #           Effective_tax_rate=Effective_tax_rate/1000
+               #           Effective_tax_rate_with_percentage = f"{ Effective_tax_rate:.2f}%"
+
+               #           #st.write(Effective_tax_rate)
+
+               #      Cost_of_debt_after_Tax =round((((Cost_of_debt)/100)* (1-(Effective_tax_rate/100))*100),2)
+               #      Cost_of_debt_after_Tax_with_percentage = f"{ Cost_of_debt_after_Tax:.2f}%"
+
+
+
+               #      Cost_of_equity = ((Average_10years_treasury_rate)+((Average_stock_market_beta)*(Market_return-Average_10years_treasury_rate)))
+               #      Cost_of_equity = round(Cost_of_equity,2)
+               #      Cost_of_equity_with_percentage = f"{Cost_of_equity}%"
+
+               #      Pepetual_growth_rate = 0.025
+               #      Growth_rate = 8.30
+               #      Growth_rate_with_percentage = f"{Growth_rate:.2f}%"
+               #      Growth_input = Growth_rate/100.00
+               #      #average_fcf_Annual_one
                     
-                    treasury = "^TNX"
-                    #treasury_yield_data = yf.download(treasury, period='1d')
-                    treasury_yield_data = yf.download(treasury)
+               #      Total_Capital = Total_Debt_from_all_calc+Marketcap
+               #      Total_debt_prozent =Total_Debt_from_all_calc/Total_Capital
+               #      Marketcap_in_prozent =Marketcap/Total_Capital
+
+               #      WACC = round(((Total_debt_prozent*Cost_of_debt_after_Tax))+(Marketcap_in_prozent*Cost_of_equity),3)
+
+               #      if WACC <= 0:
+
+               #           WACC = 9
+
+
+               #      WACC_prozent= WACC
+
+
+               #      col1, col2,col3,col4,col5 = st.columns(5)
+
+               #      #col1.info(f"FCF 10 CAGR: {FCF_Cagr_10}%")
+               #      col1.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF 10 CAGR:<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
+                    
+               #      #col2.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
+               #      col2.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF 5 CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
+                    
+               #      #col3.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
+               #      col3.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS 10 CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
+
+               #      #col4.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
+               #      col4.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS 5 CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
+
+               #      #col5.info(f"EPS next 5 YR (per annum): {Earnings_next_5_yrs}")
+               #      col5.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
+
+
+               # #to add space
+               #      st.write("")
+               #      #st.markdown("<br>", unsafe_allow_html=True)
+
+
+               #      col1,col2,col3 = st.columns(3)
+               #      # Display the values
+               #      # Display the values
+               #      # Display the values in colored boxes
+               #      with col1:
+               #           st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+               #           #col1.info(f"FCF Growth YOY: {Average_fcf_growth_ten}%")
+                         
+               #      with col2:    
+               #           st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
+               #      # coln1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_margin_ttm}</div>", unsafe_allow_html=True)
+
+               #           #col2.info(f"5 YR FCF Growth YOY: {Average_fcf_growth_five}")
+               #      with col3:    
+               #           st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
+               #           #col3.info(f"3 YR FCF Growth YOY: {Average_fcf_growth_3years}")
+
+               #      st.write("")
+               #      col5,col4= st.columns(2)
+               #      #col1.info(f"5 YR ROIC: {Average_ROIC_funf}%")
+               #      #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>5 YR ROIC: <br> {Average_ROIC_funf}%</div>", unsafe_allow_html=True)
+
+               #      #col2.info(f"3 YR ROIC: {ROIC_annual_3years}")
+               #      #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+
+               #      #col3.info(f"3 YR ROIC: {ROIC_annual_3years}")
+               #      WACC = float(col5.text_input("WACC (%):", value=f"{WACC:.2f}"))
+               #      #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+
+               #      FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)))
+               #      #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+
+               #      #Average_10years_treasury_rate = col6.number_input("10 YR T.NOTE:(%):", value=Average_10years_treasury_rate)
+                    
+                    
+                    
+                    
+                    
+               #      #st.write(FCF_Cagr_10.2f}%)
+               # #------------------------------------------------------------------------------------------------------------------------
+               #      col9, col8,col34,col10= st.columns(4)
+                    
+               #      #Growth_rate1 = col9.number_input("Growth Rate (Base Case) in %:", value=0.00,key="growth_rate1")
+               #      Growth_rate1 = float(col9.text_input("Growth Rate (Base Case) in %:",value=0.00,key="growth_rate1"))
+               #      col8.write('')
+               #      col34.write('')
+               #      Growth_rate2 = float(col10.text_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2"))
+
+               
+               # #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
+
+               #      cola, col8,col34,colc= st.columns(4)
+               #      #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+               #      Margin_of_safety1 = float(cola.text_input("1.Margin of Safety (%):", value=9.00))
+               # # Margin_of_safety2 = colb.number_input("2.Margin of Safety %:", value=8.50)
+               #      col8.write('')
+               #      col34.write('')
+               #      Margin_of_safety3 = float(colc.text_input("2.Margin of Safety (%):", value=9.00))
+               # #-------------------------------------------------------------------------------------------------------------------------------------------
+               #      #print("last FCF:",Average_Free_cash_flow_annual_one_one)
+               #      if Average_Free_cash_flow_annual_one_one < 0:
+               #           Average_Free_cash_flow_annual_one_one = average_fcf_Annual_funf
+                    
+               #      discounted_values = [] 
+               
+               #      for i in range(FCF_discount_in_years):
+               #           discounted_value = Average_Free_cash_flow_annual_one_one * (1 + (Growth_rate1/100))
+               #           Average_Free_cash_flow_annual_one_one = discounted_value
+               #           #discounted_values.append(discounted_value)  # Add the discounted value to the list
+               #           discounted_values.append(round(discounted_value, 2)) 
+               #      #discounted_values[4]*
+               #      sum_discounted_values = sum(discounted_values) 
+
+               #      #Terminal_Value = discounted_values[4]*(1+Pepetual_growth_rate)/(WACC/100-Pepetual_growth_rate)
+               #      for i, value in enumerate(discounted_values):
+               #           if i == len(discounted_values) - 1:
+               #                Terminal_Value = value * (1 + Pepetual_growth_rate) / ((WACC/100) - Pepetual_growth_rate)
+               #                Sum_terminal_fcf = Terminal_Value + discounted_values[i]
+
+               
+               #      discounted_values[-1] = round(Sum_terminal_fcf,2)
+                    
+               #      npv_result = npv(WACC/100,discounted_values)   
+               #      rounded_npv_result = round(npv_result, 2)  
+               #      #st.write(Total_Debt_from_all_calc)
+               #      Equity_value = rounded_npv_result+Total_cash_last_years-Total_Debt_from_all_calc
+               #      Intrinsic_value =Equity_value/Average_shares_basic_annual_one
+               #      #st.write(npv_result)
+
+               #      Euro_equivalent = Intrinsic_value*usd_to_eur_rate
+               #           #print(f"{Intrinsic_value} USD is approximately {Euro_equivalent:.2f} EUR")
+               #      # Display the result
+               #      #print(f"{amount} {base_currency} is equal to {converted_amount} {target_currency}")
+               # # .   ....................................................................................   
                     
 
-               # Check if the treasury_yield_data DataFrame is empty
-                    if not treasury_yield_data.empty:
-                         treasury_yield = treasury_yield_data['Close'].iloc[-1]
-                         Average_10years_treasury_rate = round(treasury_yield,2)
-                         #print("10-year Treasury yield:", treasury_yield)
-                    else:
-                         #print("Error: No price data found for the 10-year Treasury yield symbol.")
-                         Average_10years_treasury_rate = 4.25
+               # #----------------------------------------------------------2:Growth rate Estimate------------------------------------------------------------------------
+               #      if Average_Free_cash_flow_annual_one < 0:
+               #           Average_Free_cash_flow_annual_one = average_fcf_Annual_funf
+               
+               #      discounted_values2 = [] 
+               #      # Create an empty list to store discounted values
+               #      for j in range(FCF_discount_in_years):
+               #           discounted_value2 = Average_Free_cash_flow_annual_one * (1 + (Growth_rate2/100))
+               #           Average_Free_cash_flow_annual_one = discounted_value2
+               #           discounted_values2.append(round(discounted_value2,2))  # Add the discounted value to the list
+               #           #print(discounted_value2)
+               #      #Terminal_Value2 = discounted_values2[4]*(1+Pepetual_growth_rate)/(WACC/100-Pepetual_growth_rate)
+
+               #      sum_discounted_values2 = sum(discounted_values2)
+
+               #      for i, value2 in enumerate(discounted_values2):
+               #           if i == len(discounted_values2) - 1:
+               #                Terminal_Value2 = value2 * (1 + Pepetual_growth_rate) / ((WACC/100) - Pepetual_growth_rate)
+               #                Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[i]
+
+               
+               #      discounted_values2[-1] = Sum_terminal_fcf2
+
+               #      #Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[4]
+
+               #      discounted_values2[-1] = round(Sum_terminal_fcf2,2)
+               #      npv_result2 = npv(WACC/100,discounted_values2)   
+               #      rounded_npv_result2 = round(npv_result2, 2)  
+
+               #      Equity_value2 = rounded_npv_result2+Total_cash_last_years-Total_Debt_from_all_calc
+               #      Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
+               #      #st.write(npv_result)
+
+               #      Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
+               #           #print(f"{Intrinsic_value2} USD is approximately {Euro_equivalent2:.2f} EUR")
+               #      # Display the result
+
+               #      # Display the result
+               #      #print(f"{amount} {base_currency} is equal to {converted_amount} {target_currency}")
+               # # .   ....................................................................................   
+               
+               # #...................................................................................................................................
+
+               #      #print(f"The current 10-year Treasury yield is: {Average_10years_treasury_rate:.2f}")
+               
+               #      #------------------------------------------Graham 1.Estimate--------------------------------------------------------------
+
+               #      if EPS_last_average < 0:
+               #           EPS_last_average = Average_eps_basic_annual_five
+
+               #      graham_valuation = (EPS_last_average * (7+1.5*Growth_rate1)*4.4)/(Average_10years_treasury_rate)
+                    
+               #      Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
+               #           #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
+               #      # Display the result
+               # # .   ...........................................Graham 2.Estimate.........................................   
+
+               #      if EPS_last_average_one < 0:
+               #           EPS_last_average_one = Average_eps_basic_annual_five
+               #      graham_valuation2 = (EPS_last_average_one * (7+1.5*Growth_rate2)*4.4)/(Average_10years_treasury_rate)
+               
+               #      Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
+               #           #print(f"{graham_valuation2} USD is approximately {Euro_equivalent_graham_valuation2:.2f} EUR")
+               #      # Display the result
+          
+
+               # #........................................................................................
+               
+               #      if Euro_equivalent_graham_valuation < 0:
+
+               #           Euro_equivalent_graham_valuation = Euro_equivalent
+
+               #      elif Euro_equivalent < 0:
+                         
+               #           Euro_equivalent=Euro_equivalent_graham_valuation
+
+               #      if Euro_equivalent_graham_valuation2 < 0:
+
+               #           Euro_equivalent_graham_valuation2 = Euro_equivalent2
+
+               #      elif Euro_equivalent2 < 0:
+               #           Euro_equivalent2=Euro_equivalent_graham_valuation2
+
+               #      Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
+               
+               #      average_sum1 = Multiples_valuation1 / 2
+               #      average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
+                    
+               #      #st.write(average_sum_both1,converted_amount)
+
+
+               #      Multiples_valuation2 =Euro_equivalent2+Euro_equivalent_graham_valuation2
+               #      average_sum2 = Multiples_valuation2 / 2
+               #      average_sum_both2=average_sum2 *(1-Margin_of_safety3/100)
+
+               #      #Middle_multiple_value = average_sum2+average_sum1
+               #      #average_Middle_multiple_value =Middle_multiple_value/2
+               #      #average_Middle_multiple_value=average_Middle_multiple_value*(1-Margin_of_safety2/100)
+               #      Middle_multiple_value = average_sum_both1+average_sum_both2
+               #      average_Middle_multiple_value =round(Middle_multiple_value/2,2)
+
+               #      #Middle_DCF =Euro_equivalent+Euro_equivalent2
+               #      #Average_Middle_DCF =Middle_DCF/2
+               #      #Average_Middle_DCF=Average_Middle_DCF*(1-Margin_of_safety2/100)
+
+               #      low_DCF=(Euro_equivalent*(1-Margin_of_safety1/100))
+               #      high_DCF=(Euro_equivalent2*(1-Margin_of_safety3/100))
+
+               #      Average_Middle_DCF=(low_DCF+high_DCF)/2
+
+               #      #------------------------2 step--------------------------------
+               #      #hier i found the average of graham+dcf.. next step, i also found the average of (graham+dcf)+dcf
+               #      # Euro_equivalent=Euro_equivalent*(1-Margin_of_safety1/100)
+               #      # Euro_equivalent2=Euro_equivalent2*(1-Margin_of_safety3/100)
+
+               #      # average_sum_both1 =(average_sum_both1+Euro_equivalent)/2
+               #      # average_sum_both2 =(average_sum_both2+Euro_equivalent2)/2
+               #      # average_Middle_multiple_value =(average_Middle_multiple_value+Average_Middle_DCF)/2
+               #      #.........................................................................................
+
+               #      #Average_both_multiples =average_sum1+average_sum2
+               #      #Average_both_multiples_sum = Average_both_multiples/2
+               #      submit_button = st.form_submit_button(label='Calculate')
+               #      #if st.button("Calculate", key="Calculate_DCF"):
+               # if   submit_button:
+               #      col11, col12,col13, col14= st.columns(4)
+               #           #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+               #           #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
+               #      col11.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
+
+               #      col12.write(f"Low Estimate:")
+               #      col13.write(f"Middle Estimate: ")
+               #      col14.write(f"High Estimate:")
+
+
+               #      col15, col16, col17, col18 = st.columns(4)
+
+               #           # # Display number outputs for each estimate
+               #           # col15.write(f" Multiple Valuation Method:  ")
+               #           # col16.write(f"{average_sum_both1:.2f} €")
+               #           # col17.write(f"{average_Middle_multiple_value:.2f} €")
+               #           # col18.write(f"{average_sum_both2:.2f} €")
+                         
+               #                          # Display number outputs for each estimate
+               #      col15.write(f" Benjamin Graham + DCF:  ")
+               #           #col16.write(f"{average_sum_both1:.2f} €")
+                         
+               #      if average_sum_both1 > float(converted_amount):
+               #           font_color = "green"
+               #      else:
+               #           font_color = "red"
+               #      col16.write(f"<span style='color:{font_color}'>{average_sum_both1:.2f} €</span>", unsafe_allow_html=True)
+
+               #      if average_Middle_multiple_value > float(converted_amount):
+               #           font_color = "green"
+               #      else:
+               #           font_color = "red"
+               #           #col17.write(f"{average_Middle_multiple_value:.2f} €")
+               #      col17.write(f"<span style='color:{font_color}'>{average_Middle_multiple_value:.2f} €</span>", unsafe_allow_html=True)
+               #           #col18.write(f"{average_sum_both2:.2f} €")
+                         
+
+               #      if average_sum_both2 > float(converted_amount):
+               #           font_color = "green"
+               #      else:
+               #           font_color = "red"
+               #      col18.write(f"<span style='color:{font_color}'>{average_sum_both2:.2f} €</span>", unsafe_allow_html=True)
+
+               #                # Display number outputs for each estimate
+               #      col19, col20, col21, col22 = st.columns(4)
+
+               #      col19.write(f"Discounted Cash Flow Analysis (DCF):")
+               #           #col20.write(f"{low_DCF:.2f} €")
+               #      if low_DCF > float(converted_amount):
+               #           font_color = "green"
+               #      else:
+               #           font_color = "red"
+               #      col20.write(f"<span style='color:{font_color}'>{low_DCF:.2f} €</span>", unsafe_allow_html=True)
+               #           #col21.write(f"{Average_Middle_DCF:.2f} €")
+
+               #      if Average_Middle_DCF > float(converted_amount):
+               #           font_color = "green"
+               #      else:
+               #           font_color = "red"
+               #      col21.write(f"<span style='color:{font_color}'>{Average_Middle_DCF:.2f} €</span>", unsafe_allow_html=True)
+               #           #col22.write(f"{high_DCF:.2f} €")
+
+               #      if high_DCF > float(converted_amount):
+               #           font_color = "green"
+               #      else:
+               #           font_color = "red"
+               #      col22.write(f"<span style='color:{font_color}'>{high_DCF:.2f} €</span>", unsafe_allow_html=True)
+
+
+
+
+
+ 
+
+################################ Experiment ##################################################################
+                                       
+               @st.experimental_fragment
+               def display_growth_rate_formexer():
+                         
+                    with st.form(key='growth_rate_formex'):
+          
+                         treasury = "^TNX"
+                         #treasury_yield_data = yf.download(treasury, period='1d')
+                         treasury_yield_data = yf.download(treasury)
+                         
+
                     # Check if the treasury_yield_data DataFrame is empty
+                         if not treasury_yield_data.empty:
+                              treasury_yield = treasury_yield_data['Close'].iloc[-1]
+                              Average_10years_treasury_rate = round(treasury_yield,2)
+                              #print("10-year Treasury yield:", treasury_yield)
+                         else:
+                              #print("Error: No price data found for the 10-year Treasury yield symbol.")
+                              Average_10years_treasury_rate = 4.25
+                         # Check if the treasury_yield_data DataFrame is empty
 
 
-                         # Display the value of b
-                    try:          
-                         interest_expense_annual_one = annual_data['interest_expense'][-1:]
-                         Average_interest_expense_annual_one = round(((sum(interest_expense_annual_one) / len(interest_expense_annual_one)))/-1000000000, 2)
-                    except Exception as e:     
-                         Average_interest_expense_annual_one=0.0
+                              # Display the value of b
+                         try:          
+                              interest_expense_annual_one = annual_data['interest_expense'][-1:]
+                              Average_interest_expense_annual_one = round(((sum(interest_expense_annual_one) / len(interest_expense_annual_one)))/-1000000000, 2)
+                         except Exception as e:     
+                              Average_interest_expense_annual_one=0.0
+
+                         Average_stock_market_beta = float(beta)
+                              
+                         Market_return = 8.51
 
 
-
-                    
-               # Average_eps_quarter = round(((sum(int(eps_basic_quarter[9])) / len(int(eps_basic_quarter[9])))), 2)
-                    #eps_basic_quarter = [int(eps_basic) for eps_basic in eps_basic_quarter]
-
-
-                    Average_stock_market_beta = float(beta)
-                         
-                    Market_return = 8.51
-                    #total =annual_data['fcf'][-1:]
-                    #average_fcf_Annual_one = round((sum(FCF_annual_one) / len(FCF_annual_one)) / 1000000000, 2)
-
-                    #cash_und_cash_investments_annual = annual_data['cash_and_equiv'][-1:]
-                    #st_investments_annual = annual_data['st_investments'][-1:]
-                    #sum_cash_and_equiv = sum(cash_und_cash_investments_annual)
-                    #sum_st_investments = sum(st_investments_annual)
-
-                    #total_cash = round((sum_cash_and_equiv + sum_st_investments)/1000000000,2)
-
-                    Income_tax_annual_one = annual_data['income_tax'][-1:]
-                    Average_Income_tax_annual_one = round(((sum(Income_tax_annual_one) / len(Income_tax_annual_one)))/-1000000000, 2)
-
-                    Pretax_income_annual_one = annual_data['pretax_income'][-1:]
-                    Average_Pretax_annual_one = round(((sum(Pretax_income_annual_one) / len(Pretax_income_annual_one)))/1000000000, 2)
-
-                    shares_basic_annual_one = annual_data['shares_basic'][-1:]
-                    Average_shares_basic_annual_one= round(((sum(shares_basic_annual_one) / len(shares_basic_annual_one)))/1000000000, 2)
-
-                    if Total_Debt_from_all_calc != 0:
-                         Cost_of_debt = round((Average_interest_expense_annual_one/Total_Debt_from_all_calc)*100,2)
-                         Cost_of_debt_with_percentage = f"{Cost_of_debt:.2f}%"     
-                    elif Total_debt_ !=0:
-                    # Cost_of_debt = 0
-                         Cost_of_debt = round((Average_interest_expense_annual_one/Total_debt_)*100,2)
-                         Cost_of_debt_with_percentage = f"{Cost_of_debt:.2f}%"
-
-                    else:
-                         Cost_of_debt =1
-                    try:
-                         Effective_tax_rate = round((Average_Income_tax_annual_one/Average_Pretax_annual_one)*100,2)
-                         Effective_tax_rate_with_percentage = f"{ Effective_tax_rate:.2f}%"
-
-                    except Exception as e:
                          Income_tax_annual_one = annual_data['income_tax'][-1:]
-                         Average_Income_tax_annual_one = round(((sum(Income_tax_annual_one) / len(Income_tax_annual_one)))/-1, 2)
+                         Average_Income_tax_annual_one = round(((sum(Income_tax_annual_one) / len(Income_tax_annual_one)))/-1000000000, 2)
+
                          Pretax_income_annual_one = annual_data['pretax_income'][-1:]
-                         Average_Pretax_annual_one = round(((sum(Pretax_income_annual_one) / len(Pretax_income_annual_one)))/1, 2)
-                         Effective_tax_rate = round((Average_Income_tax_annual_one/Average_Pretax_annual_one)*100,2)
-                         Effective_tax_rate=Effective_tax_rate/1000
-                         Effective_tax_rate_with_percentage = f"{ Effective_tax_rate:.2f}%"
+                         Average_Pretax_annual_one = round(((sum(Pretax_income_annual_one) / len(Pretax_income_annual_one)))/1000000000, 2)
 
-                         #st.write(Effective_tax_rate)
-
-                    Cost_of_debt_after_Tax =round((((Cost_of_debt)/100)* (1-(Effective_tax_rate/100))*100),2)
-                    Cost_of_debt_after_Tax_with_percentage = f"{ Cost_of_debt_after_Tax:.2f}%"
+                         shares_basic_annual_one = annual_data['shares_basic'][-1:]
+                         Average_shares_basic_annual_one= round(((sum(shares_basic_annual_one) / len(shares_basic_annual_one)))/1000000000, 2)
 
 
+                         if Total_Debt_from_all_calc != 0:
+                              Cost_of_debt = round((Average_interest_expense_annual_one/Total_Debt_from_all_calc)*100,2)
+                              Cost_of_debt_with_percentage = f"{Cost_of_debt:.2f}%"     
+                         elif Total_debt_ !=0:
+                         # Cost_of_debt = 0
+                              Cost_of_debt = round((Average_interest_expense_annual_one/Total_debt_)*100,2)
+                              Cost_of_debt_with_percentage = f"{Cost_of_debt:.2f}%"
 
-                    Cost_of_equity = ((Average_10years_treasury_rate)+((Average_stock_market_beta)*(Market_return-Average_10years_treasury_rate)))
-                    Cost_of_equity = round(Cost_of_equity,2)
-                    Cost_of_equity_with_percentage = f"{Cost_of_equity}%"
+                         else:
+                              Cost_of_debt =1
 
-                    Pepetual_growth_rate = 0.025
-                    Growth_rate = 8.30
-                    Growth_rate_with_percentage = f"{Growth_rate:.2f}%"
-                    Growth_input = Growth_rate/100.00
-                    #average_fcf_Annual_one
-                    
-                    Total_Capital = Total_Debt_from_all_calc+Marketcap
-                    Total_debt_prozent =Total_Debt_from_all_calc/Total_Capital
-                    Marketcap_in_prozent =Marketcap/Total_Capital
+                         try:
+                              Effective_tax_rate = round((Average_Income_tax_annual_one/Average_Pretax_annual_one)*100,2)
+                              Effective_tax_rate_with_percentage = f"{ Effective_tax_rate:.2f}%"
 
-                    WACC = round(((Total_debt_prozent*Cost_of_debt_after_Tax))+(Marketcap_in_prozent*Cost_of_equity),3)
+                         except Exception as e:
+                              Income_tax_annual_one = annual_data['income_tax'][-1:]
+                              Average_Income_tax_annual_one = round(((sum(Income_tax_annual_one) / len(Income_tax_annual_one)))/-1, 2)
+                              Pretax_income_annual_one = annual_data['pretax_income'][-1:]
+                              Average_Pretax_annual_one = round(((sum(Pretax_income_annual_one) / len(Pretax_income_annual_one)))/1, 2)
+                              Effective_tax_rate = round((Average_Income_tax_annual_one/Average_Pretax_annual_one)*100,2)
+                              Effective_tax_rate=Effective_tax_rate/1000
+                              Effective_tax_rate_with_percentage = f"{ Effective_tax_rate:.2f}%"
 
-                    if WACC <= 0:
+                              #st.write(Effective_tax_rate)
 
-                         WACC = 9
+                         Cost_of_debt_after_Tax =round((((Cost_of_debt)/100)* (1-(Effective_tax_rate/100))*100),2)
+                         Cost_of_debt_after_Tax_with_percentage = f"{ Cost_of_debt_after_Tax:.2f}%"
 
+                         Cost_of_equity = ((Average_10years_treasury_rate)+((Average_stock_market_beta)*(Market_return-Average_10years_treasury_rate)))
+                         Cost_of_equity = round(Cost_of_equity,2)
+                         Cost_of_equity_with_percentage = f"{Cost_of_equity}%"
 
-                    WACC_prozent= WACC
-
-               #------------------------------------------------------Roic oder ROE vs Retention ratio oder sustainanble growth rate (SGR)---------------------------------------
-                    #Five_yrs_dividend_FCF_payout_ratio = (Average_Cash_Dividends_paid_Total_annual_one)*-1/average_FCF_annual_five
-
-                    #ROIC_Rention_ratio = (1-Five_yrs_dividend_FCF_payout_ratio)*Average_ROIC_funf
-
-                    #ROIC_Rention_ratio = (1-Five_yrs_dividend_FCF_payout_ratio)*Average_ROIC_funf
-                    #Payout_ratio_annual = annual_data['payout_ratio'][-1:]
-                    #Payout_ratio_annual =sum(Payout_ratio_annual)/len(Payout_ratio_annual)
-                    #Payout_ratio_annual =Payout_ratio_annual
-
-                    #Retention_ratio = (1-Payout_ratio_annual)
-
-                    #if Payout_ratio_annual==0.0:
-                    #    ROE_ttm_ohne_ =ROE_ttm_ohne/100
-                    #   Sustainable_growth_rate = ROE_ttm_ohne
-                    #else:
-
-                         #Retention_ratio=0
-                    #    ROE_ttm_ohne_ =ROE_ttm_ohne/100
-                    #   Sustainable_growth_rate = (ROE_ttm_ohne_*(1-Retention_ratio))*100
-
-
-                    #Sustainable_growth_rate = (roe*(1-retention_ratio)
-                    
-
-                    
-
-                    #Payout_ratio_annual = annual_data['payout_ratio'][-1:]
-                    #print("Payout_ratio_annual",Payout_ratio_annual)
-                    #print("ROE_ttm",ROE_ttm_ohne)
-                    #print("Retention_ratio",Retention_ratio)
-                    #print("Sustainable_growth_rate",Sustainable_growth_rate)
-                    #SGR=
-
-               #-----------------------------------------------------Growth rate Estimate-----------------------------------------------------------------------------
-
-                    
-                    #col4.info(f"ROE_Retention_ratio: {ROE_Retention_ratio:.2f}%")
-                    
-                    #col50000000.info(f"Sustainable Growth Rate: {Sustainable_growth_rate:.2f}%")
-                    
-                    
-               #---------------------------------------------------------------------------------------------------------------------
-                    # Display the inputs on the same row
-               
-
-                    
-          
-                    #print("Value at index 4:", value_at_index_4)
-                    #print("Value at index 9:", value_at_index_9)
-                    
-                    #print("EPS_CAGR:",EPS_CAGR)
-
-
-               #........................................................................................................................
-
-
+                         Pepetual_growth_rate = 0.025
+                         Growth_rate = 8.30
+                         Growth_rate_with_percentage = f"{Growth_rate:.2f}%"
+                         Growth_input = Growth_rate/100.00
+                         #average_fcf_Annual_one
                          
-               #-------------------------------   
+                         Total_Capital = Total_Debt_from_all_calc+Marketcap
+                         Total_debt_prozent =Total_Debt_from_all_calc/Total_Capital
+                         Marketcap_in_prozent =Marketcap/Total_Capital
 
-                    col1, col2,col3,col4,col5 = st.columns(5)
-
-                    #col1.info(f"FCF 10 CAGR: {FCF_Cagr_10}%")
-                    col1.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF 10 CAGR:<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
-                    
-                    #col2.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
-                    col2.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF 5 CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
-                    
-                    #col3.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
-                    col3.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS 10 CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
-
-                    #col4.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
-                    col4.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS 5 CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
-
-                    #col5.info(f"EPS next 5 YR (per annum): {Earnings_next_5_yrs}")
-                    col5.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
-
-                    
+                         WACC = round(((Total_debt_prozent*Cost_of_debt_after_Tax))+(Marketcap_in_prozent*Cost_of_equity),3)
 
 
-                    #col1,col2,col3,col4 = st.columns(4)
+                         if WACC <= 0:
 
-                    # Display the values in colored boxes
-                    #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-                    #col1.info(f"EPS Growth YOY: {EPS_growth_10yrs}%")
-                    #col2.info(f"5 YR EPS Growth YOY: {EPS_growth_5yrs:.2f}%") 
-                    #col3.info(f"3 YR EPS Growth YOY: {EPS_growth_3years:.2f}%") 
-                    #col4.info(f" EPS Growth next 5YR : {Earnings_next_5_yrs}")
+                              WACC = 9
 
 
-               # col1,col2,col3 = st.columns(3)
+                         WACC_prozent= WACC
 
-                    # Display the values in colored boxes
-                    #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-                    #col1.info(f"Revenue Growth: {Revenue_Cagr_10}%")
-                    #col2.info(f"5 YR Revenue: {Revenue_5_CAGR}%") 
-               # col3.info(f"1 YR Revenue Growth YOY: {Revenue_growth_1year:.2f}%")
+                         col1, col2,col3,col4,col5 = st.columns(5)
 
-               #to add space
-                    st.write("")
-                    #st.markdown("<br>", unsafe_allow_html=True)
-
-
-                    col1,col2,col3 = st.columns(3)
-                    # Display the values
-                    # Display the values
-                    # Display the values in colored boxes
-                    with col1:
-                         st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
-                         #col1.info(f"FCF Growth YOY: {Average_fcf_growth_ten}%")
+                         #col1.info(f"FCF 10 CAGR: {FCF_Cagr_10}%")
+                         col1.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF 10 CAGR:<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
                          
-                    with col2:    
-                         st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
-                    # coln1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_margin_ttm}</div>", unsafe_allow_html=True)
-
-                         #col2.info(f"5 YR FCF Growth YOY: {Average_fcf_growth_five}")
-                    with col3:    
-                         st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
-                         #col3.info(f"3 YR FCF Growth YOY: {Average_fcf_growth_3years}")
-
-                    st.write("")
-                    col5,col4= st.columns(2)
-                    #col1.info(f"5 YR ROIC: {Average_ROIC_funf}%")
-                    #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>5 YR ROIC: <br> {Average_ROIC_funf}%</div>", unsafe_allow_html=True)
-
-                    #col2.info(f"3 YR ROIC: {ROIC_annual_3years}")
-                    #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
-
-                    #col3.info(f"3 YR ROIC: {ROIC_annual_3years}")
-                    WACC = float(col5.text_input("WACC (%):", value=f"{WACC:.2f}"))
-                    #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
-
-                    FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)))
-                    #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
-
-                    #Average_10years_treasury_rate = col6.number_input("10 YR T.NOTE:(%):", value=Average_10years_treasury_rate)
-                    
-                    
-                    
-                    
-                    
-                    #st.write(FCF_Cagr_10.2f}%)
-               #------------------------------------------------------------------------------------------------------------------------
-                    col9, col8,col34,col10= st.columns(4)
-                    
-                    #Growth_rate1 = col9.number_input("Growth Rate (Base Case) in %:", value=0.00,key="growth_rate1")
-                    Growth_rate1 = float(col9.text_input("Growth Rate (Base Case) in %:",value=0.00,key="growth_rate1"))
-                    col8.write('')
-                    col34.write('')
-                    Growth_rate2 = float(col10.text_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2"))
-
-               
-               #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
-
-                    cola, col8,col34,colc= st.columns(4)
-                    #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-                    Margin_of_safety1 = float(cola.text_input("1.Margin of Safety (%):", value=9.00))
-               # Margin_of_safety2 = colb.number_input("2.Margin of Safety %:", value=8.50)
-                    col8.write('')
-                    col34.write('')
-                    Margin_of_safety3 = float(colc.text_input("2.Margin of Safety (%):", value=9.00))
-               #-------------------------------------------------------------------------------------------------------------------------------------------
-                    #print("last FCF:",Average_Free_cash_flow_annual_one_one)
-                    if Average_Free_cash_flow_annual_one_one < 0:
-                         Average_Free_cash_flow_annual_one_one = average_fcf_Annual_funf
-                    
-                    discounted_values = [] 
-               
-                    for i in range(FCF_discount_in_years):
-                         discounted_value = Average_Free_cash_flow_annual_one_one * (1 + (Growth_rate1/100))
-                         Average_Free_cash_flow_annual_one_one = discounted_value
-                         #discounted_values.append(discounted_value)  # Add the discounted value to the list
-                         discounted_values.append(round(discounted_value, 2)) 
-                    #discounted_values[4]*
-                    sum_discounted_values = sum(discounted_values) 
-
-                    #Terminal_Value = discounted_values[4]*(1+Pepetual_growth_rate)/(WACC/100-Pepetual_growth_rate)
-                    for i, value in enumerate(discounted_values):
-                         if i == len(discounted_values) - 1:
-                              Terminal_Value = value * (1 + Pepetual_growth_rate) / ((WACC/100) - Pepetual_growth_rate)
-                              Sum_terminal_fcf = Terminal_Value + discounted_values[i]
-
-               
-                    discounted_values[-1] = round(Sum_terminal_fcf,2)
-                    
-                    npv_result = npv(WACC/100,discounted_values)   
-                    rounded_npv_result = round(npv_result, 2)  
-                    #st.write(Total_Debt_from_all_calc)
-                    Equity_value = rounded_npv_result+Total_cash_last_years-Total_Debt_from_all_calc
-                    Intrinsic_value =Equity_value/Average_shares_basic_annual_one
-                    #st.write(npv_result)
-
-                    Euro_equivalent = Intrinsic_value*usd_to_eur_rate
-                         #print(f"{Intrinsic_value} USD is approximately {Euro_equivalent:.2f} EUR")
-                    # Display the result
-                    #print(f"{amount} {base_currency} is equal to {converted_amount} {target_currency}")
-               # .   ....................................................................................   
-                    
-
-               #----------------------------------------------------------2:Growth rate Estimate------------------------------------------------------------------------
-                    if Average_Free_cash_flow_annual_one < 0:
-                         Average_Free_cash_flow_annual_one = average_fcf_Annual_funf
-               
-                    discounted_values2 = [] 
-                    # Create an empty list to store discounted values
-                    for j in range(FCF_discount_in_years):
-                         discounted_value2 = Average_Free_cash_flow_annual_one * (1 + (Growth_rate2/100))
-                         Average_Free_cash_flow_annual_one = discounted_value2
-                         discounted_values2.append(round(discounted_value2,2))  # Add the discounted value to the list
-                         #print(discounted_value2)
-                    #Terminal_Value2 = discounted_values2[4]*(1+Pepetual_growth_rate)/(WACC/100-Pepetual_growth_rate)
-
-                    sum_discounted_values2 = sum(discounted_values2)
-
-                    for i, value2 in enumerate(discounted_values2):
-                         if i == len(discounted_values2) - 1:
-                              Terminal_Value2 = value2 * (1 + Pepetual_growth_rate) / ((WACC/100) - Pepetual_growth_rate)
-                              Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[i]
-
-               
-                    discounted_values2[-1] = Sum_terminal_fcf2
-
-                    #Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[4]
-
-                    discounted_values2[-1] = round(Sum_terminal_fcf2,2)
-                    npv_result2 = npv(WACC/100,discounted_values2)   
-                    rounded_npv_result2 = round(npv_result2, 2)  
-
-                    Equity_value2 = rounded_npv_result2+Total_cash_last_years-Total_Debt_from_all_calc
-                    Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
-                    #st.write(npv_result)
-
-                    Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
-                         #print(f"{Intrinsic_value2} USD is approximately {Euro_equivalent2:.2f} EUR")
-                    # Display the result
-
-                    # Display the result
-                    #print(f"{amount} {base_currency} is equal to {converted_amount} {target_currency}")
-               # .   ....................................................................................   
-               
-               #...................................................................................................................................
-
-                    #print(f"The current 10-year Treasury yield is: {Average_10years_treasury_rate:.2f}")
-               
-                    #------------------------------------------Graham 1.Estimate--------------------------------------------------------------
-
-                    if EPS_last_average < 0:
-                         EPS_last_average = Average_eps_basic_annual_five
-
-                    graham_valuation = (EPS_last_average * (7+1.5*Growth_rate1)*4.4)/(Average_10years_treasury_rate)
-                    
-                    Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
-                         #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
-                    # Display the result
-               # .   ...........................................Graham 2.Estimate.........................................   
-
-                    if EPS_last_average_one < 0:
-                         EPS_last_average_one = Average_eps_basic_annual_five
-                    graham_valuation2 = (EPS_last_average_one * (7+1.5*Growth_rate2)*4.4)/(Average_10years_treasury_rate)
-               
-                    Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
-                         #print(f"{graham_valuation2} USD is approximately {Euro_equivalent_graham_valuation2:.2f} EUR")
-                    # Display the result
-          
-
-               #........................................................................................
-               
-                    if Euro_equivalent_graham_valuation < 0:
-
-                         Euro_equivalent_graham_valuation = Euro_equivalent
-
-                    elif Euro_equivalent < 0:
+                         #col2.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
+                         col2.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF 5 CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
                          
-                         Euro_equivalent=Euro_equivalent_graham_valuation
+                         #col3.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
+                         col3.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS 10 CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
 
-                    if Euro_equivalent_graham_valuation2 < 0:
+                         #col4.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
+                         col4.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS 5 CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
 
-                         Euro_equivalent_graham_valuation2 = Euro_equivalent2
+                         #col5.info(f"EPS next 5 YR (per annum): {Earnings_next_5_yrs}")
+                         col5.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
 
-                    elif Euro_equivalent2 < 0:
-                         Euro_equivalent2=Euro_equivalent_graham_valuation2
 
-                    Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
-               
-                    average_sum1 = Multiples_valuation1 / 2
-                    average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
+                    #to add space
+                         st.write("")
+                         #st.markdown("<br>", unsafe_allow_html=True)
+
+
+                         col1,col2,col3 = st.columns(3)
                     
-                    #st.write(average_sum_both1,converted_amount)
+                         with col1:
+                              st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+                              #col1.info(f"FCF Growth YOY: {Average_fcf_growth_ten}%")
+                              
+                         with col2:    
+                              st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
+                    
+                         with col3:    
+                              st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
+                              #col3.info(f"3 YR FCF Growth YOY: {Average_fcf_growth_3years}")
 
+                         st.write("")
+                         col5,col4= st.columns(2)
 
-                    Multiples_valuation2 =Euro_equivalent2+Euro_equivalent_graham_valuation2
-                    average_sum2 = Multiples_valuation2 / 2
-                    average_sum_both2=average_sum2 *(1-Margin_of_safety3/100)
+                         WACC = float(col5.text_input("WACC (%):", value=f"{WACC:.2f}"))
+                         #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
 
-                    #Middle_multiple_value = average_sum2+average_sum1
-                    #average_Middle_multiple_value =Middle_multiple_value/2
-                    #average_Middle_multiple_value=average_Middle_multiple_value*(1-Margin_of_safety2/100)
-                    Middle_multiple_value = average_sum_both1+average_sum_both2
-                    average_Middle_multiple_value =round(Middle_multiple_value/2,2)
+                         FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)))
+                    
+                    #------------------------------------------------------------------------------------------------------------------------
+                         col9, col8,col34,col10= st.columns(4)
+                         
+                         #Growth_rate1 = col9.number_input("Growth Rate (Base Case) in %:", value=0.00,key="growth_rate1")
+                         Growth_rate1 = float(col9.text_input("Growth Rate (Base Case) in %:",value=0.00,key="growth_rate1ex"))
+                         col8.write('')
+                         col34.write('')
+                         Growth_rate2 = float(col10.text_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2ex"))
 
-                    #Middle_DCF =Euro_equivalent+Euro_equivalent2
-                    #Average_Middle_DCF =Middle_DCF/2
-                    #Average_Middle_DCF=Average_Middle_DCF*(1-Margin_of_safety2/100)
+                    
+                    #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
 
-                    low_DCF=(Euro_equivalent*(1-Margin_of_safety1/100))
-                    high_DCF=(Euro_equivalent2*(1-Margin_of_safety3/100))
-
-                    Average_Middle_DCF=(low_DCF+high_DCF)/2
-
-                    #------------------------2 step--------------------------------
-                    #hier i found the average of graham+dcf.. next step, i also found the average of (graham+dcf)+dcf
-                    # Euro_equivalent=Euro_equivalent*(1-Margin_of_safety1/100)
-                    # Euro_equivalent2=Euro_equivalent2*(1-Margin_of_safety3/100)
-
-                    # average_sum_both1 =(average_sum_both1+Euro_equivalent)/2
-                    # average_sum_both2 =(average_sum_both2+Euro_equivalent2)/2
-                    # average_Middle_multiple_value =(average_Middle_multiple_value+Average_Middle_DCF)/2
-                    #.........................................................................................
-
-                    #Average_both_multiples =average_sum1+average_sum2
-                    #Average_both_multiples_sum = Average_both_multiples/2
-                    submit_button = st.form_submit_button(label='Calculate')
-                    #if st.button("Calculate", key="Calculate_DCF"):
-               if   submit_button:
-                    col11, col12,col13, col14= st.columns(4)
+                         cola, col8,col34,colc= st.columns(4)
                          #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-                         #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
-                    col11.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
+                         Margin_of_safety1 = float(cola.text_input("1.Margin of Safety (%):", value=9.00))
+                    # Margin_of_safety2 = colb.number_input("2.Margin of Safety %:", value=8.50)
+                         col8.write('')
+                         col34.write('')
+                         Margin_of_safety3 = float(colc.text_input("2.Margin of Safety (%):", value=9.00))
+                    #-------------------------------------------------------------------------------------------------------------------------------------------
+                         #print("last FCF:",Average_Free_cash_flow_annual_one_one)
 
-                    col12.write(f"Low Estimate:")
-                    col13.write(f"Middle Estimate: ")
-                    col14.write(f"High Estimate:")
 
+                         Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
+                         Average_Free_cash_flow_annual_one = ((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000
+                         Average_Free_cash_flow_annual_one_one =Average_Free_cash_flow_annual_one
 
-                    col15, col16, col17, col18 = st.columns(4)
-
-                         # # Display number outputs for each estimate
-                         # col15.write(f" Multiple Valuation Method:  ")
-                         # col16.write(f"{average_sum_both1:.2f} €")
-                         # col17.write(f"{average_Middle_multiple_value:.2f} €")
-                         # col18.write(f"{average_sum_both2:.2f} €")
+                         if Average_Free_cash_flow_annual_one_one < 0:
+                              Average_Free_cash_flow_annual_one_one = average_fcf_Annual_funf
                          
-                                        # Display number outputs for each estimate
-                    col15.write(f" Benjamin Graham + DCF:  ")
-                         #col16.write(f"{average_sum_both1:.2f} €")
+                         discounted_values = [] 
+                    
+                         for i in range(FCF_discount_in_years):
+                              discounted_value = Average_Free_cash_flow_annual_one_one * (1 + (Growth_rate1/100))
+                              Average_Free_cash_flow_annual_one_one = discounted_value
+                              #discounted_values.append(discounted_value)  # Add the discounted value to the list
+                              discounted_values.append(round(discounted_value, 2)) 
+                         #discounted_values[4]*
+                         sum_discounted_values = sum(discounted_values) 
+
+                         #Terminal_Value = discounted_values[4]*(1+Pepetual_growth_rate)/(WACC/100-Pepetual_growth_rate)
+                         for i, value in enumerate(discounted_values):
+                              if i == len(discounted_values) - 1:
+                                   Terminal_Value = value * (1 + Pepetual_growth_rate) / ((WACC/100) - Pepetual_growth_rate)
+                                   Sum_terminal_fcf = Terminal_Value + discounted_values[i]
+                                  
+
+                    
+                         discounted_values[-1] = round(Sum_terminal_fcf,2)
                          
-                    if average_sum_both1 > float(converted_amount):
-                         font_color = "green"
-                    else:
-                         font_color = "red"
-                    col16.write(f"<span style='color:{font_color}'>{average_sum_both1:.2f} €</span>", unsafe_allow_html=True)
+                         npv_result = npv(WACC/100,discounted_values)   
+                         rounded_npv_result = round(npv_result, 2)  
+                         #st.write(Total_Debt_from_all_calc)
+                         Equity_value = rounded_npv_result+Total_cash_last_years-Total_Debt_from_all_calc
+                         Intrinsic_value =Equity_value/Average_shares_basic_annual_one
+                         #st.write(npv_result)
 
-                    if average_Middle_multiple_value > float(converted_amount):
-                         font_color = "green"
-                    else:
-                         font_color = "red"
-                         #col17.write(f"{average_Middle_multiple_value:.2f} €")
-                    col17.write(f"<span style='color:{font_color}'>{average_Middle_multiple_value:.2f} €</span>", unsafe_allow_html=True)
-                         #col18.write(f"{average_sum_both2:.2f} €")
+                         Euro_equivalent = Intrinsic_value*usd_to_eur_rate
+                              #print(f"{Intrinsic_value} USD is approximately {Euro_equivalent:.2f} EUR")
+                         # Display the result
+                         #print(f"{amount} {base_currency} is equal to {converted_amount} {target_currency}")
+                    # .   ....................................................................................   
                          
 
-                    if average_sum_both2 > float(converted_amount):
-                         font_color = "green"
-                    else:
-                         font_color = "red"
-                    col18.write(f"<span style='color:{font_color}'>{average_sum_both2:.2f} €</span>", unsafe_allow_html=True)
+                    #----------------------------------------------------------2:Growth rate Estimate------------------------------------------------------------------------
+                        
+                         
+                         if float(Average_Free_cash_flow_annual_one) < 0:
+                              Average_Free_cash_flow_annual_one = average_fcf_Annual_funf
+                    
+                         discounted_values2 = [] 
+                         # Create an empty list to store discounted values
+                         for j in range(FCF_discount_in_years):
+                              discounted_value2 = Average_Free_cash_flow_annual_one * (1 + (Growth_rate2/100))
+                              Average_Free_cash_flow_annual_one = discounted_value2
+                              discounted_values2.append(round(discounted_value2,2))  # Add the discounted value to the list
+                              #print(discounted_value2)
+                         #Terminal_Value2 = discounted_values2[4]*(1+Pepetual_growth_rate)/(WACC/100-Pepetual_growth_rate)
 
-                              # Display number outputs for each estimate
-                    col19, col20, col21, col22 = st.columns(4)
+                         sum_discounted_values2 = sum(discounted_values2)
 
-                    col19.write(f"Discounted Cash Flow Analysis (DCF):")
-                         #col20.write(f"{low_DCF:.2f} €")
-                    if low_DCF > float(converted_amount):
-                         font_color = "green"
-                    else:
-                         font_color = "red"
-                    col20.write(f"<span style='color:{font_color}'>{low_DCF:.2f} €</span>", unsafe_allow_html=True)
-                         #col21.write(f"{Average_Middle_DCF:.2f} €")
+                         for i, value2 in enumerate(discounted_values2):
+                              if i == len(discounted_values2) - 1:
+                                   Terminal_Value2 = value2 * (1 + Pepetual_growth_rate) / ((WACC/100) - Pepetual_growth_rate)
+                                   Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[i]
 
-                    if Average_Middle_DCF > float(converted_amount):
-                         font_color = "green"
-                    else:
-                         font_color = "red"
-                    col21.write(f"<span style='color:{font_color}'>{Average_Middle_DCF:.2f} €</span>", unsafe_allow_html=True)
-                         #col22.write(f"{high_DCF:.2f} €")
+                    
+                         discounted_values2[-1] = Sum_terminal_fcf2
 
-                    if high_DCF > float(converted_amount):
-                         font_color = "green"
-                    else:
-                         font_color = "red"
-                    col22.write(f"<span style='color:{font_color}'>{high_DCF:.2f} €</span>", unsafe_allow_html=True)
+                         #Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[4]
+
+                         discounted_values2[-1] = round(Sum_terminal_fcf2,2)
+                         npv_result2 = npv(WACC/100,discounted_values2)   
+                         rounded_npv_result2 = round(npv_result2, 2)  
+
+                         Equity_value2 = rounded_npv_result2+Total_cash_last_years-Total_Debt_from_all_calc
+                         Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
+                         #st.write(npv_result)
+
+                         Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
+                              #print(f"{Intrinsic_value2} USD is approximately {Euro_equivalent2:.2f} EUR")
+                         # Display the result
+
+                         # Display the result
+                         #print(f"{amount} {base_currency} is equal to {converted_amount} {target_currency}")
+                    # .   ....................................................................................   
+                    
+                    #...................................................................................................................................
+
+                         #print(f"The current 10-year Treasury yield is: {Average_10years_treasury_rate:.2f}")
+                    
+                         #------------------------------------------Graham 1.Estimate--------------------------------------------------------------
+
+                         EPS_last = annual_data['eps_basic'][-1:]
+                         EPS_last_average  = ((sum(EPS_last) / len(EPS_last))) 
+                         EPS_last_average_one=EPS_last_average
+
+                         if EPS_last_average < 0:
+                              EPS_last_average = Average_eps_basic_annual_five
+
+                         graham_valuation = (EPS_last_average * (7+1.5*Growth_rate1)*4.4)/(Average_10years_treasury_rate)
+                         
+                         Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
+                              #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
+                         # Display the result
+                    # .   ...........................................Graham 2.Estimate.........................................   
+
+                         if EPS_last_average_one < 0:
+                              EPS_last_average_one = Average_eps_basic_annual_five
+                         graham_valuation2 = (EPS_last_average_one * (7+1.5*Growth_rate2)*4.4)/(Average_10years_treasury_rate)
+                    
+                         Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
+                              #print(f"{graham_valuation2} USD is approximately {Euro_equivalent_graham_valuation2:.2f} EUR")
+                         # Display the result
+               
+
+                    #........................................................................................
+                    
+                         if Euro_equivalent_graham_valuation < 0:
+
+                              Euro_equivalent_graham_valuation = Euro_equivalent
+
+                         elif Euro_equivalent < 0:
+                              
+                              Euro_equivalent=Euro_equivalent_graham_valuation
+
+                         if Euro_equivalent_graham_valuation2 < 0:
+
+                              Euro_equivalent_graham_valuation2 = Euro_equivalent2
+
+                         elif Euro_equivalent2 < 0:
+                              Euro_equivalent2=Euro_equivalent_graham_valuation2
+
+                         Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
+                    
+                         average_sum1 = Multiples_valuation1 / 2
+                         average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
+                         
+                         #st.write(average_sum_both1,converted_amount)
+
+
+                         Multiples_valuation2 =Euro_equivalent2+Euro_equivalent_graham_valuation2
+                         average_sum2 = Multiples_valuation2 / 2
+                         average_sum_both2=average_sum2 *(1-Margin_of_safety3/100)
+
+                         #Middle_multiple_value = average_sum2+average_sum1
+                         #average_Middle_multiple_value =Middle_multiple_value/2
+                         #average_Middle_multiple_value=average_Middle_multiple_value*(1-Margin_of_safety2/100)
+                         Middle_multiple_value = average_sum_both1+average_sum_both2
+                         average_Middle_multiple_value =round(Middle_multiple_value/2,2)
+
+                         #Middle_DCF =Euro_equivalent+Euro_equivalent2
+                         #Average_Middle_DCF =Middle_DCF/2
+                         #Average_Middle_DCF=Average_Middle_DCF*(1-Margin_of_safety2/100)
+
+                         low_DCF=(Euro_equivalent*(1-Margin_of_safety1/100))
+                         high_DCF=(Euro_equivalent2*(1-Margin_of_safety3/100))
+
+                         Average_Middle_DCF=(low_DCF+high_DCF)/2
+
+                         #------------------------2 step--------------------------------
+                         #hier i found the average of graham+dcf.. next step, i also found the average of (graham+dcf)+dcf
+                         # Euro_equivalent=Euro_equivalent*(1-Margin_of_safety1/100)
+                         # Euro_equivalent2=Euro_equivalent2*(1-Margin_of_safety3/100)
+
+                         # average_sum_both1 =(average_sum_both1+Euro_equivalent)/2
+                         # average_sum_both2 =(average_sum_both2+Euro_equivalent2)/2
+                         # average_Middle_multiple_value =(average_Middle_multiple_value+Average_Middle_DCF)/2
+                         #.........................................................................................
+
+                         #Average_both_multiples =average_sum1+average_sum2
+                         #Average_both_multiples_sum = Average_both_multiples/2
+                         submit_button = st.form_submit_button(label='Calculate')
+                         #if st.button("Calculate", key="Calculate_DCF"):
+
+                    if   submit_button:
+                         col11, col12,col13, col14= st.columns(4)
+                              #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+                              #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
+                         col11.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
+
+                         col12.write(f"Low Estimate:")
+                         col13.write(f"Middle Estimate: ")
+                         col14.write(f"High Estimate:")
+
+
+                         col15, col16, col17, col18 = st.columns(4)
+
+                              # # Display number outputs for each estimate
+                              # col15.write(f" Multiple Valuation Method:  ")
+                              # col16.write(f"{average_sum_both1:.2f} €")
+                              # col17.write(f"{average_Middle_multiple_value:.2f} €")
+                              # col18.write(f"{average_sum_both2:.2f} €")
+                              
+                                             # Display number outputs for each estimate
+                         col15.write(f" Benjamin Graham + DCF:  ")
+                              #col16.write(f"{average_sum_both1:.2f} €")
+                              
+                         if average_sum_both1 > float(converted_amount):
+                              font_color = "green"
+                         else:
+                              font_color = "red"
+                         col16.write(f"<span style='color:{font_color}'>{average_sum_both1:.2f} €</span>", unsafe_allow_html=True)
+
+                         if average_Middle_multiple_value > float(converted_amount):
+                              font_color = "green"
+                         else:
+                              font_color = "red"
+                              #col17.write(f"{average_Middle_multiple_value:.2f} €")
+                         col17.write(f"<span style='color:{font_color}'>{average_Middle_multiple_value:.2f} €</span>", unsafe_allow_html=True)
+                              #col18.write(f"{average_sum_both2:.2f} €")
+                              
+
+                         if average_sum_both2 > float(converted_amount):
+                              font_color = "green"
+                         else:
+                              font_color = "red"
+                         col18.write(f"<span style='color:{font_color}'>{average_sum_both2:.2f} €</span>", unsafe_allow_html=True)
+
+                                   # Display number outputs for each estimate
+                         col19, col20, col21, col22 = st.columns(4)
+
+                         col19.write(f"Discounted Cash Flow Analysis (DCF):")
+                              #col20.write(f"{low_DCF:.2f} €")
+                         if low_DCF > float(converted_amount):
+                              font_color = "green"
+                         else:
+                              font_color = "red"
+                         col20.write(f"<span style='color:{font_color}'>{low_DCF:.2f} €</span>", unsafe_allow_html=True)
+                              #col21.write(f"{Average_Middle_DCF:.2f} €")
+
+                         if Average_Middle_DCF > float(converted_amount):
+                              font_color = "green"
+                         else:
+                              font_color = "red"
+                         col21.write(f"<span style='color:{font_color}'>{Average_Middle_DCF:.2f} €</span>", unsafe_allow_html=True)
+                              #col22.write(f"{high_DCF:.2f} €")
+
+                         if high_DCF > float(converted_amount):
+                              font_color = "green"
+                         else:
+                              font_color = "red"
+                         col22.write(f"<span style='color:{font_color}'>{high_DCF:.2f} €</span>", unsafe_allow_html=True)
+                         
+               display_growth_rate_formexer()
+
+
+
+
+
+
+
+
+
+
+
 
 
      with st.container():
           with Multiple_Valuation:
-               with st.form(key='growth_rate_form'):
+          #      with st.form(key='growth_rate_form'):
+          #           #load = st.button ('')
+
+          #           #st.session_state = False
+
+          #           #Profit_Margin_10 = annual_data['fcf_margin'][-10:]
+          #           #Profit_Margin_10=sum(Profit_Margin_10)/len(Profit_Margin_10)
+          #           #Profit_Margin_10 = (Profit_Margin_10*100)
+
+          #      # Profit_Margin_5 = annual_data['fcf_margin'][-5:]   
+          #           #Profit_Margin_5 =sum(Profit_Margin_5)/len(Profit_Margin_5)
+          #           #Profit_Margin_5 = (Profit_Margin_5*100)
+
+          #           Profit_Margin_1 = annual_data['fcf_margin'][-1:]     
+          #           Profit_Margin_1=sum(Profit_Margin_1)/len(Profit_Margin_1)
+          #           Profit_Margin_1 = (Profit_Margin_1*100)
+
+          #           col1,col2 = st.columns(2)
+
+          #           # Display the values in colored boxes
+          #           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
+          #           with col1:
+          #                st.write(f"Historical:")
+
+          #           with col2:
+          #                #st.write(f"My Assumptions:")
+
+          #           #with col2:
+          #                My_assumption = int(st.text_input("My Assumptions in Years:", value=int(10), key="My_assumption"))
+
+          #           col1,col2,col3,col4,col5,col6 = st.columns(6)
+
+          #           # Display the values in colored boxes
+          #           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
+          #           with col1:
+          #                st.write(f"1YR:")
+          #           with col2:
+          #                st.write(f"5YR:") 
+          #           with col3:
+          #                st.write(f"10YR:")
+          #           with col4:
+          #                st.write(f"LOW")
+          #           with col5:
+          #                st.write(f"MID") 
+          #           with col6:
+          #                st.write(f"HIGH")
+
+
+          #           colr1,colr2,colr3,colr9,colr10,colr11 = st.columns(6)
+
+          #           # Display the values in colored boxes
+          #           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
+          #           #colr1.write(f"Revenue Growth: <br> {Revenue_growth_1year:.2f}%", unsafe_allow_html=True)
+          #           #colr2.write(f"Revenue Growth: <br> {Revenue_5_CAGR}%", unsafe_allow_html=True)
+          #           #colr3.write(f"Revenue Growth: <br> {Revenue_Cagr_10}%", unsafe_allow_html=True)
+
+          #           # Display the values with brown background color using st.write with HTML for line breaks
+          #           colr1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_growth_1year:.2f}%</div>", unsafe_allow_html=True)
+          #           colr2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_5_CAGR}%</div>", unsafe_allow_html=True)
+          #           colr3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_Cagr_10}%</div>", unsafe_allow_html=True)
+
+
+
+               
+          #           #Growth_rate1 = col9.number_input("Wachstumsrate (Base Case) in %:", value=0.00, key="growth_rate1")
+
+          #           coln1,coln2,coln3,coln9,coln10,coln11 = st.columns(6)
+
+          #           # Display the values in colored boxes
+          #           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
+          #           #coln1.write(f"Net Profit Margin: <br> {Net_margin_ttm}", unsafe_allow_html=True) 
+          #           #coln2.write(f"Net Profit Margin: <br> {five_yrs_Nettomarge}%", unsafe_allow_html=True)
+          #           #coln3.write(f"Net Profit Margin: <br> {Net_income_margin_10}%", unsafe_allow_html=True)
+
+          #           coln1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_margin_ttm}</div>", unsafe_allow_html=True)
+          #           coln2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {five_yrs_Nettomarge}%</div>", unsafe_allow_html=True)
+          #           coln3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_income_margin_10}%</div>", unsafe_allow_html=True)
+
+
+
+          #           colf1,colf2,colf3,colf9,colf10,colf11 = st.columns(6)
+
+          #           # Display the values in colored boxes
+          #           #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
+          #           #colf1.info(f"FCF Margin: {FCF_Margin_1:.2f}%")
+          #           #colf2.info(f"FCF Margin: {FCF_Margin_5}%") 
+          #           #colf3.info(f"FCF Margin: {FCF_Margin_10}%")
+
+          #           # Display the values using st.write in colored boxes
+          #           #colf1.write(f"FCF Margin: <br> {FCF_Margin_1:.2f}%", unsafe_allow_html=True)
+          #           #colf2.write(f"FCF Margin: <br> {FCF_Margin_5}%", unsafe_allow_html=True)
+          #           #colf3.write(f"FCF Margin: <br> {FCF_Margin_10}%", unsafe_allow_html=True)
+
+          #           colf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_1:.2f}%</div>", unsafe_allow_html=True)
+          #           colf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
+          #           colf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_10}%</div>", unsafe_allow_html=True)      
+
+               
+
+          #           colcf1,colcf2,colcf3,colcf9,colcf10,colcf11 = st.columns(6)
+
+          #           #colcf1.write(f"Price/OCF: <br> {P_OCF_ttm}", unsafe_allow_html=True)
+          #           #colcf2.write(f"Price/OCF: <br> {P_OCF_5}", unsafe_allow_html=True) 
+          #           #colcf3.write(f"Price/OCF: <br> {P_OCF_10}", unsafe_allow_html=True)
+
+          #           colcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_ttm}</div>", unsafe_allow_html=True)
+          #           colcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_5}</div>", unsafe_allow_html=True)
+          #           colcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_10}</div>", unsafe_allow_html=True)
+
+
+
+          #           colfcf1,colfcf2,colfcf3,colfcf9,colfcf10,colfcf11 = st.columns(6)
+
+          #           #colfcf1.write(f"Price/FCF: <br> {pfcf_ttm}", unsafe_allow_html=True)
+          #           #colfcf2.write(f"Price/FCF: <br> {pfcf_funf}", unsafe_allow_html=True) 
+          #           #colfcf3.write(f"Price/FCF: <br> {pfcf_ten}", unsafe_allow_html=True)
+
+
+          #           colfcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ttm}</div>", unsafe_allow_html=True)
+          #           colfcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_funf}</div>", unsafe_allow_html=True)
+          #           colfcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ten}</div>", unsafe_allow_html=True)
+
+                    
+
+          #           col1,col2,colx,cola, colb, colc= st.columns(6)
+          #           #col1.write('Desired Rate of Return')
+          #           #col1,col2,colx= st.columns(3)
+          #           col1.write('')               
+          #           col2.write('')
+          #           #colx.write('')
+          #           colx.write(f"<div style='background-color:#333333;padding: 10px; border-radius: 5px; color: white;'>Desired Rate of Return: <br> <br>  {''}</div>", unsafe_allow_html=True)
+
+          #           #col1,col2,colx= st.columns(3)
+          #           #col1.write('')               
+          #           #col2.write('')
+          #           colx.write(f"Multiple of Earnings Valuation:")
+
+
+
+          #           #load =st.button('LOAD')
+          #           #if "load_state" not in st.session_state:
+          #           #    st.session_state.load_state =False
+
+               
+          #           Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0.00,key="Growth_rate_revenue_LOW"))
+          #           Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0.00,key="Growth_rate_revenue_middle"))
+          #           Growth_rate_revenue_high = float(colr11.text_input(" ", value=0.00,key="Growth_rate_revenue_high"))
+
+          #           Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0.00,key="Growth_rate_net_profit_LOW"))
+          #           Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0.00,key="Growth_rate__net_profit_middle"))
+          #           Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0.00,key="Growth_rate__net_profit_high"))
+
+          #           Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW"))
+          #           Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle"))
+          #           Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_high"))
+
+          #           Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0.00,key="Growth_rate_P_OCF_low"))
+          #           Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0.00,key="Growth_rate_P_OCF_middle"))
+          #           Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0.00,key="Growth_rate_P_OCF_high"))
+
+          #           Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0.00,key="Growth_rate_P_FCF_low"))
+          #           Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0.00,key="Growth_rate_P_FCF_middle"))
+          #           Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0.00,key="Growth_rate_P_FCF_high"))
+
+          #           #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+          #           Margin_of_safety_low = float(cola.text_input(" ", value=9.00,key="Margin_of_safety_low"))
+          #           Margin_of_safety_mid = float(colb.text_input(" ", value=9.00,key="Margin_of_safety_mid"))
+          #           Margin_of_safety_high = float(colc.text_input(" ", value=9.00,key="Margin_of_safety_high"))
+
+          #           submit_button = st.form_submit_button(label='Calculate')       
+
+                    
+
+          #      if submit_button:     
+
+
+               
+          # # -----------------------------LOW-------------
+          #           average_FCF_Profit_margin_low=((Growth_rate_fcf_margin_LOW+Growth_rate_net_profit_LOW)/2)/100
+
+          #           average_PFCF_POCF_low=(Growth_rate_P_OCF_low+Growth_rate_P_FCF_low)/2
+
+          #           Revenue_assumption_low=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_LOW/100),My_assumption)
+          #           #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
+          #           #st.write("Revenue_assumption_low",Revenue_assumption_low)
+
+          #           Assumption_low=(Revenue_assumption_low*average_FCF_Profit_margin_low)*average_PFCF_POCF_low
+          #           #st.write("Assumption_low_all margins",Assumption_low)
+          #           Assumption_low_inklu_shares_outstanding_low =Assumption_low/Average_shares_basic_annual_one
+          #           #st.write("Assumption_low_inklu_shares_outstanding",Assumption_low_inklu_shares_outstanding_low)
+
+          #           Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
+          #           #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_low",Assumption_low_inklu_shares_outstanding_MarginofSafety_low)
+
+
+          #           Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
+          #           #st.write(Revenue_low_Euro)
+          #           #st.write(converted_amount)
+
+          # # -----------------------------MIDDLE-------------
+          #           average_FCF_Profit_margin_mid=((Growth_rate_fcf_margin_middle+Growth_rate__net_profit_middle)/2)/100
+
+          #           average_PFCF_POCF_mid=(Growth_rate_P_OCF_middle+Growth_rate_P_FCF_middle)/2
+
+          #           Revenue_assumption_mid=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_middle/100),My_assumption)
+          #           #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
+          #           #st.write("Revenue_assumption_low",Revenue_assumption_mid)
+
+          #           Assumption_mid=(Revenue_assumption_mid*average_FCF_Profit_margin_mid)*average_PFCF_POCF_mid
+
+          #           Assumption_mid_inklu_shares_outstanding_mid =Assumption_mid/Average_shares_basic_annual_one
+          #           #st.write("Assumption_low_inklu_shares_outstanding",Assumption_mid_inklu_shares_outstanding_mid)
+
+          #           Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid=Assumption_mid_inklu_shares_outstanding_mid*(1-(Margin_of_safety_mid/100))
+          #           #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_mid",Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid)
+               
+
+          #           Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*usd_to_eur_rate)
+                    
+
+                    
+          # # -----------------------------HIGH-------------
+
+          #           average_FCF_Profit_margin_high=((Growth_rate_fcf_margin_high+Growth_rate__net_profit_high)/2)/100
+
+          #           average_PFCF_POCF_high=(Growth_rate_P_OCF_high+Growth_rate_P_FCF_high)/2
+
+          #           Revenue_assumption_high=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_high/100),My_assumption)
+          #           #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
+          #           #st.write("Revenue_assumption_low",Revenue_assumption_high)
+
+          #           Assumption_high=(Revenue_assumption_high*average_FCF_Profit_margin_high)*average_PFCF_POCF_high
+
+          #           Assumption_high_inklu_shares_outstanding_high =Assumption_high/Average_shares_basic_annual_one
+          #           #st.write("Assumption_low_inklu_shares_outstanding",Assumption_high_inklu_shares_outstanding_high)
+
+          #           Assumption_high_inklu_shares_outstanding_MarginofSafety_high=Assumption_high_inklu_shares_outstanding_high*(1-(Margin_of_safety_high/100))
+          #           #st.write("Assumption_high_inklu_shares_outstanding_MarginofSafety_high",Assumption_high_inklu_shares_outstanding_MarginofSafety_high)
+               
+          #           Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*usd_to_eur_rate)
+                    
+
+                    
+
+          #           col1.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True) 
+                         
+          #           st.markdown('</div>', unsafe_allow_html=True)
+
+                       
+          #           #st.session_state = True
+          #      #with col1:
+          #           #if st.button("Calculate", key="Calculate_revenue"):
+               
+          #                #if load or st.session_state.load_state:
+          #                #    st.session_state.load_state = True
+
+          #                               #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+          #                               #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
+                         
+          #                     #colx.write(f"Multiples of Earnings Value:")
+          #                     #col20.write(f"{low_DCF:.2f} €")
+          #           if float(Revenue_low_Euro) < float(converted_amount):
+          #                font_color = "red"
+          #           else:
+          #                font_color = "green"
+          #           cola.write(f"<span style='color:{font_color}'>{Revenue_low_Euro} €</span>", unsafe_allow_html=True)
+          #                     #col21.write(f"{Average_Middle_DCF:.2f} €")
+
+          #           if float(Revenue_mid_Euro) < float(converted_amount):
+          #                font_color = "red"
+          #           else:
+          #                font_color = "green"
+          #           colb.write(f"<span style='color:{font_color}'>{Revenue_mid_Euro} €</span>", unsafe_allow_html=True)
+          #                     #col22.write(f"{high_DCF:.2f} €")
+
+          #           if float(Revenue_high_Euro) < float(converted_amount):
+          #                font_color = "red"
+          #           else:
+          #                font_color = "green"
+          #           colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro} €</span>", unsafe_allow_html=True)
+
+
+################################experiment2########
+               @st.experimental_fragment
+               def display_growth_rate_form():
+                    with st.form(key='growth_rate_form31'):
                     #load = st.button ('')
 
                     #st.session_state = False
@@ -11859,42 +12533,44 @@ if selected == "Stock Analysis Tool":
                     #Profit_Margin_5 =sum(Profit_Margin_5)/len(Profit_Margin_5)
                     #Profit_Margin_5 = (Profit_Margin_5*100)
 
-                    Profit_Margin_1 = annual_data['fcf_margin'][-1:]     
-                    Profit_Margin_1=sum(Profit_Margin_1)/len(Profit_Margin_1)
-                    Profit_Margin_1 = (Profit_Margin_1*100)
+                         Profit_Margin_1 = annual_data['fcf_margin'][-1:]     
+                         Profit_Margin_1=sum(Profit_Margin_1)/len(Profit_Margin_1)
+                         Profit_Margin_1 = (Profit_Margin_1*100)
 
-                    col1,col2 = st.columns(2)
+                         col1,col2 = st.columns(2)
 
                     # Display the values in colored boxes
                     #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-                    with col1:
-                         st.write(f"Historical:")
+                         with col1:
+                              st.write(f"Historical:")
 
-                    with col2:
+                         with col2:
                          #st.write(f"My Assumptions:")
 
                     #with col2:
-                         My_assumption = int(st.text_input("My Assumptions in Years:", value=int(10), key="My_assumption"))
+                              My_assumption = int(st.text_input("My Assumptions in Years:", value=int(10), key="My_assumption12"))
 
-                    col1,col2,col3,col4,col5,col6 = st.columns(6)
+                         
+                    
+                         col1,col2,col3,col4,col5,col6 = st.columns(6)
 
                     # Display the values in colored boxes
                     #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-                    with col1:
-                         st.write(f"1YR:")
-                    with col2:
-                         st.write(f"5YR:") 
-                    with col3:
-                         st.write(f"10YR:")
-                    with col4:
-                         st.write(f"LOW")
-                    with col5:
-                         st.write(f"MID") 
-                    with col6:
-                         st.write(f"HIGH")
+                         with col1:
+                              st.write(f"1YR:")
+                         with col2:
+                              st.write(f"5YR:") 
+                         with col3:
+                              st.write(f"10YR:")
+                         with col4:
+                              st.write(f"LOW")
+                         with col5:
+                              st.write(f"MID") 
+                         with col6:
+                              st.write(f"HIGH")
 
-
-                    colr1,colr2,colr3,colr9,colr10,colr11 = st.columns(6)
+                         
+                         colr1,colr2,colr3,colr9,colr10,colr11 = st.columns(6)
 
                     # Display the values in colored boxes
                     #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
@@ -11903,16 +12579,16 @@ if selected == "Stock Analysis Tool":
                     #colr3.write(f"Revenue Growth: <br> {Revenue_Cagr_10}%", unsafe_allow_html=True)
 
                     # Display the values with brown background color using st.write with HTML for line breaks
-                    colr1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_growth_1year:.2f}%</div>", unsafe_allow_html=True)
-                    colr2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_5_CAGR}%</div>", unsafe_allow_html=True)
-                    colr3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_Cagr_10}%</div>", unsafe_allow_html=True)
+                         colr1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_growth_1year:.2f}%</div>", unsafe_allow_html=True)
+                         colr2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_5_CAGR}%</div>", unsafe_allow_html=True)
+                         colr3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_Cagr_10}%</div>", unsafe_allow_html=True)
 
 
 
                
                     #Growth_rate1 = col9.number_input("Wachstumsrate (Base Case) in %:", value=0.00, key="growth_rate1")
 
-                    coln1,coln2,coln3,coln9,coln10,coln11 = st.columns(6)
+                         coln1,coln2,coln3,coln9,coln10,coln11 = st.columns(6)
 
                     # Display the values in colored boxes
                     #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
@@ -11920,13 +12596,13 @@ if selected == "Stock Analysis Tool":
                     #coln2.write(f"Net Profit Margin: <br> {five_yrs_Nettomarge}%", unsafe_allow_html=True)
                     #coln3.write(f"Net Profit Margin: <br> {Net_income_margin_10}%", unsafe_allow_html=True)
 
-                    coln1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_margin_ttm}</div>", unsafe_allow_html=True)
-                    coln2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {five_yrs_Nettomarge}%</div>", unsafe_allow_html=True)
-                    coln3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_income_margin_10}%</div>", unsafe_allow_html=True)
+                         coln1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_margin_ttm}</div>", unsafe_allow_html=True)
+                         coln2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {five_yrs_Nettomarge}%</div>", unsafe_allow_html=True)
+                         coln3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_income_margin_10}%</div>", unsafe_allow_html=True)
 
 
 
-                    colf1,colf2,colf3,colf9,colf10,colf11 = st.columns(6)
+                         colf1,colf2,colf3,colf9,colf10,colf11 = st.columns(6)
 
                     # Display the values in colored boxes
                     #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
@@ -11939,49 +12615,49 @@ if selected == "Stock Analysis Tool":
                     #colf2.write(f"FCF Margin: <br> {FCF_Margin_5}%", unsafe_allow_html=True)
                     #colf3.write(f"FCF Margin: <br> {FCF_Margin_10}%", unsafe_allow_html=True)
 
-                    colf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_1:.2f}%</div>", unsafe_allow_html=True)
-                    colf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
-                    colf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_10}%</div>", unsafe_allow_html=True)      
+                         colf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_1:.2f}%</div>", unsafe_allow_html=True)
+                         colf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
+                         colf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_10}%</div>", unsafe_allow_html=True)      
 
                
 
-                    colcf1,colcf2,colcf3,colcf9,colcf10,colcf11 = st.columns(6)
+                         colcf1,colcf2,colcf3,colcf9,colcf10,colcf11 = st.columns(6)
 
                     #colcf1.write(f"Price/OCF: <br> {P_OCF_ttm}", unsafe_allow_html=True)
                     #colcf2.write(f"Price/OCF: <br> {P_OCF_5}", unsafe_allow_html=True) 
                     #colcf3.write(f"Price/OCF: <br> {P_OCF_10}", unsafe_allow_html=True)
 
-                    colcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_ttm}</div>", unsafe_allow_html=True)
-                    colcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_5}</div>", unsafe_allow_html=True)
-                    colcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_10}</div>", unsafe_allow_html=True)
+                         colcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_ttm}</div>", unsafe_allow_html=True)
+                         colcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_5}</div>", unsafe_allow_html=True)
+                         colcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_10}</div>", unsafe_allow_html=True)
 
 
 
-                    colfcf1,colfcf2,colfcf3,colfcf9,colfcf10,colfcf11 = st.columns(6)
+                         colfcf1,colfcf2,colfcf3,colfcf9,colfcf10,colfcf11 = st.columns(6)
 
                     #colfcf1.write(f"Price/FCF: <br> {pfcf_ttm}", unsafe_allow_html=True)
                     #colfcf2.write(f"Price/FCF: <br> {pfcf_funf}", unsafe_allow_html=True) 
                     #colfcf3.write(f"Price/FCF: <br> {pfcf_ten}", unsafe_allow_html=True)
 
 
-                    colfcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ttm}</div>", unsafe_allow_html=True)
-                    colfcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_funf}</div>", unsafe_allow_html=True)
-                    colfcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ten}</div>", unsafe_allow_html=True)
+                         colfcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ttm}</div>", unsafe_allow_html=True)
+                         colfcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_funf}</div>", unsafe_allow_html=True)
+                         colfcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ten}</div>", unsafe_allow_html=True)
 
                     
 
-                    col1,col2,colx,cola, colb, colc= st.columns(6)
+                         col1,col2,colx,cola, colb, colc= st.columns(6)
                     #col1.write('Desired Rate of Return')
                     #col1,col2,colx= st.columns(3)
-                    col1.write('')               
-                    col2.write('')
-                    #colx.write('')
-                    colx.write(f"<div style='background-color:#333333;padding: 10px; border-radius: 5px; color: white;'>Desired Rate of Return: <br> <br>  {''}</div>", unsafe_allow_html=True)
+                         col1.write('')               
+                         col2.write('')
+                         #colx.write('')
+                         colx.write(f"<div style='background-color:#333333;padding: 10px; border-radius: 5px; color: white;'>Desired Rate of Return: <br> <br>  {''}</div>", unsafe_allow_html=True)
 
-                    #col1,col2,colx= st.columns(3)
-                    #col1.write('')               
-                    #col2.write('')
-                    colx.write(f"Multiple of Earnings Valuation:")
+                         #col1,col2,colx= st.columns(3)
+                         #col1.write('')               
+                         #col2.write('')
+                         colx.write(f"Multiple of Earnings Valuation:")
 
 
 
@@ -11990,146 +12666,152 @@ if selected == "Stock Analysis Tool":
                     #    st.session_state.load_state =False
 
                
-                    Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0.00,key="Growth_rate_revenue_LOW"))
-                    Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0.00,key="Growth_rate_revenue_middle"))
-                    Growth_rate_revenue_high = float(colr11.text_input(" ", value=0.00,key="Growth_rate_revenue_high"))
+                         Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0.00,key="Growth_rate_revenue_LOW22"))
+                         Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0.00,key="Growth_rate_revenue_middle22"))
+                         Growth_rate_revenue_high = float(colr11.text_input(" ", value=0.00,key="Growth_rate_revenue_high22"))
 
-                    Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0.00,key="Growth_rate_net_profit_LOW"))
-                    Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0.00,key="Growth_rate__net_profit_middle"))
-                    Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0.00,key="Growth_rate__net_profit_high"))
+                         Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0.00,key="Growth_rate_net_profit_LOW23"))
+                         Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0.00,key="Growth_rate__net_profit_middle23"))
+                         Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0.00,key="Growth_rate__net_profit_high23"))
 
-                    Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW"))
-                    Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle"))
-                    Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_high"))
+                         Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW24"))
+                         Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle24"))
+                         Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_high24"))
 
-                    Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0.00,key="Growth_rate_P_OCF_low"))
-                    Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0.00,key="Growth_rate_P_OCF_middle"))
-                    Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0.00,key="Growth_rate_P_OCF_high"))
+                         Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0.00,key="Growth_rate_P_OCF_low22"))
+                         Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0.00,key="Growth_rate_P_OCF_middle22"))
+                         Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0.00,key="Growth_rate_P_OCF_high22"))
 
-                    Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0.00,key="Growth_rate_P_FCF_low"))
-                    Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0.00,key="Growth_rate_P_FCF_middle"))
-                    Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0.00,key="Growth_rate_P_FCF_high"))
+                         Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0.00,key="Growth_rate_P_FCF_low22"))
+                         Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0.00,key="Growth_rate_P_FCF_middle22"))
+                         Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0.00,key="Growth_rate_P_FCF_high22"))
 
-                    #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-                    Margin_of_safety_low = float(cola.text_input(" ", value=9.00,key="Margin_of_safety_low"))
-                    Margin_of_safety_mid = float(colb.text_input(" ", value=9.00,key="Margin_of_safety_mid"))
-                    Margin_of_safety_high = float(colc.text_input(" ", value=9.00,key="Margin_of_safety_high"))
+                         #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+                         Margin_of_safety_low = float(cola.text_input(" ", value=9.00,key="Margin_of_safety_low22"))
+                         Margin_of_safety_mid = float(colb.text_input(" ", value=9.00,key="Margin_of_safety_mid22"))
+                         Margin_of_safety_high = float(colc.text_input(" ", value=9.00,key="Margin_of_safety_high22"))
 
-                    submit_button = st.form_submit_button(label='Calculate')       
+                         submit_button = st.form_submit_button(label='Calculate')
+                    if submit_button:
+                    
+                    #return My_assumption,Growth_rate_revenue_LOW, Growth_rate_revenue_middle, Growth_rate_revenue_high,Growth_rate_net_profit_LOW,Growth_rate__net_profit_middle ,Growth_rate__net_profit_high,Growth_rate_fcf_margin_LOW,Growth_rate_fcf_margin_middle,Growth_rate_fcf_margin_high,Growth_rate_P_OCF_low,Growth_rate_P_OCF_middle,Growth_rate_P_OCF_high,Growth_rate_P_FCF_low,Growth_rate_P_FCF_middle,Growth_rate_P_FCF_high,Margin_of_safety_low,Margin_of_safety_mid,Margin_of_safety_high,submit_button 
+                         #return submit_button,My_assumption, Growth_rate_revenue_LOW, Growth_rate_revenue_middle, Growth_rate_revenue_high, Growth_rate_net_profit_LOW, Growth_rate__net_profit_middle, Growth_rate__net_profit_high, Growth_rate_fcf_margin_LOW, Growth_rate_fcf_margin_middle, Growth_rate_fcf_margin_high, Growth_rate_P_OCF_low, Growth_rate_P_OCF_middle, Growth_rate_P_OCF_high, Growth_rate_P_FCF_low, Growth_rate_P_FCF_middle, Growth_rate_P_FCF_high, Margin_of_safety_low, Margin_of_safety_mid, Margin_of_safety_high
+               #def display_intrinsic_value_results(My_assumption,Growth_rate_revenue_LOW, Growth_rate_revenue_middle, Growth_rate_revenue_high,Growth_rate_net_profit_LOW,Growth_rate__net_profit_middle ,Growth_rate__net_profit_high,Growth_rate_fcf_margin_LOW,Growth_rate_fcf_margin_middle,Growth_rate_fcf_margin_high,Growth_rate_P_OCF_low,Growth_rate_P_OCF_middle,Growth_rate_P_OCF_high,Growth_rate_P_FCF_low,Growth_rate_P_FCF_middle,Growth_rate_P_FCF_high,Margin_of_safety_low,Margin_of_safety_mid,Margin_of_safety_high):
+               #def display_intrinsic_value_results(My_assumption, Growth_rate_revenue_LOW, Growth_rate_revenue_middle, Growth_rate_revenue_high, Growth_rate_net_profit_LOW, Growth_rate_net_profit_middle, Growth_rate_net_profit_high, Growth_rate_fcf_margin_LOW, Growth_rate_fcf_margin_middle, Growth_rate_fcf_margin_high, Growth_rate_P_OCF_low, Growth_rate_P_OCF_middle, Growth_rate_P_OCF_high, Growth_rate_P_FCF_low, Growth_rate_P_FCF_middle, Growth_rate_P_FCF_high, Margin_of_safety_low, Margin_of_safety_mid, Margin_of_safety_high):    
 
+               # -----------------------------LOW-------------
+                         average_FCF_Profit_margin_low=((Growth_rate_fcf_margin_LOW+Growth_rate_net_profit_LOW)/2)/100
+
+                         average_PFCF_POCF_low=(Growth_rate_P_OCF_low+Growth_rate_P_FCF_low)/2
+
+                         Revenue_assumption_low=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_LOW/100),My_assumption)
+                         #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
+                         #st.write("Revenue_assumption_low",Revenue_assumption_low)
+
+                         Assumption_low=(Revenue_assumption_low*average_FCF_Profit_margin_low)*average_PFCF_POCF_low
+                         #st.write("Assumption_low_all margins",Assumption_low)
+                         Assumption_low_inklu_shares_outstanding_low =Assumption_low/Average_shares_basic_annual_one
+                         #st.write("Assumption_low_inklu_shares_outstanding",Assumption_low_inklu_shares_outstanding_low)
+
+                         Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
+                         #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_low",Assumption_low_inklu_shares_outstanding_MarginofSafety_low)
+
+
+                         Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
+                    
+                         #st.write(Revenue_low_Euro)
+                         #st.write(converted_amount)
+
+               # -----------------------------MIDDLE-------------
+                         average_FCF_Profit_margin_mid=((Growth_rate_fcf_margin_middle+Growth_rate__net_profit_middle)/2)/100
+
+                         average_PFCF_POCF_mid=(Growth_rate_P_OCF_middle+Growth_rate_P_FCF_middle)/2
+
+                         Revenue_assumption_mid=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_middle/100),My_assumption)
+                         #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
+                         #st.write("Revenue_assumption_low",Revenue_assumption_mid)
+
+                         Assumption_mid=(Revenue_assumption_mid*average_FCF_Profit_margin_mid)*average_PFCF_POCF_mid
+
+                         Assumption_mid_inklu_shares_outstanding_mid =Assumption_mid/Average_shares_basic_annual_one
+                         #st.write("Assumption_low_inklu_shares_outstanding",Assumption_mid_inklu_shares_outstanding_mid)
+
+                         Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid=Assumption_mid_inklu_shares_outstanding_mid*(1-(Margin_of_safety_mid/100))
+                         #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_mid",Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid)
                     
 
-               if submit_button:     
-
-
-               
-          # -----------------------------LOW-------------
-                    average_FCF_Profit_margin_low=((Growth_rate_fcf_margin_LOW+Growth_rate_net_profit_LOW)/2)/100
-
-                    average_PFCF_POCF_low=(Growth_rate_P_OCF_low+Growth_rate_P_FCF_low)/2
-
-                    Revenue_assumption_low=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_LOW/100),My_assumption)
-                    #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
-                    #st.write("Revenue_assumption_low",Revenue_assumption_low)
-
-                    Assumption_low=(Revenue_assumption_low*average_FCF_Profit_margin_low)*average_PFCF_POCF_low
-                    #st.write("Assumption_low_all margins",Assumption_low)
-                    Assumption_low_inklu_shares_outstanding_low =Assumption_low/Average_shares_basic_annual_one
-                    #st.write("Assumption_low_inklu_shares_outstanding",Assumption_low_inklu_shares_outstanding_low)
-
-                    Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
-                    #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_low",Assumption_low_inklu_shares_outstanding_MarginofSafety_low)
-
-
-                    Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
-                    #st.write(Revenue_low_Euro)
-                    #st.write(converted_amount)
-
-          # -----------------------------MIDDLE-------------
-                    average_FCF_Profit_margin_mid=((Growth_rate_fcf_margin_middle+Growth_rate__net_profit_middle)/2)/100
-
-                    average_PFCF_POCF_mid=(Growth_rate_P_OCF_middle+Growth_rate_P_FCF_middle)/2
-
-                    Revenue_assumption_mid=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_middle/100),My_assumption)
-                    #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
-                    #st.write("Revenue_assumption_low",Revenue_assumption_mid)
-
-                    Assumption_mid=(Revenue_assumption_mid*average_FCF_Profit_margin_mid)*average_PFCF_POCF_mid
-
-                    Assumption_mid_inklu_shares_outstanding_mid =Assumption_mid/Average_shares_basic_annual_one
-                    #st.write("Assumption_low_inklu_shares_outstanding",Assumption_mid_inklu_shares_outstanding_mid)
-
-                    Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid=Assumption_mid_inklu_shares_outstanding_mid*(1-(Margin_of_safety_mid/100))
-                    #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_mid",Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid)
-               
-
-                    Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*usd_to_eur_rate)
-                    
-
-                    
-          # -----------------------------HIGH-------------
-
-                    average_FCF_Profit_margin_high=((Growth_rate_fcf_margin_high+Growth_rate__net_profit_high)/2)/100
-
-                    average_PFCF_POCF_high=(Growth_rate_P_OCF_high+Growth_rate_P_FCF_high)/2
-
-                    Revenue_assumption_high=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_high/100),My_assumption)
-                    #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
-                    #st.write("Revenue_assumption_low",Revenue_assumption_high)
-
-                    Assumption_high=(Revenue_assumption_high*average_FCF_Profit_margin_high)*average_PFCF_POCF_high
-
-                    Assumption_high_inklu_shares_outstanding_high =Assumption_high/Average_shares_basic_annual_one
-                    #st.write("Assumption_low_inklu_shares_outstanding",Assumption_high_inklu_shares_outstanding_high)
-
-                    Assumption_high_inklu_shares_outstanding_MarginofSafety_high=Assumption_high_inklu_shares_outstanding_high*(1-(Margin_of_safety_high/100))
-                    #st.write("Assumption_high_inklu_shares_outstanding_MarginofSafety_high",Assumption_high_inklu_shares_outstanding_MarginofSafety_high)
-               
-                    Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*usd_to_eur_rate)
-                    
-
-                    
-
-                    col1.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True) 
+                         Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*usd_to_eur_rate)
                          
-                    st.markdown('</div>', unsafe_allow_html=True)
 
-                       
-                    #st.session_state = True
-               #with col1:
-                    #if st.button("Calculate", key="Calculate_revenue"):
-               
-                         #if load or st.session_state.load_state:
-                         #    st.session_state.load_state = True
-
-                                        #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-                                        #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
                          
+               # -----------------------------HIGH-------------
+
+                         average_FCF_Profit_margin_high=((Growth_rate_fcf_margin_high+Growth_rate__net_profit_high)/2)/100
+
+                         average_PFCF_POCF_high=(Growth_rate_P_OCF_high+Growth_rate_P_FCF_high)/2
+
+                         Revenue_assumption_high=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_high/100),My_assumption)
+                         #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
+                         #st.write("Revenue_assumption_low",Revenue_assumption_high)
+
+                         Assumption_high=(Revenue_assumption_high*average_FCF_Profit_margin_high)*average_PFCF_POCF_high
+
+                         Assumption_high_inklu_shares_outstanding_high =Assumption_high/Average_shares_basic_annual_one
+                         #st.write("Assumption_low_inklu_shares_outstanding",Assumption_high_inklu_shares_outstanding_high)
+
+                         Assumption_high_inklu_shares_outstanding_MarginofSafety_high=Assumption_high_inklu_shares_outstanding_high*(1-(Margin_of_safety_high/100))
+                         #st.write("Assumption_high_inklu_shares_outstanding_MarginofSafety_high",Assumption_high_inklu_shares_outstanding_MarginofSafety_high)
+                    
+                         Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*usd_to_eur_rate)
+                         
+                         
+                         
+
+                         col1.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True) 
+                              
+                         st.markdown('</div>', unsafe_allow_html=True)
+
+
+                         #return Revenue_low_Euro,Revenue_mid_Euro,Revenue_high_Euro
+                    
+                    #@st.experimental_fragment
+                    #def main():
+
+                    
+                         #st.session_state = True
+                    #with col1:
+                         #if st.button("Calculate", key="Calculate_revenue"):
+                    
+                              #if load or st.session_state.load_state:
+                              #    st.session_state.load_state = True
+
+                                             #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
+                                             #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
+                              
                               #colx.write(f"Multiples of Earnings Value:")
-                              #col20.write(f"{low_DCF:.2f} €")
-                    if float(Revenue_low_Euro) < float(converted_amount):
-                         font_color = "red"
-                    else:
-                         font_color = "green"
-                    cola.write(f"<span style='color:{font_color}'>{Revenue_low_Euro} €</span>", unsafe_allow_html=True)
-                              #col21.write(f"{Average_Middle_DCF:.2f} €")
+                                   #col20.write(f"{low_DCF:.2f} €")
+                         if float(Revenue_low_Euro) < float(converted_amount):
+                                   font_color = "red"
+                         else:
+                                   font_color = "green"
+                         cola.write(f"<span style='color:{font_color}'>{Revenue_low_Euro} €</span>", unsafe_allow_html=True)
+                                        #col21.write(f"{Average_Middle_DCF:.2f} €")
 
-                    if float(Revenue_mid_Euro) < float(converted_amount):
-                         font_color = "red"
-                    else:
-                         font_color = "green"
-                    colb.write(f"<span style='color:{font_color}'>{Revenue_mid_Euro} €</span>", unsafe_allow_html=True)
-                              #col22.write(f"{high_DCF:.2f} €")
+                         if float(Revenue_mid_Euro) < float(converted_amount):
+                                   font_color = "red"
+                         else:
+                                   font_color = "green"
+                         colb.write(f"<span style='color:{font_color}'>{Revenue_mid_Euro} €</span>", unsafe_allow_html=True)
+                                        #col22.write(f"{high_DCF:.2f} €")
 
-                    if float(Revenue_high_Euro) < float(converted_amount):
-                         font_color = "red"
-                    else:
-                         font_color = "green"
-                    colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro} €</span>", unsafe_allow_html=True)
-
-
-
-               #with st.form("login"):
+                         if float(Revenue_high_Euro) < float(converted_amount):
+                                   font_color = "red"
+                         else:
+                                   font_color = "green"
+                         colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro} €</span>", unsafe_allow_html=True)
+                    
+               display_growth_rate_form()
+                    #with st.form("login"):
                 #     st.markdown("**Hello World**")
                  #    st.text_input("Name",key="form_login")
                   #   st.text_input("password",key="form_pwd")
@@ -12255,197 +12937,367 @@ if selected == "Stock Analysis Tool":
      with st.container():              
           with Dividend_Discount_Model:
                
-               with st.form(key='growth_rate_form3'):
+               # with st.form(key='growth_rate_form3'):
                  
-                    # .......................................DDM............................................
-                    Dividend_annual = annual_data['dividends'][-4:]     
-                    Dividend_per_share_quarter = quarterly_data['dividends'][-14:]  
-                    Dividend_growth_quarter = quarterly_data['dividends_per_share_growth'][-14:]
-                    Dividend_current_dividend_growth_ttm=Dividend_current_dividend*4
+               #      # .......................................DDM............................................
+               #      Dividend_annual = annual_data['dividends'][-4:]     
+               #      Dividend_per_share_quarter = quarterly_data['dividends'][-14:]  
+               #      Dividend_growth_quarter = quarterly_data['dividends_per_share_growth'][-14:]
+               #      Dividend_current_dividend_growth_ttm=Dividend_current_dividend*4
 
 
-                    cola, colb, colc, cold,col2 = st.columns(5)
+               #      cola, colb, colc, cold,col2 = st.columns(5)
 
-                    percentage_increase_1_2 = 0
-                    percentage_increase_2_3 = 0
-                    percentage_increase_3_4 = 0
-                    percentage_increase_4_5 = 0
+               #      percentage_increase_1_2 = 0
+               #      percentage_increase_2_3 = 0
+               #      percentage_increase_3_4 = 0
+               #      percentage_increase_4_5 = 0
 
-                    for i in range(len(Dividend_per_share_quarter)):
-                         if i == 0:
-                              Dividend_quarter1 = Dividend_per_share_quarter[i]
-                              Dividend11 = cola.text_input("quarterly", value=round(Dividend_quarter1,3),key="unique_key1")
-                         elif i == 12 - 8:
-                              Dividend_quarter2 = Dividend_per_share_quarter[i]
-                              Dividend12 = colb.text_input("quarterly", value=Dividend_quarter2,key="unique_key2")
-                              if Dividend_quarter1 != 0:
-                                   percentage_increase_1_2 = ((Dividend_quarter2 - Dividend_quarter1) / Dividend_quarter1) * 100
-                         elif i == 12-4:
-                              Dividend_quarter3 = Dividend_per_share_quarter[i] 
-                              Dividend13 = colc.text_input("quarterly", value=Dividend_quarter3,key="unique_key3")
-                              if Dividend_quarter2 != 0:
-                                   percentage_increase_2_3 = ((Dividend_quarter3 - Dividend_quarter2) / Dividend_quarter2) * 100
-                         elif i == 12:
-                              Dividend_quarter4 = Dividend_per_share_quarter[i] 
-                              Dividend14 = cold.text_input("quarterly", value=Dividend_quarter4,key="unique_key4")
-                              if Dividend_quarter3 != 0:
-                                   percentage_increase_3_4 = ((Dividend_quarter4 - Dividend_quarter3) / Dividend_quarter3) * 100
-                         elif i == 13:
-                              Dividend_quarter5 = Dividend_per_share_quarter[i] 
-                              Dividend15 = float(col2.text_input("current Dividend", value=Dividend_quarter5,key="unique_key5"))
-                              if Dividend_quarter4 != 0:
-                                   percentage_increase_4_5 = ((Dividend_quarter5 - Dividend_quarter4) / Dividend_quarter4) * 100
+               #      for i in range(len(Dividend_per_share_quarter)):
+               #           if i == 0:
+               #                Dividend_quarter1 = Dividend_per_share_quarter[i]
+               #                Dividend11 = cola.text_input("quarterly", value=round(Dividend_quarter1,3),key="unique_key1")
+               #           elif i == 12 - 8:
+               #                Dividend_quarter2 = Dividend_per_share_quarter[i]
+               #                Dividend12 = colb.text_input("quarterly", value=Dividend_quarter2,key="unique_key2")
+               #                if Dividend_quarter1 != 0:
+               #                     percentage_increase_1_2 = ((Dividend_quarter2 - Dividend_quarter1) / Dividend_quarter1) * 100
+               #           elif i == 12-4:
+               #                Dividend_quarter3 = Dividend_per_share_quarter[i] 
+               #                Dividend13 = colc.text_input("quarterly", value=Dividend_quarter3,key="unique_key3")
+               #                if Dividend_quarter2 != 0:
+               #                     percentage_increase_2_3 = ((Dividend_quarter3 - Dividend_quarter2) / Dividend_quarter2) * 100
+               #           elif i == 12:
+               #                Dividend_quarter4 = Dividend_per_share_quarter[i] 
+               #                Dividend14 = cold.text_input("quarterly", value=Dividend_quarter4,key="unique_key4")
+               #                if Dividend_quarter3 != 0:
+               #                     percentage_increase_3_4 = ((Dividend_quarter4 - Dividend_quarter3) / Dividend_quarter3) * 100
+               #           elif i == 13:
+               #                Dividend_quarter5 = Dividend_per_share_quarter[i] 
+               #                Dividend15 = float(col2.text_input("current Dividend", value=Dividend_quarter5,key="unique_key5"))
+               #                if Dividend_quarter4 != 0:
+               #                     percentage_increase_4_5 = ((Dividend_quarter5 - Dividend_quarter4) / Dividend_quarter4) * 100
 
 
-                    #if  Dividend_quarter4 and Dividend_quarter5!=0:  
-                    try:
-                         Growth_rate= round(((Dividend_quarter5- Dividend_quarter4)/Dividend_quarter4)*100,2)
+               #      #if  Dividend_quarter4 and Dividend_quarter5!=0:  
+               #      try:
+               #           Growth_rate= round(((Dividend_quarter5- Dividend_quarter4)/Dividend_quarter4)*100,2)
 
-                    except Exception as e:
-                         Growth_rate= 0
+               #      except Exception as e:
+               #           Growth_rate= 0
                          
 
-                    cola, colb, colc, cold,col2 = st.columns(5)
-                    # for i in range(len(Dividend_growth_quarter)):
-                    #      if i == 0:
-                    #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
-                    try:
-                         Dividend101 = cola.text_input("Year 4", value=Dividend_quarter1*4, key="unique_key_for_Dividend101")
-                    #      elif i == 12-8:
-                    except Exception as e:
-                         Dividend101 =0
-                    #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
-                    try:
-                         Dividend201 = colb.text_input("Year 3", value=Dividend_quarter2*4, key="unique_key_for_Dividend201")
+               #      cola, colb, colc, cold,col2 = st.columns(5)
+               #      # for i in range(len(Dividend_growth_quarter)):
+               #      #      if i == 0:
+               #      #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
+               #      try:
+               #           Dividend101 = cola.text_input("Year 4", value=Dividend_quarter1*4, key="unique_key_for_Dividend101")
+               #      #      elif i == 12-8:
+               #      except Exception as e:
+               #           Dividend101 =0
+               #      #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
+               #      try:
+               #           Dividend201 = colb.text_input("Year 3", value=Dividend_quarter2*4, key="unique_key_for_Dividend201")
 
-                    except Exception as  e:
-                         Dividend201 =0
-                    #      elif i == 12-4:
-                    #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
-                    try:
-                         Dividend301 = colc.text_input("Year 2", value=Dividend_quarter3*4, key="unique_key_for_Dividend301")
-                    #      elif i == 12:
-                    except Exception as e:
-                         Dividend301=0
-                    #   
-                    #         Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
+               #      except Exception as  e:
+               #           Dividend201 =0
+               #      #      elif i == 12-4:
+               #      #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
+               #      try:
+               #           Dividend301 = colc.text_input("Year 2", value=Dividend_quarter3*4, key="unique_key_for_Dividend301")
+               #      #      elif i == 12:
+               #      except Exception as e:
+               #           Dividend301=0
+               #      #   
+               #      #         Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
 
-                    try:
-                         Dividend401 = cold.text_input("Year 1", value=Dividend_quarter4*4, key="unique_key_for_Dividend401")
-                    except Exception as e:
-                         Dividend401 = 0
+               #      try:
+               #           Dividend401 = cold.text_input("Year 1", value=Dividend_quarter4*4, key="unique_key_for_Dividend401")
+               #      except Exception as e:
+               #           Dividend401 = 0
 
-                    #      elif i == 13:
-                    #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
+               #      #      elif i == 13:
+               #      #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
                     
-                    try:  
-                         Dividend501 = col2.text_input("Current year", value=Dividend_quarter5*4, key="unique_key_for_Dividend501")
+               #      try:  
+               #           Dividend501 = col2.text_input("Current year", value=Dividend_quarter5*4, key="unique_key_for_Dividend501")
 
-                    except Exception as e:
+               #      except Exception as e:
                     
-                         Dividend501 = 0
+               #           Dividend501 = 0
                
                
 
-                    cola, colb, colc, cold,col2 = st.columns(5)
-                    # for i in range(len(Dividend_growth_quarter)):
-                    #      if i == 0:
-                    #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
-                    Dividend1 = cola.text_input("Growth Rate(%)", value=None, key="unique_key_for_Dividend1")
-                    #      elif i == 12-8:
-                    #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
-                    Dividend2 = float(colb.text_input("Growth Rate(%)", value=f"{percentage_increase_1_2:.2f}", key="unique_key_for_Dividend2"))
-                    #      elif i == 12-4:
-                    #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
-                    Dividend3 = colc.text_input("Growth Rate(%)", value=f"{percentage_increase_2_3:.2f}",key="unique_key_for_Dividend3")
-                    #      elif i == 12:
-                    #           Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
-                    Dividend4 = cold.text_input("Growth Rate(%)", value=f"{percentage_increase_3_4:.2f}", key="unique_key_for_Dividend4")
+               #      cola, colb, colc, cold,col2 = st.columns(5)
+               #      # for i in range(len(Dividend_growth_quarter)):
+               #      #      if i == 0:
+               #      #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
+               #      Dividend1 = cola.text_input("Growth Rate(%)", value=None, key="unique_key_for_Dividend1")
+               #      #      elif i == 12-8:
+               #      #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
+               #      Dividend2 = float(colb.text_input("Growth Rate(%)", value=f"{percentage_increase_1_2:.2f}", key="unique_key_for_Dividend2"))
+               #      #      elif i == 12-4:
+               #      #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
+               #      Dividend3 = colc.text_input("Growth Rate(%)", value=f"{percentage_increase_2_3:.2f}",key="unique_key_for_Dividend3")
+               #      #      elif i == 12:
+               #      #           Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
+               #      Dividend4 = cold.text_input("Growth Rate(%)", value=f"{percentage_increase_3_4:.2f}", key="unique_key_for_Dividend4")
 
-                    #      elif i == 13:
-                    #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
-                    Dividend5 = col2.text_input("Growth Rate(%)", value=f"{percentage_increase_4_5:.2f}", key="unique_key_for_Dividend5")
-
-
+               #      #      elif i == 13:
+               #      #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
+               #      Dividend5 = col2.text_input("Growth Rate(%)", value=f"{percentage_increase_4_5:.2f}", key="unique_key_for_Dividend5")
 
 
-                    # Check if any of the dividend inputs contain a value greater than 1
-               # List to store the values greater than 1
-                    # dividends_greater_than_1 = []
 
-                    # # Check if any of the dividend inputs contain a value greater than 1
-                    # for dividend, name in zip([Dividend1, Dividend2, Dividend3, Dividend4, Dividend5],
-                    #                          ['Dividend1', 'Dividend2', 'Dividend3', 'Dividend4', 'Dividend5']):
-                    #      if dividend > 1:
-                    #           dividends_greater_than_1.append((name, dividend))
 
-                    # if dividends_greater_than_1:
-                    #      st.write("The following growth rates are greater than 1%:")
-                    # for name, value in dividends_greater_than_1:
-                    #      st.write(f"{name}: {value}%")
-                    # else:
-                    #      st.write("None of the growth rates are greater than 1%.")
+               #      # Check if any of the dividend inputs contain a value greater than 1
+               # # List to store the values greater than 1
+               #      # dividends_greater_than_1 = []
+
+               #      # # Check if any of the dividend inputs contain a value greater than 1
+               #      # for dividend, name in zip([Dividend1, Dividend2, Dividend3, Dividend4, Dividend5],
+               #      #                          ['Dividend1', 'Dividend2', 'Dividend3', 'Dividend4', 'Dividend5']):
+               #      #      if dividend > 1:
+               #      #           dividends_greater_than_1.append((name, dividend))
+
+               #      # if dividends_greater_than_1:
+               #      #      st.write("The following growth rates are greater than 1%:")
+               #      # for name, value in dividends_greater_than_1:
+               #      #      st.write(f"{name}: {value}%")
+               #      # else:
+               #      #      st.write("None of the growth rates are greater than 1%.")
                     
-                    # total_dividend_growth = Dividend5 + Dividend4 + Dividend3 + Dividend2
+               #      # total_dividend_growth = Dividend5 + Dividend4 + Dividend3 + Dividend2
 
-                    # # Calculate the average dividend growth rate
-                    # num_dividend_growth_rates = 3  # Total number of dividend growth rates
-                    # try:
-                    #      Average_dividend_growth_rate = total_dividend_growth / num_dividend_growth_rates
+               #      # # Calculate the average dividend growth rate
+               #      # num_dividend_growth_rates = 3  # Total number of dividend growth rates
+               #      # try:
+               #      #      Average_dividend_growth_rate = total_dividend_growth / num_dividend_growth_rates
 
-                    # except Exception as e:
-                    #      Average_dividend_growth_rate=0
+               #      # except Exception as e:
+               #      #      Average_dividend_growth_rate=0
                          
-                    #cola,colb = st.columns(2)
-                    #average_input = cola.number_input("Growth rate YOY (%)", value=Average_dividend_growth_rate)
-                    #Dividend_per_share_cagr_10_quarter =cola.number_input("Quarter Dividend per share Cagr 10 (%)", value=Dividend_per_share_cagr_10_quarter)
-                    #Dividend_per_share_cagr_10 = colb.number_input("Annual Dividend per share Cagr 10 (%)", value=Dividend_per_share_cagr_10)
-                    #Growth_rate_dividend = cola[1].number_input("Growth rate (%)", value=0.00)
-                    #WACC = cola[2].number_input("WACC (%)", value=WACC)
+               #      #cola,colb = st.columns(2)
+               #      #average_input = cola.number_input("Growth rate YOY (%)", value=Average_dividend_growth_rate)
+               #      #Dividend_per_share_cagr_10_quarter =cola.number_input("Quarter Dividend per share Cagr 10 (%)", value=Dividend_per_share_cagr_10_quarter)
+               #      #Dividend_per_share_cagr_10 = colb.number_input("Annual Dividend per share Cagr 10 (%)", value=Dividend_per_share_cagr_10)
+               #      #Growth_rate_dividend = cola[1].number_input("Growth rate (%)", value=0.00)
+               #      #WACC = cola[2].number_input("WACC (%)", value=WACC)
 
-                    cola, colb = st.columns(2)
+               #      cola, colb = st.columns(2)
 
-                    cola.write(f"10 YR CAGR Quarter Dividend per share : {Dividend_per_share_cagr_10_quarter} %")
-                    colb.write(f"10 YR CAGR Annual Dividend per share : {Dividend_per_share_cagr_10} %")
+               #      cola.write(f"10 YR CAGR Quarter Dividend per share : {Dividend_per_share_cagr_10_quarter} %")
+               #      colb.write(f"10 YR CAGR Annual Dividend per share : {Dividend_per_share_cagr_10} %")
 
-                    col10,col11 =st.columns(2)
-                    Growth_rate_dividend = float(col10.text_input("Growth Rate %:", value=0.00))
-                    WACC = float(col11.text_input("WACC in (%):", value=f"{WACC:.2f}"))
+               #      col10,col11 =st.columns(2)
+               #      Growth_rate_dividend = float(col10.text_input("Growth Rate %:", value=0.00))
+               #      WACC = float(col11.text_input("WACC in (%):", value=f"{WACC:.2f}"))
 
-                    try: 
-                         intrinsic_value3 = (Dividend15 * 4) * (1 + (Growth_rate_dividend / 100)) / ((WACC / 100) - (Growth_rate_dividend / 100))
+               #      try: 
+               #           intrinsic_value3 = (Dividend15 * 4) * (1 + (Growth_rate_dividend / 100)) / ((WACC / 100) - (Growth_rate_dividend / 100))
 
-                    except Exception as e:
+               #      except Exception as e:
                          
-                         intrinsic_value3 =0
-                    #st.write(intrinsic_value3)
-                    submit_button = st.form_submit_button(label='Calculate')
-                    #try:
-                    #if st.button("Calculate", key="Calculate_DDM"):
+               #           intrinsic_value3 =0
+               #      #st.write(intrinsic_value3)
+               #      submit_button = st.form_submit_button(label='Calculate')
+               #      #try:
+               #      #if st.button("Calculate", key="Calculate_DDM"):
               
-               if submit_button:
+               # if submit_button:
                     
-                    DDM_intrinsic_value3 = intrinsic_value3*usd_to_eur_rate
+               #      DDM_intrinsic_value3 = intrinsic_value3*usd_to_eur_rate
                          
-                    col1,col2 = st.columns(2)
+               #      col1,col2 = st.columns(2)
 
 
-                    if float(converted_amount) < DDM_intrinsic_value3:
-                         font_color = "green"
+               #      if float(converted_amount) < DDM_intrinsic_value3:
+               #           font_color = "green"
 
-                         with col1:
-                              st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
-                         with col2:
-                              st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
-                    else:
-                         font_color = "red"
+               #           with col1:
+               #                st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
+               #           with col2:
+               #                st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
+               #      else:
+               #           font_color = "red"
 
-                         with col1:
-                              st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
-                         with col2:
-                              st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
+               #           with col1:
+               #                st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
+               #           with col2:
+               #                st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
 
-                                   
+     #######################################experiment###############################    
+               @st.experimental_fragment
+               def display_growth_rate_formdiv():              
+                    with st.form(key='growth_rate_form4'):
+                    
+                         # .......................................DDM............................................
+                         Dividend_annual = annual_data['dividends'][-4:]     
+                         Dividend_per_share_quarter = quarterly_data['dividends'][-14:]  
+                         Dividend_growth_quarter = quarterly_data['dividends_per_share_growth'][-14:]
+                         Dividend_current_dividend_growth_ttm=Dividend_current_dividend*4
+
+
+                         cola, colb, colc, cold,col2 = st.columns(5)
+
+                         percentage_increase_1_2 = 0
+                         percentage_increase_2_3 = 0
+                         percentage_increase_3_4 = 0
+                         percentage_increase_4_5 = 0
+
+                         for i in range(len(Dividend_per_share_quarter)):
+                              if i == 0:
+                                   Dividend_quarter1 = Dividend_per_share_quarter[i]
+                                   Dividend11 = cola.text_input("quarterly", value=round(Dividend_quarter1,3),key="unique_keydiv1")
+                              elif i == 12 - 8:
+                                   Dividend_quarter2 = Dividend_per_share_quarter[i]
+                                   Dividend12 = colb.text_input("quarterly", value=Dividend_quarter2,key="unique_keydv2")
+                                   if Dividend_quarter1 != 0:
+                                        percentage_increase_1_2 = ((Dividend_quarter2 - Dividend_quarter1) / Dividend_quarter1) * 100
+                              elif i == 12-4:
+                                   Dividend_quarter3 = Dividend_per_share_quarter[i] 
+                                   Dividend13 = colc.text_input("quarterly", value=Dividend_quarter3,key="unique_keydv3")
+                                   if Dividend_quarter2 != 0:
+                                        percentage_increase_2_3 = ((Dividend_quarter3 - Dividend_quarter2) / Dividend_quarter2) * 100
+                              elif i == 12:
+                                   Dividend_quarter4 = Dividend_per_share_quarter[i] 
+                                   Dividend14 = cold.text_input("quarterly", value=Dividend_quarter4,key="unique_keydv4")
+                                   if Dividend_quarter3 != 0:
+                                        percentage_increase_3_4 = ((Dividend_quarter4 - Dividend_quarter3) / Dividend_quarter3) * 100
+                              elif i == 13:
+                                   Dividend_quarter5 = Dividend_per_share_quarter[i] 
+                                   Dividend15 = float(col2.text_input("current Dividend", value=Dividend_quarter5,key="unique_keydv5"))
+                                   if Dividend_quarter4 != 0:
+                                        percentage_increase_4_5 = ((Dividend_quarter5 - Dividend_quarter4) / Dividend_quarter4) * 100
+
+
+                         #if  Dividend_quarter4 and Dividend_quarter5!=0:  
+                         try:
+                              Growth_rate= round(((Dividend_quarter5- Dividend_quarter4)/Dividend_quarter4)*100,2)
+
+                         except Exception as e:
+                              Growth_rate= 0
+                              
+
+                         cola, colb, colc, cold,col2 = st.columns(5)
+                         # for i in range(len(Dividend_growth_quarter)):
+                         #      if i == 0:
+                         #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
+                         try:
+                              Dividend101 = cola.text_input("Year 4", value=Dividend_quarter1*4, key="unique_key_for_Dividenddv101")
+                         #      elif i == 12-8:
+                         except Exception as e:
+                              Dividend101 =0
+                         #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
+                         try:
+                              Dividend201 = colb.text_input("Year 3", value=Dividend_quarter2*4, key="unique_key_for_Dividenddv201")
+
+                         except Exception as  e:
+                              Dividend201 =0
+                         #      elif i == 12-4:
+                         #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
+                         try:
+                              Dividend301 = colc.text_input("Year 2", value=Dividend_quarter3*4, key="unique_key_for_Dividenddv301")
+                         #      elif i == 12:
+                         except Exception as e:
+                              Dividend301=0
+                         #   
+                         #         Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
+
+                         try:
+                              Dividend401 = cold.text_input("Year 1", value=Dividend_quarter4*4, key="unique_key_for_Dividenddv401")
+                         except Exception as e:
+                              Dividend401 = 0
+
+                         #      elif i == 13:
+                         #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
+                         
+                         try:  
+                              Dividend501 = col2.text_input("Current year", value=Dividend_quarter5*4, key="unique_key_for_Dividenddv501")
+
+                         except Exception as e:
+                         
+                              Dividend501 = 0
+                    
+                    
+
+                         cola, colb, colc, cold,col2 = st.columns(5)
+                         # for i in range(len(Dividend_growth_quarter)):
+                         #      if i == 0:
+                         #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
+                         Dividend1 = cola.text_input("Growth Rate(%)", value=None, key="unique_key_for_Dividenddv1")
+                         #      elif i == 12-8:
+                         #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
+                         Dividend2 = float(colb.text_input("Growth Rate(%)", value=f"{percentage_increase_1_2:.2f}", key="unique_key_for_Dividenddv2"))
+                         #      elif i == 12-4:
+                         #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
+                         Dividend3 = colc.text_input("Growth Rate(%)", value=f"{percentage_increase_2_3:.2f}",key="unique_key_for_Dividenddv3")
+                         #      elif i == 12:
+                         #           Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
+                         Dividend4 = cold.text_input("Growth Rate(%)", value=f"{percentage_increase_3_4:.2f}", key="unique_key_for_Dividenddv4")
+
+                         #      elif i == 13:
+                         #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
+                         Dividend5 = col2.text_input("Growth Rate(%)", value=f"{percentage_increase_4_5:.2f}", key="unique_key_for_Dividenddv5")
+
+                         cola, colb = st.columns(2)
+
+                         cola.write(f"10 YR CAGR Quarter Dividend per share : {Dividend_per_share_cagr_10_quarter} %")
+                         colb.write(f"10 YR CAGR Annual Dividend per share : {Dividend_per_share_cagr_10} %")
+
+                         col10,col11 =st.columns(2)
+                         Growth_rate_dividend = float(col10.text_input("Growth Rate %:", value=0.00))
+                         WACC = 8
+                         WACC = float(col11.text_input("WACC in (%):", value=f"{WACC:.2f}"))
+
+                         try: 
+                              intrinsic_value3 = (Dividend15 * 4) * (1 + (Growth_rate_dividend / 100)) / ((WACC / 100) - (Growth_rate_dividend / 100))
+
+                         except Exception as e:
+                              
+                              intrinsic_value3 =0
+                         #st.write(intrinsic_value3)
+                         submit_button = st.form_submit_button(label='Calculate')
+                         #try:
+                         #if st.button("Calculate", key="Calculate_DDM"):
+               
+                    if submit_button:
+                         
+                         DDM_intrinsic_value3 = intrinsic_value3*usd_to_eur_rate
+                              
+                         col1,col2 = st.columns(2)
+
+
+                         if float(converted_amount) < DDM_intrinsic_value3:
+                              font_color = "green"
+
+                              with col1:
+                                   st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
+                              with col2:
+                                   st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
+                         else:
+                              font_color = "red"
+
+                              with col1:
+                                   st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
+                              with col2:
+                                   st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
+
+
+     # 
+               display_growth_rate_formdiv()
+     # 
+     # 
+     # 
+     # 
+     # 
+     # 
+     # 
+     # 
+     # 
+     # 
+     #                   
                                         
                # else:     
                     #     st.write("")
@@ -13764,8 +14616,59 @@ if selected == "Stock Analysis Tool":
 
 
 
+#  ########################################################################################################################################              
+#                def display_growth_rate_form():
+#                     with st.form(key='growth_rate_form8'):
+#                          Growth_rate_revenue_LOW = st.number_input("Growth Rate Revenue LOW (%)", value=0.00, key="Growth_rate_revenue_LOW67")
+                      
+                         
+#                          submit_button = st.form_submit_button(label='Submit')
+        
+#                     return submit_button, Growth_rate_revenue_LOW
+               
+#                def calculate_intrinsic_value(usd_to_eur_rate,Dividend15,Growth_rate_revenue_LOW, WACC):
+                                          
 
-               # links = quote.outer_news_df[['title', 'link']].head(10)
+#     # Example calculation for intrinsic value
+#                     try:
+#                          intrinsic_value = usd_to_eur_rate*((Dividend15 * 4) * (1 + (Growth_rate_revenue_LOW / 100)) / ((WACC / 100) - (Growth_rate_revenue_LOW / 100)))
+#                          intrinsic_value = f"{intrinsic_value:.2f}"
+#                     except ZeroDivisionError:
+#                          intrinsic_value = 0
+#                     return intrinsic_value
+               
+#                @st.experimental_fragment
+#                def main():
+#                     st.title("Dividend Discount Model")
+
+#     # Display the growth rate form
+#                     submit_button, Growth_rate_revenue_LOW = display_growth_rate_form()
+    
+#                     if submit_button:
+                        
+#                          # Example WACC for calculation
+#                          intrinsic_value = calculate_intrinsic_value(usd_to_eur_rate,Dividend15, Growth_rate_revenue_LOW, WACC) 
+
+#                          col1, col2 = st.columns(2)                      
+#                          if float(converted_amount) < float(intrinsic_value):
+#                               font_color = "green"
+#                          else:
+#                               font_color = "red"
+
+#                          with col1:
+#                               st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
+#                          with col2:
+#                               st.write(f"Fair Value:    <span style='color:{font_color}'>{intrinsic_value} €</span>", unsafe_allow_html=True)
+
+#                          #st.write("intrinsic_value",WACC)
+                         
+
+#                if __name__ == "__main__":
+#                     main()
+
+
+
+#                # links = quote.outer_news_df[['title', 'link']].head(10)
 
                # # Display the headlines and links
                # for i, row in links.iterrows():
@@ -13905,7 +14808,17 @@ if selected == "Stock Analysis Tool":
 
 # Apply the CSS styles using st.markdown
 #st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
+disclaimer = """
+          The information provided on this website is intended for informational purposes only and does not constitute financial advice, investment recommendations, or a solicitation to buy or sell any securities. The content and data presented on this website are not tailored to your specific investment goals, financial situation, or risk tolerance. You should always consult with a qualified financial advisor before making investment decisions.
+          """
+          # The stock and financial data provided on this website may be delayed, inaccurate, or subject to errors. We make no representations or warranties about the accuracy, completeness, or reliability of the information presented. Any reliance you place on such information is strictly at your own risk.
+          # Past performance is not indicative of future results. Investments in stocks, securities, and financial instruments involve risks, including the loss of your invested capital. Market conditions can change rapidly, and investment values can fluctuate.
+          # This website may contain links to third-party websites or content. We do not endorse or control the content of these external sites and are not responsible for their accuracy, legality, or availability.
+          # We are not licensed financial advisors, and the content provided on this website should not be construed as professional financial advice. You are solely responsible for evaluating the suitability of any investment decisions based on your individual circumstances and objectives.
+          # By using this website, you agree to hold us harmless from any and all claims, losses, liabilities, or damages resulting from your reliance on the information presented herein. We reserve the right to modify or discontinue the content and services offered on this website at any time.
+          # Please consult with a qualified financial professional and conduct your own research before making any investment decisions. We encourage you to review the terms of use and privacy policy of this website for more information about your use of this site.
+          # For specific legal, tax, and financial advice, you should contact your own attorney, accountant, or other professional advisors..
+#
 
           
 
