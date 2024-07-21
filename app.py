@@ -7477,10 +7477,15 @@ if selected == "Stock Analysis Tool":
 
           return current_price 
 
-     current_price = get_current_price()    
+     current_price = get_current_price()  
+
+
+
      @st.cache_data
      def format_date(date):
           return date.strftime('%Y/%m/%d')
+     
+
      @st.cache_data
      def get_all_time_high_and_low_price(ticker):
           data = stock_info.history(period="max", actions=False)  # Exclude dividend data
@@ -11814,7 +11819,7 @@ if selected == "Stock Analysis Tool":
  
 
 ################################ Experiment ##################################################################
-                                       
+              # @st.cache_data                     
                @st.experimental_fragment
                def display_growth_rate_formexer():
                          
@@ -12518,6 +12523,7 @@ if selected == "Stock Analysis Tool":
 
 
 ################################experiment2########
+               #@st.cache_data
                @st.experimental_fragment
                def display_growth_rate_form():
                     with st.form(key='growth_rate_form31'):
@@ -13127,7 +13133,8 @@ if selected == "Stock Analysis Tool":
                #           with col2:
                #                st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
 
-     #######################################experiment###############################    
+     #######################################experiment###############################  
+               #  
                @st.experimental_fragment
                def display_growth_rate_formdiv():              
                     with st.form(key='growth_rate_form4'):
@@ -13273,16 +13280,16 @@ if selected == "Stock Analysis Tool":
                               font_color = "green"
 
                               with col1:
-                                   st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
+                                   st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
                               with col2:
-                                   st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
+                                   st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True)
                          else:
                               font_color = "red"
 
                               with col1:
-                                   st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True,use_container_width=True)
+                                   st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
                               with col2:
-                                   st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
+                                   st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True)
 
 
      # 
