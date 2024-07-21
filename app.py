@@ -51,9 +51,46 @@ from pyfinviz.quote import Quote
 from stocknews import StockNews
 from streamlit_option_menu import option_menu
 #from callbacks import supports_callbacks
-
-
 st.set_page_config(page_title="verstehdieaktie", page_icon = "📚", layout="wide")
+
+
+# Set the theme
+# Apply theme via CSS
+st.markdown(
+    """
+    <style>
+    /* Set the primary color and secondary background color */
+    .stApp {
+       
+        font-family: serif;
+    }
+    .stButton>button {
+        background-color: #0a0201;
+        color: white;
+    }
+    .stButton>button:hover {
+        background-color: #4b71ff;
+        color: white;
+    }
+    .stTextInput>div>div>input {
+        border: 1px solid #ffffff;
+        background-color: #ffffff;
+    }
+    .stTextArea>div>div>textarea {
+        border: 1px solid #ffffff;
+        background-color: #ffffff;
+    }
+    .stSelectbox>div>div>div {
+        border: 1px solid #ffffff;
+    }
+    .stSelectbox>div>div>select {
+        border: 1px solid #ffffff;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
+
 
 
 
