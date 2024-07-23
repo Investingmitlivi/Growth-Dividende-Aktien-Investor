@@ -14585,24 +14585,28 @@ if selected == "Stock Analysis Tool":
                #st.write("FCF Projection")
                #st.image('fcf estimate.png', use_column_width=True)
 
-               st.write("DCF Calculation")
-               st.image('DCF Update.png', use_column_width=True)
+               #st.write("DCF Calculation")
+               st.image('DCF Update.png', caption = 'DCF Calculation' ,use_column_width=True)
 
-               st.write("Terminal Value")
-               st.image('Terminal-Value.png', use_column_width=True)
+               #st.write("Terminal Value")
+               st.image('Terminal-Value.png', caption = 'Terminal Value' , use_column_width=True)
 
-               st.write("Multiple of Earnings Valuation")
-               st.image('Multiples of Earnings.png', use_column_width=True)
+               #st.write("Multiple of Earnings Valuation")
+               st.image('Multiples of Earnings.png', caption = "Multiple of Earnings Valuation", use_column_width=True)
 
-               st.write("Net Present Value")
-               st.image('NPV.png', use_column_width=True)
+               #st.write("Net Present Value")
+               #st.image('NPV.png', caption = '**Net Present Value**', use_column_width=True)
+               #st.markdown("**Net Present Value**")
 
-               st.write("Dividend Discount Model")
-               st.write("Das Modell basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden")
-               st.image('DDM.png', use_column_width=True) 
+               st.image('NPV.png', caption='Net Present Value', use_column_width=True)
 
-               st.write("CAGR")
-               st.image('CAGR.png', use_column_width=True) 
+
+               #st.write("Dividend Discount Model")
+               #st.write("Das Modell basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden")
+               st.image('DDM.png', caption='Das Dividend Discount Model basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden',use_column_width=True) 
+
+               #st.write("CAGR")
+               st.image('CAGR.png',caption='CAGR', use_column_width=True) 
 
                
 
