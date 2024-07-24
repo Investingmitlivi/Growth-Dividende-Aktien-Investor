@@ -12616,6 +12616,7 @@ if selected == "Stock Analysis Tool":
                     #with col2:
                               My_assumption = int(st.text_input("My Assumptions in Years:", value=int(10), key="My_assumption12"))
 
+
                          
                     
                          col1,col2,col3,col4,col5,col6 = st.columns(6)
@@ -14597,7 +14598,7 @@ if selected == "Stock Analysis Tool":
                #st.write("Net Present Value")
                #st.image('NPV.png', caption = '**Net Present Value**', use_column_width=True)
                #st.markdown("**Net Present Value**")
-
+               
                st.image('NPV.png', caption='Net Present Value', use_column_width=True)
 
 
