@@ -56,36 +56,40 @@ st.set_page_config(page_title="verstehdieaktie", page_icon = "📚", layout="wid
 
 # Set the theme
 # Apply theme via CSS
-st.markdown(
-    """
+st.markdown("""
     <style>
-    /* Set the primary color and secondary background color */
-    .stApp {
-       
-        font-family: serif;
-    }
-    .stButton>button {
-        background-color: #0a0201;
-        color: white;
-    }
-    .stButton>button:hover {
-        background-color: #4b71ff;
-        color: white;
-    }
-    .stTextInput>div>div>input {
-        border: 1px solid #ffffff;
-        background-color: #ffffff;
-    }
-    .stTextArea>div>div>textarea {
-        border: 1px solid #ffffff;
-        background-color: #ffffff;
-    }
-    .stSelectbox>div>div>div {
-        border: 1px solid #ffffff;
-    }
-    .stSelectbox>div>div>select {
-        border: 1px solid #ffffff;
-    }
+        /* Set the primary color and secondary background color */
+        .stApp {
+            font-family: serif;
+            color: black;  /* Set default text color to black */
+        }
+        .stButton>button {
+            background-color: #0a0201;
+            color: white;
+        }
+        .stButton>button:hover {
+            background-color: #4b71ff;
+            color: white;
+        }
+        .stTextInput>div>div>input {
+            border: 1px solid #ffffff;
+            background-color: #ffffff;
+            color: black;  /* Set text input font color to black */
+        }
+        .stTextArea>div>div>textarea {
+            border: 1px solid #ffffff;
+            background-color: #ffffff;
+            color: black;  /* Set text area font color to black */
+        }
+        .stSelectbox>div>div>div {
+            border: 1px solid #ffffff;
+        }
+        .stSelectbox>div>div>select {
+            border: 1px solid #ffffff;
+        }
+        .stMarkdown>div {
+            color: black;  /* Set Markdown text color to black */
+        }
     </style>
     """, unsafe_allow_html=True
 )
@@ -7157,6 +7161,14 @@ if selected == "Home":
           st.write("[Getquin >](https://getqu.in/xFbQ9n/YqUbcT/)")
           st.write("[open a free current account: N26>](https://n26.com/r/livinuso3606)")
           st.write("[Investing in P2P loans Bondora >](https://bondora.com/ref/livinusc)")
+
+          st.write(
+          """
+          Track Super Investor portfolio like Warren Buffet, Ruane Cunniff, B.Tweedy, Ch. Browne
+           """
+          )
+          st.write("[Superinvestor Portfolios >](https://valuesider.com/)")
+          
           #st.write("---")
 
 #finnhub_client = finnhub.Client(api_key="ckse5rhr01qjpllh316gckse5rhr01qjpllh3170")
@@ -12734,9 +12746,11 @@ if selected == "Stock Analysis Tool":
 
                
                          Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0.00,key="Growth_rate_revenue_LOW22"))
+                         if Growth_rate_revenue_LOW == 0.00:
+                              Growth_rate_revenue_LOW = 0.00
                          Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0.00,key="Growth_rate_revenue_middle22"))
                          Growth_rate_revenue_high = float(colr11.text_input(" ", value=0.00,key="Growth_rate_revenue_high22"))
-
+                         
                          Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0.00,key="Growth_rate_net_profit_LOW23"))
                          Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0.00,key="Growth_rate__net_profit_middle23"))
                          Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0.00,key="Growth_rate__net_profit_high23"))
