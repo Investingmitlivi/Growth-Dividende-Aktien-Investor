@@ -8729,44 +8729,111 @@ if selected == "Stock Analysis Tool":
                     
 
                                              #------------------------------------------------------------------
+
                try:
                     Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
+               except KeyError:
+                    Accounts_payable_quarter = [0] * 10
+
+               try:
                     Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
+               except KeyError:
+                    Current_accrued_liab_quarter = [0] * 10
+
+               try:
                     Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
+               except KeyError:
+                    Tax_payable_quarter = [0] * 10
+
+               try:
                     Other_current_liabilities_quarter = quarterly_data['other_current_liabilities'][-10:]
+               except KeyError:
+                    Other_current_liabilities_quarter = [0] * 10
+
+               try:
                     Current_deferred_revenue_quarter = quarterly_data['current_deferred_revenue'][-10:]
-                    Total_current_liabilities_quarter = quarterly_data['total_current_liabilities'][-10:] 
+               except KeyError:
+                    Current_deferred_revenue_quarter = [0] * 10
 
+               try:
+                    Total_current_liabilities_quarter = quarterly_data['total_current_liabilities'][-10:]
+               except KeyError:
+                    Total_current_liabilities_quarter = [0] * 10
+
+               try:
                     Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
+               except KeyError:
+                    Short_term_debt_quarter = [0] * 10
+
+               try:
                     current_portion_of_lease_obligation = quarterly_data['current_capital_leases'][-10:]
+               except KeyError:
+                    current_portion_of_lease_obligation = [0] * 10
+
+               try:
                     capital_leases = quarterly_data['noncurrent_capital_leases'][-10:]
+               except KeyError:
+                    capital_leases = [0] * 10
+
+               try:
                     LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
-                                                  #Total_debt_quarter = quarterly_data[''][-10:]
+               except KeyError:
+                    LongTerm_debt_quarter = [0] * 10
+
+               try:
                     Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
+               except KeyError:
+                    Other_longterm_liabilities_quarter = [0] * 10
+
+               try:
                     Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
-                                                  #Total_Sharehold_equity_quarter = quarterly_data[''][-10:]
+               except KeyError:
+                    Total_liabilities_quarter = [0] * 10
+
+               try:
                     Total_Equity_quarter = quarterly_data['total_equity'][-10:]
+               except KeyError:
+                    Total_Equity_quarter = [0] * 10
 
-                    st_investments_annual =quarterly_data['st_investments'][-1:]
-                    st_investments_annual = round((sum(st_investments_annual) / len(st_investments_annual)) / 1000000000, 3)
+               try:
+                    st_investments_annual = quarterly_data['st_investments'][-1:]
+               except KeyError:
+                    st_investments_annual = [0]
 
-                    gross_margin =quarterly_data['gross_margin'][-1:]
-                    average_gross_margin = round((sum(gross_margin) / len(gross_margin))*100, 2)
-                    #gross_margin_ttm =gross_margin_ttm
-                    rounded_gross_margin = "{:.2f}%".format(average_gross_margin)
+                    
+               st_investments_annual = round((sum(st_investments_annual) / len(st_investments_annual)) / 1000000000, 3)
 
-                    five_yrs_average_gross_margin =annual_data['gross_margin'][-5:]
-                    five_yrs_average_gross_margin = round((sum(five_yrs_average_gross_margin) / len(five_yrs_average_gross_margin))*100, 2)
-                    #gross_margin_ttm =gross_margin_ttm
-                    five_yrs_average_gross_margin = "{:.2f}%".format(five_yrs_average_gross_margin)
+               try:
+                    gross_margin = quarterly_data['gross_margin'][-1:]
+               except KeyError:
+                    gross_margin = [0]
 
-                    operating_margin =annual_data['operating_margin'][-1:]
-                    average_operating_margin = round((sum(operating_margin) / len(operating_margin))*100, 2)
-                    rounded_operating_margin = "{:.2f}%".format(average_operating_margin)
+               average_gross_margin = round((sum(gross_margin) / len(gross_margin)) * 100, 2)
+               rounded_gross_margin = "{:.2f}%".format(average_gross_margin)
 
-                    operating_margin_five =annual_data['operating_margin'][-5:]
-                    average_operating_margin_five = round((sum(operating_margin_five) / len(operating_margin_five))*100, 2)
-                    rounded_operating_margin_five = "{:.2f}%".format(average_operating_margin_five)
+               try:
+                    five_yrs_average_gross_margin = annual_data['gross_margin'][-5:]
+               except KeyError:
+                    five_yrs_average_gross_margin = [0] * 5
+
+               five_yrs_average_gross_margin = round((sum(five_yrs_average_gross_margin) / len(five_yrs_average_gross_margin)) * 100, 2)
+               five_yrs_average_gross_margin = "{:.2f}%".format(five_yrs_average_gross_margin)
+
+               try:
+                    operating_margin = annual_data['operating_margin'][-1:]
+               except KeyError:
+                    operating_margin = [0]
+
+               average_operating_margin = round((sum(operating_margin) / len(operating_margin)) * 100, 2)
+               rounded_operating_margin = "{:.2f}%".format(average_operating_margin)
+
+               try:
+                    operating_margin_five = annual_data['operating_margin'][-5:]
+               except KeyError:
+                    operating_margin_five = [0] * 5
+
+               average_operating_margin_five = round((sum(operating_margin_five) / len(operating_margin_five)) * 100, 2)
+               rounded_operating_margin_five = "{:.2f}%".format(average_operating_margin_five)
 
                     #Total_Equity_ttm =Financial_data['ttm']['total_equity']/1000000000
                     #P_B_ttm =Marketcap/Total_Equity_ttm
@@ -8774,13 +8841,13 @@ if selected == "Stock Analysis Tool":
                     
                #cash_equiv_annual =float(cash_equiv_annual[9])
 
-                    Total_cash_last_years = round((st_investments_annual+cash_equiv_quarter),3)
+               Total_cash_last_years = round((st_investments_annual+cash_equiv_quarter),3)
                                                   #Liabili_shareholders_Equity_quarter = quarterly_data[''][-10:]
                                                   #Nopat_quarter= quarterly_data['nopat'][-10:]
 
 
-                    index = range(len(date_quarter))
-                    df = pd.DataFrame({
+               index = range(len(date_quarter))
+               df = pd.DataFrame({
                          'period_end_date': date_quarter,
                          'accounts_payable': Accounts_payable_quarter,
                          'current_accrued_liabilities': Current_accrued_liab_quarter,
@@ -8792,77 +8859,77 @@ if selected == "Stock Analysis Tool":
                          'noncurrent_capital_leases': capital_leases,
                          'lt_debt': LongTerm_debt_quarter}, index=index)
                                                   
-                    df['Total Difference'] = df['total_current_liabilities'] - \
+               df['Total Difference'] = df['total_current_liabilities'] - \
                                              (df['accounts_payable'] + df['current_accrued_liabilities'] + df['tax_payable'] +
                                              df['other_current_liabilities'] + df['current_deferred_revenue'])
                                                   
-                    df['Total add'] =df['noncurrent_capital_leases']+df['lt_debt']
+               df['Total add'] =df['noncurrent_capital_leases']+df['lt_debt']
 
-                    df['Total Debt'] =df['Total Difference']+df['Total add'] 
+               df['Total Debt'] =df['Total Difference']+df['Total add'] 
                                                   
-                    total = df.T
-                    total.columns = total.iloc[0]  # Use the first row as column names
-                    total = total[1:]
-                    total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
+               total = df.T
+               total.columns = total.iloc[0]  # Use the first row as column names
+               total = total[1:]
+               total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
                                                   
                     #print("total",total)
 
                     
 
-                    total_debt_column = df['Total Debt']
-                    last_value_total_debt = total_debt_column.iloc[-1]
+               total_debt_column = df['Total Debt']
+               last_value_total_debt = total_debt_column.iloc[-1]
 
-                    Total_Debt_from_all_calc = last_value_total_debt/ 1000000000
+               Total_Debt_from_all_calc = last_value_total_debt/ 1000000000
                
 
 
-               except Exception as e:    #if "Consumer Finance" in Industry or "Banks" in Industry or "Insurance" in Industry or "Health Care Providers & Services" in Industry:
-                    Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
-                    LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
+               # except Exception as e:    #if "Consumer Finance" in Industry or "Banks" in Industry or "Insurance" in Industry or "Health Care Providers & Services" in Industry:
+               #      Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
+               #      LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
 
-                    index = range(len(date_quarter))
-                    df = pd.DataFrame({
-                         'period_end_date': date_quarter,
-                         'lt_debt': LongTerm_debt_quarter,
-                         'st_debt':Short_term_debt_quarter }, index=index)
+               #      index = range(len(date_quarter))
+               #      df = pd.DataFrame({
+               #           'period_end_date': date_quarter,
+               #           'lt_debt': LongTerm_debt_quarter,
+               #           'st_debt':Short_term_debt_quarter }, index=index)
 
-                    df['Total Debt'] =df['lt_debt']+df['st_debt'] 
+               #      df['Total Debt'] =df['lt_debt']+df['st_debt'] 
                                                   
-                    total = df.T
-                    total.columns = total.iloc[0]  # Use the first row as column names
-                    total = total[1:]
-                    total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
+               #      total = df.T
+               #      total.columns = total.iloc[0]  # Use the first row as column names
+               #      total = total[1:]
+               #      total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
                                                   
-                    #print("total",total)
+               #      #print("total",total)
 
                     
 
-                    total_debt_column = df['Total Debt']
-                    last_value_total_debt = total_debt_column.iloc[-1]
+               #      total_debt_column = df['Total Debt']
+               #      last_value_total_debt = total_debt_column.iloc[-1]
 
-                    #if Total_Debt_from_finviz >0:
-                    #     last_value_total_debt=Total_Debt_from_finviz
-                    #else:
-                    #    last_value_total_debt=last_value_total_debt
+               #      #if Total_Debt_from_finviz >0:
+               #      #     last_value_total_debt=Total_Debt_from_finviz
+               #      #else:
+               #      #    last_value_total_debt=last_value_total_debt
                          
-                    #.write("total debt",last_value_total_debt)
-                    Total_Debt_from_all_calc = last_value_total_debt/ 1000000000
-                    Total_cash_last_years = round((cash_equiv_quarter),3)
-                    rounded_gross_margin="-"
-                    five_yrs_average_gross_margin="-"
-                    rounded_operating_margin="-"
-                    rounded_operating_margin_five="-"
-                    #P_B_ttm ="NA"
+               #      #.write("total debt",last_value_total_debt)
+               #      Total_Debt_from_all_calc = last_value_total_debt/ 1000000000
+               #      Total_cash_last_years = round((cash_equiv_quarter),3)
+               #      rounded_gross_margin="-"
+               #      five_yrs_average_gross_margin="-"
+               #      rounded_operating_margin="-"
+               #      rounded_operating_margin_five="-"
+               #      #P_B_ttm ="NA"
 
 
-
+               #print(Total_Debt_from_all_calc)
 
 
 
                #print("Total_Debt_from_all_calc", Total_Debt_from_all_calc)
                
           # Total_DEbt_in_billion = "{:.2f}B".format(df.loc[9, 'Total Debt'] / 1000000000) if df.loc[9, 'Total Debt'] >= 1000000000 else "{:,.0f}M".format(df.loc[9, 'Total Debt'] / 1000000)
-               Total_DEbt_in_billion = "{:.2f}B".format(last_value_total_debt/ 1000000000) if abs(last_value_total_debt)>= 1000000000 else "{:,.0f}M".format(last_value_total_debt / 1000000)
+               Total_DEbt_in_billion = "{:.2f}B".format(Total_Debt_from_all_calc/ 1000000000) if abs(Total_Debt_from_all_calc)>= 1000000000 else "{:,.0f}M".format(Total_Debt_from_all_calc / 1000000)
                #print("Last value from Total Debt column:", Total_DEbt_in_billion)
                #Total_Debt_from_all_calc=32.22
                Enterprise_value = "{:.2f}".format((Marketcap)+Total_Debt_from_all_calc-Total_cash_last_years)
@@ -11161,7 +11228,7 @@ if selected == "Stock Analysis Tool":
                     """
                     <div style="width: 100%;">
                     
-                    **Earnings Multiples** | **Value** | **Change**
+                    **Earnings Multiples** | **Value** | **Change** 
                     --- | --- | ---
                     5 YR P/E < 23 | **{KGV}** | {pe}
                     5 YR P/FCF < 23 | **{KCV}** | {pcf}
@@ -11236,6 +11303,8 @@ if selected == "Stock Analysis Tool":
                          Shares_outstanding_funf_growth=Shares_outstanding_funf_growth, share=share
                     ),unsafe_allow_html=True
                     )
+
+               
           # 
                #col10.metric("Net Income Growth 5 YR",f"{netincome_annual_funf_growth_:.2f}%", netincome)
                                                                                 
@@ -12596,8 +12665,11 @@ if selected == "Stock Analysis Tool":
 
 ################################experiment2########
                #@st.cache_data
+              
                @st.experimental_fragment
                def display_growth_rate_form():
+                    
+
                     with st.form(key='growth_rate_form31'):
                     #load = st.button ('')
 
@@ -14678,7 +14750,7 @@ if selected == "Stock Analysis Tool":
 
 
 
-          
+     
           
                               
 
@@ -14699,6 +14771,172 @@ if selected == "Stock Analysis Tool":
                
                     st.error("No news available for this stock:")
                yf.pdr_override()  # Clear the cached data
+
+
+               # current_capital_leases = quarterly_data['current_capital_leases'][-2:]
+               # lt_debt = quarterly_data['lt_debt'][-2:]
+               # noncurrent_capital_leases = quarterly_data['noncurrent_capital_leases'][-2:]
+               # pension_liabilities = quarterly_data['pension_liabilities'][-2:]
+               # current_deferred_tax_liability = quarterly_data['current_deferred_tax_liability'][-6:]
+               # tax_payable = quarterly_data['tax_payable'][-2:]
+               # accounts_payable = quarterly_data['accounts_payable'][-2:]
+
+
+               # print("current_capital_leases",current_capital_leases)
+               # print("lt_debt",lt_debt)
+               # print("noncurrent_capital_leases",noncurrent_capital_leases)
+               # print("pension_liabilities",noncurrent_capital_leases)
+               # print("current_deferred_tax_liability",current_deferred_tax_liability)
+               # print("tax_payable",tax_payable)
+               # print("accounts_payable",accounts_payable)
+
+
+
+
+               try:
+                    Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
+               except KeyError:
+                    Accounts_payable_quarter = [0] * 10
+
+               try:
+                    Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
+               except KeyError:
+                    Current_accrued_liab_quarter = [0] * 10
+
+               try:
+                    Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
+               except KeyError:
+                    Tax_payable_quarter = [0] * 10
+
+               try:
+                    Other_current_liabilities_quarter = quarterly_data['other_current_liabilities'][-10:]
+               except KeyError:
+                    Other_current_liabilities_quarter = [0] * 10
+
+               try:
+                    Current_deferred_revenue_quarter = quarterly_data['current_deferred_revenue'][-10:]
+               except KeyError:
+                    Current_deferred_revenue_quarter = [0] * 10
+
+               try:
+                    Total_current_liabilities_quarter = quarterly_data['total_current_liabilities'][-10:]
+               except KeyError:
+                    Total_current_liabilities_quarter = [0] * 10
+
+               try:
+                    Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
+               except KeyError:
+                    Short_term_debt_quarter = [0] * 10
+
+               try:
+                    current_portion_of_lease_obligation = quarterly_data['current_capital_leases'][-10:]
+               except KeyError:
+                    current_portion_of_lease_obligation = [0] * 10
+
+               try:
+                    capital_leases = quarterly_data['noncurrent_capital_leases'][-10:]
+               except KeyError:
+                    capital_leases = [0] * 10
+
+               try:
+                    LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
+               except KeyError:
+                    LongTerm_debt_quarter = [0] * 10
+
+               try:
+                    Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
+               except KeyError:
+                    Other_longterm_liabilities_quarter = [0] * 10
+
+               try:
+                    Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
+               except KeyError:
+                    Total_liabilities_quarter = [0] * 10
+
+               try:
+                    Total_Equity_quarter = quarterly_data['total_equity'][-10:]
+               except KeyError:
+                    Total_Equity_quarter = [0] * 10
+
+               try:
+                    st_investments_annual = quarterly_data['st_investments'][-1:]
+               except KeyError:
+                    st_investments_annual = [0]
+
+                    
+               st_investments_annual = round((sum(st_investments_annual) / len(st_investments_annual)) / 1000000000, 3)
+
+               try:
+                    gross_margin = quarterly_data['gross_margin'][-1:]
+               except KeyError:
+                    gross_margin = [0]
+
+               average_gross_margin = round((sum(gross_margin) / len(gross_margin)) * 100, 2)
+               rounded_gross_margin = "{:.2f}%".format(average_gross_margin)
+
+               try:
+                    five_yrs_average_gross_margin = annual_data['gross_margin'][-5:]
+               except KeyError:
+                    five_yrs_average_gross_margin = [0] * 5
+
+               five_yrs_average_gross_margin = round((sum(five_yrs_average_gross_margin) / len(five_yrs_average_gross_margin)) * 100, 2)
+               five_yrs_average_gross_margin = "{:.2f}%".format(five_yrs_average_gross_margin)
+
+               try:
+                    operating_margin = annual_data['operating_margin'][-1:]
+               except KeyError:
+                    operating_margin = [0]
+
+               average_operating_margin = round((sum(operating_margin) / len(operating_margin)) * 100, 2)
+               rounded_operating_margin = "{:.2f}%".format(average_operating_margin)
+
+               try:
+                    operating_margin_five = annual_data['operating_margin'][-5:]
+               except KeyError:
+                    operating_margin_five = [0] * 5
+
+               average_operating_margin_five = round((sum(operating_margin_five) / len(operating_margin_five)) * 100, 2)
+               rounded_operating_margin_five = "{:.2f}%".format(average_operating_margin_five)
+
+               # Total_cash_last_years is commented out due to missing cash_equiv_quarter
+               # Total_cash_last_years = round((st_investments_annual + cash_equiv_quarter), 3)
+
+               index = range(len(date_quarter))
+               df = pd.DataFrame({
+               'period_end_date': date_quarter,
+               'accounts_payable': Accounts_payable_quarter,
+               'current_accrued_liabilities': Current_accrued_liab_quarter,
+               'tax_payable': Tax_payable_quarter,
+               'other_current_liabilities': Other_current_liabilities_quarter,
+               'current_deferred_revenue': Current_deferred_revenue_quarter,
+               'total_current_liabilities': Total_current_liabilities_quarter,
+               'noncurrent_capital_leases': capital_leases,
+               'lt_debt': LongTerm_debt_quarter
+               }, index=index)
+
+               df['Total Difference'] = df['total_current_liabilities'] - \
+                                        (df['accounts_payable'] + df['current_accrued_liabilities'] + df['tax_payable'] +
+                                        df['other_current_liabilities'] + df['current_deferred_revenue'])
+
+               df['Total add'] = df['noncurrent_capital_leases'] + df['lt_debt']
+
+               df['Total Debt'] = df['Total Difference'] + df['Total add']
+
+               total = df.T
+               total.columns = total.iloc[0]  # Use the first row as column names
+               total = total[1:]
+               total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
+
+               total_debt_column = df['Total Debt']
+               last_value_total_debt = total_debt_column.iloc[-1]
+
+               Total_Debt_from_all_calc = last_value_total_debt / 1000000000
+
+               print("Total_Debt_from_all_calc",Total_Debt_from_all_calc)
+                              
+
+
+              
 
 
 
