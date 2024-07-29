@@ -7996,10 +7996,8 @@ if selected == "Stock Analysis Tool":
 
 
 
-     #Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,EPS_Valuation,Dividend_Discount_Model,Key_ratios,Charts,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","EPS Valuation","Dividend Discount Model","Key Ratios","Charts","Calculator","Top 10 News"])
-
      Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,Dividend_Discount_Model,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","Dividend Discount Model","Charts","Key Ratios","Calculator","Top 10 News"])
-
+     
           #st.header('Price / Total return')
 
 
@@ -8014,6 +8012,7 @@ if selected == "Stock Analysis Tool":
      #..........................................................
 
      with st.container():
+          use_container_width=True
           with Metric:  
      
 
@@ -9252,6 +9251,7 @@ if selected == "Stock Analysis Tool":
           #.............................................................
      # Assuming revenue_list and gross_profit_list are extracted from the API response
      with st.container():
+          use_container_width=True
           with Financials:
                Income_Statement, Balance_Sheet, Cash_Flow = st.tabs(["Income Statement", "Balance Sheet", "Cash Flow"])
 
@@ -10885,6 +10885,7 @@ if selected == "Stock Analysis Tool":
           # Apply custom CSS style to control the width of the content
           #pillar_analysis_style = f"width: {pillar_analysis_width * 100}%;"
      with st.container():
+          use_container_width=True
           with Pillar_Analysis: 
                #st.markdown("### Pillar Analysis", unsafe_allow_html=True)
 
@@ -12330,6 +12331,7 @@ if selected == "Stock Analysis Tool":
                          else:
                               font_color = "red"
                               #col17.write(f"{average_Middle_multiple_value:.2f} €")
+                         
                          col17.write(f"<span style='color:{font_color}'>{average_Middle_multiple_value:.2f} €</span>", unsafe_allow_html=True)
                               #col18.write(f"{average_sum_both2:.2f} €")
                               
@@ -12380,6 +12382,7 @@ if selected == "Stock Analysis Tool":
 
 
      with st.container():
+          use_container_width=True
           with Multiple_Valuation:
           #      with st.form(key='growth_rate_form'):
           #           #load = st.button ('')
@@ -12803,12 +12806,18 @@ if selected == "Stock Analysis Tool":
                          col1.write('')               
                          col2.write('')
                          #colx.write('')
-                         colx.write(f"<div style='background-color:#333333;padding: 10px; border-radius: 5px; color: white;'>Desired Rate of Return: <br> <br>  {''}</div>", unsafe_allow_html=True)
+                         colx.write(f"<div style='background-color:#333333;padding: 10px; border-radius: 5px; color: white;'>Desired Rate of Return: <br><br>{''}</div>", unsafe_allow_html=True)
 
                          #col1,col2,colx= st.columns(3)
                          #col1.write('')               
                          #col2.write('')
+                         st.write("")
+                         colx.write('')
                          colx.write(f"Multiple of Earnings Valuation:")
+                         #colx.write('')
+                         #colx.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Multiple of Earnings Valuation: <br> {''}</div>", unsafe_allow_html=True)
+
+                        
 
 
 
@@ -13087,7 +13096,8 @@ if selected == "Stock Analysis Tool":
                
 
 
-     with st.container():              
+     with st.container(): 
+          use_container_width=True             
           with Dividend_Discount_Model:
                
                # with st.form(key='growth_rate_form3'):
@@ -13492,7 +13502,8 @@ if selected == "Stock Analysis Tool":
                          #print("Market cap:",Marketcap)  
                          #print("shares Outstanding:",Average_shares_basic_annual_one)
                          #st.write("Total_cash_last_years",Average_eps_basic_annual_five)
-     with st.container():              
+     with st.container(): 
+          use_container_width=True             
           with Key_ratios:
                Annual, Quarter = st.tabs(["Annual", "Quarterly"])
 
@@ -13756,6 +13767,7 @@ if selected == "Stock Analysis Tool":
 
 
      with st.container():
+          use_container_width=True
           with Charts:
                     Annual, Quarter = st.tabs(["Annual", "Quarterly"])
                     with Annual:
@@ -14204,7 +14216,7 @@ if selected == "Stock Analysis Tool":
                               <b>5 YR ROIC Y/Y: {Average_ROIC_funf}</b>
                               <b> Current ROIC: {ROIC_annual_one}</b><br>
                               <span style='font-family: Calibri; font-style: italic;'>
-                              Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.
+                              Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.<br>(Investiertes Kapital = Summe von Eigenkapital und Fremdkapital)
                               </span>
                                    """, unsafe_allow_html=True)
 
@@ -14212,8 +14224,11 @@ if selected == "Stock Analysis Tool":
 
                          with col2:
                               st.write(f"""
-                              <b>5 YR ROE Y/Y: {five_ROE}%    Current ROE: {ROE_ttm}
-                              """, unsafe_allow_html=True)
+                              <b>5 YR ROE Y/Y: {five_ROE}% Current ROE: {ROE_ttm}</b>   
+                              <span style='font-family: Calibri; font-style: italic;'>
+                              Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.<br>(Investiertes Kapital = Eigenkapital)
+                              </span>
+                                   """, unsafe_allow_html=True)
                               st.plotly_chart(fig2,use_container_width=True,config=config)
      #-------------------------------------------------------------------------------------------------
                          try:
@@ -14653,6 +14668,7 @@ if selected == "Stock Analysis Tool":
 
 
      with st.container():
+          use_container_width=True
           with Retirement_Calculator:
 
 
@@ -14755,6 +14771,7 @@ if selected == "Stock Analysis Tool":
                               
 
      with st.container():
+          use_container_width=True
           with news:
                try:
                     news = stock_info.news[:10]  # Get the top ten news articles
