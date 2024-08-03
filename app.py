@@ -16,6 +16,7 @@ import plotly.graph_objects as go
 #import hashlib
 import time
 import firebase_admin
+import os
 #import math
 #import textwrap
 #import sklearn
@@ -51,6 +52,14 @@ from pyfinviz.quote import Quote
 from stocknews import StockNews
 from streamlit_option_menu import option_menu
 #from callbacks import supports_callbacks
+from dotenv import load_dotenv
+
+def configure():
+     load_dotenv()
+
+    
+configure()
+
 st.set_page_config(page_title="verstehdieaktie", page_icon = "📚", layout="wide")
 
 
@@ -7364,8 +7373,11 @@ if selected == "Stock Analysis Tool":
      </style>
      """, unsafe_allow_html=True)
 
-     ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()}     
-     selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')    
+     ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
+
+     col1, col2 = st.columns(2)
+     with col1:    
+          selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')    
 
 
 
@@ -7386,12 +7398,13 @@ if selected == "Stock Analysis Tool":
      header = {'x-qfs-api-key': api_key}
 
      url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={api_key}'
+     #url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={os.getenv('api_key')}'
      usage_url = f'https://public-api.quickfs.net/v1/usage'
      #marketwatch ="https://www.marketwatch.com/investing/stock/{ticker}/financials/balance-sheet"
      #headers = "/html/body/div[3]/div[6]/div/div[3]/div/div/table/tbody/tr[12]/td[6]/div/span"
                
-     response = requests.get(url, headers=header)
-     usage_response = requests.get(usage_url, headers=header)
+     # response = requests.get(url, headers=header)
+     # usage_response = requests.get(usage_url, headers=header)
 
      @st.cache_data
      def fetch_data_from_api(url, header):
@@ -7399,14 +7412,17 @@ if selected == "Stock Analysis Tool":
           
     
           if response.status_code == 200:
-               st.write()
+               return response.json()
           # Continue processing the data as required
           else:
                st.write()
+               return  None
 
 
 
-     data = response.json()
+    # data = response.json()
+
+     data= fetch_data_from_api(url, header)
      #data = response.json()
      #usage = response.json()
      #st.write(data)
@@ -7477,19 +7493,32 @@ if selected == "Stock Analysis Tool":
 
      # Add a line break
      st.text("")
-     col1, col2,col3 = st.columns(3)
-     # Display sector and industry information in the second column
-     with col1:
-          st.write(f"Sector: {stock_sector}", unsafe_allow_html=True)
-     with col2:
-          st.markdown(
-     '<div style="text-align:center;"><b>{}</b></div>'.format(name),
-     unsafe_allow_html=True
-     )
-          #st.write(f"Industry: {Industry}", unsafe_allow_html=True)
-     with col3:
-          st.write(styled_link, unsafe_allow_html=True)
+     # col1, col2,col3 = st.columns(3)
+     # # Display sector and industry information in the second column
+     # with col1:
+     #      st.write(f"Sector: {stock_sector}", unsafe_allow_html=True)
+     # with col2:
+     #      st.markdown(
+     # '<div style="text-align:center;"><b>{}</b></div>'.format(name),
+     # unsafe_allow_html=True
+     # )
+     #      #st.write(f"Industry: {Industry}", unsafe_allow_html=True)
+     # with col3:
+     #      st.write(styled_link, unsafe_allow_html=True)
 
+     right, middle, left = st.columns(3, gap="small")
+     # Display stock information in the columns
+     with right:
+          st.write(f"Sector: {stock_sector}", unsafe_allow_html=True)
+
+     # with middle:
+     #      st.markdown(
+     # '<div style="text-align:center;"><b>{}</b></div>'.format(name),
+     # unsafe_allow_html=True)
+     
+
+     with left:
+          st.write(styled_link, unsafe_allow_html=True)
      #.............................................................................................
 
      if ticker == 'ADS:DE':
@@ -7642,31 +7671,32 @@ if selected == "Stock Analysis Tool":
      #st.markdown("Current Price: " + formatted_price_with_color, unsafe_allow_html=True)
 
 
-          
+     with middle:
+            
      # Calculate the text color based on the percentage difference
      #arrow_text = "🟩 " if percentage_difference >= 0 else "🔻"
-     try:
-          arrow_text = " 🔼 " if percentage_difference > 0 else " 🔻 "
-          text_color = "green" if percentage_difference > 0 else "red"
+          try:
+               arrow_text = " 🔼 " if percentage_difference > 0 else " 🔻 "
+               text_color = "green" if percentage_difference > 0 else "red"
 
 
-          text_color = "green" if percentage_difference >= 0 else "red"
-          #formatted_value2 = f" {converted_amount} €"
-               #formatted_price_euro = "&euro; {:.2f}".format(formatted_value2)  # Format with Euro sign
+               text_color = "green" if percentage_difference >= 0 else "red"
+               #formatted_value2 = f" {converted_amount} €"
+                    #formatted_price_euro = "&euro; {:.2f}".format(formatted_value2)  # Format with Euro sign
 
-          st.markdown(
-     f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
-          f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
+               st.markdown(
+          f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
+               f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
+               unsafe_allow_html=True
+          ) 
+          except Exception as e:
+               st.markdown(
+          f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
+               f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
+               #unsafe_allow_html=True
           unsafe_allow_html=True
-     ) 
-     except Exception as e:
-          st.markdown(
-     f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
-          f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
-          #unsafe_allow_html=True
-     unsafe_allow_html=True
-     )
-     
+          )
+          
      #...............................................................................................................
 
      # col2, col3, col4, col5, col6, col7= st.columns(6)
@@ -7722,18 +7752,71 @@ if selected == "Stock Analysis Tool":
      data['Adj Close'] = data['Adj Close'].round(2)
 
 
-     fig = px.line(data, x=data.index, y='Adj Close', labels={'x ': 'Date', 'Adj Close': 'Price ($)'})
+     # fig = px.line(data, x=data.index, y='Adj Close', labels={'x ': 'Date', 'Adj Close': 'Price ($)'})
 
+     # fig.update_layout(
+     # #title=f'{ticker} Price',
+     # xaxis_title='Date',
+     # yaxis_title='Price ',
+     # )
+
+    
+     # st.plotly_chart(fig,use_container_width=True,config={'displayModeBar': False})
+
+
+
+     fig = go.Figure()
+
+     # Add the area fill
+     fig.add_trace(go.Scatter(
+     x=data.index,
+     y=data['Adj Close'],
+     fill='tozeroy',
+     fillcolor='rgba(0, 100, 80, 0.1)',  # Very light green, adjust as needed
+     line_color='rgba(0, 0, 0, 0)',  # Transparent line for fill
+     showlegend=False
+     ))
+
+     # Add the line trace
+     fig.add_trace(go.Scatter(
+     x=data.index,
+     y=data['Adj Close'],
+     line=dict(color='rgb(0, 100, 80)', width=2),  # Darker green line, adjust as needed
+     name=name
+     ))
+
+     # Update the layout
      fig.update_layout(
-     #title=f'{ticker} Price',
      xaxis_title='Date',
-     yaxis_title='Price ',
+     yaxis_title='Price ($)',
+     plot_bgcolor='white',  # White background
+     paper_bgcolor='white',  # White surrounding area
+     xaxis=dict(
+          showgrid=True,
+          gridcolor='lightgrey',
+          showline=True,
+          linecolor='lightgrey'
+     ),
+     yaxis=dict(
+          showgrid=True,
+          gridcolor='lightgrey',
+          showline=True,
+          linecolor='lightgrey',
+          tickprefix='$'  # Add dollar sign prefix to y-axis ticks
+     ),
+     margin=dict(l=40, r=40, t=40, b=40)
      )
 
-     st.plotly_chart(fig,use_container_width=True,config={'displayModeBar': False})
+     # Format hover text to include dollar sign
+     fig.update_traces(
+     hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
+     )
 
+     # Display the chart in Streamlit
+     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
-     #st.plotly_chart(fig, config={'displayModeBar': False})
+          
+          #st.plotly_chart(fig, config={'displayModeBar': False})
 
 
 
@@ -7994,9 +8077,8 @@ if selected == "Stock Analysis Tool":
      # 	return data
 
 
-
-
      Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,Dividend_Discount_Model,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","Dividend Discount Model","Charts","Key Ratios","Calculator","Top 10 News"])
+  
      
           #st.header('Price / Total return')
 
@@ -11962,7 +12044,8 @@ if selected == "Stock Analysis Tool":
 
 ################################ Experiment ##################################################################
               # @st.cache_data                     
-               @st.experimental_fragment
+               #@st.experimental_fragment
+               @st.fragment
                def display_growth_rate_formexer():
                          
                     with st.form(key='growth_rate_formex'):
@@ -12381,9 +12464,7 @@ if selected == "Stock Analysis Tool":
 
 
 
-     with st.container():
-          use_container_width=True
-          with Multiple_Valuation:
+     
           #      with st.form(key='growth_rate_form'):
           #           #load = st.button ('')
 
@@ -12667,49 +12748,55 @@ if selected == "Stock Analysis Tool":
 
 
 ################################experiment2########
+      
                #@st.cache_data
-              
-               @st.experimental_fragment
+     with st.container():
+          use_container_width=True
+          with Multiple_Valuation:        
+               #@st.experimental_fragment
+               @st.fragment
                def display_growth_rate_form():
                     
 
                     with st.form(key='growth_rate_form31'):
-                    #load = st.button ('')
-
-                    #st.session_state = False
-
-                    #Profit_Margin_10 = annual_data['fcf_margin'][-10:]
-                    #Profit_Margin_10=sum(Profit_Margin_10)/len(Profit_Margin_10)
-                    #Profit_Margin_10 = (Profit_Margin_10*100)
-
-               # Profit_Margin_5 = annual_data['fcf_margin'][-5:]   
-                    #Profit_Margin_5 =sum(Profit_Margin_5)/len(Profit_Margin_5)
-                    #Profit_Margin_5 = (Profit_Margin_5*100)
-
+                                         # Initialize variables with default values
+                         Growth_rate_revenue_LOW = 0.0
+                         Growth_rate_revenue_middle = 0.0
+                         Growth_rate_revenue_high = 0.0
+                         
+                         Growth_rate_net_profit_LOW = 0.0
+                         Growth_rate__net_profit_middle = 0.0
+                         Growth_rate__net_profit_high = 0.0
+                         
+                         Growth_rate_fcf_margin_LOW = 0.0
+                         Growth_rate_fcf_margin_middle = 0.0
+                         Growth_rate_fcf_margin_high = 0.0
+                         
+                         Growth_rate_P_OCF_low = 0.0
+                         Growth_rate_P_OCF_middle = 0.0
+                         Growth_rate_P_OCF_high = 0.0
+                         
+                         Growth_rate_P_FCF_low = 0.0
+                         Growth_rate_P_FCF_middle = 0.0
+                         Growth_rate_P_FCF_high = 0.0
+                         
+                         Margin_of_safety_low = 9.0
+                         Margin_of_safety_mid = 9.0
+                         Margin_of_safety_high = 9.0
+ 
                          Profit_Margin_1 = annual_data['fcf_margin'][-1:]     
                          Profit_Margin_1=sum(Profit_Margin_1)/len(Profit_Margin_1)
                          Profit_Margin_1 = (Profit_Margin_1*100)
 
                          col1,col2 = st.columns(2)
 
-                    # Display the values in colored boxes
-                    #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
                          with col1:
                               st.write(f"Historical:")
 
                          with col2:
-                         #st.write(f"My Assumptions:")
-
-                    #with col2:
                               My_assumption = int(st.text_input("My Assumptions in Years:", value=int(10), key="My_assumption12"))
 
-
-                         
-                    
                          col1,col2,col3,col4,col5,col6 = st.columns(6)
-
-                    # Display the values in colored boxes
-                    #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
                          with col1:
                               st.write(f"1YR:")
                          with col2:
@@ -12726,74 +12813,29 @@ if selected == "Stock Analysis Tool":
                          
                          colr1,colr2,colr3,colr9,colr10,colr11 = st.columns(6)
 
-                    # Display the values in colored boxes
-                    #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-                    #colr1.write(f"Revenue Growth: <br> {Revenue_growth_1year:.2f}%", unsafe_allow_html=True)
-                    #colr2.write(f"Revenue Growth: <br> {Revenue_5_CAGR}%", unsafe_allow_html=True)
-                    #colr3.write(f"Revenue Growth: <br> {Revenue_Cagr_10}%", unsafe_allow_html=True)
-
-                    # Display the values with brown background color using st.write with HTML for line breaks
                          colr1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_growth_1year:.2f}%</div>", unsafe_allow_html=True)
                          colr2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_5_CAGR}%</div>", unsafe_allow_html=True)
                          colr3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_Cagr_10}%</div>", unsafe_allow_html=True)
 
-
-
-               
-                    #Growth_rate1 = col9.number_input("Wachstumsrate (Base Case) in %:", value=0.00, key="growth_rate1")
-
                          coln1,coln2,coln3,coln9,coln10,coln11 = st.columns(6)
-
-                    # Display the values in colored boxes
-                    #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-                    #coln1.write(f"Net Profit Margin: <br> {Net_margin_ttm}", unsafe_allow_html=True) 
-                    #coln2.write(f"Net Profit Margin: <br> {five_yrs_Nettomarge}%", unsafe_allow_html=True)
-                    #coln3.write(f"Net Profit Margin: <br> {Net_income_margin_10}%", unsafe_allow_html=True)
 
                          coln1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_margin_ttm}</div>", unsafe_allow_html=True)
                          coln2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {five_yrs_Nettomarge}%</div>", unsafe_allow_html=True)
                          coln3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_income_margin_10}%</div>", unsafe_allow_html=True)
 
-
-
                          colf1,colf2,colf3,colf9,colf10,colf11 = st.columns(6)
-
-                    # Display the values in colored boxes
-                    #col1.info(f"Cost of Capital (WACC): {WACC_prozent:.2f}%")
-                    #colf1.info(f"FCF Margin: {FCF_Margin_1:.2f}%")
-                    #colf2.info(f"FCF Margin: {FCF_Margin_5}%") 
-                    #colf3.info(f"FCF Margin: {FCF_Margin_10}%")
-
-                    # Display the values using st.write in colored boxes
-                    #colf1.write(f"FCF Margin: <br> {FCF_Margin_1:.2f}%", unsafe_allow_html=True)
-                    #colf2.write(f"FCF Margin: <br> {FCF_Margin_5}%", unsafe_allow_html=True)
-                    #colf3.write(f"FCF Margin: <br> {FCF_Margin_10}%", unsafe_allow_html=True)
 
                          colf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_1:.2f}%</div>", unsafe_allow_html=True)
                          colf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
                          colf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_10}%</div>", unsafe_allow_html=True)      
 
-               
-
                          colcf1,colcf2,colcf3,colcf9,colcf10,colcf11 = st.columns(6)
-
-                    #colcf1.write(f"Price/OCF: <br> {P_OCF_ttm}", unsafe_allow_html=True)
-                    #colcf2.write(f"Price/OCF: <br> {P_OCF_5}", unsafe_allow_html=True) 
-                    #colcf3.write(f"Price/OCF: <br> {P_OCF_10}", unsafe_allow_html=True)
 
                          colcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_ttm}</div>", unsafe_allow_html=True)
                          colcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_5}</div>", unsafe_allow_html=True)
                          colcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_10}</div>", unsafe_allow_html=True)
 
-
-
                          colfcf1,colfcf2,colfcf3,colfcf9,colfcf10,colfcf11 = st.columns(6)
-
-                    #colfcf1.write(f"Price/FCF: <br> {pfcf_ttm}", unsafe_allow_html=True)
-                    #colfcf2.write(f"Price/FCF: <br> {pfcf_funf}", unsafe_allow_html=True) 
-                    #colfcf3.write(f"Price/FCF: <br> {pfcf_ten}", unsafe_allow_html=True)
-
-
                          colfcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ttm}</div>", unsafe_allow_html=True)
                          colfcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_funf}</div>", unsafe_allow_html=True)
                          colfcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ten}</div>", unsafe_allow_html=True)
@@ -12801,170 +12843,117 @@ if selected == "Stock Analysis Tool":
                     
 
                          col1,col2,colx,cola, colb, colc= st.columns(6)
-                    #col1.write('Desired Rate of Return')
-                    #col1,col2,colx= st.columns(3)
                          col1.write('')               
                          col2.write('')
+                         col1.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True) 
+
                          #colx.write('')
                          colx.write(f"<div style='background-color:#333333;padding: 10px; border-radius: 5px; color: white;'>Desired Rate of Return: <br><br>{''}</div>", unsafe_allow_html=True)
 
-                         #col1,col2,colx= st.columns(3)
-                         #col1.write('')               
-                         #col2.write('')
                          st.write("")
                          colx.write('')
                          colx.write(f"Multiple of Earnings Valuation:")
-                         #colx.write('')
-                         #colx.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Multiple of Earnings Valuation: <br> {''}</div>", unsafe_allow_html=True)
-
                         
+                         try:
+                              Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0.00,key="Growth_rate_revenue_LOW22").replace(',', '0.0'))
 
+                              Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0.00,key="Growth_rate_revenue_middle22").replace(',', '.'))
+                              Growth_rate_revenue_high = float(colr11.text_input(" ", value=0.00,key="Growth_rate_revenue_high22").replace(',', '.'))
+                              
+                              Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0.00,key="Growth_rate_net_profit_LOW23").replace(',', '.'))
+                              Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0.00,key="Growth_rate__net_profit_middle23").replace(',', '.'))
+                              Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0.00,key="Growth_rate__net_profit_high23").replace(',', '.'))
 
+                              Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW24").replace(',', '.'))
+                              Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle24").replace(',', '.'))
+                              Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_high24").replace(',', '.'))
 
-                    #load =st.button('LOAD')
-                    #if "load_state" not in st.session_state:
-                    #    st.session_state.load_state =False
+                              Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0.00,key="Growth_rate_P_OCF_low22").replace(',', '.'))
+                              Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0.00,key="Growth_rate_P_OCF_middle22").replace(',', '0.0'))
+                              Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0.00,key="Growth_rate_P_OCF_high22").replace(',', '.'))
 
-               
-                         Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0.00,key="Growth_rate_revenue_LOW22"))
-                         if Growth_rate_revenue_LOW == 0.00:
-                              Growth_rate_revenue_LOW = 0.00
-                         Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0.00,key="Growth_rate_revenue_middle22"))
-                         Growth_rate_revenue_high = float(colr11.text_input(" ", value=0.00,key="Growth_rate_revenue_high22"))
-                         
-                         Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0.00,key="Growth_rate_net_profit_LOW23"))
-                         Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0.00,key="Growth_rate__net_profit_middle23"))
-                         Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0.00,key="Growth_rate__net_profit_high23"))
+                              Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0.00,key="Growth_rate_P_FCF_low22").replace(',', '.'))
+                              Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0.00,key="Growth_rate_P_FCF_middle22").replace(',', '.'))
+                              Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0.00,key="Growth_rate_P_FCF_high22"))
 
-                         Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW24"))
-                         Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle24"))
-                         Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_high24"))
+                              Margin_of_safety_low = float(cola.text_input(" ", value=9.00,key="Margin_of_safety_low22").replace(',', '.'))
+                              Margin_of_safety_mid = float(colb.text_input(" ", value=9.00,key="Margin_of_safety_mid22").replace(',', '.'))
+                              Margin_of_safety_high = float(colc.text_input(" ", value=9.00,key="Margin_of_safety_high22").replace(',', '.'))
 
-                         Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0.00,key="Growth_rate_P_OCF_low22"))
-                         Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0.00,key="Growth_rate_P_OCF_middle22"))
-                         Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0.00,key="Growth_rate_P_OCF_high22"))
-
-                         Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0.00,key="Growth_rate_P_FCF_low22"))
-                         Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0.00,key="Growth_rate_P_FCF_middle22"))
-                         Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0.00,key="Growth_rate_P_FCF_high22"))
-
-                         #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-                         Margin_of_safety_low = float(cola.text_input(" ", value=9.00,key="Margin_of_safety_low22"))
-                         Margin_of_safety_mid = float(colb.text_input(" ", value=9.00,key="Margin_of_safety_mid22"))
-                         Margin_of_safety_high = float(colc.text_input(" ", value=9.00,key="Margin_of_safety_high22"))
+                         except Exception as e:
+                              st.error("Please use a dot instead of a comma for decimal values.")
 
                          submit_button = st.form_submit_button(label='Calculate')
                     if submit_button:
-                    
-                    #return My_assumption,Growth_rate_revenue_LOW, Growth_rate_revenue_middle, Growth_rate_revenue_high,Growth_rate_net_profit_LOW,Growth_rate__net_profit_middle ,Growth_rate__net_profit_high,Growth_rate_fcf_margin_LOW,Growth_rate_fcf_margin_middle,Growth_rate_fcf_margin_high,Growth_rate_P_OCF_low,Growth_rate_P_OCF_middle,Growth_rate_P_OCF_high,Growth_rate_P_FCF_low,Growth_rate_P_FCF_middle,Growth_rate_P_FCF_high,Margin_of_safety_low,Margin_of_safety_mid,Margin_of_safety_high,submit_button 
-                         #return submit_button,My_assumption, Growth_rate_revenue_LOW, Growth_rate_revenue_middle, Growth_rate_revenue_high, Growth_rate_net_profit_LOW, Growth_rate__net_profit_middle, Growth_rate__net_profit_high, Growth_rate_fcf_margin_LOW, Growth_rate_fcf_margin_middle, Growth_rate_fcf_margin_high, Growth_rate_P_OCF_low, Growth_rate_P_OCF_middle, Growth_rate_P_OCF_high, Growth_rate_P_FCF_low, Growth_rate_P_FCF_middle, Growth_rate_P_FCF_high, Margin_of_safety_low, Margin_of_safety_mid, Margin_of_safety_high
-               #def display_intrinsic_value_results(My_assumption,Growth_rate_revenue_LOW, Growth_rate_revenue_middle, Growth_rate_revenue_high,Growth_rate_net_profit_LOW,Growth_rate__net_profit_middle ,Growth_rate__net_profit_high,Growth_rate_fcf_margin_LOW,Growth_rate_fcf_margin_middle,Growth_rate_fcf_margin_high,Growth_rate_P_OCF_low,Growth_rate_P_OCF_middle,Growth_rate_P_OCF_high,Growth_rate_P_FCF_low,Growth_rate_P_FCF_middle,Growth_rate_P_FCF_high,Margin_of_safety_low,Margin_of_safety_mid,Margin_of_safety_high):
-               #def display_intrinsic_value_results(My_assumption, Growth_rate_revenue_LOW, Growth_rate_revenue_middle, Growth_rate_revenue_high, Growth_rate_net_profit_LOW, Growth_rate_net_profit_middle, Growth_rate_net_profit_high, Growth_rate_fcf_margin_LOW, Growth_rate_fcf_margin_middle, Growth_rate_fcf_margin_high, Growth_rate_P_OCF_low, Growth_rate_P_OCF_middle, Growth_rate_P_OCF_high, Growth_rate_P_FCF_low, Growth_rate_P_FCF_middle, Growth_rate_P_FCF_high, Margin_of_safety_low, Margin_of_safety_mid, Margin_of_safety_high):    
+                       
+                    # -----------------------------LOW-------------
+                         try:
+                              average_FCF_Profit_margin_low=((Growth_rate_fcf_margin_LOW+Growth_rate_net_profit_LOW)/2)/100
 
-               # -----------------------------LOW-------------
-                         average_FCF_Profit_margin_low=((Growth_rate_fcf_margin_LOW+Growth_rate_net_profit_LOW)/2)/100
+                              average_PFCF_POCF_low=(Growth_rate_P_OCF_low+Growth_rate_P_FCF_low)/2
 
-                         average_PFCF_POCF_low=(Growth_rate_P_OCF_low+Growth_rate_P_FCF_low)/2
+                              Revenue_assumption_low=average_revenue_annual_ttm*pow(1+((Growth_rate_revenue_LOW).replace(',', '0.0')/100),My_assumption)
+                                   #
 
-                         Revenue_assumption_low=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_LOW/100),My_assumption)
-                         #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
-                         #st.write("Revenue_assumption_low",Revenue_assumption_low)
+                              Assumption_low=(Revenue_assumption_low*average_FCF_Profit_margin_low)*average_PFCF_POCF_low
+                              Assumption_low_inklu_shares_outstanding_low =Assumption_low/Average_shares_basic_annual_one
 
-                         Assumption_low=(Revenue_assumption_low*average_FCF_Profit_margin_low)*average_PFCF_POCF_low
-                         #st.write("Assumption_low_all margins",Assumption_low)
-                         Assumption_low_inklu_shares_outstanding_low =Assumption_low/Average_shares_basic_annual_one
-                         #st.write("Assumption_low_inklu_shares_outstanding",Assumption_low_inklu_shares_outstanding_low)
-
-                         Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
-                         #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_low",Assumption_low_inklu_shares_outstanding_MarginofSafety_low)
+                              Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
 
 
-                         Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
-                    
-                         #st.write(Revenue_low_Euro)
-                         #st.write(converted_amount)
-
-               # -----------------------------MIDDLE-------------
+                              Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
+                              
+                         except Exception as e:
+                              st.error("Please use a dot instead of a comma for decimal values.")
+                    # -----------------------------MIDDLE-------------
                          average_FCF_Profit_margin_mid=((Growth_rate_fcf_margin_middle+Growth_rate__net_profit_middle)/2)/100
 
                          average_PFCF_POCF_mid=(Growth_rate_P_OCF_middle+Growth_rate_P_FCF_middle)/2
 
                          Revenue_assumption_mid=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_middle/100),My_assumption)
-                         #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
-                         #st.write("Revenue_assumption_low",Revenue_assumption_mid)
 
                          Assumption_mid=(Revenue_assumption_mid*average_FCF_Profit_margin_mid)*average_PFCF_POCF_mid
 
                          Assumption_mid_inklu_shares_outstanding_mid =Assumption_mid/Average_shares_basic_annual_one
-                         #st.write("Assumption_low_inklu_shares_outstanding",Assumption_mid_inklu_shares_outstanding_mid)
 
                          Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid=Assumption_mid_inklu_shares_outstanding_mid*(1-(Margin_of_safety_mid/100))
-                         #st.write("Assumption_low_inklu_shares_outstanding_MarginofSafety_mid",Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid)
-                    
+                         
 
                          Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*usd_to_eur_rate)
-                         
+                              
 
-                         
-               # -----------------------------HIGH-------------
+                              
+                    # -----------------------------HIGH-------------
 
                          average_FCF_Profit_margin_high=((Growth_rate_fcf_margin_high+Growth_rate__net_profit_high)/2)/100
 
                          average_PFCF_POCF_high=(Growth_rate_P_OCF_high+Growth_rate_P_FCF_high)/2
 
                          Revenue_assumption_high=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_high/100),My_assumption)
-                         #st.write("average_revenue_annual_ttm",average_revenue_annual_ttm)
-                         #st.write("Revenue_assumption_low",Revenue_assumption_high)
 
                          Assumption_high=(Revenue_assumption_high*average_FCF_Profit_margin_high)*average_PFCF_POCF_high
 
                          Assumption_high_inklu_shares_outstanding_high =Assumption_high/Average_shares_basic_annual_one
-                         #st.write("Assumption_low_inklu_shares_outstanding",Assumption_high_inklu_shares_outstanding_high)
 
                          Assumption_high_inklu_shares_outstanding_MarginofSafety_high=Assumption_high_inklu_shares_outstanding_high*(1-(Margin_of_safety_high/100))
-                         #st.write("Assumption_high_inklu_shares_outstanding_MarginofSafety_high",Assumption_high_inklu_shares_outstanding_MarginofSafety_high)
-                    
+                         
                          Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*usd_to_eur_rate)
-                         
-                         
-                         
-
-                         col1.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True) 
                               
+                                   
                          st.markdown('</div>', unsafe_allow_html=True)
 
 
-                         #return Revenue_low_Euro,Revenue_mid_Euro,Revenue_high_Euro
-                    
-                    #@st.experimental_fragment
-                    #def main():
-
-                    
-                         #st.session_state = True
-                    #with col1:
-                         #if st.button("Calculate", key="Calculate_revenue"):
-                    
-                              #if load or st.session_state.load_state:
-                              #    st.session_state.load_state = True
-
-                                             #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-                                             #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
-                              
-                              #colx.write(f"Multiples of Earnings Value:")
-                                   #col20.write(f"{low_DCF:.2f} €")
                          if float(Revenue_low_Euro) < float(converted_amount):
                                    font_color = "red"
                          else:
                                    font_color = "green"
                          cola.write(f"<span style='color:{font_color}'>{Revenue_low_Euro} €</span>", unsafe_allow_html=True)
-                                        #col21.write(f"{Average_Middle_DCF:.2f} €")
 
                          if float(Revenue_mid_Euro) < float(converted_amount):
                                    font_color = "red"
                          else:
                                    font_color = "green"
                          colb.write(f"<span style='color:{font_color}'>{Revenue_mid_Euro} €</span>", unsafe_allow_html=True)
-                                        #col22.write(f"{high_DCF:.2f} €")
 
                          if float(Revenue_high_Euro) < float(converted_amount):
                                    font_color = "red"
@@ -12973,6 +12962,14 @@ if selected == "Stock Analysis Tool":
                          colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro} €</span>", unsafe_allow_html=True)
                     
                display_growth_rate_form()
+
+
+
+
+
+
+
+
                     #with st.form("login"):
                 #     st.markdown("**Hello World**")
                  #    st.text_input("Name",key="form_login")
@@ -13292,7 +13289,8 @@ if selected == "Stock Analysis Tool":
 
      #######################################experiment###############################  
                #  
-               @st.experimental_fragment
+               #@st.experimental_fragment
+               @st.fragment
                def display_growth_rate_formdiv():              
                     with st.form(key='growth_rate_form4'):
                     
@@ -14226,7 +14224,7 @@ if selected == "Stock Analysis Tool":
                               st.write(f"""
                               <b>5 YR ROE Y/Y: {five_ROE}% Current ROE: {ROE_ttm}</b>   
                               <span style='font-family: Calibri; font-style: italic;'>
-                              Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.<br>(Investiertes Kapital = Eigenkapital)
+                              Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.<br>(Investiertes Kapital = Fremdkapital)
                               </span>
                                    """, unsafe_allow_html=True)
                               st.plotly_chart(fig2,use_container_width=True,config=config)
