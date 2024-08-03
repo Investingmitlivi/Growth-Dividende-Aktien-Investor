@@ -12180,30 +12180,30 @@ if selected == "Stock Analysis Tool":
                          st.write("")
                          col5,col4= st.columns(2)
 
-                         WACC = float(col5.text_input("WACC (%):", value=f"{WACC:.2f}"))
+                         WACC = float(col5.text_input("WACC (%):", value=f"{WACC:.2f}").replace(',', '.'))
                          #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
 
-                         FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)))
+                         FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)).replace(',', '.'))
                     
                     #------------------------------------------------------------------------------------------------------------------------
                          col9, col8,col34,col10= st.columns(4)
                          
                          #Growth_rate1 = col9.number_input("Growth Rate (Base Case) in %:", value=0.00,key="growth_rate1")
-                         Growth_rate1 = float(col9.text_input("Growth Rate (Base Case) in %:",value=0.00,key="growth_rate1ex"))
+                         Growth_rate1 = float(col9.text_input("Growth Rate (Base Case) in %:",value=0.00,key="growth_rate1ex").replace(',', '.'))
                          col8.write('')
                          col34.write('')
-                         Growth_rate2 = float(col10.text_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2ex"))
+                         Growth_rate2 = float(col10.text_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2ex").replace(',', '.'))
 
                     
                     #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
 
                          cola, col8,col34,colc= st.columns(4)
                          #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-                         Margin_of_safety1 = float(cola.text_input("1.Margin of Safety (%):", value=9.00))
+                         Margin_of_safety1 = float(cola.text_input("1.Margin of Safety (%):", value=9.00).replace(',', '.'))
                     # Margin_of_safety2 = colb.number_input("2.Margin of Safety %:", value=8.50)
                          col8.write('')
                          col34.write('')
-                         Margin_of_safety3 = float(colc.text_input("2.Margin of Safety (%):", value=9.00))
+                         Margin_of_safety3 = float(colc.text_input("2.Margin of Safety (%):", value=9.00).replace(',', '.'))
                     #-------------------------------------------------------------------------------------------------------------------------------------------
                          #print("last FCF:",Average_Free_cash_flow_annual_one_one)
 
@@ -12755,35 +12755,13 @@ if selected == "Stock Analysis Tool":
           with Multiple_Valuation:        
                #@st.experimental_fragment
                @st.fragment
+               #@st.experimental_memo
                def display_growth_rate_form():
                     
 
                     with st.form(key='growth_rate_form31'):
                                          # Initialize variables with default values
-                         Growth_rate_revenue_LOW = 0.0
-                         Growth_rate_revenue_middle = 0.0
-                         Growth_rate_revenue_high = 0.0
-                         
-                         Growth_rate_net_profit_LOW = 0.0
-                         Growth_rate__net_profit_middle = 0.0
-                         Growth_rate__net_profit_high = 0.0
-                         
-                         Growth_rate_fcf_margin_LOW = 0.0
-                         Growth_rate_fcf_margin_middle = 0.0
-                         Growth_rate_fcf_margin_high = 0.0
-                         
-                         Growth_rate_P_OCF_low = 0.0
-                         Growth_rate_P_OCF_middle = 0.0
-                         Growth_rate_P_OCF_high = 0.0
-                         
-                         Growth_rate_P_FCF_low = 0.0
-                         Growth_rate_P_FCF_middle = 0.0
-                         Growth_rate_P_FCF_high = 0.0
-                         
-                         Margin_of_safety_low = 9.0
-                         Margin_of_safety_mid = 9.0
-                         Margin_of_safety_high = 9.0
- 
+
                          Profit_Margin_1 = annual_data['fcf_margin'][-1:]     
                          Profit_Margin_1=sum(Profit_Margin_1)/len(Profit_Margin_1)
                          Profit_Margin_1 = (Profit_Margin_1*100)
@@ -12854,34 +12832,34 @@ if selected == "Stock Analysis Tool":
                          colx.write('')
                          colx.write(f"Multiple of Earnings Valuation:")
                         
-                         try:
-                              Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0.00,key="Growth_rate_revenue_LOW22").replace(',', '0.0'))
+                         
+                         Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0.00,key="Growth_rate_revenue_LOW22").replace(',', '.'))
 
-                              Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0.00,key="Growth_rate_revenue_middle22").replace(',', '.'))
-                              Growth_rate_revenue_high = float(colr11.text_input(" ", value=0.00,key="Growth_rate_revenue_high22").replace(',', '.'))
+                         Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0.00,key="Growth_rate_revenue_middle22").replace(',', '.'))
+                         Growth_rate_revenue_high = float(colr11.text_input(" ", value=0.00,key="Growth_rate_revenue_high22").replace(',', '.'))
                               
-                              Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0.00,key="Growth_rate_net_profit_LOW23").replace(',', '.'))
-                              Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0.00,key="Growth_rate__net_profit_middle23").replace(',', '.'))
-                              Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0.00,key="Growth_rate__net_profit_high23").replace(',', '.'))
+                         Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0.00,key="Growth_rate_net_profit_LOW23").replace(',', '.'))
+                         Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0.00,key="Growth_rate__net_profit_middle23").replace(',', '.'))
+                         Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0.00,key="Growth_rate__net_profit_high23").replace(',', '.'))
 
-                              Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW24").replace(',', '.'))
-                              Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle24").replace(',', '.'))
-                              Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_high24").replace(',', '.'))
+                         Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW24").replace(',', '.'))
+                         Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle24").replace(',', '.'))
+                         Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_high24").replace(',', '.'))
 
-                              Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0.00,key="Growth_rate_P_OCF_low22").replace(',', '.'))
-                              Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0.00,key="Growth_rate_P_OCF_middle22").replace(',', '0.0'))
-                              Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0.00,key="Growth_rate_P_OCF_high22").replace(',', '.'))
+                         Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0.00,key="Growth_rate_P_OCF_low22").replace(',', '.'))
+                         Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0.00,key="Growth_rate_P_OCF_middle22").replace(',', '0.0'))
+                         Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0.00,key="Growth_rate_P_OCF_high22").replace(',', '.'))
 
-                              Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0.00,key="Growth_rate_P_FCF_low22").replace(',', '.'))
-                              Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0.00,key="Growth_rate_P_FCF_middle22").replace(',', '.'))
-                              Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0.00,key="Growth_rate_P_FCF_high22"))
+                         Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0.00,key="Growth_rate_P_FCF_low22").replace(',', '.'))
+                         Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0.00,key="Growth_rate_P_FCF_middle22").replace(',', '.'))
+                         Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0.00,key="Growth_rate_P_FCF_high22"))
 
-                              Margin_of_safety_low = float(cola.text_input(" ", value=9.00,key="Margin_of_safety_low22").replace(',', '.'))
-                              Margin_of_safety_mid = float(colb.text_input(" ", value=9.00,key="Margin_of_safety_mid22").replace(',', '.'))
-                              Margin_of_safety_high = float(colc.text_input(" ", value=9.00,key="Margin_of_safety_high22").replace(',', '.'))
+                         Margin_of_safety_low = float(cola.text_input(" ", value=9.00,key="Margin_of_safety_low22").replace(',', '.'))
+                         Margin_of_safety_mid = float(colb.text_input(" ", value=9.00,key="Margin_of_safety_mid22").replace(',', '.'))
+                         Margin_of_safety_high = float(colc.text_input(" ", value=9.00,key="Margin_of_safety_high22").replace(',', '.'))
 
-                         except Exception as e:
-                              st.error("Please use a dot instead of a comma for decimal values.")
+                         #except Exception as e:
+                          #    st.error("Please use a dot instead of a comma for decimal values.")
 
                          submit_button = st.form_submit_button(label='Calculate')
                     if submit_button:
@@ -12892,7 +12870,7 @@ if selected == "Stock Analysis Tool":
 
                               average_PFCF_POCF_low=(Growth_rate_P_OCF_low+Growth_rate_P_FCF_low)/2
 
-                              Revenue_assumption_low=average_revenue_annual_ttm*pow(1+((Growth_rate_revenue_LOW).replace(',', '0.0')/100),My_assumption)
+                              Revenue_assumption_low=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_LOW/100),My_assumption)
                                    #
 
                               Assumption_low=(Revenue_assumption_low*average_FCF_Profit_margin_low)*average_PFCF_POCF_low
@@ -13409,9 +13387,9 @@ if selected == "Stock Analysis Tool":
                          colb.write(f"10 YR CAGR Annual Dividend per share : {Dividend_per_share_cagr_10} %")
 
                          col10,col11 =st.columns(2)
-                         Growth_rate_dividend = float(col10.text_input("Growth Rate %:", value=0.00))
+                         Growth_rate_dividend = float(col10.text_input("Growth Rate %:", value=0.00).replace(',', '.'))
                          WACC = 8
-                         WACC = float(col11.text_input("WACC in (%):", value=f"{WACC:.2f}"))
+                         WACC = float(col11.text_input("WACC in (%):", value=f"{WACC:.2f}").replace(',', '.'))
 
                          try: 
                               intrinsic_value3 = (Dividend15 * 4) * (1 + (Growth_rate_dividend / 100)) / ((WACC / 100) - (Growth_rate_dividend / 100))
