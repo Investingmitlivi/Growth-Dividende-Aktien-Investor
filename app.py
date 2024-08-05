@@ -7391,7 +7391,8 @@ if selected == "Stock Analysis Tool":
      api_key = os.getenv("SECRET_API_KEY")
      header = {'x-qfs-api-key': api_key}
 
-     url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={api_key}'
+     #url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={api_key}'
+     url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={os.getenv('api_key')}'
      #usage_url = f'https://public-api.quickfs.net/v1/usage'
     
 
