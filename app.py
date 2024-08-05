@@ -54,11 +54,8 @@ from streamlit_option_menu import option_menu
 #from callbacks import supports_callbacks
 from dotenv import load_dotenv
 
-def configure():
-     load_dotenv()
-
     
-configure()
+
 
 st.set_page_config(page_title="verstehdieaktie", page_icon = "📚", layout="wide")
 
@@ -7391,23 +7388,16 @@ if selected == "Stock Analysis Tool":
      #st.write(f'Selected Ticker Name: {name}')
      #............................... quickfs api .................
 
-
-     #api_key = "5f478e5d5c33dea7e1a950e500e94a4bbfbd4368"
-     #api_key = "1d26eb898e859a7f519e974f6fa969bb073ba09f"
-     api_key = "7bd83d28344a3e5d2c2103dd4ca746f133259764"
+     api_key = os.getenv("SECRET_API_KEY")
      header = {'x-qfs-api-key': api_key}
 
      url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={api_key}'
-     #url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={os.getenv('api_key')}'
-     usage_url = f'https://public-api.quickfs.net/v1/usage'
-     #marketwatch ="https://www.marketwatch.com/investing/stock/{ticker}/financials/balance-sheet"
-     #headers = "/html/body/div[3]/div[6]/div/div[3]/div/div/table/tbody/tr[12]/td[6]/div/span"
-               
-     # response = requests.get(url, headers=header)
-     # usage_response = requests.get(usage_url, headers=header)
+     #usage_url = f'https://public-api.quickfs.net/v1/usage'
+    
 
      @st.cache_data
      def fetch_data_from_api(url, header):
+          load_dotenv()
           response = requests.get(url, headers=header)
           
     
