@@ -55,7 +55,8 @@ from streamlit_option_menu import option_menu
 from dotenv import load_dotenv
 
     
-
+def configure():
+     load_dotenv()
 
 st.set_page_config(page_title="verstehdieaktie", page_icon = "📚", layout="wide")
 
