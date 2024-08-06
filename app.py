@@ -7396,11 +7396,7 @@ if selected == "Stock Analysis Tool":
 
      url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={api_key}'
      #url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={os.getenv('api_key')}'
-<<<<<<< HEAD
      #url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={os.getenv('api_key')}'
-
-=======
->>>>>>> fc514330bd092314459c4afce0530a128a78caad
      #usage_url = f'https://public-api.quickfs.net/v1/usage'
     
 
