@@ -7121,6 +7121,7 @@ def get_exchange_rate(base_currency, target_currency):
                          # Get the exchange rate for USD to EUR
 usd_to_eur_rate = get_exchange_rate("USD", "EUR")
 
+
 selected = option_menu(
      menu_title= None, #required
      options=["Home","Stock Analysis Tool","Contacts"], #required
@@ -7530,6 +7531,7 @@ if selected == "Stock Analysis Tool":
       ticker = ticker
 
      stock_info = yf.Ticker(ticker)
+     #print(stock_info)
 
 
 
@@ -7539,18 +7541,22 @@ if selected == "Stock Analysis Tool":
 
           try:
                current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
+              
                #current_price = stock_info.history(period="1d")["Close"].iloc[-1]
 
           except Exception as e: #except all errors
-          
-               current_price = quote.fundamental_df.at[0, "Price"]
+               try:
+                    current_price = quote.fundamental_df.at[0, "Price"]
                #current_price = 23
-          else:   
-               current_price = 23  
+               except Exception as e:
+                    current_price = 23  
 
           return current_price 
 
-     current_price = get_current_price()  
+     current_price = get_current_price()
+     #current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
+ 
+     #print("current_price",current_price) 
 
 
 
