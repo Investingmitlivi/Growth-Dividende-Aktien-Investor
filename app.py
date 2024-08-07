@@ -58,7 +58,7 @@ from dotenv import load_dotenv
 def configure():
      load_dotenv()
 
-st.set_page_config(page_title="verstehdieaktie", page_icon = "📚", layout="wide")
+st.set_page_config(page_title="Stock Valuation", page_icon = "📚", layout="wide")
 
 
 # Set the theme
@@ -7499,6 +7499,7 @@ if selected == "Stock Analysis Tool":
      # unsafe_allow_html=True
      # )
      #      #st.write(f"Industry: {Industry}", unsafe_allow_html=True)
+
      # with col3:
      #      st.write(styled_link, unsafe_allow_html=True)
 
