@@ -63,43 +63,43 @@ st.set_page_config(page_title="verstehdieaktie", page_icon = "📚", layout="wid
 
 # Set the theme
 # Apply theme via CSS
-st.markdown("""
-    <style>
-        /* Set the primary color and secondary background color */
-        .stApp {
-            font-family: serif;
-            color: black;  /* Set default text color to black */
-        }
-        .stButton>button {
-            background-color: #0a0201;
-            color: white;
-        }
-        .stButton>button:hover {
-            background-color: #4b71ff;
-            color: white;
-        }
-        .stTextInput>div>div>input {
-            border: 1px solid #ffffff;
-            background-color: #ffffff;
-            color: black;  /* Set text input font color to black */
-        }
-        .stTextArea>div>div>textarea {
-            border: 1px solid #ffffff;
-            background-color: #ffffff;
-            color: black;  /* Set text area font color to black */
-        }
-        .stSelectbox>div>div>div {
-            border: 1px solid #ffffff;
-        }
-        .stSelectbox>div>div>select {
-            border: 1px solid #ffffff;
-        }
-        .stMarkdown>div {
-            color: black;  /* Set Markdown text color to black */
-        }
-    </style>
-    """, unsafe_allow_html=True
-)
+# st.markdown("""
+#     <style>
+#         /* Set the primary color and secondary background color */
+#         .stApp {
+#             font-family: serif;
+#             color: black;  /* Set default text color to black */
+#         }
+#         .stButton>button {
+#             background-color: #0a0201;
+#             color: white;
+#         }
+#         .stButton>button:hover {
+#             background-color: #4b71ff;
+#             color: white;
+#         }
+#         .stTextInput>div>div>input {
+#             border: 1px solid #ffffff;
+#             background-color: #ffffff;
+#             color: black;  /* Set text input font color to black */
+#         }
+#         .stTextArea>div>div>textarea {
+#             border: 1px solid #ffffff;
+#             background-color: #ffffff;
+#             color: black;  /* Set text area font color to black */
+#         }
+#         .stSelectbox>div>div>div {
+#             border: 1px solid #ffffff;
+#         }
+#         .stSelectbox>div>div>select {
+#             border: 1px solid #ffffff;
+#         }
+#         .stMarkdown>div {
+#             color: black;  /* Set Markdown text color to black */
+#         }
+#     </style>
+#     """, unsafe_allow_html=True
+# )
 
 
 
