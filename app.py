@@ -7182,7 +7182,6 @@ if selected == "Home":
 #finnhub_client = finnhub.Client(api_key="ckse5rhr01qjpllh316gckse5rhr01qjpllh3170")
 
 
-
 if selected == "Stock Analysis Tool":
      
     
@@ -7701,20 +7700,97 @@ if selected == "Stock Analysis Tool":
           
      #...............................................................................................................
 
-     # col2, col3, col4, col5, col6, col7= st.columns(6)
+     # col2, col3, col4, col5, col6, col7, col8,col9= st.columns(8)
 
      # with col2:
-     #     button2 = col2.button("1W")
+     #     button2 = col2.button("1mo")
      # with col3:
-     #     button3 = col3.button("1M")
+     #     button3 = col3.button("3mo")
      # with col4:
-     #     button4 = col4.button("YTD")
+     #     button4 = col4.button("6mo")
      # with col5:
-     #     button5 = col5.button("1Y")
+     #     button5 = col5.button("1y")
      # with col6:
-     #     button6 = col6.button("5Y")
+     #     button6 = col6.button("2y")
      # with col7:
-     #     button7 = col7.button("MAX")
+     #     button7 = col7.button("5y")
+     # with col8:
+     #     button8 = col8.button("10y")
+     # with col9:
+     #     button9 = col9.button("max")
+ ######################################################   
+     # def calculate_stock_performance(periods):
+     #        # Define time periods
+     #      #performances = {}
+
+
+          
+     #      periods = {
+     #           "1mo": "1 Month",
+     #           "3mo": "3 Months",
+     #           "6mo": "6 Months",
+     #           "1y": "1 Year",
+     #           "2y": "2 Years",
+     #           "5y": "5 Years",
+     #           "10y": "10 Years",
+     #           "max": "MAX"
+     #      }
+
+     #      # Get stock data
+     #      #stock = yf.Ticker(ticker)
+    
+     #      performances = []
+    
+     #      for period, label in periods.items():
+     #           try:
+     #                # Get historical data
+     #                hist = stock_info.history(period=period)
+                    
+     #                if len(hist) > 0:
+     #                     start_price = hist['Close'].iloc[0]
+     #                     end_price = hist['Close'].iloc[-1]
+                         
+     #                     # Calculate performance
+     #                     performance = ((end_price - start_price) / start_price) * 100
+     #                     performances.append({
+     #                          "Period": label,
+     #                          "Performance": f"{performance:.2f}%"
+     #                     })
+     #                else:
+     #                     performances.append({
+     #                          "Period": label,
+     #                          "Performance": "No data"
+     #                     })
+     #           except Exception as e:
+     #                performances.append({
+     #                     "Period": label,
+     #                     "Performance": f"Error: {str(e)}"
+     #                })
+          
+     #      # Create DataFrame
+     #      df = pd.DataFrame(performances)
+          
+     #      return df
+
+     #      # Example usage
+     # #ticker = ticker  # Replace with your desired stock ticker
+     # performance_df = calculate_stock_performance(ticker)
+
+
+     # #st.title(f"Stock Performance for {ticker}")
+     # #.dataframe(performance_df.style.highlight_max(axis=0, color='lightgreen'))
+     # #st.dataframe(performance_df, hide_index=True)
+     # st.dataframe(
+     # performance_df.style.highlight_max(axis=0, subset=['Performance'], color='lightgreen'),
+     # hide_index=True
+     # )
+
+
+     #####################################################################
+
+
+
+     #st.dataframe(performance_df, hide_index=True, width=1000)
 
 
      # if button2:
@@ -7744,6 +7820,7 @@ if selected == "Stock Analysis Tool":
 
      if start_date_input is None:
      # Set the default start date to "2002-03-04"
+          #start_date_input = start_date
           start_date_input = start_date
 
 
@@ -7765,61 +7842,214 @@ if selected == "Stock Analysis Tool":
     
      # st.plotly_chart(fig,use_container_width=True,config={'displayModeBar': False})
 
+#############################################################################################################
 
+     # fig = go.Figure()
 
-     fig = go.Figure()
+     # # Add the area fill
+     # fig.add_trace(go.Scatter(
+     # x=data.index,
+     # y=data['Adj Close'],
+     # fill='tozeroy',
+     # fillcolor='rgba(0, 100, 80, 0.1)',  # Very light green, adjust as needed
+     # line_color='rgba(0, 0, 0, 0)',  # Transparent line for fill
+     # showlegend=False
+     # ))
 
-     # Add the area fill
-     fig.add_trace(go.Scatter(
-     x=data.index,
-     y=data['Adj Close'],
-     fill='tozeroy',
-     fillcolor='rgba(0, 100, 80, 0.1)',  # Very light green, adjust as needed
-     line_color='rgba(0, 0, 0, 0)',  # Transparent line for fill
-     showlegend=False
-     ))
+     # # Add the line trace
+     # fig.add_trace(go.Scatter(
+     # x=data.index,
+     # y=data['Adj Close'],
+     # line=dict(color='rgb(0, 100, 80)', width=2),  # Darker green line, adjust as needed
+     # name=name
+     
+     # ))
 
-     # Add the line trace
-     fig.add_trace(go.Scatter(
-     x=data.index,
-     y=data['Adj Close'],
-     line=dict(color='rgb(0, 100, 80)', width=2),  # Darker green line, adjust as needed
-     name=name
-     ))
+     # # Update the layout
+     # fig.update_layout(
+     # xaxis_title='Date',
+     # yaxis_title='Price ($)',
+     # plot_bgcolor='white',  # White background
+     # paper_bgcolor='white',  # White surrounding area
+     # xaxis=dict(
+     #      showgrid=True,
+     #      gridcolor='lightgrey',
+     #      showline=True,
+     #      linecolor='lightgrey'
+     # ),
+     # yaxis=dict(
+     #      showgrid=True,
+     #      gridcolor='lightgrey',
+     #      showline=True,
+     #      linecolor='lightgrey',
+     #      tickprefix='$'  # Add dollar sign prefix to y-axis ticks
+     # ),
+     # margin=dict(l=40, r=40, t=40, b=40)
+     # )
 
-     # Update the layout
-     fig.update_layout(
-     xaxis_title='Date',
-     yaxis_title='Price ($)',
-     plot_bgcolor='white',  # White background
-     paper_bgcolor='white',  # White surrounding area
-     xaxis=dict(
-          showgrid=True,
-          gridcolor='lightgrey',
-          showline=True,
-          linecolor='lightgrey'
-     ),
-     yaxis=dict(
-          showgrid=True,
-          gridcolor='lightgrey',
-          showline=True,
-          linecolor='lightgrey',
-          tickprefix='$'  # Add dollar sign prefix to y-axis ticks
-     ),
-     margin=dict(l=40, r=40, t=40, b=40)
-     )
-
-     # Format hover text to include dollar sign
-     fig.update_traces(
-     hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
-     )
-
-     # Display the chart in Streamlit
-     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-
+     # # Format hover text to include dollar sign
+     # fig.update_traces(
+     # hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
+     # )
+     # col1,col2 =st.columns(2)
+     # # Display the chart in Streamlit
+     
+     # st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+     
+    #############################################################################################################
           
           #st.plotly_chart(fig, config={'displayModeBar': False})
 
+
+
+     @st.cache_data
+     #@st.fragment
+     def calculate_stock_performance(ticker):
+          stock_info = yf.Ticker(ticker)
+          periods = {
+               "1mo": "1 Month",
+               "3mo": "3 Months",
+               "6mo": "6 Months",
+               #"1y": "1 Year",
+               "2y": "2 Years",
+               "5y": "5 Years",
+               "10y": "10 Years",
+               "max": "MAX"
+          }
+
+          #stock = yf.Ticker(ticker)
+          performances = {}
+          
+          for period, label in periods.items():
+               try:
+                    hist = stock_info.history(period=period)
+                    if len(hist) > 0:
+                         start_price = hist['Close'].iloc[0]
+                         end_price = hist['Close'].iloc[-1]
+                         performance = ((end_price - start_price) / start_price) * 100
+                         performances[label] = f"{performance:.2f}%"
+                    else:
+                         performances[label] = "No data"
+               except Exception as e:
+                    performances[label] = f"Error: {str(e)}"
+          
+          return performances
+     
+     @st.cache_data
+     #@st.fragment
+     def get_detailed_data(ticker, period):
+          stock_info = yf.Ticker(ticker)
+          detailed_data = stock_info.history(period=period)
+          return detailed_data
+     
+     def create_figure(detailed_data):
+           # Create the figure
+          fig = go.Figure()
+
+          # Add the area fill
+          fig.add_trace(go.Scatter(
+               x=detailed_data.index,
+               y=detailed_data['Close'],
+               fill='tozeroy',
+               fillcolor='rgba(0, 100, 80, 0.1)',  # Very light green, adjust as needed
+               line_color='rgba(0, 0, 0, 0)',  # Transparent line for fill
+               showlegend=False
+          ))
+
+          # Add the line trace
+          fig.add_trace(go.Scatter(
+               x=detailed_data.index,
+               y=detailed_data['Close'],
+               line=dict(color='rgb(0, 100, 80)', width=2),  # Darker green line, adjust as needed
+               #name=None
+               showlegend=False  # Hide legend
+          ))
+
+          # Update the layout
+          fig.update_layout(
+               xaxis_title='Date',
+               yaxis_title='Price ($)',
+               plot_bgcolor='white',  # White background
+               paper_bgcolor='white',  # White surrounding area
+               xaxis=dict(
+                    showgrid=True,
+                    gridcolor='lightgrey',
+                    showline=True,
+                    linecolor='lightgrey'
+          ),
+          yaxis=dict(
+               showgrid=True,
+               gridcolor='lightgrey',
+               showline=True,
+               linecolor='lightgrey',
+               tickprefix='$'  # Add dollar sign prefix to y-axis ticks
+          ),
+          margin=dict(l=40, r=40, t=40, b=40),
+          showlegend=False  # Hide legend
+          )
+
+          # Format hover text to include dollar sign
+          fig.update_traces(
+          hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
+          )
+
+          return fig
+
+          # Display the chart in Streamlit
+          #st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+     
+     @st.fragment
+     #@st.cache_data
+     def main():
+          with st.container():
+               #ticker = ticker 
+               performances = calculate_stock_performance(ticker)
+
+               # Create options for the menu with performance data
+               options = [f"{period} ({perf})" for period, perf in performances.items()]
+               
+               if 'selected_period' not in st.session_state:
+                    st.session_state.selected_period = "MAX"
+                    #st.markdown(f"**{period}**")
+                    #st.markdown(f"{performance}")
+
+               selected = option_menu(
+                    menu_title=None,  # required
+                    options=options,  # using the new options with performance data
+                    icons=["None"] * len(options),  # empty icons for each option
+                    menu_icon="cast",  # optional
+                    #default_index=0,
+                    default_index=options.index(f"MAX ({performances['MAX']})") if f"MAX ({performances['MAX']})" in options else 0,
+                    orientation="horizontal",
+               )
+
+               st.session_state.selected_period = selected.split(" (")[0]
+
+               period_mapping = {
+                    "1 Month": "1mo", 
+                    "3 Months": "3mo", 
+                    "6 Months": "6mo", 
+                    #"1 Year ": '1y', 
+                    "2 Years": "2y", 
+                    "5 Years": "5y", 
+                    "10 Years": "10y", 
+                    "MAX": "max"
+               }
+               
+               #stock = yf.Ticker(ticker)
+               #detailed_data = stock_info.history(period=period_mapping[selected_period])
+               detailed_data = get_detailed_data(ticker, period_mapping[st.session_state.selected_period])
+
+               fig = create_figure(detailed_data)
+
+               st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+     # Run the app
+     if __name__ == "__main__":
+          main()
+     
+  
+
+###############################################################################################
 
 
      data2 = data
@@ -7944,6 +8174,19 @@ if selected == "Stock Analysis Tool":
      # else:
      #     st.sidebar.error("Authentication failed. Please enter the correct username and password.")
 
+
+     # Display some statistics
+     #st.write(f"Start Price: {detailed_data['Close'].iloc[0]:.2f}")
+     #st.write(f"End Price: {detailed_data['Close'].iloc[-1]:.2f}")
+     #st.write(f"Highest Price: {detailed_data['High'].max():.2f}")
+     #st.write(f"Lowest Price: {detailed_data['Low'].min():.2f}")
+
+
+
+
+
+
+#if selected == "Stock Analysis Tool":
 
 
      #..............................................Stock beta......................................................
