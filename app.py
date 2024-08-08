@@ -7389,7 +7389,8 @@ if selected == "Stock Analysis Tool":
      #st.write(f'Selected Ticker Name: {name}')
      #............................... quickfs api .................
 
-     api_key = os.getenv("SECRET_API_KEY")
+     #api_key = os.getenv("SECRET_API_KEY")
+     api_key = "7bd83d28344a3e5d2c2103dd4ca746f133259764"
      header = {'x-qfs-api-key': api_key}
 
     
