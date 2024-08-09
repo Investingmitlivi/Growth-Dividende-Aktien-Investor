@@ -7102,8 +7102,9 @@ ticker_symbol_name = {
           'ZYXI':'Zynex Inc. '
      }
 
+global ticker, name, symbol
 
-@st.cache_data
+
 def get_exchange_rate(base_currency, target_currency):
                          try:
                               url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
@@ -7391,7 +7392,7 @@ if selected == "Stock Analysis Tool":
      #............................... quickfs api .................
 
      #api_key = os.getenv("SECRET_API_KEY")
-     api_key = 
+     api_key = "7bd83d28344a3e5d2c2103dd4ca746f133259764"
      header = {'x-qfs-api-key': api_key}
 
     
@@ -7402,7 +7403,7 @@ if selected == "Stock Analysis Tool":
      #usage_url = f'https://public-api.quickfs.net/v1/usage'
     
 
-     @st.cache_data
+    # @st.cache_data
      def fetch_data_from_api(url, header):
           load_dotenv()
           response = requests.get(url, headers=header)
@@ -7530,7 +7531,9 @@ if selected == "Stock Analysis Tool":
 
      else:
      # Handle other cases if needed
+     
       ticker = ticker
+      
 
      stock_info = yf.Ticker(ticker)
      #print(stock_info)
@@ -7570,7 +7573,7 @@ if selected == "Stock Analysis Tool":
           return date.strftime('%Y/%m/%d')
      
 
-     @st.cache_data
+     #@st.cache_data
      def get_all_time_high_and_low_price(ticker):
           data = stock_info.history(period="max", actions=False)  # Exclude dividend data
 
@@ -7922,9 +7925,8 @@ if selected == "Stock Analysis Tool":
 
      
      #@st.fragment
-     @st.cache_data
+     #@st.cache_data
      def calculate_stock_performance(ticker):
-          stock_info = yf.Ticker(ticker)
           periods = {
                "1mo": "1 Month",
                "3mo": "3 Months",
@@ -7954,13 +7956,13 @@ if selected == "Stock Analysis Tool":
           
           return performances
      
-     @st.cache_data
+     #@st.cache_data
      #@st.fragment
      def get_detailed_data(ticker, period):
           stock_info = yf.Ticker(ticker)
           detailed_data = stock_info.history(period=period)
           return detailed_data
-     
+     #@st.cache_data
      def create_figure(detailed_data):
            # Create the figure
           fig = go.Figure()
@@ -8018,10 +8020,16 @@ if selected == "Stock Analysis Tool":
           #st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
      #@st.cache_data
      #@st.fragment
-     @single_fragment
-     def main():
-          with st.container():
+     @st.fragment
+     def display_stock_chart():
+          global ticker
                #ticker = ticker 
+          if 'previous_ticker' not in st.session_state or st.session_state.previous_ticker != ticker:
+                    # Reset fragment state
+               st.session_state.selected_period = None
+               st.session_state.previous_ticker = ticker
+
+          with st.container():
                
                performances = calculate_stock_performance(ticker)
 
@@ -8041,6 +8049,7 @@ if selected == "Stock Analysis Tool":
                     #default_index=0,
                     default_index=options.index(f"MAX ({performances['MAX']})") if f"MAX ({performances['MAX']})" in options else 0,
                     orientation="horizontal",
+                    key=f"option_menu_{ticker}" 
                )
 
                st.session_state.selected_period = selected.split(" (")[0]
@@ -8062,7 +8071,15 @@ if selected == "Stock Analysis Tool":
 
                fig = create_figure(detailed_data)
 
+       
                st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+     
+     def main():
+          #st.title("Stock Performance Chart")
+          #global ticker
+          global ticker, name, symbol          
+          if ticker:
+               display_stock_chart()          
      # Run the app
      if __name__ == "__main__":
           main()
@@ -11559,100 +11576,246 @@ if selected == "Stock Analysis Tool":
                #      f"{dt_equt}"
                #      )
                # Apply CSS to make sure the markdown takes full width of the container
-               st.markdown("""
-               <style>
-               .full-width {
-                    width: 100%;
-               }
-               </style>
-               """, unsafe_allow_html=True)
+####################################################################################
+
+               # st.markdown("""
+               # <style>
+               # .full-width {
+               #      width: 100%;
+               # }
+               # </style>
+               # """, unsafe_allow_html=True)
 
 
-               col1,col2,col3=st.columns(3)
+               # col1,col2,col3=st.columns(3)
 
 
-               #with col1:
-               col1.write(
-                    """
-                    <div style="width: 100%;">
+               # #with col1:
+               # col1.write(
+               #      """
+               #      <div style="width: 100%;">
                     
-                    **Earnings Multiples** | **Value** | **Change** 
-                    --- | --- | ---
-                    5 YR P/E < 23 | **{KGV}** | {pe}
-                    5 YR P/FCF < 23 | **{KCV}** | {pcf}
-                    </div>
+               #      **Earnings Multiples** | **Value** | **Change** 
+               #      --- | --- | ---
+               #      5 YR P/E < 23 | **{KGV}** | {pe}
+               #      5 YR P/FCF < 23 | **{KCV}** | {pcf}
+               #      </div>
+               #      """.format(
+               #           KGV=KGV, pe=pe,
+               #           KCV=KCV, pcf=pcf,
+                        
+               #      ),unsafe_allow_html=True
+               #      )
+               # col2.write('')
+               # #with col2:
+               # col3.write(
+               #      """
+               #      <div style="width: 100%;">
+                    
+               #      **Leverage ratio/Bilanzkennzahl** | **Value** | **Change**
+               #      --- | --- | ---
+               #      5 YR FCF / DEBT < 5 | **{Schuldentillgung}** | {schuld}
+               #      DEBT / EQUITY < 2 | **{Average_debt_equity_one}** | {dt_equt}
+               #      </div>
+               #      """.format(
+               #           Schuldentillgung=Schuldentillgung, schuld=schuld,
+               #           Average_debt_equity_one=Average_debt_equity_one, dt_equt=dt_equt
+               #      ),unsafe_allow_html=True
+               #      )
+               #                                         # 
+                        
+               
+               # cola,colc,colb=st.columns(3)
+
+               # with cola:
+               #      st.markdown(
+               #      """
+               #      <div style="width: 100%;">
+                    
+               #      **Gewinnkennzahl/Ausschüttungsquote** | **Value** | **Change**
+               #      --- | --- | ---
+               #      5 YR ROIC > 9% | **{Average_ROIC_funf}** | {roic}
+               #      5 YR ROE > 14% | **{five_Yrs_ROE}%** | {roe}
+               #      5 YR NET MARGIN > 5% | **{five_yrs_Nettomarge}%** | {netmarge}
+               #      FCF PAYOUT RATIO < 60 % | **{one_FCF_annual_payout}%** | {payout}
+               #      </div>
+               #      """.format(
+               #           Average_ROIC_funf=Average_ROIC_funf, roic=roic,
+               #           five_Yrs_ROE=five_Yrs_ROE, roe=roe,
+               #           five_yrs_Nettomarge=five_yrs_Nettomarge, netmarge=netmarge,
+               #           one_FCF_annual_payout=one_FCF_annual_payout, payout=payout
+               #      ),unsafe_allow_html=True
+               #      )
+
+
+               # colc.write('')  
+                   
+                       
+               # with colb:
+               #      st.markdown(
+               #      """
+               #      <div style="width: 100%;">
+                    
+               #      **Wachstum/Aktienrückkauf** | **Value** | **Change**
+               #      --- | --- | ---
+               #      Revenue Growth 5 YR | **{revenue_annual_funf_Growth:.2f}%** | {rev}
+               #      Net Income Growth 5 YR | **{netincome_annual_funf_growth_:.2f}%** | {netincome}
+               #      FCF Growth 5 YR| **{FCF_funf_growth:.2f}%** | {fcf}
+               #      Shares Outstanding 5 YR | **{Shares_outstanding_funf_growth:.2f}%** | {share}
+               #      </div>
+               #      """.format(
+               #           revenue_annual_funf_Growth=revenue_annual_funf_Growth, rev=rev,
+               #           netincome_annual_funf_growth_=netincome_annual_funf_growth_, netincome=netincome,
+               #           FCF_funf_growth=FCF_funf_growth, fcf=fcf,
+               #           Shares_outstanding_funf_growth=Shares_outstanding_funf_growth, share=share
+               #      ),unsafe_allow_html=True
+               #      )
+
+ #################################################      
+               #@st.cache_data
+               def display_metrics():
+                    st.markdown("""
+                    <style>
+                    .metric-table {
+                         width: 100%;
+                         border-collapse: collapse;
+                    }
+                    .metric-table th, .metric-table td {
+                         border: 1px solid #ddd;
+                         padding: 8px;
+                         text-align: left;
+                    }
+                    .metric-table th {
+                         background-color: #f00ff00;
+                    }
+                    .metric-table .section-header {
+                         color: green;
+                         font-weight: bold;
+                    }
+                    </style>
+                    """, unsafe_allow_html=True)
+
+                    st.markdown("""
+                    <table class="metric-table">
+                         <tr>
+                              <td>
+                                   <table class="metric-table">
+                                        <tr>
+                                        <td class="section-header">Earnings Multiples</td>
+                                        <th>Value</th>
+                                        <th>Change</th>
+                                        </tr>
+                                        <tr>
+                                        <td>5 YR P/E < 23</td>
+                                        <td><b>{KGV}</b></td>
+                                        <td>{pe}</td>
+                                        </tr>
+                                        <tr>
+                                        <td>5 YR P/FCF < 23</td>
+                                        <td><b>{KCV}</b></td>
+                                        <td>{pcf}</td>
+                                        </tr>
+                                   </table>
+                              </td>
+                              <td>
+                                   <table class="metric-table">
+                                        <tr>
+                                        <td class="section-header">Leverage ratio/Bilanzkennzahl</td>
+                                        <th>Value</th>
+                                        <th>Change</th>
+                                        </tr>
+                                        <tr>
+                                        <td>5 YR FCF / DEBT < 5</td>
+                                        <td><b>{Schuldentillgung}</b></td>
+                                        <td>{schuld}</td>
+                                        </tr>
+                                        <tr>
+                                        <td>DEBT / EQUITY < 2</td>
+                                        <td><b>{Average_debt_equity_one}</b></td>
+                                        <td>{dt_equt}</td>
+                                        </tr>
+                                   </table>
+                              </td>
+                         </tr>
+                         <tr>
+                              <td>
+                                   <table class="metric-table">
+                                        <tr>
+                                        <td class="section-header">Gewinnkennzahl/Ausschüttungsquote</td>
+                                        <th>Value</th>
+                                        <th>Change</th>
+                                        </tr>
+                                        <tr>
+                                        <td>5 YR ROIC > 9%</td>
+                                        <td><b>{Average_ROIC_funf}</b></td>
+                                        <td>{roic}</td>
+                                        </tr>
+                                        <tr>
+                                        <td>5 YR ROE > 14%</td>
+                                        <td><b>{five_Yrs_ROE}%</b></td>
+                                        <td>{roe}</td>
+                                        </tr>
+                                        <tr>
+                                        <td>5 YR NET MARGIN > 5%</td>
+                                        <td><b>{five_yrs_Nettomarge}%</b></td>
+                                        <td>{netmarge}</td>
+                                        </tr>
+                                        <tr>
+                                        <td>FCF PAYOUT RATIO < 60 %</td>
+                                        <td><b>{one_FCF_annual_payout}%</b></td>
+                                        <td>{payout}</td>
+                                        </tr>
+                                   </table>
+                              </td>
+                              <td>
+                                   <table class="metric-table">
+                                        <tr>
+                                        <td class="section-header">Wachstum/Aktienrückkauf</td>
+                                        <th>Value</th>
+                                        <th>Change</th>
+                                        </tr>
+                                        <tr>
+                                        <td>Revenue Growth 5 YR</td>
+                                        <td><b>{revenue_annual_funf_Growth:.2f}%</b></td>
+                                        <td>{rev}</td>
+                                        </tr>
+                                        <tr>
+                                        <td>Net Income Growth 5 YR</td>
+                                        <td><b>{netincome_annual_funf_growth_:.2f}%</b></td>
+                                        <td>{netincome}</td>
+                                        </tr>
+                                        <tr>
+                                        <td>FCF Growth 5 YR</td>
+                                        <td><b>{FCF_funf_growth:.2f}%</b></td>
+                                        <td>{fcf}</td>
+                                        </tr>
+                                        <tr>
+                                        <td>Shares Outstanding 5 YR</td>
+                                        <td><b>{Shares_outstanding_funf_growth:.2f}%</b></td>
+                                        <td>{share}</td>
+                                        </tr>
+                                   </table>
+                              </td>
+                         </tr>
+                    </table>
                     """.format(
                          KGV=KGV, pe=pe,
                          KCV=KCV, pcf=pcf,
-                        
-                    ),unsafe_allow_html=True
-                    )
-               col2.write('')
-               #with col2:
-               col3.write(
-                    """
-                    <div style="width: 100%;">
-                    
-                    **Leverage ratio/Bilanzkennzahl** | **Value** | **Change**
-                    --- | --- | ---
-                    5 YR FCF / DEBT < 5 | **{Schuldentillgung}** | {schuld}
-                    DEBT / EQUITY < 2 | **{Average_debt_equity_one}** | {dt_equt}
-                    </div>
-                    """.format(
                          Schuldentillgung=Schuldentillgung, schuld=schuld,
-                         Average_debt_equity_one=Average_debt_equity_one, dt_equt=dt_equt
-                    ),unsafe_allow_html=True
-                    )
-                                                       # 
-                        
-               
-               cola,colc,colb=st.columns(3)
-
-               with cola:
-                    st.markdown(
-                    """
-                    <div style="width: 100%;">
-                    
-                    **Gewinnkennzahl/Ausschüttungsquote** | **Value** | **Change**
-                    --- | --- | ---
-                    5 YR ROIC > 9% | **{Average_ROIC_funf}** | {roic}
-                    5 YR ROE > 14% | **{five_Yrs_ROE}%** | {roe}
-                    5 YR NET MARGIN > 5% | **{five_yrs_Nettomarge}%** | {netmarge}
-                    FCF PAYOUT RATIO < 60 % | **{one_FCF_annual_payout}%** | {payout}
-                    </div>
-                    """.format(
+                         Average_debt_equity_one=Average_debt_equity_one, dt_equt=dt_equt,
                          Average_ROIC_funf=Average_ROIC_funf, roic=roic,
                          five_Yrs_ROE=five_Yrs_ROE, roe=roe,
                          five_yrs_Nettomarge=five_yrs_Nettomarge, netmarge=netmarge,
-                         one_FCF_annual_payout=one_FCF_annual_payout, payout=payout
-                    ),unsafe_allow_html=True
-                    )
-
-
-               colc.write('')  
-                   
-                       
-               with colb:
-                    st.markdown(
-                    """
-                    <div style="width: 100%;">
-                    
-                    **Wachstum/Aktienrückkauf** | **Value** | **Change**
-                    --- | --- | ---
-                    Revenue Growth 5 YR | **{revenue_annual_funf_Growth:.2f}%** | {rev}
-                    Net Income Growth 5 YR | **{netincome_annual_funf_growth_:.2f}%** | {netincome}
-                    FCF Growth 5 YR| **{FCF_funf_growth:.2f}%** | {fcf}
-                    Shares Outstanding 5 YR | **{Shares_outstanding_funf_growth:.2f}%** | {share}
-                    </div>
-                    """.format(
+                         one_FCF_annual_payout=one_FCF_annual_payout, payout=payout,
                          revenue_annual_funf_Growth=revenue_annual_funf_Growth, rev=rev,
                          netincome_annual_funf_growth_=netincome_annual_funf_growth_, netincome=netincome,
                          FCF_funf_growth=FCF_funf_growth, fcf=fcf,
                          Shares_outstanding_funf_growth=Shares_outstanding_funf_growth, share=share
-                    ),unsafe_allow_html=True
-                    )
+                    ), unsafe_allow_html=True)
 
-               
+# Call the function to display the metrics
+
+               display_metrics()
           # 
                #col10.metric("Net Income Growth 5 YR",f"{netincome_annual_funf_growth_:.2f}%", netincome)
                                                                                 
