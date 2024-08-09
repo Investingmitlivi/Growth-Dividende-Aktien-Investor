@@ -53,6 +53,7 @@ from stocknews import StockNews
 from streamlit_option_menu import option_menu
 #from callbacks import supports_callbacks
 from dotenv import load_dotenv
+from typing import Dict,Any
 
     
 def configure():
@@ -7536,9 +7537,9 @@ if selected == "Stock Analysis Tool":
 
 
 
-     @st.cache_data
+     #@st.cache_data
      def get_current_price():
-
+    
           try:
                current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
               
@@ -7554,13 +7555,16 @@ if selected == "Stock Analysis Tool":
           return current_price 
 
      current_price = get_current_price()
+     amount = current_price 
+     converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+     
      #current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
  
      #print("current_price",current_price) 
 
 
 
-     @st.cache_data
+     #@st.cache_data
      def format_date(date):
           return date.strftime('%Y/%m/%d')
      
@@ -7626,11 +7630,14 @@ if selected == "Stock Analysis Tool":
      try:
           close_price = round(data['Close'][-2],2)#-2 meaning a day before
           #st.write(close_price)
-          current_price = stock_info.history(period="1d",interval="1m")["Close"].iloc[-1] 
+          #current_price = stock_info.history(period="1d",interval="1m")["Close"].iloc[-1] 
 
           percentage_difference = round(((current_price - close_price) / close_price) * 100,2)
-          amount = current_price 
-          converted_amount = "{:.2f}".format(amount * usd_to_eur_rate)
+         
+          #converted_amount = "{:.2f}".format(amount * usd_to_eur_rate)
+          #converted_amount=45
+          converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+
      except Exception as e:
           st.write(" ")
      # Determine text color based on percentage_difference
@@ -7899,11 +7906,22 @@ if selected == "Stock Analysis Tool":
     #############################################################################################################
           
           #st.plotly_chart(fig, config={'displayModeBar': False})
+     
+     def single_fragment(func):
+          #@st.experimental_fragment
+          def wrapper(*args, **kwargs):
+               if not st.session_state.get('fragment_applied', False):
+                    result = st.fragment(func(*args, **kwargs))
+                    st.session_state['fragment_applied'] = True
+               else:
+                    result = func(*args, **kwargs)
+               return result
+          return wrapper
 
 
-
-     @st.cache_data
+     
      #@st.fragment
+     @st.cache_data
      def calculate_stock_performance(ticker):
           stock_info = yf.Ticker(ticker)
           periods = {
@@ -7997,12 +8015,13 @@ if selected == "Stock Analysis Tool":
 
           # Display the chart in Streamlit
           #st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-     
-     @st.fragment
      #@st.cache_data
+     #@st.fragment
+     @single_fragment
      def main():
           with st.container():
                #ticker = ticker 
+               
                performances = calculate_stock_performance(ticker)
 
                # Create options for the menu with performance data
@@ -12288,13 +12307,14 @@ if selected == "Stock Analysis Tool":
  
 
 ################################ Experiment ##################################################################
-              # @st.cache_data                     
+               #st.cache_data                     
                #@st.experimental_fragment
-               @st.fragment
+               #@st.fragment
+               @single_fragment
                def display_growth_rate_formexer():
                          
                     with st.form(key='growth_rate_formex'):
-          
+                        
                          treasury = "^TNX"
                          #treasury_yield_data = yf.download(treasury, period='1d')
                          treasury_yield_data = yf.download(treasury)
@@ -12629,6 +12649,7 @@ if selected == "Stock Analysis Tool":
                          col11, col12,col13, col14= st.columns(4)
                               #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
                               #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
+                         #print("converted_amount",converted_amount)     
                          col11.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
 
                          col12.write(f"Low Estimate:")
@@ -12994,17 +13015,24 @@ if selected == "Stock Analysis Tool":
 
 ################################experiment2########
       
-               #@st.cache_data
+                          
+            #@st.cache_data
      with st.container():
-          use_container_width=True
+          
+          #use_container_width=True
           with Multiple_Valuation:        
                #@st.experimental_fragment
-               @st.fragment
-               #@st.experimental_memo
+               
+               #@st.experimental_fragment
+
+               #@st.fragment
+               #@st.cache_data
+               @single_fragment
                def display_growth_rate_form():
                     
 
                     with st.form(key='growth_rate_form31'):
+                         #converted_amount =340 
                                          # Initialize variables with default values
 
                          Profit_Margin_1 = annual_data['fcf_margin'][-1:]     
@@ -13068,6 +13096,8 @@ if selected == "Stock Analysis Tool":
                          col1,col2,colx,cola, colb, colc= st.columns(6)
                          col1.write('')               
                          col2.write('')
+                         #st.write(current_price)
+                         #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
                          col1.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True) 
 
                          #colx.write('')
@@ -13165,7 +13195,7 @@ if selected == "Stock Analysis Tool":
                                    
                          st.markdown('</div>', unsafe_allow_html=True)
 
-
+          
                          if float(Revenue_low_Euro) < float(converted_amount):
                                    font_color = "red"
                          else:
@@ -13183,8 +13213,16 @@ if selected == "Stock Analysis Tool":
                          else:
                                    font_color = "green"
                          colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro} €</span>", unsafe_allow_html=True)
+
+               #@st.fragment
+               #@st.cache_data
+               @single_fragment
+               def main():
                     
-               display_growth_rate_form()
+                    display_growth_rate_form()
+               if __name__ == "__main__":
+                   main()
+#####################################################################################################################################################                             
 
 
 
@@ -13513,7 +13551,8 @@ if selected == "Stock Analysis Tool":
      #######################################experiment###############################  
                #  
                #@st.experimental_fragment
-               @st.fragment
+               #@st.fragment
+               @single_fragment
                def display_growth_rate_formdiv():              
                     with st.form(key='growth_rate_form4'):
                     
