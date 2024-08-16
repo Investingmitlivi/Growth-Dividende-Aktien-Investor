@@ -7178,8 +7178,9 @@ if selected == "Home":
            """
           )
           st.write("[Superinvestor Portfolios >](https://valuesider.com/)")
+          st.write("[Superinvestor Portfolios 13F fillings >](https://dataroma.com/m/home.php)")
           
-          #st.write("---")
+         
 
 #finnhub_client = finnhub.Client(api_key="ckse5rhr01qjpllh316gckse5rhr01qjpllh3170")
 
@@ -7542,6 +7543,7 @@ if selected == "Stock Analysis Tool":
 
 
      #@st.cache_data
+     #@st.fragment
      def get_current_price():
     
           try:
@@ -7956,13 +7958,13 @@ if selected == "Stock Analysis Tool":
           
           return performances
      
-     #@st.cache_data
+     @st.cache_data
      #@st.fragment
      def get_detailed_data(ticker, period):
           stock_info = yf.Ticker(ticker)
           detailed_data = stock_info.history(period=period)
           return detailed_data
-     #@st.cache_data
+     @st.cache_data
      def create_figure(detailed_data):
            # Create the figure
           fig = go.Figure()
@@ -8020,7 +8022,7 @@ if selected == "Stock Analysis Tool":
           #st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
      #@st.cache_data
      #@st.fragment
-     @st.fragment
+     #@st.fragment
      def display_stock_chart():
           global ticker
                #ticker = ticker 
@@ -8073,7 +8075,8 @@ if selected == "Stock Analysis Tool":
 
        
                st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-     
+     #@st.cache_data
+     #@st.fragment
      def main():
           #st.title("Stock Performance Chart")
           #global ticker
@@ -8083,8 +8086,146 @@ if selected == "Stock Analysis Tool":
      # Run the app
      if __name__ == "__main__":
           main()
+
+
+
+
+#######################################################
+
      
-  
+     # def calculate_stock_performance(ticker):
+     #      periods = {
+     #      "1mo": "1 Month",
+     #      "3mo": "3 Months",
+     #      "6mo": "6 Months",
+     #      "2y": "2 Years",
+     #      "5y": "5 Years",
+     #      "10y": "10 Years",
+     #      "max": "MAX"
+     # }
+
+     #      stock = yf.Ticker(ticker)
+     #      performances = {}
+    
+     #      for period, label in periods.items():
+     #           try:
+     #                hist = stock.history(period=period)
+     #                if len(hist) > 0:
+     #                     start_price = hist['Close'].iloc[0]
+     #                     end_price = hist['Close'].iloc[-1]
+     #                     performance = ((end_price - start_price) / start_price) * 100
+     #                     performances[label] = f"{performance:.2f}%"
+     #                else:
+     #                     performances[label] = "No data"
+     #           except Exception as e:
+     #                performances[label] = f"Error: {str(e)}"
+          
+     #      return performances
+
+     # @st.cache_data
+     # def get_detailed_data(ticker, period):
+     #      stock_info = yf.Ticker(ticker)
+     #      detailed_data = stock_info.history(period=period)
+     #      return detailed_data
+
+     # @st.cache_data
+     # def create_figure(detailed_data):
+     #      fig = go.Figure()
+
+     #      fig.add_trace(go.Scatter(
+     #           x=detailed_data.index,
+     #           y=detailed_data['Close'],
+     #           fill='tozeroy',
+     #           fillcolor='rgba(0, 100, 80, 0.1)',
+     #           line_color='rgba(0, 0, 0, 0)',
+     #           showlegend=False
+     #      ))
+
+     #      fig.add_trace(go.Scatter(
+     #           x=detailed_data.index,
+     #           y=detailed_data['Close'],
+     #           line=dict(color='rgb(0, 100, 80)', width=2),
+     #           showlegend=False
+     #      ))
+
+     #      fig.update_layout(
+     #           xaxis_title='Date',
+     #           yaxis_title='Price ($)',
+     #           plot_bgcolor='white',
+     #           paper_bgcolor='white',
+     #           xaxis=dict(
+     #                showgrid=True,
+     #                gridcolor='lightgrey',
+     #                showline=True,
+     #                linecolor='lightgrey'
+     #           ),
+     #           yaxis=dict(
+     #                showgrid=True,
+     #                gridcolor='lightgrey',
+     #                showline=True,
+     #                linecolor='lightgrey',
+     #                tickprefix='$'
+     #           ),
+     #           margin=dict(l=40, r=40, t=40, b=40),
+     #           showlegend=False
+     #      )
+
+     #      fig.update_traces(
+     #           hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
+     #      )
+
+     #      return fig
+
+     # def display_stock_chart():
+     #      global ticker
+     #      if 'previous_ticker' not in st.session_state or st.session_state.previous_ticker != ticker:
+     #           st.session_state.selected_period = None
+     #           st.session_state.previous_ticker = ticker
+
+     #      with st.container():
+     #           performances = calculate_stock_performance(ticker)
+
+     #           options = [f"{period} ({perf})" for period, perf in performances.items()]
+               
+     #           if 'selected_period' not in st.session_state:
+     #                st.session_state.selected_period = "MAX"
+
+     #           selected = option_menu(
+     #                menu_title=None,
+     #                options=options,
+     #                icons=["None"] * len(options),
+     #                menu_icon="cast",
+     #                default_index=options.index(f"MAX ({performances['MAX']})") if f"MAX ({performances['MAX']})" in options else 0,
+     #                orientation="horizontal",
+     #                key=f"option_menu_{ticker}" 
+     #           )
+
+     #           # Display performances table
+     #           st.table(pd.DataFrame(performances.items(), columns=['Period', 'Performance']))
+
+     #           st.session_state.selected_period = selected.split(" (")[0]
+
+     #           period_mapping = {
+     #                "1 Month": "1mo", 
+     #                "3 Months": "3mo", 
+     #                "6 Months": "6mo", 
+     #                "2 Years": "2y", 
+     #                "5 Years": "5y", 
+     #                "10 Years": "10y", 
+     #                "MAX": "max"
+     #           }
+               
+     #           detailed_data = get_detailed_data(ticker, period_mapping[st.session_state.selected_period])
+     #           fig = create_figure(detailed_data)
+     #           st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+     # @st.fragment
+     # def main():
+     #      global ticker, name, symbol          
+     #      if ticker:
+     #           display_stock_chart()          
+
+     # if __name__ == "__main__":
+     #      main()
 
 ###############################################################################################
 
@@ -8380,7 +8521,7 @@ if selected == "Stock Analysis Tool":
           with Metric:  
      
 
-               stock_info = yf.Ticker(ticker)
+               #stock_info = yf.Ticker(ticker)
 
 
 
@@ -9364,11 +9505,185 @@ if selected == "Stock Analysis Tool":
                     Debt_to_EBITDA = "{:.2f}".format(Total_Debt_from_all_calc/Ebita_ttm)
                except Exception as e:
                     Debt_to_EBITDA =0.00
+
+############################################################################
+
                
+     #           data1 = {
+     #           'Market Cap (intraday)': [Marketcap_in_Billion],
+     #           'Enterprise Value': [Enterprise_value_in_Billion], 
+     #           'Debt/EBITDA':[Debt_to_EBITDA],
+     #           'Revenue (TTM)': [revenue_ttm],      
+     #           '5 YR Net Income': [Average_netIncome_annual_we], 
+     #           'Net Income (TTM)': [netincome_ttm], 
+     #           'PEG': [PEG],
+     #           'Forward P/E': [forwardPE], 
+     #           'P/E (TTM)': [pe_ttm],
+     #           '5 YR P/E': [pe_five_],
+     #           '10 YR P/E': [average_PE_historical],
+     #           'Operating Cash Flow (TTM)': [current_Operating_cash_Flow_Value], 
+     #           'Price/OCF (TTM)':[P_OCF_ttm],  
+     #           '5 YR Price/OCF ':[P_OCF_5],  
+     #           '10 YR Price/OCF':[P_OCF_10],  
+     #           '5 YR Gross Profit Margin': [five_yrs_average_gross_margin],
+     #           'Gross Profit Margin (TTM)': [rounded_gross_margin],
+               
+          
+                    
+     #           }
+          
+
+     #           data2 = {
+     #           '5 YR Dividend Yield': [Dividend_yield_average], 
+     #           'Dividend Yield': [Dividend_per_share_yield],
+     #           'Shareholder Yield': [Share_holder_yield],
+     #           'Dividend Paid (TTM)': [Dividend_ttm], 
+     #           'Dividend/Share (TTM)':f"$ {Dividend_TTM}",
+     #           'Dividend Estimate':f"$ {Dividend_Est}",
+     #           'Dividend Ex-Date':[Dividend_Ex_Date],
+     #           '5 YR Avg FCF': [average_FCF_annual_five_we], 
+     #           'Free Cash Flow (TTM)': [fcf_ttm],
+     #           'Price/FCF (TTM)': [pfcf_ttm], 
+     #           '5 YR Avg Price/FCF':[pfcf_funf],
+     #           '10 YR Avg Price/FCF':[pfcf_ten],
+     #           '5 YR Operating Margin': [rounded_operating_margin_five],
+     #           'Operating Margin': [rounded_operating_margin],
+     #           '5 YR Net Profit Margin':f"{five_yrs_Nettomarge}%",
+     #           'Net Profit Margin': [Net_margin_ttm],
+     #           '5 YR FCF Margin':f"{FCF_Margin_5}%",
+     #           'FCF Margin': ' {:.2f}%'.format(FCF_Margin_1)
+               
+          
+          
+     #           }     
+     #           date_obj = datetime.strptime(formatted_date, "%Y/%m/%d")
+
+     #           all_time_high_date = formatted_date
+     # #          min_price_date = min_price_date
+
+     #           data3 = {
+     #           'FCF Yield':[fcf_yield_ttm],
+     #           'P/S': [Price_to_sales_last],
+     #           '5 YR P/S': [P_sales_5],
+     #           '10 YR P/S': [P_sales_10],
+     #           'ROA': [average_ROA_annual_ttm],
+     #           '5 YR ROE': ["{:.5}%".format(five_ROE)],
+     #           'ROE': [ROE_ttm],
+     #           '5 YR ROIC': [Average_ROIC_funf],
+     #           'ROIC': [ROIC_annual_one],
+     #           '5 YR ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
+     #           'ROCE ':[ "{:.2f}%".format(One_YR_ROCE)],
+     #           #f'ATH ({all_time_high_date}'")": ["$ {:.2f}".format(all_time_high_price)],
+     #           f'ATH ({all_time_high_date}'")": f"$ {all_time_high_price:.2f} ({percentage_diff_ATH})",
+          
+
+
+     #           f'52WK LOW ({min_price_date.strftime("%Y/%m/%d")})': f"$ {fifty_two_week_low:.2f} ({percentage_difference_52_week_low})"
+     
+     #           }   
+
+
+     #           data4 = {
+               
+     #           #'Forward P/E': [forwardPE], 
+     #           'EPS (TTM)':[" {:.2f}".format(eps_diluted_ttm)],
+     #           'EPS Estimate this YR': f"{Earnings_this_yr}",
+     #      # 'EPS Estimate next YR':[Earnings_next_yr_in_prozent],
+     #           'EPS Estimate next YR': f" {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
+     #           #'EPS Estimate next YR':f"$ {Earnings_next_yr_in_value}",
+     #           'EPS Estimate 5 YR (per annum)':[Earnings_next_5_yrs],
+     #           'EPS past 5 YR':f"{EPS_5_CAGR}% ",
+     #           'Revenue growth 10 YR':f"{Revenue_Cagr_10}%",
+     #           'Revenue growth 5 YR':f"{Revenue_5_CAGR}%",
+     #           'RSI (14)': [RSI],
+     #           '50 SMA' : [Moving_50],
+     #           '200 SMA':[Moving_200],
+     #           #'Earnings':[Earnings],
+     #           'Analyst Target Price':  [f"$ {Target_Price}"],
+     #           'Current price': ["$ {:.2f}".format(amount)] 
+     #           #'Price Change':[Price_Change]      
+     # #"{:.2f}".format(((sum(pe_one) / len(pe_one))))
+     #           }
+     #                # Convert data into DataFrames
+     #           df1 = pd.DataFrame(data1).transpose()                                      
+     #           df2 = pd.DataFrame(data2).transpose()
+     #           df3 = pd.DataFrame(data3).transpose()
+     #           df4 = pd.DataFrame(data4).transpose()
+
+
+     #           df1 = df1.rename(columns={i: "" for i in df1.columns})
+     #           df2 = df2.rename(columns={i: " " for i in df2.columns})
+     #           df3 = df3.rename(columns={i: " " for i in df3.columns})
+     #           df4 = df4.rename(columns={i: " " for i in df4.columns})
+
+     #           # Apply styling to DataFrames
+     #           style = "color: #2E8B57; text-align: center"
+     #           styled_df1 = df1.style.applymap(lambda x: style).set_caption("")
+     #           styled_df2 = df2.style.applymap(lambda x: style).set_caption("")
+     #           styled_df3 = df3.style.applymap(lambda x: style).set_caption("")
+     #           styled_df4 = df4.style.applymap(lambda x: style).set_caption("")
+
+               
+
+     #           # Create a responsive layout with three columns
+     #           #col1, col2, col3 = st.columns(3)
+     #           col1, col2, col3, col4 = st.columns(4)
+
+     #           # Display the dataframes in each column
+     #           with col1:
+     #                st.table(styled_df1)
+     #           with col2:
+     #                st.table(styled_df2)
+     #           with col3:
+     #                st.table(styled_df3)
+     #           with col4:
+     #                st.table(styled_df4)
+
+#################################################################################
+               # Function to create and return a dataframe
+               def create_dataframe(data):
+                    df = pd.DataFrame(data).transpose()
+                    df = df.rename(columns={i: " " for i in df.columns})  # Remove column headers
+                    return df
+
+               # Function to apply styling, specifically to the first column header
+               # Function to apply styling, specifically to the first column header and text color for all headers
+               def style_dataframe(df):
+                    def highlight_negative(val):
+                         """Apply color styles based on the value."""
+                         if isinstance(val, (int, float)) and val < 0:
+                              return 'color: green'
+                         return ''  
+                    # Default styling (no additional styling)
+                    styled_df = df.style.applymap(highlight_negative) \
+                         .set_table_styles(
+
+                         [
+                              {'selector': 'th.col0',  # Apply to the first column header
+                              'props': [('background-color', 'white'),  # Green background for the first header
+                                        ('color', 'white'),# White text color for the first header
+                                        ('text-align', 'center')]},  # Centered text
+                              {'selector': 'th:not(.col0)',  # Apply to other headers
+                              'props': [('color', '#2E8B57'), 
+                                         # Green text color for other headers
+                                        ('text-align', 'center')]},  # Centered text for other headers
+                         ],
+                         overwrite=False
+                    ).hide(axis='index')#.set_caption("")
+                    
+                    return styled_df
+
+               # Function to display multiple dataframes in columns
+               def display_dataframes(dfs, cols):
+                    for df, col in zip(dfs, cols):
+                         with col:
+                              st.table(df)
+
+               # Data for the tables
                data1 = {
                'Market Cap (intraday)': [Marketcap_in_Billion],
                'Enterprise Value': [Enterprise_value_in_Billion], 
-               'Debt/EBITDA':[Debt_to_EBITDA],
+               'Debt/EBITDA': [Debt_to_EBITDA],
                'Revenue (TTM)': [revenue_ttm],      
                '5 YR Net Income': [Average_netIncome_annual_we], 
                'Net Income (TTM)': [netincome_ttm], 
@@ -9377,57 +9692,37 @@ if selected == "Stock Analysis Tool":
                'P/E (TTM)': [pe_ttm],
                '5 YR P/E': [pe_five_],
                '10 YR P/E': [average_PE_historical],
-               'Operating Cash Flow (TTM)': [current_Operating_cash_Flow_Value], 
-               'Price/OCF (TTM)':[P_OCF_ttm],  
-               '5 YR Price/OCF ':[P_OCF_5],  
-               '10 YR Price/OCF':[P_OCF_10],  
+               'Operating Cash Flow (OCF : TTM)': [current_Operating_cash_Flow_Value], 
+               'Price/OCF (TTM)': [P_OCF_ttm],  
+               '5 YR Price/OCF ': [P_OCF_5],  
+               '10 YR Price/OCF': [P_OCF_10],  
                '5 YR Gross Profit Margin': [five_yrs_average_gross_margin],
                'Gross Profit Margin (TTM)': [rounded_gross_margin],
-               
-          
-                    
                }
-          
 
                data2 = {
                '5 YR Dividend Yield': [Dividend_yield_average], 
                'Dividend Yield': [Dividend_per_share_yield],
                'Shareholder Yield': [Share_holder_yield],
                'Dividend Paid (TTM)': [Dividend_ttm], 
-               'Dividend/Share (TTM)':f"$ {Dividend_TTM}",
-               'Dividend Estimate':f"$ {Dividend_Est}",
-               'Dividend Ex-Date':[Dividend_Ex_Date],
+               'Dividend/Share (TTM)': f"$ {Dividend_TTM}",
+               'Dividend Estimate': f"$ {Dividend_Est}",
+               'Dividend Ex-Date': [Dividend_Ex_Date],
                '5 YR Avg FCF': [average_FCF_annual_five_we], 
                'Free Cash Flow (TTM)': [fcf_ttm],
                'Price/FCF (TTM)': [pfcf_ttm], 
-               '5 YR Avg Price/FCF':[pfcf_funf],
-               '10 YR Avg Price/FCF':[pfcf_ten],
+               '5 YR Avg Price/FCF': [pfcf_funf],
+               '10 YR Avg Price/FCF': [pfcf_ten],
                '5 YR Operating Margin': [rounded_operating_margin_five],
                'Operating Margin': [rounded_operating_margin],
-               '5 YR Net Profit Margin':f"{five_yrs_Nettomarge}%",
+               '5 YR Net Profit Margin': f"{five_yrs_Nettomarge}%",
                'Net Profit Margin': [Net_margin_ttm],
-               '5 YR FCF Margin':f"{FCF_Margin_5}%",
+               '5 YR FCF Margin': f"{FCF_Margin_5}%",
                'FCF Margin': ' {:.2f}%'.format(FCF_Margin_1)
-               
-               
-               
-          
-          
                }
-               #date_obj = datetime.strptime(formatted_date,min_price_date, "%Y/%m/%d")
-               date_obj = datetime.strptime(formatted_date, "%Y/%m/%d")
-
-               # Convert 'min_price_date' string to datetime object
-               #min_price_date_obj = datetime.strptime(min_price_date, '%Y/%m/%d')
-
-               # Convert 'min_price_date_obj' datetime object back to string in the format 'YYYY/MM/DD'
-          # min_price_date_str = datetime.strftime(min_price_date_obj, '%Y/%m/%d')
-
-               all_time_high_date = formatted_date
-     #          min_price_date = min_price_date
 
                data3 = {
-               'FCF Yield':[fcf_yield_ttm],
+               'FCF Yield': [fcf_yield_ttm],
                'P/S': [Price_to_sales_last],
                '5 YR P/S': [P_sales_5],
                '10 YR P/S': [P_sales_10],
@@ -9437,93 +9732,39 @@ if selected == "Stock Analysis Tool":
                '5 YR ROIC': [Average_ROIC_funf],
                'ROIC': [ROIC_annual_one],
                '5 YR ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
-               'ROCE ':[ "{:.2f}%".format(One_YR_ROCE)],
-               #f'ATH ({all_time_high_date}'")": ["$ {:.2f}".format(all_time_high_price)],
-               f'ATH ({all_time_high_date}'")": f"$ {all_time_high_price:.2f} ({percentage_diff_ATH})",
-          
-
-               #f'52WK LOW ( {min_price_date.strftime("%Y/%m/%d")})': ["$ {:.2f}".format(fifty_two_week_low)]
-               #f'52WK LOW ({min_price_date.strftime("%Y/%m/%d")}): $ {fifty_two_week_low:.2f} ({percentage_difference_52_week_low})'
+               'ROCE': [ "{:.2f}%".format(One_YR_ROCE)],
+               f'ATH ({all_time_high_date})': f"$ {all_time_high_price:.2f} ({percentage_diff_ATH})",
                f'52WK LOW ({min_price_date.strftime("%Y/%m/%d")})': f"$ {fifty_two_week_low:.2f} ({percentage_difference_52_week_low})"
-     
-               }   
-
-
-          # eps_basic_ttm =Financial_data['ttm']['eps_basic']
-               #st.write("eps_basic_ttm",eps_basic_ttm)
-               data4 = {
-               
-               #'Forward P/E': [forwardPE], 
-               'EPS (TTM)':[" {:.2f}".format(eps_diluted_ttm)],
-               'EPS Estimate this YR': f"{Earnings_this_yr}",
-          # 'EPS Estimate next YR':[Earnings_next_yr_in_prozent],
-               'EPS Estimate next YR': f" {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
-               #'EPS Estimate next YR':f"$ {Earnings_next_yr_in_value}",
-               'EPS Estimate 5 YR (per annum)':[Earnings_next_5_yrs],
-               'EPS past 5 YR':f"{EPS_5_CAGR}% ",
-               'Revenue growth 10 YR':f"{Revenue_Cagr_10}%",
-               'Revenue growth 5 YR':f"{Revenue_5_CAGR}%",
-               'RSI (14)': [RSI],
-               '50 SMA' : [Moving_50],
-               '200 SMA':[Moving_200],
-               #'Earnings':[Earnings],
-               'Analyst Target Price':  [f"$ {Target_Price}"],
-               'Current price': ["$ {:.2f}".format(amount)] 
-               #'Price Change':[Price_Change]      
-     #"{:.2f}".format(((sum(pe_one) / len(pe_one))))
                }
-                    # Convert data into DataFrames
-               df1 = pd.DataFrame(data1).transpose()                                      
-               df2 = pd.DataFrame(data2).transpose()
-               df3 = pd.DataFrame(data3).transpose()
-               df4 = pd.DataFrame(data4).transpose()
 
-               # # Reset column index to start from 1
-               # df1.columns = range(1, len(df1.columns) + 1)
-               # df2.columns = range(2, len(df2.columns) + 2)
-               # df3.columns = range(3, len(df3.columns) + 3)
-               # df4.columns = range(4, len(df4.columns) + 4)
-               
+               data4 = {
+               'EPS (TTM)': " {:.2f}".format(eps_diluted_ttm),
+               'EPS Estimate this YR': f"{Earnings_this_yr}",
+               'EPS Estimate next YR': f" {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
+               'EPS Estimate 5 YR (per annum)': [Earnings_next_5_yrs],
+               'EPS past 5 YR': f"{EPS_5_CAGR}% ",
+               'Revenue growth 10 YR': f"{Revenue_Cagr_10}%",
+               'Revenue growth 5 YR': f"{Revenue_5_CAGR}%",
+               'RSI (14)': [RSI],
+               '50 SMA': [Moving_50],
+               '200 SMA': [Moving_200],
+               'Analyst Target Price': [f"$ {Target_Price}"],
+               'Current price': ["$ {:.2f}".format(amount)] 
+               }
 
-          
-               # #style = "color: #2E8B57"
-               # style = "color: #2E8B57; text-align: center"
+               # Convert data into styled DataFrames
+               df1 = style_dataframe(create_dataframe(data1).iloc[0:])
+               df2 = style_dataframe(create_dataframe(data2).iloc[0:])
+               df3 = style_dataframe(create_dataframe(data3).iloc[0:])
+               df4 = style_dataframe(create_dataframe(data4).iloc[0:])
 
-               # styled_df1 = df1.style.applymap(lambda x: style).set_caption("")
-               # styled_df2 = df2.style.applymap(lambda x: style).set_caption("")
-               # styled_df3 = df3.style.applymap(lambda x: style).set_caption("")
-               # styled_df4 = df4.style.applymap(lambda x: style).set_caption("")
-               
 
-               # Rename columns to replace indices with "ratios"
-               df1 = df1.rename(columns={i: " " for i in df1.columns})
-               df2 = df2.rename(columns={i: " " for i in df2.columns})
-               df3 = df3.rename(columns={i: " " for i in df3.columns})
-               df4 = df4.rename(columns={i: " " for i in df4.columns})
-
-               # Apply styling to DataFrames
-               style = "color: #2E8B57; text-align: center"
-               styled_df1 = df1.style.applymap(lambda x: style).set_caption("")
-               styled_df2 = df2.style.applymap(lambda x: style).set_caption("")
-               styled_df3 = df3.style.applymap(lambda x: style).set_caption("")
-               styled_df4 = df4.style.applymap(lambda x: style).set_caption("")
-
-               
-
-               # Create a responsive layout with three columns
-               #col1, col2, col3 = st.columns(3)
+               # Create a responsive layout with four columns
                col1, col2, col3, col4 = st.columns(4)
 
                # Display the dataframes in each column
-               with col1:
-                    st.table(styled_df1)
-               with col2:
-                    st.table(styled_df2)
-               with col3:
-                    st.table(styled_df3)
-               with col4:
-                    st.table(styled_df4)
-                              
+               display_dataframes([df1, df2, df3, df4], [col1, col2, col3, col4])     
+
 
 
 
@@ -10565,7 +10806,7 @@ if selected == "Stock Analysis Tool":
                                                             Total_Non_interest_revenue_quarterly_df = pd.DataFrame(Total_Non_interest_revenue_list_quarterly_billion,  index=date_list_quarter, columns=["Non Interest Revenue"])
                                                             Total_Non_interest_revenue_quarterly_df =Total_Non_interest_revenue_quarterly_df.transpose()
                                                             #-------------------------------------------------------------
-
+                                                            
                                                             merged_df_banks = pd.concat([total_interest_expense_quarterly_df,total_interestincome_quarterly_df,Net_interest_Income_quarterly_df,Prov_Credit_losses_quarterly_df,Total_Non_interest_expenses_quarterly_df,Total_Non_interest_revenue_quarterly_df,net_income_quarterly_df,Pretax_income_quarterly_df,eps_basic_quarterly_df,shares_basic_quarterly_df,eps_diluted_quarterly_df,shares_diluted_quarterly_df])    
 
                                                             st.table(merged_df_banks.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
@@ -13180,20 +13421,21 @@ if selected == "Stock Analysis Tool":
 ################################experiment2########
       
                           
-            #@st.cache_data
+     
      with st.container():
           
           #use_container_width=True
           with Multiple_Valuation:        
-               #@st.experimental_fragment
+             #@st.experimental_fragment
                
                #@st.experimental_fragment
 
                #@st.fragment
                #@st.cache_data
-               @single_fragment
+               
                def display_growth_rate_form():
-                    
+                    current_price = get_current_price()  # Get current price
+                    converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
                     with st.form(key='growth_rate_form31'):
                          #converted_amount =340 
@@ -13202,6 +13444,9 @@ if selected == "Stock Analysis Tool":
                          Profit_Margin_1 = annual_data['fcf_margin'][-1:]     
                          Profit_Margin_1=sum(Profit_Margin_1)/len(Profit_Margin_1)
                          Profit_Margin_1 = (Profit_Margin_1*100)
+
+
+                         
 
                          col1,col2 = st.columns(2)
 
@@ -13302,26 +13547,27 @@ if selected == "Stock Analysis Tool":
 
                          submit_button = st.form_submit_button(label='Calculate')
                     if submit_button:
+                         st.session_state.converted_amount = converted_amount
+
                        
                     # -----------------------------LOW-------------
-                         try:
-                              average_FCF_Profit_margin_low=((Growth_rate_fcf_margin_LOW+Growth_rate_net_profit_LOW)/2)/100
+                        
+                         average_FCF_Profit_margin_low=((Growth_rate_fcf_margin_LOW+Growth_rate_net_profit_LOW)/2)/100
 
-                              average_PFCF_POCF_low=(Growth_rate_P_OCF_low+Growth_rate_P_FCF_low)/2
+                         average_PFCF_POCF_low=(Growth_rate_P_OCF_low+Growth_rate_P_FCF_low)/2
 
-                              Revenue_assumption_low=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_LOW/100),My_assumption)
+                         Revenue_assumption_low=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_LOW/100),My_assumption)
                                    #
 
-                              Assumption_low=(Revenue_assumption_low*average_FCF_Profit_margin_low)*average_PFCF_POCF_low
-                              Assumption_low_inklu_shares_outstanding_low =Assumption_low/Average_shares_basic_annual_one
+                         Assumption_low=(Revenue_assumption_low*average_FCF_Profit_margin_low)*average_PFCF_POCF_low
+                         Assumption_low_inklu_shares_outstanding_low =Assumption_low/Average_shares_basic_annual_one
 
-                              Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
+                         Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
 
 
-                              Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
+                         Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
                               
-                         except Exception as e:
-                              st.error("Please use a dot instead of a comma for decimal values.")
+                    
                     # -----------------------------MIDDLE-------------
                          average_FCF_Profit_margin_mid=((Growth_rate_fcf_margin_middle+Growth_rate__net_profit_middle)/2)/100
 
@@ -13380,7 +13626,7 @@ if selected == "Stock Analysis Tool":
 
                #@st.fragment
                #@st.cache_data
-               @single_fragment
+               #@single_fragment
                def main():
                     
                     display_growth_rate_form()
@@ -15573,27 +15819,33 @@ if selected == "Stock Analysis Tool":
 
 # Apply the CSS styles using st.markdown
 #st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-disclaimer = """
-          The information provided on this website is intended for informational purposes only and does not constitute financial advice, investment recommendations, or a solicitation to buy or sell any securities. The content and data presented on this website are not tailored to your specific investment goals, financial situation, or risk tolerance. You should always consult with a qualified financial advisor before making investment decisions.
-          """
-          # The stock and financial data provided on this website may be delayed, inaccurate, or subject to errors. We make no representations or warranties about the accuracy, completeness, or reliability of the information presented. Any reliance you place on such information is strictly at your own risk.
-          # Past performance is not indicative of future results. Investments in stocks, securities, and financial instruments involve risks, including the loss of your invested capital. Market conditions can change rapidly, and investment values can fluctuate.
-          # This website may contain links to third-party websites or content. We do not endorse or control the content of these external sites and are not responsible for their accuracy, legality, or availability.
-          # We are not licensed financial advisors, and the content provided on this website should not be construed as professional financial advice. You are solely responsible for evaluating the suitability of any investment decisions based on your individual circumstances and objectives.
-          # By using this website, you agree to hold us harmless from any and all claims, losses, liabilities, or damages resulting from your reliance on the information presented herein. We reserve the right to modify or discontinue the content and services offered on this website at any time.
-          # Please consult with a qualified financial professional and conduct your own research before making any investment decisions. We encourage you to review the terms of use and privacy policy of this website for more information about your use of this site.
-          # For specific legal, tax, and financial advice, you should contact your own attorney, accountant, or other professional advisors..
-#
+@st.fragment
+def display_disclaimer():
+     disclaimer = """
+               The information provided on this website is intended for informational purposes only and does not constitute financial advice, investment recommendations, or a solicitation to buy or sell any securities. The content and data presented on this website are not tailored to your specific investment goals, financial situation, or risk tolerance. You should always consult with a qualified financial advisor before making investment decisions.
+               """
+               # The stock and financial data provided on this website may be delayed, inaccurate, or subject to errors. We make no representations or warranties about the accuracy, completeness, or reliability of the information presented. Any reliance you place on such information is strictly at your own risk.
+               # Past performance is not indicative of future results. Investments in stocks, securities, and financial instruments involve risks, including the loss of your invested capital. Market conditions can change rapidly, and investment values can fluctuate.
+               # This website may contain links to third-party websites or content. We do not endorse or control the content of these external sites and are not responsible for their accuracy, legality, or availability.
+               # We are not licensed financial advisors, and the content provided on this website should not be construed as professional financial advice. You are solely responsible for evaluating the suitability of any investment decisions based on your individual circumstances and objectives.
+               # By using this website, you agree to hold us harmless from any and all claims, losses, liabilities, or damages resulting from your reliance on the information presented herein. We reserve the right to modify or discontinue the content and services offered on this website at any time.
+               # Please consult with a qualified financial professional and conduct your own research before making any investment decisions. We encourage you to review the terms of use and privacy policy of this website for more information about your use of this site.
+               # For specific legal, tax, and financial advice, you should contact your own attorney, accountant, or other professional advisors..
+     #
 
-          
+     custom_css = """
+     <style>
+     body { font-family: serif; }
+     </style>
+     """
 
-st.markdown("<style>body { font-family: serif; }</style>", unsafe_allow_html=True)
-st.markdown("<u><h3 style='color:#FF4B4B;'>Disclaimer</h3></u>", unsafe_allow_html=True)
-          #short_description = disclaimer[:20]
-          #with st.expander("Read More"):
-st.write(disclaimer)
-          
-st.markdown(custom_css, unsafe_allow_html=True)
+     # Display the disclaimer with custom styling
+     st.markdown("<u><h3 style='color:#FF4B4B;'>Disclaimer</h3></u>", unsafe_allow_html=True)
+     st.write(disclaimer)
+     st.markdown(custom_css, unsafe_allow_html=True)
+
+# Call the function to display the disclaimer
+display_disclaimer()
 
 
 current_year = datetime.now().year
