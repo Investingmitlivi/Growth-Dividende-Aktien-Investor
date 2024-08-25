@@ -8932,6 +8932,8 @@ if selected == "Stock Analysis Tool":
                pe_five =annual_data['price_to_earnings'][-5:]
                pe_ten =annual_data['price_to_earnings'][-10:]
 
+              
+
                ROE_five = annual_data['roe'][-5:]
 
                #Debt_issued = quarterly_data['cff_debt_issued'][-2:]
@@ -8981,9 +8983,13 @@ if selected == "Stock Analysis Tool":
                     average_end_price_five = annual_data['period_end_price'][-5:]
                     average_end_price_five = sum(average_end_price_five) / len(average_end_price_five)
 
+                    eps_5years_average_diluted_annual =annual_data['eps_diluted'][-5:]
+                    eps_5years_average_diluted_annual = sum(eps_5years_average_diluted_annual) / len(eps_5years_average_diluted_annual)
+
                except Exception as e: 
                     
                     average_end_price_five = 0.0
+                    eps_5years_average_diluted_annual = 0.0
 
                Divdends_paid_5years =annual_data['dividends'][-5:]
                #st.write(Divdends_paid_5years)
@@ -9026,6 +9032,7 @@ if selected == "Stock Analysis Tool":
                          Average_pe_five =  "{:.2f}".format(((sum(pe_five) /len(pe_five)))) 
                          five_yrs_Nettomarge = "{:.2f}".format((Net_income_margin_5)*100)
                          FCF_Margin_5 = "{:.2f}".format((FCF_Margin_5)*100)
+                         #eps_5years_average_diluted_annual = "{:.2f}".format((eps_5years_average_diluted_annual)*100)
                          P_sales_5="{:.2f}".format(Marketcap/((sum(Revenue_annual_5)/len(Revenue_annual_5))/1000000000))
                          
                
@@ -9786,61 +9793,12 @@ if selected == "Stock Analysis Tool":
           #----------------------------------------------------------------------------
                # Display the first 20 characters of the description
                short_description = Stock_description[:20]
-               #with st.expander("Description: Read More"):
-                    # English expander
-               #with st.expander("Description (English): Read More"):
-               #st.write("About",name)
+
                st.markdown(f"About <u style='color:green;'>{name}</u>", unsafe_allow_html=True)
 
 
                st.write(Stock_description)
 
-               # German expander
-          # with st.expander("Beschreibung (Deutsch): Mehr lesen"):
-               #     try:
-               #         translator = Translator()
-               #        target_language = 'de'  # German
-               #       translated_text = translator.translate(Stock_description, src='en', dest=target_language)
-               #      translated_text_only = translated_text.text
-                    #     st.write(translated_text_only)
-
-                    #except TypeError:
-                    #    st.write("Nicht vorhanden auf Deutsch")
-                         
-                    # Print the translation
-                    #print(f"Original Text: {Stock_description}")
-                    #print(f"Translated Text ({translated_text.text}")
-          #----------------------------------------------------------------------------
-               
-
-
-
-               #disclaimer = """
-               #The information provided on this website is intended for informational purposes only and does not constitute financial advice, investment recommendations, or a solicitation to buy or sell any securities. The content and data presented on this website are not tailored to your specific investment goals, financial situation, or risk tolerance. You should always consult with a qualified financial advisor before making investment decisions.
-               #"""
-               # The stock and financial data provided on this website may be delayed, inaccurate, or subject to errors. We make no representations or warranties about the accuracy, completeness, or reliability of the information presented. Any reliance you place on such information is strictly at your own risk.
-               # Past performance is not indicative of future results. Investments in stocks, securities, and financial instruments involve risks, including the loss of your invested capital. Market conditions can change rapidly, and investment values can fluctuate.
-               # This website may contain links to third-party websites or content. We do not endorse or control the content of these external sites and are not responsible for their accuracy, legality, or availability.
-               # We are not licensed financial advisors, and the content provided on this website should not be construed as professional financial advice. You are solely responsible for evaluating the suitability of any investment decisions based on your individual circumstances and objectives.
-               # By using this website, you agree to hold us harmless from any and all claims, losses, liabilities, or damages resulting from your reliance on the information presented herein. We reserve the right to modify or discontinue the content and services offered on this website at any time.
-               # Please consult with a qualified financial professional and conduct your own research before making any investment decisions. We encourage you to review the terms of use and privacy policy of this website for more information about your use of this site.
-               # For specific legal, tax, and financial advice, you should contact your own attorney, accountant, or other professional advisors..
-               
-
-               #st.markdown("<style>body { font-family: serif; }</style>", unsafe_allow_html=True)
-               #st.markdown("<u><h3 style='color:#FF4B4B;'>Disclaimer</h3></u>", unsafe_allow_html=True)
-               #short_description = disclaimer[:20]
-               #with st.expander("Read More"):
-               #st.write(disclaimer)
-               
-
-               #st.header("Found an error or have an idea? Write us an email!")
-               #st.markdown("<h1 style='font-family: serif; font-size: 24px; text-align: center;'>Found an error or have an idea? Write us an email!</h1>", unsafe_allow_html=True, use_container_width=True)
-
-          
-
-               # Text mit benutzerdefiniertem CSS und Container-Breite
-               #st.markdown(custom_css, unsafe_allow_html=True)
                st.markdown('<div class="my-header">Found an error or have an idea? Write us an Email!</div>', unsafe_allow_html=True)
                
           # ---- Documentation : https://formsubmit.co/
@@ -9869,13 +9827,723 @@ if selected == "Stock Analysis Tool":
                # st.markdown(f'&copy; {2023} - {current_year} Stock valuation', unsafe_allow_html=True)
           #.............................................................
      # Assuming revenue_list and gross_profit_list are extracted from the API response
+     @st.cache_data
+     def financials_df(data_list, date_list, column_name):
+          #formatted_data = ["{:.2f}B".format(value / 1_000_000_000) if abs(value) >= 1_000_000_000 else "{:,.0f}M".format(value / 1_000_000) for value in data_list]
+          formatted_data = ["{:.2f}B".format(value / 1_000_000_000) if abs(value) >= 1_000_000_000 else 
+           "{:,.0f}M".format(value / 1_000_000) if abs(value) >= 1_000_000 else "{:.2f}".format(value)for value in data_list]
+          df = pd.DataFrame(formatted_data, index=date_list, columns=[column_name])
+          return df.transpose()   
+      
      with st.container():
           use_container_width=True
           with Financials:
                Income_Statement, Balance_Sheet, Cash_Flow = st.tabs(["Income Statement", "Balance Sheet", "Cash Flow"])
+         #...........................................................................
+               with Income_Statement:
+                    Annual,Quarterly = st.tabs(["Annual","Quarterly"])
+                    date_annual = annual_data['period_end_date'][-10:]
+                    date_quarter = quarterly_data['period_end_date'][-10:]
+                                                  
+
+                    with Annual: 
+
+                         try: 
+                                           
+                              revenue_2013_annual = annual_data['revenue'][-10:]
+                              Pretax_income_annual = annual_data['pretax_income'][-10:]
+                              eps_basic_annual= annual_data['eps_basic'][-10:]
+                              shares_basic_annual= annual_data['shares_basic'][-10:]
+                              eps_diluted_annual = annual_data['eps_diluted'][-10:]
+                              shares_diluted_annual = annual_data['shares_diluted'][-10:]
+                              Income_tax_annual = annual_data['income_tax'][-10:]
+                              net_income_annual = annual_data['net_income'][-10:]
+                              Total_interest_income_list_annual = annual_data['total_interest_income'][-10:]
+                              Total_interest_expense_list_annual= annual_data['total_interest_expense'][-10:]
+                              Net_interest_Income_annual = annual_data['net_interest_income'][-10:]
+                              Prov_Credit_losses_annual = annual_data['credit_losses_provision'][-10:]
+                              Netinterest_Prov_Credit_losses_annual = annual_data['net_interest_income_after_credit_losses_provision'][-10:]
+                              Total_Non_interest_expenses_annual = annual_data['total_noninterest_expense'][-10:]
+                              Total_Non_interest_revenue_annual = annual_data['total_noninterest_revenue'][-10:]
+
+
+
+                              revenue_2013_annual_df = financials_df(revenue_2013_annual, date_annual, "Revenue")
+                              Pretax_income_annual_df = financials_df(Pretax_income_annual, date_annual, "Pretax Income")
+                              eps_basic_annual_df = financials_df(eps_basic_annual, date_annual, "EPS Basic")
+                              shares_basic_annual_df = financials_df(shares_basic_annual, date_annual, "Shares Basic")
+                              eps_diluted_annual_df = financials_df(eps_diluted_annual, date_annual, "EPS Diluted")
+                              shares_diluted_annual_df = financials_df(shares_diluted_annual, date_annual, "Shares Diluted")
+                              Income_tax_annual_df = financials_df(Income_tax_annual, date_annual, "Income Tax Expense")
+                              net_income_annual_df = financials_df(net_income_annual, date_annual, "Net Income")
+                              Total_interest_income_list_annual_df = financials_df(Total_interest_income_list_annual, date_annual, "Total Interest Income")
+                              Total_interest_expense_list_annual_df = financials_df(Total_interest_expense_list_annual, date_annual, "Total Interest Expense")
+                              Net_interest_Income_annual_df = financials_df(Net_interest_Income_annual, date_annual, "Net Interest Income")
+                              Prov_Credit_losses_annual_df = financials_df(Prov_Credit_losses_annual, date_annual, "Provision for Credit Losses")
+                              Netinterest_Prov_Credit_losses_annual_df = financials_df(Netinterest_Prov_Credit_losses_annual, date_annual, "Net Interest Income After Credit Losses Provision")
+                              Total_Non_interest_expenses_annual_df = financials_df(Total_Non_interest_expenses_annual, date_annual, "Total Non Interest Expenses")
+                              Total_Non_interest_revenue_annual_df = financials_df(Total_Non_interest_revenue_annual, date_annual, "Total Non-Interest Revenue")
+
+                              merged_df = pd.concat([
+                              Total_interest_income_list_annual_df,Total_interest_expense_list_annual_df,Net_interest_Income_annual_df,
+                              Total_Non_interest_revenue_annual_df,Prov_Credit_losses_annual_df,revenue_2013_annual_df,
+                              Netinterest_Prov_Credit_losses_annual_df, Total_Non_interest_expenses_annual_df,
+                              Pretax_income_annual_df,Income_tax_annual_df,net_income_annual_df,eps_basic_annual_df, shares_basic_annual_df,
+                              eps_diluted_annual_df, shares_diluted_annual_df
+                              
+                              ])
+
+                              st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                        
+                              pass
+                             
+
+                         except KeyError:
+                              try:
+                                   Net_premiums_earned = annual_data['premiums_earned'][-10:] 
+                                   Net_investment_income = annual_data['net_investment_income'][-10:] 
+                                   Fees_and_other_income = annual_data['fees_and_other_income'][-10:] 
+                                   Interest_Expense_insurance = annual_data['interest_expense_insurance'][-10:] 
+                                   revenue_2013 = annual_data['revenue'][-10:]
+                                   Policy_benenfits_claim_annual= annual_data['net_policyholder_claims_expense'][-10:]
+                                   Operating_income_annual = annual_data['operating_income'][-10:]
+                                   Pretax_income_annual = annual_data['pretax_income'][-10:]
+                                   net_income_annual = annual_data['net_income'][-10:] 
+                                   eps_basic_annual = annual_data['eps_basic'][-10:]
+                                   shares_basic_annual = annual_data['shares_basic'][-10:]
+                                   eps_diluted_annual = annual_data['eps_diluted'][-10:]
+                                   shares_diluted_annual = annual_data['shares_diluted'][-10:]
+                                   Income_tax_annual = annual_data['income_tax'][-10:]
+                                   Ebita_annual = annual_data['ebitda'][-10:]
+ 
+
+                                   Net_premiums_earned_df = financials_df(Net_premiums_earned, date_annual, "Net Premiums Earned")
+                                   Net_investment_income_df = financials_df(Net_investment_income, date_annual, "Net Investment Income")
+                                   Fees_and_other_income_df = financials_df(Fees_and_other_income, date_annual, "Fees and Other Income")
+                                   revenue_2013_df = financials_df(revenue_2013, date_annual, "Total Revenue")
+                                   Policy_benenfits_claim_annual_df = financials_df(Policy_benenfits_claim_annual, date_annual, "Policy Benefits & Claims")
+                                   Operating_income_annual_df = financials_df(Operating_income_annual, date_annual, "Operating Income")
+                                   Interest_Expense_insurance_df = financials_df(Interest_Expense_insurance, date_annual, "Interest Expense")
+
+                                   Pretax_income_annual_df = financials_df(Pretax_income_annual, date_annual, "Pretax Income")
+                                   net_income_annual_df = financials_df(net_income_annual, date_annual, "Net Income")
+                                   eps_basic_annual_df = financials_df(eps_basic_annual, date_annual, "EPS Basic")
+                                   shares_basic_annual_df = financials_df(shares_basic_annual, date_annual, "Shares Basic")
+                                   eps_diluted_annual_df = financials_df(eps_diluted_annual, date_annual, "EPS Diluted")
+                                   shares_diluted_annual_df = financials_df(shares_diluted_annual, date_annual, "Shares Diluted")
+                                   Income_tax_annual_df = financials_df(Income_tax_annual, date_annual, "Income Tax Expense")
+                                   Ebita_annual_df = financials_df(Ebita_annual, date_annual, "EBITDA")
+
+
+               
+                                   merged_df = pd.concat([Net_premiums_earned_df,Net_investment_income_df,Fees_and_other_income_df,revenue_2013_df,
+                                                          Policy_benenfits_claim_annual_df,Operating_income_annual_df,Interest_Expense_insurance_df,Pretax_income_annual_df,
+                                                          Income_tax_annual_df,net_income_annual_df,
+                                                          eps_basic_annual_df,shares_basic_annual_df,eps_diluted_annual_df,shares_diluted_annual_df,Ebita_annual_df]) 
+          
+                                   st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                   pass
+
+
+                              except KeyError:
+                                      
+                                   try:              
+                                        revenue_2013_annual = annual_data['revenue'][-10:]
+                                        Pretax_income_annual  = annual_data['pretax_income'][-10:]
+                                        eps_basic_annual = annual_data['eps_basic'][-10:]
+                                        shares_basic_annual = annual_data['shares_basic'][-10:]
+                                        eps_diluted_annual  = annual_data['eps_diluted'][-10:]
+                                        shares_diluted_annual  = annual_data['shares_diluted'][-10:]
+                                        Income_tax_annual  = annual_data['income_tax'][-10:]
+                                        net_income_annual  = annual_data['net_income'][-10:]
+                                        cogs_list_annual  = annual_data['cogs'][-10:]
+                                        gross_profit_annual = annual_data['gross_profit'][-10:]
+                                        SGA_Expense_annual  = annual_data['total_opex'][-10:]
+                                        Research_Dev_annual  = annual_data['rnd'][-10:]
+                                        interest_expense_list_annual  = annual_data['interest_expense'][-10:]
+                                        Ebita_annual = annual_data['ebitda'][-10:]
+                                        operating_income_list_annual = annual_data['operating_income'][-10:] 
+
+
+                                        revenue_2013_annual_df = financials_df(revenue_2013_annual, date_annual, "Revenue")
+                                        Pretax_income_annual_df = financials_df(Pretax_income_annual, date_annual, "Pretax Income")
+                                        eps_basic_annual_df = financials_df(eps_basic_annual, date_annual, "EPS Basic")
+                                        shares_basic_annual_df = financials_df(shares_basic_annual, date_annual, "Shares Basic")
+                                        eps_diluted_annual_df = financials_df(eps_diluted_annual, date_annual, "EPS Diluted")
+                                        shares_diluted_annual_df = financials_df(shares_diluted_annual, date_annual, "Shares Diluted")
+                                        Income_tax_annual_df = financials_df(Income_tax_annual, date_annual, "Income Tax Expense")
+                                        net_income_annual_df = financials_df(net_income_annual, date_annual, "Net Income")
+                                        cogs_list_annual_df = financials_df(cogs_list_annual, date_annual, "COGS")
+                                        gross_profit_annual_df = financials_df(gross_profit_annual, date_annual, "Gross Profit")
+                                        SGA_Expense_annual_df = financials_df(SGA_Expense_annual, date_annual, "SGA Expense")
+                                        Research_Dev_annual_df = financials_df(Research_Dev_annual, date_annual, "R&D Expense")
+                                        interest_expense_list_annual_df = financials_df(interest_expense_list_annual, date_annual, "Interest Expense")
+                                        Ebita_annual_df = financials_df(Ebita_annual, date_annual, "EBITDA")
+                                        operating_income_list_annual_df = financials_df(operating_income_list_annual, date_annual, "Operating Income")
+
+
+                                        merged_df = pd.concat([
+                                        revenue_2013_annual_df,cogs_list_annual_df,gross_profit_annual_df, SGA_Expense_annual_df, Research_Dev_annual_df,
+                                        operating_income_list_annual_df,interest_expense_list_annual_df,Pretax_income_annual_df,Income_tax_annual_df,
+                                        net_income_annual_df ,eps_basic_annual_df, 
+                                        shares_basic_annual_df,
+                                        eps_diluted_annual_df, shares_diluted_annual_df,Ebita_annual_df
+                                        ])
+                                        
+
+                                        st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                        pass
+                                   except KeyError:
+                                        st.write("") 
+                                        pass      
+
+                    with Quarterly:
+                                                   
+                         try:               
+                              revenue_2013_quarterly = quarterly_data['revenue'][-10:] 
+                              Pretax_income_quarterly = quarterly_data['pretax_income'][-10:]
+                              eps_basic_quarterly= quarterly_data['eps_basic'][-10:]
+                              shares_basic_quarterly = quarterly_data['shares_basic'][-10:]
+                              eps_diluted_quarterly = quarterly_data['eps_diluted'][-10:]
+                              shares_diluted_quarterly = quarterly_data['shares_diluted'][-10:]
+                              Income_tax_quarterly = quarterly_data['income_tax'][-10:]
+                              net_income_quarterly = quarterly_data['net_income'][-10:]
+                              Total_interest_income_list_quarterly = quarterly_data['total_interest_income'][-10:]
+                              Total_interest_expense_list_quarterly = quarterly_data['total_interest_expense'][-10:]
+                              Net_interest_Income_quarterly = quarterly_data['net_interest_income'][-10:]
+                              Prov_Credit_losses_quarterly = quarterly_data['credit_losses_provision'][-10:]
+                              Netinterest_Prov_Credit_losses_quarterly = quarterly_data['net_interest_income_after_credit_losses_provision'][-10:]
+                              Total_Non_interest_expenses_quarterly = quarterly_data['total_noninterest_expense'][-10:]
+                              Total_Non_interest_revenue_quarterly = quarterly_data['total_noninterest_revenue'][-10:]
+
+                              revenue_2013_quarterly_df = financials_df(revenue_2013_quarterly, date_quarter, "Revenue")
+                              Pretax_income_quarterly_df = financials_df(Pretax_income_quarterly, date_quarter, "Pretax Income")
+                              eps_basic_quarterly_df = financials_df(eps_basic_quarterly, date_quarter, "EPS Basic")
+                              shares_basic_quarterly_df = financials_df(shares_basic_quarterly, date_quarter, "Shares Basic")
+                              eps_diluted_quarterly_df = financials_df(eps_diluted_quarterly, date_quarter, "EPS Diluted")
+                              shares_diluted_quarterly_df = financials_df(shares_diluted_quarterly, date_quarter, "Shares Diluted")
+                              Income_tax_quarterly_df = financials_df(Income_tax_quarterly, date_quarter, "Income Tax Expense")
+                              net_income_quarterly_df = financials_df(net_income_quarterly, date_quarter, "Net Income")
+                              Total_interest_income_list_quarterly_df = financials_df(Total_interest_income_list_quarterly, date_quarter, "Total Interest Income")
+                              Total_interest_expense_list_quarterly_df = financials_df(Total_interest_expense_list_quarterly, date_quarter, "Total Interest Expense")
+                              Net_interest_Income_quarterly_df = financials_df(Net_interest_Income_quarterly, date_quarter, "Net Interest Income")
+                              Prov_Credit_losses_quarterly_df = financials_df(Prov_Credit_losses_quarterly, date_quarter, "Provision for Credit Losses")
+                              Netinterest_Prov_Credit_losses_quarterly_df = financials_df(Netinterest_Prov_Credit_losses_quarterly, date_quarter, "Net Interest Income After Credit Losses Provision")
+                              Total_Non_interest_expenses_quarterly_df = financials_df(Total_Non_interest_expenses_quarterly, date_quarter, "Total Non Interest Expenses")
+                              Total_Non_interest_revenue_quarterly_df = financials_df(Total_Non_interest_revenue_quarterly, date_quarter, "Total Non-Interest Revenue")
+
+                              
+                              merged_df = pd.concat([Total_interest_income_list_quarterly_df,Total_interest_expense_list_quarterly_df,
+                                                     Net_interest_Income_quarterly_df,Total_Non_interest_revenue_quarterly_df,
+                                                     Prov_Credit_losses_quarterly_df,revenue_2013_quarterly_df,
+                                                     Netinterest_Prov_Credit_losses_quarterly_df,Total_Non_interest_expenses_quarterly_df,
+                                                     Pretax_income_quarterly_df,Income_tax_quarterly_df,net_income_quarterly_df,
+                                                     eps_basic_quarterly_df,shares_basic_quarterly_df,
+                                                     eps_diluted_quarterly_df,shares_diluted_quarterly_df])    
+
+
+                              st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                              
+                                        
+                                                                   
+                              pass
+                                                       
+                                                  
+                         except KeyError:
+                              try:
+                                   Net_premiums_earned = quarterly_data['premiums_earned'][-10:] 
+                                   Net_investment_income = quarterly_data['net_investment_income'][-10:] 
+                                   Fees_and_other_income = quarterly_data['fees_and_other_income'][-10:] 
+                                   Interest_Expense_insurance = quarterly_data['interest_expense_insurance'][-10:] 
+                                   revenue_2013 = quarterly_data['revenue'][-10:]
+                                   Policy_benenfits_claim_quarter= quarterly_data['net_policyholder_claims_expense'][-10:]
+                                   Operating_income_quarter = quarterly_data['operating_income'][-10:]
+                                   Pretax_income = quarterly_data['pretax_income'][-10:]
+                                   net_income = quarterly_data['net_income'][-10:] 
+                                   eps_basic = quarterly_data['eps_basic'][-10:]
+                                   shares_basic = quarterly_data['shares_basic'][-10:]
+                                   eps_diluted = quarterly_data['eps_diluted'][-10:]
+                                   shares_diluted = quarterly_data['shares_diluted'][-10:]
+                                   Income_tax = quarterly_data['income_tax'][-10:]
+                                   Ebita_quarter = quarterly_data['ebitda'][-10:]
+
+
+                                   Net_premiums_earned_df = financials_df(Net_premiums_earned, date_quarter, "Net Premiums Earned")
+                                   Net_investment_income_df = financials_df(Net_investment_income, date_quarter, "Net Investment Income")
+                                   Fees_and_other_income_df = financials_df(Fees_and_other_income, date_quarter, "Fees and Other Income")
+                                   Interest_Expense_insurance_df = financials_df(Interest_Expense_insurance, date_quarter, "Interest Expense")
+                                   revenue_2013_df = financials_df(revenue_2013, date_quarter, "Total Revenue")
+                                   Policy_benenfits_claim_quarter_df = financials_df(Policy_benenfits_claim_quarter, date_quarter, "Policy Benefits & Claims")
+                                   Operating_income_quarter_df = financials_df(Operating_income_quarter, date_quarter, "Operating Income")                    
+                                   Pretax_income_df = financials_df(Pretax_income, date_quarter, "Pretax Income")
+                                   net_income_df = financials_df(net_income, date_quarter, "Net Income")
+                                   eps_basic_df = financials_df(eps_basic, date_quarter, "EPS Basic")
+                                   shares_basic_df = financials_df(shares_basic, date_quarter, "Shares Basic")
+                                   eps_diluted_df = financials_df(eps_diluted, date_quarter, "EPS Diluted")
+                                   shares_diluted_df = financials_df(shares_diluted, date_quarter, "Shares Diluted")
+                                   Income_tax_df = financials_df(Income_tax, date_quarter, "Income Tax Expense")
+                                   Ebita_quarter_df = financials_df(Ebita_quarter, date_quarter, "EBITDA")
+
+
+
+                                   
+               
+                                   merged_df= pd.concat([
+                                   Net_premiums_earned_df, Net_investment_income_df, Fees_and_other_income_df, revenue_2013_df, Policy_benenfits_claim_quarter_df,
+                                   Operating_income_quarter_df,Interest_Expense_insurance_df,
+                                   Pretax_income_df,Income_tax_df,net_income_df, eps_basic_df, shares_basic_df,
+                                   eps_diluted_df, shares_diluted_df,Ebita_quarter_df
+                                   ])
+
+                                   st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                   pass 
+
+                              except KeyError:
+
+
+                                                                           
+                                                      
+                                   try:               
+                                        revenue_2013_quarter = quarterly_data['revenue'][-10:] 
+                                        Pretax_income_quarter  = quarterly_data['pretax_income'][-10:]
+                                        eps_basic_quarter  = quarterly_data['eps_basic'][-10:]
+                                        shares_basic_quarter  = quarterly_data['shares_basic'][-10:]
+                                        eps_diluted_quarter  = quarterly_data['eps_diluted'][-10:]
+                                        shares_diluted_quarter  = quarterly_data['shares_diluted'][-10:]
+                                        Income_tax_quarter  = quarterly_data['income_tax'][-10:]
+                                        net_income_quarter  = quarterly_data['net_income'][-10:]
+                                        cogs_list_quarter  = quarterly_data['cogs'][-10:]
+                                        gross_profit_quarter  = quarterly_data['gross_profit'][-10:]
+                                        SGA_Expense_quarter  = quarterly_data['total_opex'][-10:]
+                                        Research_Dev_quarter  = quarterly_data['rnd'][-10:]
+                                        interest_expense_list_quarter  = quarterly_data['interest_expense'][-10:]
+                                        Ebita_quarter = quarterly_data['ebitda'][-10:]
+                                        operating_income_list_quarter = quarterly_data['operating_income'][-10:]  
+
+
+                                        revenue_2013_quarter_df = financials_df(revenue_2013_quarter, date_quarter, "Revenue")
+                                        Pretax_income_quarter_df = financials_df(Pretax_income_quarter, date_quarter, "Pretax Income")
+                                        eps_basic_quarter_df = financials_df(eps_basic_quarter, date_quarter, "EPS Basic")
+                                        shares_basic_quarter_df = financials_df(shares_basic_quarter, date_quarter, "Shares Basic")
+                                        eps_diluted_quarter_df = financials_df(eps_diluted_quarter, date_quarter, "EPS Diluted")
+                                        shares_diluted_quarter_df = financials_df(shares_diluted_quarter, date_quarter, "Shares Diluted")
+                                        Income_tax_quarter_df = financials_df(Income_tax_quarter, date_quarter, "Income Tax Expense")
+                                        net_income_quarter_df = financials_df(net_income_quarter, date_quarter, "Net Income")
+                                        cogs_list_quarter_df = financials_df(cogs_list_quarter, date_quarter, "COGS")
+                                        gross_profit_quarter_df = financials_df(gross_profit_quarter, date_quarter, "Gross Profit")
+                                        SGA_Expense_quarter_df = financials_df(SGA_Expense_quarter, date_quarter, "SGA Expense")
+                                        Research_Dev_quarter_df = financials_df(Research_Dev_quarter, date_quarter, "R&D Expense")
+                                        interest_expense_list_quarter_df = financials_df(interest_expense_list_quarter, date_quarter, "Interest Expense")
+                                        Ebita_quarter_df = financials_df(Ebita_quarter, date_quarter, "EBITDA")
+                                        operating_income_list_quarter_df = financials_df(operating_income_list_quarter, date_quarter, "Operating Income")
+
+                                        merged_df = pd.concat([
+                                        revenue_2013_quarter_df, cogs_list_quarter_df,gross_profit_quarter_df, SGA_Expense_quarter_df, Research_Dev_quarter_df,
+                                        operating_income_list_quarter_df,interest_expense_list_quarter_df,Pretax_income_quarter_df, Income_tax_quarter_df,
+                                        net_income_quarter_df,eps_basic_quarter_df, shares_basic_quarter_df,
+                                        eps_diluted_quarter_df, shares_diluted_quarter_df,
+                                        Ebita_quarter_df
+                                        ])
+
+                                        
+                                        st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                        pass                                 
+
+                                   except KeyError:   
+
+                                        st.write("")
+                                        pass  
+
+               with Balance_Sheet:
+                    Annual,Quarterly = st.tabs(["Annual","Quarterly"])
+                    date_annual = annual_data['period_end_date'][-10:]
+                    date_quarter = quarterly_data['period_end_date'][-10:]
+
+                                   
+                    with Annual:
+
+                                        
+                         try:
+                              cash_und_cash_investments = annual_data['cash_and_equiv'][-10:]
+                              Total_investments_annual = annual_data['total_investments'][-10:]
+                              Gross_loans_annual = annual_data['loans_gross'][-10:]
+                              Loans_loss_annual = annual_data['allowance_for_loan_losses'][-10:]
+                              Net_Loan_annual = annual_data['loans_net'][-10:]
+                              Unearned_income_annual = annual_data['unearned_income'][-10:]
+                              Net_goodwill_annual = annual_data['goodwill'][-10:]
+                              Intangible_assets_annual = annual_data['intangible_assets'][-10:]
+                              Other_lt_assets_annual = annual_data['other_lt_assets'][-10:]
+                              Total_assets_annual = annual_data['total_assets'][-10:]
+                              Deposits_annual = annual_data['deposits_liability'][-10:]
+                              Short_term_debt_annual = annual_data['st_debt'][-10:]
+                              LongTerm_debt_annual = annual_data['lt_debt'][-10:]
+                              Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
+                              Retained_earnings_annual = annual_data['retained_earnings'][-10:]
+                              Total_liabilities_annual = annual_data['total_liabilities'][-10:]
+                              Total_Equity_annual = annual_data['total_equity'][-10:]
+                              
+                     
+
+
+
+                              cash_und_cash_investments_df = financials_df(cash_und_cash_investments, date_annual, "Cash & Equivalents")
+                              Total_investments_annual_df = financials_df(Total_investments_annual, date_annual, "Total Investments")
+                              Gross_loans_annual_df = financials_df(Gross_loans_annual, date_annual, "Gross Loans")
+                              Loans_loss_annual_df = financials_df(Loans_loss_annual, date_annual, "Allowance for Loan Losses")
+                              Net_Loan_annual_df = financials_df(Net_Loan_annual, date_annual, "Net Loans")
+                              Unearned_income_annual_df = financials_df(Unearned_income_annual, date_annual, "Unearned Income")
+                              Net_goodwill_annual_df = financials_df(Net_goodwill_annual, date_annual, "Net Goodwill")
+                              Intangible_assets_annual_df = financials_df(Intangible_assets_annual, date_annual, "Intangible Assets")
+                              Other_lt_assets_annual_df = financials_df(Other_lt_assets_annual, date_annual, "Other longterm Assets")
+                              Total_assets_annual_df = financials_df(Total_assets_annual, date_annual, "Total Assets")
+                              Deposits_annual_df = financials_df(Deposits_annual, date_annual, "Total Deposits")
+                              Short_term_debt_annual_df = financials_df(Short_term_debt_annual, date_annual, "Short-Term Debt")
+                              LongTerm_debt_annual_df = financials_df(LongTerm_debt_annual, date_annual, "Long-Term Debt")
+                              Other_longterm_liabilities_annual_df = financials_df(Other_longterm_liabilities_annual, date_annual, "Other Long-Term Liabilities")
+                              Retained_earnings_annual_df = financials_df(Retained_earnings_annual, date_annual, "Retained Earnings")
+                              Total_liabilities_annual_df = financials_df(Total_liabilities_annual, date_annual, "Total Liabilities")
+                              Total_Equity_annual_df = financials_df(Total_Equity_annual, date_annual, "Total Equity")
+                              
+
+
+
+
+                              merged_df = pd.concat([cash_und_cash_investments_df,Total_investments_annual_df,Gross_loans_annual_df,
+                                                     Loans_loss_annual_df,Net_Loan_annual_df,Unearned_income_annual_df,
+                                                     Net_goodwill_annual_df,Intangible_assets_annual_df,
+                                                     Other_lt_assets_annual_df,Total_assets_annual_df,Deposits_annual_df,
+                                                     Short_term_debt_annual_df,LongTerm_debt_annual_df,
+                                                     Other_longterm_liabilities_annual_df,Retained_earnings_annual_df,
+                                                     Total_liabilities_annual_df,Total_Equity_annual_df
+                                                     ])           
+                                        
+                              st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                              pass
+                         except KeyError:
+                              try:
+
+                                   cash_und_cash_investments_annual = annual_data['cash_and_equiv'][-10:]
+                                   st_investments_annual = annual_data['st_investments'][-10:]
+                                   Inventories_annual = annual_data['inventories'][-10:]
+                                   Total_current_assets_annual = annual_data['total_current_assets'][-10:]
+                                   Income_Tax_payable_annual = annual_data['tax_payable'][-10:]
+                                   Total_current_liabilities_annual = annual_data['total_current_liabilities'][-10:]
+                                   Intangible_assets_annual = annual_data['intangible_assets'][-10:]
+                                   Net_goodwill_annual = annual_data['goodwill'][-10:]
+                                   Other_lt_assets_annual =annual_data['other_lt_assets'][-10:]
+                                   Total_assets_annual = annual_data['total_assets'][-10:]
+                                   Short_term_debt_annual = annual_data['st_debt'][-10:]
+                                   LongTerm_debt_annual = annual_data['lt_debt'][-10:]
+                                   Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
+                                   Total_liabilities_annual = annual_data['total_liabilities'][-10:]
+                                   Total_Equity_annual = annual_data['total_equity'][-10:]
+
+                                   index = range(len(date_annual))
+                                   df = pd.DataFrame({'Period End Date': date_annual,
+                                                                 'Cash and Equivalents': cash_und_cash_investments_annual,
+                                                                 'Short term Investments': st_investments_annual
+                                                                 }, index=index)
+
+                                   if 'Short term Investments' in df.columns:
+                                        df['Total Cash'] = df['Cash and Equivalents'] + df['Short term Investments']
+                                   else:
+                                        df['Total Cash'] = df['Cash and Equivalents']
+                                   total = df.T
+
+                                   total.columns = total.iloc[0]  
+                                   total = total[1:]  # Remove the first row
+
+                                   total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
+
+ 
+                                                  
+                                   cash_und_cash_investments_annual_df = financials_df(cash_und_cash_investments_annual, date_annual, "Cash & Equivalents")
+                                   st_investments_annual_df = financials_df(st_investments_annual, date_annual, "Short-Term Investments")
+                                   Inventories_annual_df = financials_df(Inventories_annual, date_annual, "Inventories")
+                                   Total_current_assets_annual_df = financials_df(Total_current_assets_annual, date_annual, "Total Current Assets")
+                                   Income_Tax_payable_annual_df = financials_df(Income_Tax_payable_annual, date_annual, "Income Tax Payable")
+                                   Total_current_liabilities_annual_df = financials_df(Total_current_liabilities_annual, date_annual, "Total Current Liabilities")
+                                   Intangible_assets_annual_df = financials_df(Intangible_assets_annual, date_annual, "Intangible Assets")
+                                   Net_goodwill_annual_df = financials_df(Net_goodwill_annual, date_annual, "Net Goodwill")
+                                   Other_lt_assets_annual_df = financials_df(Other_lt_assets_annual, date_annual, "Other longterm Assets")
+                                   Total_assets_annual_df = financials_df(Total_assets_annual, date_annual, "Total Assets")
+                                   Short_term_debt_annual_df = financials_df(Short_term_debt_annual, date_annual, "Short-Term Debt")
+                                   LongTerm_debt_annual_df = financials_df(LongTerm_debt_annual, date_annual, "Long-Term Debt")
+                                   Other_longterm_liabilities_annual_df = financials_df(Other_longterm_liabilities_annual, date_annual, "Other Long-Term Liabilities")
+                                   Total_liabilities_annual_df = financials_df(Total_liabilities_annual, date_annual, "Total Liabilities")
+                                   Total_Equity_annual_df = financials_df(Total_Equity_annual, date_annual, "Total Equity")
+
+
+
+     
+                                   merged_df =pd.concat([total_annual,Inventories_annual_df,Total_current_assets_annual_df,
+                                                         Net_goodwill_annual_df,Intangible_assets_annual_df,Other_lt_assets_annual_df,Total_assets_annual_df,
+                                                         Short_term_debt_annual_df,Total_current_liabilities_annual_df,LongTerm_debt_annual_df,
+                                                         Other_longterm_liabilities_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
+
+                                                  
+
+
+                                   st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                   pass    
+                                        #else:      
+                              except KeyError:    
+
+                                   Total_investments = annual_data['total_investments'][-10:]
+                                   cash_und_cash_investments = annual_data['cash_and_equiv'][-10:]
+                                   Intangible_assets_annual = annual_data['intangible_assets'][-10:]
+                                   Net_goodwill_annual = annual_data['goodwill'][-10:]
+                                   Other_longterm_assets_annual = annual_data['other_lt_assets'][-10:]
+                                   Total_assets_annual = annual_data['total_assets'][-10:]
+                                   Unearned_Premiums_annual = annual_data['unearned_premiums'][-10:]
+                                   Short_term_debt_annual = annual_data['st_debt'][-10:]
+                                   LongTerm_debt_annual = annual_data['lt_debt'][-10:]
+                                   Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
+                                   Total_liabilities_annual = annual_data['total_liabilities'][-10:]
+                                   Retained_earnings_annual =annual_data['retained_earnings'][-10:]
+                                   Total_Equity_annual = annual_data['total_equity'][-10:]
+
+                                   Total_investments_annual_df = financials_df(Total_investments, date_annual, "Other Investments")
+                                   cash_und_cash_investments_annual_df = financials_df(cash_und_cash_investments, date_annual, "Cash & Equivalents")
+                                   Intangible_assets_annual_df = financials_df(Intangible_assets_annual, date_annual, "Intangible Assets")
+                                   Net_goodwill_annual_df = financials_df(Net_goodwill_annual, date_annual, "Net Goodwill")
+                                   Other_longterm_assets_annual_df = financials_df(Other_longterm_assets_annual, date_annual, "Other Longterm Assets")
+                                   Total_assets_annual_df = financials_df(Total_assets_annual, date_annual, "Total Assets")
+                                   Unearned_Premiums_annual_df=financials_df(Unearned_Premiums_annual, date_annual, "Unearned Premiums")
+                                   Retained_earnings_annual_df=financials_df(Retained_earnings_annual, date_annual, "Retained Earnings")
+                                   Short_term_debt_annual_df = financials_df(Short_term_debt_annual, date_annual, "Short-Term Debt")
+                                   LongTerm_debt_annual_df = financials_df(LongTerm_debt_annual, date_annual, "Long-Term Debt")
+                                   Other_longterm_liabilities_annual_df = financials_df(Other_longterm_liabilities_annual, date_annual, "Other Long-Term Liabilities")
+                                   Total_liabilities_annual_df = financials_df(Total_liabilities_annual, date_annual, "Total Liabilities")
+                                   Total_Equity_annual_df = financials_df(Total_Equity_annual, date_annual, "Total Equity")
+
+                                                       
+
+                                   merged_df = pd.concat([Total_investments_annual_df,cash_und_cash_investments_annual_df,Net_goodwill_annual_df,
+                                                          Intangible_assets_annual_df,Other_longterm_assets_annual_df,
+                                                          Total_assets_annual_df,Unearned_Premiums_annual_df,Short_term_debt_annual_df,
+                                                          LongTerm_debt_annual_df,Other_longterm_liabilities_annual_df,
+                                                          Total_liabilities_annual_df,Retained_earnings_annual_df,Total_Equity_annual_df
+                                                          ])           
+                                                                                     
+                                                                                     
+                                                  
+                                   st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+
+
+
+                    with Quarterly:
+
+                         try:
+                                                   
+                              cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
+                              Total_investments_quarterly_Balance_Sheet = quarterly_data['total_investments'][-10:]
+                              Gross_loans_quarter = quarterly_data['loans_gross'][-10:]
+                              Loans_loss_quarter = quarterly_data['allowance_for_loan_losses'][-10:]
+                              Net_Loan_quarter = quarterly_data['loans_net'][-10:]
+                              Unearned_income_quarter = quarterly_data['unearned_income'][-10:]
+                              Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
+                              Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
+                              Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
+                              Total_assets_quarter = quarterly_data['total_assets'][-10:]
+                              Deposits_quarter = quarterly_data['deposits_liability'][-10:]
+                              Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
+                              LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
+                              Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
+                              Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
+                              Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
+                              Total_Equity_quarter = quarterly_data['total_equity'][-10:]
+                              
+                              
+                              
+                              
+
+
+
+
+                              
+                              
+                              
+
+                              
+                              
+                              
+
+
+                              cash_and_equiv_quarterly_Balance_Sheet_df = financials_df(cash_and_equiv_quarterly_Balance_Sheet, date_quarter, "Cash & Equivalents")
+                              Total_investments_quarterly_Balance_Sheet_df = financials_df(Total_investments_quarterly_Balance_Sheet, date_quarter, "Total Investments")
+                              Gross_loans_quarter_df = financials_df(Gross_loans_quarter, date_quarter, "Gross Loans")
+                              Loans_loss_quarter_df = financials_df(Loans_loss_quarter, date_quarter, "Allowance for Loan Losses")
+                              Net_Loan_quarter_df = financials_df(Net_Loan_quarter, date_quarter, "Net Loans")
+                              Unearned_income_quarter_df = financials_df(Unearned_income_quarter, date_quarter, "Unearned Income")
+                              Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
+                              Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
+                              Other_lt_assets_quarter_df = financials_df(Other_lt_assets_quarter, date_quarter, "Other longterm Assets")
+                              Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
+                              Deposits_quarter_df = financials_df(Deposits_quarter, date_quarter, "Total Deposits")
+                              Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter, date_quarter, "Short-Term Debt")
+                              LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter, date_quarter, "Long-Term Debt")
+                              Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter, date_quarter, "Other Long-Term Liabilities")
+                              Retained_earnings_quarter_df = financials_df(Retained_earnings_quarter, date_quarter, "Retained Earnings")
+                              Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter, date_quarter, "Total Liabilities")
+                              Total_Equity_quarter_df = financials_df(Total_Equity_quarter, date_quarter, "Total Equity")
+                             
+                              
+                         
+
+
+                              merged_df_quarter = pd.concat([cash_and_equiv_quarterly_Balance_Sheet_df,Total_investments_quarterly_Balance_Sheet_df,
+                                                             Gross_loans_quarter_df,Loans_loss_quarter_df,Net_Loan_quarter_df,Unearned_income_quarter_df,
+                                                             Net_goodwill_quarter_df,Intangible_assets_quarter_df,
+                                                             Other_lt_assets_quarter_df,Total_assets_quarter_df,Deposits_quarter_df,
+                                                             Short_term_debt_quarter_df,LongTerm_debt_quarter_df,
+                                                             Other_longterm_liabilities_quarter_df,
+                                                             Retained_earnings_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])           
+                              st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                              pass
+                                             
+                         except KeyError:
+                              try:
+  
+
+
+                                   date_quarterly_Balance_Sheet = quarterly_data['period_end_date'][-10:] 
+
+
+                                   cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
+                                   st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
+                                   Inventories_quarter = quarterly_data['inventories'][-10:]
+                                                  
+                                   Total_current_assets_quarter = quarterly_data['total_current_assets'][-10:]
+                                   Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
+                                   Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
+                                   Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
+                                   Total_assets_quarter = quarterly_data['total_assets'][-10:]
+                                   st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
+                                   Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
+                                   Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
+                                   Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
+                                   Other_current_liabilities_quarter = quarterly_data['other_current_liabilities'][-10:]
+                                   Current_deferred_revenue_quarter = quarterly_data['current_deferred_revenue'][-10:]
+                                   Total_current_liabilities_quarter = quarterly_data['total_current_liabilities'][-10:] 
+                                   Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
+                                   current_portion_of_lease_obligation = quarterly_data['current_capital_leases'][-10:]
+                                   capital_leases = quarterly_data['noncurrent_capital_leases'][-10:]
+                                   LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
+                                   Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
+                                   Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
+                                   Total_Equity_quarter = quarterly_data['total_equity'][-10:]
+                                                  #-----------------------------------------------------------
+                                   index = range(len(date_list_quarter))
+                                   df = pd.DataFrame({'Period End Date': date_list_quarter,
+                                                       'Cash and Equivalents': cash_and_equiv_quarterly_Balance_Sheet,
+                                                       'Short term Investments': st_investments_quarterly_Balance_Sheet
+                                                        }, index=index)
+
+
+                                   if 'Short term Investments' in df.columns:
+                                        df['Total Cash'] = df['Cash and Equivalents'] + df['Short term Investments']
+                                   else:
+                                        df['Total Cash'] = df['Cash and Equivalents']
+                                                       
+                                   total = df.T
+                                                       
+
+                                   total.columns = total.iloc[0]  # Use the first row as column names
+                                   total = total[1:]  # Remove the first row
+
+                                   total = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
+
+                                   cash_and_equiv_quarterly_Balance_Sheet_df = financials_df(cash_and_equiv_quarterly_Balance_Sheet, date_quarter, "Cash & Equivalents")
+                                   st_investments_quarterly_Balance_Sheet_df = financials_df(st_investments_quarterly_Balance_Sheet, date_quarter, "Short-Term Investments")
+                                   Inventories_quarter_df = financials_df(Inventories_quarter, date_quarter, "Inventories")
+                                   Total_current_assets_quarter_df = financials_df(Total_current_assets_quarter, date_quarter, "Total Current Assets")
+                                   Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
+                                   Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
+                                   Other_lt_assets_quarter_df = financials_df(Other_lt_assets_quarter, date_quarter, "Other longterm Assets")
+                                   Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
+                                   Accounts_payable_quarter_df = financials_df(Accounts_payable_quarter, date_quarter, "Accounts Payable")
+                                   Current_accrued_liab_quarter_df = financials_df(Current_accrued_liab_quarter, date_quarter, "Current Accrued Liabilities")
+                                   Tax_payable_quarter_df = financials_df(Tax_payable_quarter, date_quarter, "Income Tax Payable")
+                                   Other_current_liabilities_quarter_df = financials_df(Other_current_liabilities_quarter, date_quarter, "Other Current Liabilities")
+                                   Current_deferred_revenue_quarter_df = financials_df(Current_deferred_revenue_quarter, date_quarter, "Current Deferred Revenue")
+                                   Total_current_liabilities_quarter_df = financials_df(Total_current_liabilities_quarter, date_quarter, "Total Current Liabilities")
+                                   Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter, date_quarter, "Short-Term Debt")
+                                   current_portion_of_lease_obligation_df = financials_df(current_portion_of_lease_obligation, date_quarter, "Current Portion of Lease Obligation")
+                                   capital_leases_df = financials_df(capital_leases, date_quarter, "Capital Leases (Noncurrent)")
+                                   LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter, date_quarter, "Long-Term Debt")
+                                   Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter, date_quarter, "Other Long-Term Liabilities")
+                                   Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter, date_quarter, "Total Liabilities")
+                                   Total_Equity_quarter_df = financials_df(Total_Equity_quarter, date_quarter, "Total Equity")
+
+                                                       
+                                   merged_df_quarter = pd.concat([total,Inventories_quarter_df,Total_current_assets_quarter_df,Net_goodwill_quarter_df,
+                                                                  Intangible_assets_quarter_df,
+                                                                  Other_lt_assets_quarter_df,Total_assets_quarter_df,Short_term_debt_quarter_df,
+                                                                  Total_current_liabilities_quarter_df,LongTerm_debt_quarter_df,Other_longterm_liabilities_quarter_df,
+                                                                  Total_liabilities_quarter_df,Total_Equity_quarter_df])        
+                                   st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                   pass
+                              except KeyError:
+                                        
+                                        Total_investments = quarterly_data['total_investments'][-10:]
+                                        cash_and_equiv_quarterly = quarterly_data['cash_and_equiv'][-10:]
+                                        Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
+                                        Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
+                                        Other_longterm_assets_quarter = quarterly_data['other_lt_assets'][-10:]
+                                        Total_assets_quarter = quarterly_data['total_assets'][-10:]
+                                        Unearned_Premiums_quarter  = quarterly_data['unearned_premiums'][-10:]
+                                        Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
+                                        LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
+                                        Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
+                                        Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
+                                        Total_Equity_quarter = quarterly_data['total_equity'][-10:]
+                                        Retained_earnings_quarter  =quarterly_data['retained_earnings'][-10:]
+
+                                        
+                                        
+                                        
+                                        
+
+                                        Total_investments_quarter_df = financials_df(Total_investments, date_quarter, "Other Investments")
+                                        cash_and_equiv_quarterly_df = financials_df(cash_and_equiv_quarterly, date_quarter, "Cash & Equivalents")
+                                        Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
+                                        Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
+                                        Other_longterm_assets_quarter_df = financials_df(Other_longterm_assets_quarter , date_quarter, "Other Longterm Assets")
+                                        Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
+                                        Unearned_Premiums_quarter_df=financials_df(Unearned_Premiums_quarter , date_quarter, "Unearned Premiums")
+                                        Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter, date_quarter, "Short-Term Debt")
+                                        LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter, date_quarter, "Long-Term Debt")
+                                        Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter, date_quarter, "Other Long-Term Liabilities")
+                                        Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter, date_quarter, "Total Liabilities")
+                                        Retained_earnings_quarter_df=financials_df(Retained_earnings_quarter , date_quarter, "Retained Earnings")
+                                        Total_Equity_quarter_df = financials_df(Total_Equity_quarter, date_quarter, "Total Equity")
+
+
+                         
+                                        merged_df_quarter = pd.concat([Total_investments_quarter_df,cash_and_equiv_quarterly_df,Net_goodwill_quarter_df,Intangible_assets_quarter_df,
+                                                                       Other_longterm_assets_quarter_df,Total_assets_quarter_df,
+                                                                       Unearned_Premiums_quarter_df,Short_term_debt_quarter_df,LongTerm_debt_quarter_df,
+                                                                       Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Retained_earnings_quarter_df,
+                                                                       Total_Equity_quarter_df])           
+                                        st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                             
+                                        
 
                with Cash_Flow:
                     Annual,Quarterly = st.tabs(["Annual","Quarterly"])
+                    date_annual = annual_data['period_end_date'][-10:]
+                    date_quarter = quarterly_data['period_end_date'][-10:]
+ 
                     
                     with Annual:
                          Changes_in_working_capital_annual = annual_data['cfo_change_in_working_capital'][-10:] 
@@ -9884,109 +10552,63 @@ if selected == "Stock Analysis Tool":
                          Purchase_of_Investment_annual = annual_data['cfi_investment_purchases'][-10:]
                          Sale_maturity_of_Investments_annual = annual_data['cfi_investment_sales'][-10:]
                          Net_investing_CashFlow_annual = annual_data['cf_cfi'][-10:] 
-                         Cash_Dividends_paid_Total_annual = annual_data['cff_dividend_paid'][-10:] 
                          Insurance_Reduction_of_DebtNet_annual = annual_data['cff_debt_net'][-10:]
-                         #Cash_Dividends_paid_Total_annual = annual_data['cff_dividend_paid'][-10:]
+                         Debt_issued_annual = annual_data['cff_debt_issued'][-10:]
+                         Debt_repaid_annual = annual_data['cff_debt_repaid'][-10:]
+                         Stock_issued_of_common_Preferred_stock_annual = annual_data['cff_common_stock_issued'][-10:]
                          Repurchase_of_common_Preferred_stock_annual = annual_data['cff_common_stock_repurchased'][-10:]
+                         Cash_Dividends_paid_Total_annual = annual_data['cff_dividend_paid'][-10:] 
                          Net_Financing_cashFlow_annual = annual_data['cf_cff'][-10:]
                          Net_change_in_cash_annual = annual_data['cf_net_change_in_cash'][-10:]
                          Free_cash_flow_annual = annual_data['fcf'][-10:]
 
                          index = range(len(date_list_annual))
-                    
-
-
-                         
                          FFO = pd.DataFrame({'Period End Date': date_list_annual,
                                                             'Operating Cash Flow': Net_Operating_CashFlow_annual,
                                                             'Changes In Working Capital': Changes_in_working_capital_annual
                                                             }, index=index)
-                                   # Convert JSON data to a DataFrame
                          df = pd.DataFrame(FFO)
 
-                                   # Add a new column "total_cashflow" which is the sum of the two columns
                          df["Funds from Operations"] = df["Operating Cash Flow"] + df["Changes In Working Capital"]
                               
                          total = df.T
-
-                                        # Replace the numbering with the actual date
                          total.columns = total.iloc[0]  # Use the first row as column names
                          total = total[1:]  
 
                          total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x)>= 1e9 else "{:,.0f}M".format(x / 1e6))
 
-
-                         #Changes_in_working_capital_annual_table= ["{:.2f}B".format(cfo_change_in_working_capital / 1000000000) if cfo_change_in_working_capital >= 1000000000 else "{:,.0f}M".format(cfo_change_in_working_capital / 1000000)for cfo_change_in_working_capital in Changes_in_working_capital_annual]
-                         #Changes_in_working_capital_annual_df = pd.DataFrame(Changes_in_working_capital_annual_table, index=date_list_annual,  columns=["Changes in Working Capital"])
-                         #Changes_in_working_capital_annual_df = Changes_in_working_capital_annual_df.transpose()
-
-                         #Net_Operating_CashFlow_annual_table= ["{:.2f}B".format(cf_cfo / 1000000000) if cf_cfo >= 1000000000 else "{:,.0f}M".format(cf_cfo / 1000000)for cf_cfo in Net_Operating_CashFlow_annual]
-                         #Net_Operating_CashFlow_annual_df = pd.DataFrame(Net_Operating_CashFlow_annual_table, index=date_list_annual,  columns=["Operating Cash Flow"])
-                         #Net_Operating_CashFlow_annual_df = Net_Operating_CashFlow_annual_df.transpose()
-
-                         Capex_annual_table= ["{:.2f}B".format(capex / 1000000000) if abs(capex) >= 1000000000 else "{:,.0f}M".format(capex / 1000000)for capex in Capex_annual]
-                         Capex_annual_df = pd.DataFrame(Capex_annual_table, index=date_list_annual,  columns=["Capital Expenditure"])
-                         Capex_annual_df = Capex_annual_df.transpose()
-                         
-
-
-                         Net_Assets_from_Acquisitions_annual_table= ["{:.2f}B".format(cfi_acquisitions / 1000000000) if abs(cfi_acquisitions) >= 1000000000 else "{:,.0f}M".format(cfi_acquisitions / 1000000)for cfi_acquisitions in Net_Assets_from_Acquisitions_annual]
-                         Net_Assets_from_Acquisitions_annual_df = pd.DataFrame(Net_Assets_from_Acquisitions_annual_table, index=date_list_annual,  columns=["Acquisitions, net"])
-                         Net_Assets_from_Acquisitions_annual_df = Net_Assets_from_Acquisitions_annual_df.transpose()
-
-                         Purchase_of_Investment_annual_table= ["{:.2f}B".format(cfi_investment_purchases / 1000000000) if abs(cfi_investment_purchases) >= 1000000000 else "{:,.0f}M".format(cfi_investment_purchases / 1000000)for cfi_investment_purchases in Purchase_of_Investment_annual]
-                         Purchase_of_Investment_annual_df = pd.DataFrame(Purchase_of_Investment_annual_table, index=date_list_annual,  columns=["Purchase of Investments"])
-                         Purchase_of_Investment_annual_df = Purchase_of_Investment_annual_df.transpose()
-
-                         Sale_maturity_of_Investments_annual_table=["{:.2f}B".format(cfi_investment_sales / 1000000000) if abs(cfi_investment_sales) >= 1000000000 else "{:,.0f}M".format(cfi_investment_sales / 1000000)for cfi_investment_sales in Sale_maturity_of_Investments_annual]
-                         Sale_maturity_of_Investments_annual_df = pd.DataFrame(Sale_maturity_of_Investments_annual_table, index=date_list_annual,  columns=["Sale/Maturity of Investments"])
-                         Sale_maturity_of_Investments_annual_df = Purchase_of_Investment_annual_df.transpose()
-
-                         Net_investing_CashFlow_annual_table= ["{:.2f}B".format(cf_cfi / 1000000000) if abs(cf_cfi) >= 1000000000 else "{:,.0f}M".format(cf_cfi / 1000000)for cf_cfi in Net_investing_CashFlow_annual]
-                         Net_investing_CashFlow_annual_df = pd.DataFrame(Net_investing_CashFlow_annual_table, index=date_list_annual,  columns=["Net Investing Cash Flow"])
-                         Net_investing_CashFlow_annual_df = Net_investing_CashFlow_annual_df.transpose()
-
-                         Cash_Dividends_paid_Total_annual_table= ["{:.2f}B".format(abs(cff_dividend_paid) / 1000000000) if abs(cff_dividend_paid) >= 1000000000 else "{:,.0f}M".format(abs(cff_dividend_paid) / 1000000)for cff_dividend_paid in Cash_Dividends_paid_Total_annual]
-                         Cash_Dividends_paid_Total_annual_df = pd.DataFrame(Cash_Dividends_paid_Total_annual_table, index=date_list_annual,  columns=["Cash Dividends Paid"])
-                         Cash_Dividends_paid_Total_annual_df = Cash_Dividends_paid_Total_annual_df.transpose()
-
-                         Insurance_Reduction_of_DebtNet_annual_table= ["{:.2f}B".format(cff_debt_net / 1000000000) if abs(cff_debt_net) >= 1000000000 else "{:,.0f}M".format(cff_debt_net / 1000000)for cff_debt_net in Insurance_Reduction_of_DebtNet_annual]
-                         Insurance_Reduction_of_DebtNet_annual_df = pd.DataFrame(Insurance_Reduction_of_DebtNet_annual_table, index=date_list_annual,  columns=["Issuance/Reduction of Debt,Net"])
-                         Insurance_Reduction_of_DebtNet_annual_df = Insurance_Reduction_of_DebtNet_annual_df.transpose()
-
-                         Repurchase_of_common_Preferred_stock_annual_table= ["{:.2f}B".format(cff_common_stock_repurchased / 1000000000) if abs(cff_common_stock_repurchased) >= 1000000000 else "{:,.0f}M".format(cff_common_stock_repurchased / 1000000)for cff_common_stock_repurchased in Repurchase_of_common_Preferred_stock_annual]
-                         Repurchase_of_common_Preferred_stock_annual_df = pd.DataFrame(Repurchase_of_common_Preferred_stock_annual_table, index=date_list_annual,  columns=["Repurchase Comm. & Pref. Stks"])
-                         Repurchase_of_common_Preferred_stock_annual_df = Repurchase_of_common_Preferred_stock_annual_df.transpose()
-
-                         Net_Financing_cashFlow_annual_table= ["{:.2f}B".format(cf_cff / 1000000000) if abs(cf_cff) >= 1000000000 else "{:,.0f}M".format(cf_cff / 1000000)for cf_cff in Net_Financing_cashFlow_annual]
-                         Net_Financing_cashFlow_annual_df = pd.DataFrame(Net_Financing_cashFlow_annual_table, index=date_list_annual,  columns=["Net Financing Cash Flow"])
-                         Net_Financing_cashFlow_annual_df = Net_Financing_cashFlow_annual_df.transpose()
-
-                         Net_change_in_cash_annual_table= ["{:.2f}B".format(cf_net_change_in_cash / 1000000000) if abs(cf_net_change_in_cash) >= 1000000000 else "{:,.0f}M".format(cf_net_change_in_cash / 1000000)for cf_net_change_in_cash in Net_change_in_cash_annual]
-                         Net_change_in_cash_annual_df = pd.DataFrame(Net_change_in_cash_annual_table, index=date_list_annual,  columns=["Net Change in Cash"])
-                         Net_change_in_cash_annual_df = Net_change_in_cash_annual_df.transpose()
-
-                         Free_cash_flow_annual_table= ["{:.2f}B".format(fcf / 1000000000) if abs(fcf) >= 1000000000 else "{:,.0f}M".format(fcf / 1000000)for fcf in Free_cash_flow_annual]
-                         Free_cash_flow_annual_df = pd.DataFrame(Free_cash_flow_annual_table, index=date_list_annual,  columns=["Free Cash Flow"])
-                         Free_cash_flow_annual_df = Free_cash_flow_annual_df.transpose()
+                         Changes_in_working_capital_annual_df = financials_df(Changes_in_working_capital_annual, date_annual, "Changes in Working Capital")
+                         Capex_annual_df = financials_df(Capex_annual, date_annual, "Capital Expenditure")
+                         Net_Assets_from_Acquisitions_annual_df = financials_df(Net_Assets_from_Acquisitions_annual, date_annual, "Acquisitions, net")
+                         Purchase_of_Investment_annual_df = financials_df(Purchase_of_Investment_annual, date_annual, "Purchase of Investments")
+                         Sale_maturity_of_Investments_annual_df = financials_df(Sale_maturity_of_Investments_annual, date_annual, "Sale/Maturity of Investments")
+                         Net_investing_CashFlow_annual_df = financials_df(Net_investing_CashFlow_annual, date_annual, "Net Investing Cash Flow")
+                         Insurance_Reduction_of_DebtNet_annual_df = financials_df(Insurance_Reduction_of_DebtNet_annual, date_annual, "Issuance/Reduction of Net Debt")
+                         Debt_issued_annual_df = financials_df(Debt_issued_annual, date_annual, "Longterm Debt Issued")
+                         Debt_repaid_annual_df = financials_df(Debt_repaid_annual, date_annual, "Longterm Debt Repaid")
+                         Stock_issued_of_common_Preferred_stock_annual_df  = financials_df(Stock_issued_of_common_Preferred_stock_annual, date_annual, "Common Stock Repurchased")
+                         Repurchase_of_common_Preferred_stock_annual_df = financials_df(Repurchase_of_common_Preferred_stock_annual, date_annual, "Repurchase Comm. & Pref. Stks")
+                         Cash_Dividends_paid_Total_annual_df = financials_df(Cash_Dividends_paid_Total_annual, date_annual, "Cash Dividends Paid")
+                         Net_Financing_cashFlow_annual_df = financials_df(Net_Financing_cashFlow_annual, date_annual, "Net Financing Cash Flow")
+                         Net_change_in_cash_annual_df = financials_df(Net_change_in_cash_annual, date_annual, "Net Change in Cash")
+                         Free_cash_flow_annual_df = financials_df(Free_cash_flow_annual, date_annual, "Free Cash Flow")
 
 
 
-                         merged_df = pd.concat([total_annual,Capex_annual_df,Net_Assets_from_Acquisitions_annual_df,Purchase_of_Investment_annual_df,Net_investing_CashFlow_annual_df,Cash_Dividends_paid_Total_annual_df,Insurance_Reduction_of_DebtNet_annual_df,Repurchase_of_common_Preferred_stock_annual_df,Net_Financing_cashFlow_annual_df,Net_change_in_cash_annual_df,Free_cash_flow_annual_df]) 
-                                   
-                         #styled_df = merged_df.style.set_table_attributes('class="fixed-table"')\
-                          #         .set_properties(**{'max-width': '1000px',
-                           #                           'color': 'black'})
-                         
-                         #st.table(styled_df)
+
+                         merged_df = pd.concat([total_annual,Capex_annual_df,Net_Assets_from_Acquisitions_annual_df,
+                                                Purchase_of_Investment_annual_df,Sale_maturity_of_Investments_annual_df,Net_investing_CashFlow_annual_df,
+                                                Debt_issued_annual_df,
+                                                Debt_repaid_annual_df,
+                                                Stock_issued_of_common_Preferred_stock_annual_df,Insurance_Reduction_of_DebtNet_annual_df,
+                                                Cash_Dividends_paid_Total_annual_df,
+                                                Repurchase_of_common_Preferred_stock_annual_df,Net_Financing_cashFlow_annual_df,
+                                                Net_change_in_cash_annual_df,Free_cash_flow_annual_df]) 
+
                          st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
                          
-                         #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                         #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
 
-
-                         
 
                          with Quarterly:
                               
@@ -9999,7 +10621,10 @@ if selected == "Stock Analysis Tool":
                               Net_investing_CashFlow_quarter = quarterly_data['cf_cfi'][-10:] 
                               Cash_Dividends_paid_Total_quarter = quarterly_data['cff_dividend_paid'][-10:] 
                               Insurance_Reduction_of_DebtNet_quarter = quarterly_data['cff_debt_net'][-10:]
-                              Cash_Dividends_paid_Total_annual = annual_data['cff_dividend_paid'][-10:]
+                              Debt_issued_quarter = quarterly_data['cff_debt_issued'][-10:]
+                              Debt_repaid_quarter = quarterly_data['cff_debt_repaid'][-10:]
+                              Stock_issued_of_common_Preferred_stock_quarter = quarterly_data['cff_common_stock_issued'][-10:]
+                              Cash_Dividends_paid_Total_annual = quarterly_data['cff_dividend_paid'][-10:]
                               Repurchase_of_common_Preferred_stock_quarter = quarterly_data['cff_common_stock_repurchased'][-10:]
                               Net_Financing_cashFlow_quarter = quarterly_data['cf_cff'][-10:]
                               Net_change_in_cash_quarter = quarterly_data['cf_net_change_in_cash'][-10:]
@@ -10015,1404 +10640,53 @@ if selected == "Stock Analysis Tool":
                                    # Convert JSON data to a DataFrame
                               df = pd.DataFrame(FFO)
 
-                                   # Add a new column "total_cashflow" which is the sum of the two columns
                               df["Funds from Operations"] = df["Operating Cash Flow"] + df["Changes In Working Capital"]
                               
                               total = df.T
 
-                                        # Replace the numbering with the actual date
                               total.columns = total.iloc[0]  # Use the first row as column names
                               total = total[1:]  # Remove the first row
 
-                                             # Convert the numbers to billions and display with 2 decimal places
-                                             #total = (total / 1e9).round(2)
-                                             
-                                             #total = "{:.2f}B".format((total/1000000000))
-                              #total_qaurter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9))
                               total_quarter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
 
 
+                              Net_Operating_CashFlow_quarter_df = financials_df(Net_Operating_CashFlow_quarter, date_quarter, "Net Operating Cash Flow")
+                              changes_in_working_capital_quarter_df = financials_df(changes_in_working_capital_quarter, date_quarter, "Changes in Working Capital")
+                              Capex_quarter_df = financials_df(Capex_quarter, date_quarter, "Capital Expenditure")
+                              Net_Assets_from_Acquisitions_quarter_df = financials_df(Net_Assets_from_Acquisitions_quarter, date_quarter, "Acquisitions, net")
+                              Purchase_of_Investment_quarter_df = financials_df(Purchase_of_Investment_quarter, date_quarter, "Purchase of Investments")
+                              Sale_maturity_of_Investments_quarter_df = financials_df(Sale_maturity_of_Investments_quarter, date_quarter, "Sale/Maturity of Investments")
+                              Net_investing_CashFlow_quarter_df = financials_df(Net_investing_CashFlow_quarter, date_quarter, "Net Investing Cash Flow")
+                              Cash_Dividends_paid_Total_quarter_df = financials_df(Cash_Dividends_paid_Total_quarter, date_quarter, "Cash Dividends Paid")
+                              Debt_issued_quarter_df = financials_df(Debt_issued_annual, date_quarter, "Longterm Debt Issued")
+                              Debt_repaid_quarter_df = financials_df(Debt_repaid_annual, date_quarter, "Longterm Debt Repaid")
+                              Stock_issued_of_common_Preferred_stock_quarter_df  = financials_df(Stock_issued_of_common_Preferred_stock_annual, date_quarter, "Common Stock Repurchased")
+                              Insurance_Reduction_of_DebtNet_quarter_df = financials_df(Insurance_Reduction_of_DebtNet_quarter, date_quarter, "Issuance/Reduction of Net Debt")
+                              Repurchase_of_common_Preferred_stock_quarter_df = financials_df(Repurchase_of_common_Preferred_stock_quarter, date_quarter, "Repurchase Comm. & Pref. Stks")
+                              Net_Financing_cashFlow_quarter_df = financials_df(Net_Financing_cashFlow_quarter, date_quarter, "Net Financing Cash Flow")
+                              Net_change_in_cash_quarter_df = financials_df(Net_change_in_cash_quarter, date_quarter, "Net Change in Cash")
+                              Free_cash_flow_quarter_df = financials_df(Free_cash_flow_quarter, date_quarter, "Free Cash Flow")
 
 
-                              #changes_in_working_capital_quarter_table= ["{:.2f}B".format(cfo_change_in_working_capital / 1000000000) if cfo_change_in_working_capital >= 1000000000 else "{:,.0f}M".format(cfo_change_in_working_capital / 1000000)for cfo_change_in_working_capital in changes_in_working_capital_quarter]
-                              #changes_in_working_capital_quarter_df = pd.DataFrame(changes_in_working_capital_quarter_table, index=date_list_quarter,  columns=["Changes in Working Capital"])
-                              #changes_in_working_capital_quarter_df = changes_in_working_capital_quarter_df.transpose()
-
-                              #Net_Operating_CashFlow_quarter_table= ["{:.2f}B".format(cf_cfo / 1000000000) if cf_cfo >= 1000000000 else "{:,.0f}M".format(cf_cfo / 1000000)for cf_cfo in Net_Operating_CashFlow_quarter]
-                              #Net_Operating_CashFlow_quarter_df = pd.DataFrame(Net_Operating_CashFlow_quarter_table, index=date_list_quarter,  columns=["Operating Cash Flow"])
-                              #Net_Operating_CashFlow_quarter_df = Net_Operating_CashFlow_quarter_df.transpose()
-
-                              Capex_quarter_table= ["{:.2f}B".format(capex / 1000000000) if abs(capex) >= 1000000000 else "{:,.0f}M".format(capex / 1000000)for capex in Capex_quarter]
-                              Capex_quarter_df = pd.DataFrame(Capex_quarter_table, index=date_list_quarter,  columns=["Capital Expenditure"])
-                              Capex_quarter_df = Capex_quarter_df.transpose()
-
-                              Net_Assets_from_Acquisitions_quarter_table= ["{:.2f}B".format(cfi_acquisitions / 1000000000) if abs(cfi_acquisitions) >= 1000000000 else "{:,.0f}M".format(cfi_acquisitions / 1000000)for cfi_acquisitions in Net_Assets_from_Acquisitions_quarter]
-                              Net_Assets_from_Acquisitions_quarter_df = pd.DataFrame(Net_Assets_from_Acquisitions_quarter_table, index=date_list_quarter,  columns=["Acquisitions, net"])
-                              Net_Assets_from_Acquisitions_quarter_df = Net_Assets_from_Acquisitions_quarter_df.transpose()
-
-                              Purchase_of_Investment_quarter_table= ["{:.2f}B".format(cfi_investment_purchases / 1000000000) if abs(cfi_investment_purchases) >= 1000000000 else "{:,.0f}M".format(cfi_investment_purchases / 1000000)for cfi_investment_purchases in Purchase_of_Investment_quarter]
-                              Purchase_of_Investment_quarter_df = pd.DataFrame(Purchase_of_Investment_quarter_table, index=date_list_quarter,  columns=["Purchase of Investments"])
-                              Purchase_of_Investment_quarter_df = Purchase_of_Investment_quarter_df.transpose()
-
-                              Sale_maturity_of_Investments_quarter_table= ["{:.2f}B".format(cfi_investment_sales / 1000000000) if abs(cfi_investment_sales) >= 1000000000 else "{:,.0f}M".format(cfi_investment_sales / 1000000)for cfi_investment_sales in Sale_maturity_of_Investments_quarter]
-                              Sale_maturity_of_Investments_quarter_df = pd.DataFrame(Sale_maturity_of_Investments_quarter_table, index=date_list_quarter,  columns=["Sale/Maturity of Investments"])
-                              Sale_maturity_of_Investments_quarter_df = Purchase_of_Investment_quarter_df.transpose()
-
-                              Net_investing_CashFlow_quarter_table= ["{:.2f}B".format(cf_cfi / 1000000000) if abs(cf_cfi) >= 1000000000 else "{:,.0f}M".format(cf_cfi / 1000000)for cf_cfi in Net_investing_CashFlow_quarter]
-                              Net_investing_CashFlow_quarter_df = pd.DataFrame(Net_investing_CashFlow_quarter_table, index=date_list_quarter,  columns=["Net Investing Cash Flow"])
-                              Net_investing_CashFlow_quarter_df = Net_investing_CashFlow_quarter_df.transpose()
-
-                              Cash_Dividends_paid_Total_quarter_table= ["{:.2f}B".format(abs(cff_dividend_paid) / 1000000000) if abs(cff_dividend_paid) >= 1000000000 else "{:,.0f}M".format(abs(cff_dividend_paid) / 1000000)for cff_dividend_paid in Cash_Dividends_paid_Total_quarter]
-                              Cash_Dividends_paid_Total_quarter_df = pd.DataFrame(Cash_Dividends_paid_Total_quarter_table, index=date_list_quarter,  columns=["Cash Dividends Paid"])
-                              Cash_Dividends_paid_Total_quarter_df = Cash_Dividends_paid_Total_quarter_df.transpose()
-
-                              Insurance_Reduction_of_DebtNet_quarter_table= ["{:.2f}B".format(cff_debt_net / 1000000000) if abs(cff_debt_net) >= 1000000000 else "{:,.0f}M".format(cff_debt_net / 1000000)for cff_debt_net in Insurance_Reduction_of_DebtNet_quarter]
-                              Insurance_Reduction_of_DebtNet_quarter_df = pd.DataFrame(Insurance_Reduction_of_DebtNet_quarter_table, index=date_list_quarter,  columns=["Issuance/Reduction of Debt,Net"])
-                              Insurance_Reduction_of_DebtNet_quarter_df = Insurance_Reduction_of_DebtNet_quarter_df.transpose()
-
-                              Repurchase_of_common_Preferred_stock_quarter_table= ["{:.2f}B".format(cff_common_stock_repurchased / 1000000000) if abs(cff_common_stock_repurchased) >= 1000000000 else "{:,.0f}M".format(cff_common_stock_repurchased / 1000000)for cff_common_stock_repurchased in Repurchase_of_common_Preferred_stock_quarter]
-                              Repurchase_of_common_Preferred_stock_quarter_df = pd.DataFrame(Repurchase_of_common_Preferred_stock_quarter_table, index=date_list_quarter,  columns=["Repurchase Comm. & Pref. Stks"])
-                              Repurchase_of_common_Preferred_stock_quarter_df = Repurchase_of_common_Preferred_stock_quarter_df.transpose()
-
-                              Net_Financing_cashFlow_quarter_table= ["{:.2f}B".format(cf_cff / 1000000000) if abs(cf_cff) >= 1000000000 else "{:,.0f}M".format(cf_cff / 1000000)for cf_cff in Net_Financing_cashFlow_quarter]
-                              Net_Financing_cashFlow_quarter_df = pd.DataFrame(Net_Financing_cashFlow_quarter_table, index=date_list_quarter,  columns=["Net Financing Cash Flow"])
-                              Net_Financing_cashFlow_quarter_df = Net_Financing_cashFlow_quarter_df.transpose()
-
-                              Net_change_in_cash_quarter_table= ["{:.2f}B".format(cf_net_change_in_cash / 1000000000) if abs(cf_net_change_in_cash) >= 1000000000 else "{:,.0f}M".format(cf_net_change_in_cash / 1000000)for cf_net_change_in_cash in Net_change_in_cash_quarter]
-                              Net_change_in_cash_quarter_df = pd.DataFrame(Net_change_in_cash_quarter_table, index=date_list_quarter,  columns=["Net Change in Cash"])
-                              Net_change_in_cash_quarter_df = Net_change_in_cash_quarter_df.transpose()
-
-                              Free_cash_flow_quarter_table= ["{:.2f}B".format(fcf / 1000000000) if abs(fcf) >= 1000000000 else "{:,.0f}M".format(fcf / 1000000)for fcf in Free_cash_flow_quarter]
-                              Free_cash_flow_quarter_df = pd.DataFrame(Free_cash_flow_quarter_table, index=date_list_quarter,  columns=["Free Cash Flow"])
-                              Free_cash_flow_quarter_df = Free_cash_flow_quarter_df.transpose()
-
-
-
-                              merged_df = pd.concat([total_quarter,Capex_quarter_df,Net_Assets_from_Acquisitions_quarter_df,Purchase_of_Investment_quarter_df,Net_investing_CashFlow_quarter_df,Cash_Dividends_paid_Total_quarter_df,Insurance_Reduction_of_DebtNet_quarter_df,Repurchase_of_common_Preferred_stock_quarter_df,Net_Financing_cashFlow_quarter_df,Net_change_in_cash_quarter_df,Free_cash_flow_quarter_df])           
+                              merged_df = pd.concat([total_quarter,Capex_quarter_df,Net_Assets_from_Acquisitions_quarter_df,
+                                                     Purchase_of_Investment_quarter_df,Sale_maturity_of_Investments_quarter_df,Net_investing_CashFlow_quarter_df,
+                                                     Debt_issued_quarter_df,
+                                                     Debt_repaid_quarter_df,
+                                                     Stock_issued_of_common_Preferred_stock_quarter_df,
+                                                     Insurance_Reduction_of_DebtNet_quarter_df,
+                                                     Cash_Dividends_paid_Total_quarter_df,
+                                                     Repurchase_of_common_Preferred_stock_quarter_df,Net_Financing_cashFlow_quarter_df,
+                                                     Net_change_in_cash_quarter_df,Free_cash_flow_quarter_df])           
                               
                               st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
 
-                              #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                            
-                              #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
-                         
-
-
-                              with Balance_Sheet:
-                                   Annual,Quarterly = st.tabs(["Annual","Quarterly"])
-
-                                   period_end_dates = annual_data['period_end_date'][-10:]
-                                   date_quarterly_Balance_Sheet = quarterly_data['period_end_date'][-10:] 
-                                   
-                                   with Annual:
-
-                                        #if "Consumer Finance" in Industry or "Banks" in Industry or ticker == "MAIN":
-                                        try:
-                                             cash_und_cash_investments = annual_data['cash_and_equiv'][-10:]
-                                             st_investments_annual = annual_data['total_investments'][-10:]
-                                             Intangible_assets_annual = annual_data['intangible_assets'][-10:]
-                                             Net_goodwill_annual = annual_data['goodwill'][-10:]
-                                             Total_assets_annual = annual_data['total_assets'][-10:]
-                                             Short_term_debt_annual = annual_data['st_debt'][-10:]
-                                             LongTerm_debt_annual = annual_data['lt_debt'][-10:]
-                                             Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
-                                             Total_liabilities_annual = annual_data['total_liabilities'][-10:]
-                                             Total_Equity_annual = annual_data['total_equity'][-10:]
-                                             Deposits_annual = annual_data['deposits_liability'][-10:]
-                                             Gross_loans_annual = annual_data['loans_gross'][-10:]
-                                             Loans_loss_annual = annual_data['allowance_for_loan_losses'][-10:]
-                                             Net_Loan_annual = annual_data['loans_net'][-10:]
-
-                                             cash_und_cash_investments_annual= ["{:.2f}B".format(cash_and_equiv / 1000000000) if abs(cash_and_equiv) >= 1000000000 else "{:,.0f}M".format(cash_and_equiv / 1000000)for cash_and_equiv in cash_und_cash_investments]
-                                             cash_und_cash_investments_annual_df = pd.DataFrame(cash_und_cash_investments_annual, index=date_list_annual,  columns=["Total Cash"])
-                                             cash_und_cash_investments_annual_df = cash_und_cash_investments_annual_df.transpose()
-
-                                             Intangible_assets_annual_table= ["{:.2f}B".format(intangible_assets / 1000000000) if abs(intangible_assets) >= 1000000000 else "{:,.0f}M".format(intangible_assets / 1000000)for intangible_assets in Intangible_assets_annual]
-                                             Intangible_assets_annual_df = pd.DataFrame(Intangible_assets_annual_table, index=date_list_annual,  columns=["Intangible Assets"])
-                                             Intangible_assets_annual_df = Intangible_assets_annual_df.transpose()
-
-                                             Net_goodwill_table= ["{:.2f}B".format(goodwill / 1000000000) if abs(goodwill) >= 1000000000 else "{:,.0f}M".format(goodwill / 1000000)for goodwill in Net_goodwill_annual]
-                                             Net_goodwill_annual_df = pd.DataFrame(Net_goodwill_table, index=date_list_annual,  columns=["Goodwill"])
-                                             Net_goodwill_annual_df = Net_goodwill_annual_df.transpose()
-
-                                             Total_assets_annual_table= ["{:.2f}B".format(total_assets / 1000000000) if abs(total_assets) >= 1000000000 else "{:,.0f}M".format(total_assets / 1000000)for total_assets in Total_assets_annual]
-                                             Total_assets_annual_df = pd.DataFrame(Total_assets_annual_table, index=date_list_annual,  columns=["Total Assets"])
-                                             Total_assets_annual_df = Total_assets_annual_df.transpose()
-
-                                             Short_term_debt_annual_table= ["{:.2f}B".format(st_debt / 1000000000) if abs(st_debt) >= 1000000000 else "{:,.0f}M".format(st_debt / 1000000)for st_debt in Short_term_debt_annual]
-                                             Short_term_debt_annual_df = pd.DataFrame(Short_term_debt_annual_table, index=date_list_annual,  columns=["Short Term Debt"])
-                                             Short_term_debt_annual_df = Short_term_debt_annual_df.transpose()
-
-                                             LongTerm_debt_annual_table= ["{:.2f}B".format(lt_debt / 1000000000) if abs(lt_debt) >= 1000000000 else "{:,.0f}M".format(lt_debt / 1000000)for lt_debt in LongTerm_debt_annual]
-                                             LongTerm_debt_annual_df = pd.DataFrame(LongTerm_debt_annual_table, index=date_list_annual,  columns=["Long-Term Debt"])
-                                             LongTerm_debt_annual_df = LongTerm_debt_annual_df.transpose()
-
-                                             Other_longterm_liabilities_annual_table= ["{:.2f}B".format(other_lt_liabilities / 1000000000) if abs(other_lt_liabilities) >= 1000000000 else "{:,.0f}M".format(other_lt_liabilities / 1000000)for other_lt_liabilities in Other_longterm_liabilities_annual]
-                                             Other_longterm_liabilities_annual_df = pd.DataFrame(Other_longterm_liabilities_annual_table, index=date_list_annual,  columns=["Other Non-current Liabilities"])
-                                             Other_longterm_liabilities_annual_df = Other_longterm_liabilities_annual_df.transpose()
-
-                                             Total_liabilities_annual_table= ["{:.2f}B".format(total_liabilities / 1000000000) if abs(total_liabilities) >= 1000000000 else "{:,.0f}M".format(total_liabilities / 1000000)for total_liabilities in Total_liabilities_annual]
-                                             Total_liabilities_annual_df = pd.DataFrame(Total_liabilities_annual_table, index=date_list_annual,  columns=["Total Liabilities"])
-                                             Total_liabilities_annual_df = Total_liabilities_annual_df.transpose()
-
-                                             Total_Equity_annual_table= ["{:.2f}B".format(total_equity / 1000000000) if abs(total_equity) >= 1000000000 else "{:,.0f}M".format(total_equity / 1000000)for total_equity in Total_Equity_annual]
-                                             Total_Equity_annual_df = pd.DataFrame(Total_Equity_annual_table, index=date_list_annual,  columns=["Total Equity"])
-                                             Total_Equity_annual_df = Total_Equity_annual_df.transpose()
-
-                                             
-                                             deposits_liability_annual_table= ["{:.2f}B".format(deposits_liability / 1000000000) if abs(deposits_liability) >= 1000000000 else "{:,.0f}M".format(deposits_liability / 1000000)for deposits_liability in Deposits_annual]
-                                             deposits_liability_annual_df = pd.DataFrame(deposits_liability_annual_table, index=date_list_annual,  columns=["Deposits"])
-                                             deposits_liability_df = deposits_liability_annual_df.transpose()
-
-                                             Gross_loans_annual_table= ["{:.2f}B".format(loans_gross / 1000000000) if abs(loans_gross) >= 1000000000 else "{:,.0f}M".format(loans_gross / 1000000)for loans_gross in Gross_loans_annual]
-                                             Gross_loans_annual_df = pd.DataFrame(Gross_loans_annual_table, index=date_list_annual,  columns=["Gross Loans"])
-                                             Gross_loans_annual_df = Gross_loans_annual_df.transpose()
-
-                                             Loans_loss_annual_table= ["{:.2f}B".format(allowance_for_loan_losses / 1000000000) if abs(allowance_for_loan_losses) >= 1000000000 else "{:,.0f}M".format(allowance_for_loan_losses / 1000000)for allowance_for_loan_losses in Loans_loss_annual]
-                                             Loans_loss_annual_df = pd.DataFrame(Loans_loss_annual_table, index=date_list_annual,  columns=["Loan Losses"])
-                                             Loans_loss_annual_df = Loans_loss_annual_df.transpose()
-
-                                             Net_Loan_annual_table= ["{:.2f}B".format(loans_net / 1000000000) if abs(loans_net) >= 1000000000 else "{:,.0f}M".format(loans_net / 1000000)for loans_net in Net_Loan_annual]
-                                             Net_Loan_annual_df = pd.DataFrame(Net_Loan_annual_table, index=date_list_annual,  columns=["Net Loans"])
-                                             Net_Loan_annual_df = Net_Loan_annual_df.transpose()
-
-
-
-                                             merged_df = pd.concat([cash_und_cash_investments_annual_df,Gross_loans_annual_df,Loans_loss_annual_df,Net_Loan_annual_df,Intangible_assets_annual_df,Net_goodwill_annual_df,Total_assets_annual_df,deposits_liability_df,Short_term_debt_annual_df,LongTerm_debt_annual_df,Other_longterm_liabilities_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
-                                        
-                                             st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                             #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                              
-                                             #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
-
-                                        #elif "Insurance" in Industry or "Health Care Providers & Services" in Industry or ticker=="BRK-A" or ticker=="BRK-B":
-                                             pass
-                                        except KeyError:
-                                             try:
-                                                  cash_und_cash_investments = annual_data['cash_and_equiv'][-10:]
-                                                  Intangible_assets_annual = annual_data['intangible_assets'][-10:]
-                                                  Net_goodwill_annual = annual_data['goodwill'][-10:]
-                                                  Total_assets_annual = annual_data['total_assets'][-10:]
-                                                  Short_term_debt_annual = annual_data['st_debt'][-10:]
-                                                  LongTerm_debt_annual = annual_data['lt_debt'][-10:]
-                                                  Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
-                                                  Total_liabilities_annual = annual_data['total_liabilities'][-10:]
-                                                  Total_Equity_annual = annual_data['total_equity'][-10:]
-
-
-                                                  cash_und_cash_investments_annual= ["{:.2f}B".format(cash_and_equiv / 1000000000) if abs(cash_and_equiv) >= 1000000000 else "{:,.0f}M".format(cash_and_equiv / 1000000)for cash_and_equiv in cash_und_cash_investments]
-                                                  cash_und_cash_investments_annual_df = pd.DataFrame(cash_und_cash_investments_annual, index=date_list_annual,  columns=["Total Cash"])
-                                                  cash_und_cash_investments_annual_df = cash_und_cash_investments_annual_df.transpose()
-
-                                                  Intangible_assets_annual_table= ["{:.2f}B".format(intangible_assets / 1000000000) if abs(intangible_assets) >= 1000000000 else "{:,.0f}M".format(intangible_assets / 1000000)for intangible_assets in Intangible_assets_annual]
-                                                  Intangible_assets_annual_df = pd.DataFrame(Intangible_assets_annual_table, index=date_list_annual,  columns=["Intangible Assets"])
-                                                  Intangible_assets_annual_df = Intangible_assets_annual_df.transpose()
-
-                                                  Net_goodwill_table= ["{:.2f}B".format(goodwill / 1000000000) if abs(goodwill) >= 1000000000 else "{:,.0f}M".format(goodwill / 1000000)for goodwill in Net_goodwill_annual]
-                                                  Net_goodwill_annual_df = pd.DataFrame(Net_goodwill_table, index=date_list_annual,  columns=["Goodwill"])
-                                                  Net_goodwill_annual_df = Net_goodwill_annual_df.transpose()
-
-                                                  Total_assets_annual_table= ["{:.2f}B".format(total_assets / 1000000000) if abs(total_assets) >= 1000000000 else "{:,.0f}M".format(total_assets / 1000000)for total_assets in Total_assets_annual]
-                                                  Total_assets_annual_df = pd.DataFrame(Total_assets_annual_table, index=date_list_annual,  columns=["Total Assets"])
-                                                  Total_assets_annual_df = Total_assets_annual_df.transpose()
-
-                                                  Short_term_debt_annual_table= ["{:.2f}B".format(st_debt / 1000000000) if abs(st_debt) >= 1000000000 else "{:,.0f}M".format(st_debt / 1000000)for st_debt in Short_term_debt_annual]
-                                                  Short_term_debt_annual_df = pd.DataFrame(Short_term_debt_annual_table, index=date_list_annual,  columns=["Short Term Debt"])
-                                                  Short_term_debt_annual_df = Short_term_debt_annual_df.transpose()
-
-                                                  LongTerm_debt_annual_table= ["{:.2f}B".format(lt_debt / 1000000000) if abs(lt_debt) >= 1000000000 else "{:,.0f}M".format(lt_debt / 1000000)for lt_debt in LongTerm_debt_annual]
-                                                  LongTerm_debt_annual_df = pd.DataFrame(LongTerm_debt_annual_table, index=date_list_annual,  columns=["Long-Term Debt"])
-                                                  LongTerm_debt_annual_df = LongTerm_debt_annual_df.transpose()
-
-                                                  Other_longterm_liabilities_annual_table= ["{:.2f}B".format(other_lt_liabilities / 1000000000) if abs(other_lt_liabilities) >= 1000000000 else "{:,.0f}M".format(other_lt_liabilities / 1000000)for other_lt_liabilities in Other_longterm_liabilities_annual]
-                                                  Other_longterm_liabilities_annual_df = pd.DataFrame(Other_longterm_liabilities_annual_table, index=date_list_annual,  columns=["Other Non-current Liabilities"])
-                                                  Other_longterm_liabilities_annual_df = Other_longterm_liabilities_annual_df.transpose()
-
-                                                  Total_liabilities_annual_table= ["{:.2f}B".format(total_liabilities / 1000000000) if abs(total_liabilities) >= 1000000000 else "{:,.0f}M".format(total_liabilities / 1000000)for total_liabilities in Total_liabilities_annual]
-                                                  Total_liabilities_annual_df = pd.DataFrame(Total_liabilities_annual_table, index=date_list_annual,  columns=["Total Liabilities"])
-                                                  Total_liabilities_annual_df = Total_liabilities_annual_df.transpose()
-
-                                                  Total_Equity_annual_table= ["{:.2f}B".format(total_equity / 1000000000) if abs(total_equity) >= 1000000000 else "{:,.0f}M".format(total_equity / 1000000)for total_equity in Total_Equity_annual]
-                                                  Total_Equity_annual_df = pd.DataFrame(Total_Equity_annual_table, index=date_list_annual,  columns=["Total Equity"])
-                                                  Total_Equity_annual_df = Total_Equity_annual_df.transpose()
-                              
-               #...............................................................Quarterly........................................................
-                                                  
-
-                                                  merged_df = pd.concat([cash_und_cash_investments_annual_df,Intangible_assets_annual_df,Net_goodwill_annual_df,Total_assets_annual_df,Short_term_debt_annual_df,LongTerm_debt_annual_df,Other_longterm_liabilities_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
-                                                                                     
-                                                                                     
-                                                  
-                                                  st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                                  pass    
-                                        #else:      
-                                             except KeyError:    
-                                                  cash_und_cash_investments_annual = annual_data['cash_and_equiv'][-10:]
-                                                  st_investments_annual = annual_data['st_investments'][-10:]
-                                                  Inventories_annual = annual_data['inventories'][-10:]
-                                                  Total_current_assets_annual = annual_data['total_current_assets'][-10:]
-                                                  Income_Tax_payable_annual = annual_data['tax_payable'][-10:]
-                                                  Total_current_liabilities_annual = annual_data['total_current_liabilities'][-10:]
-                                                  Intangible_assets_annual = annual_data['intangible_assets'][-10:]
-                                                  Net_goodwill_annual = annual_data['goodwill'][-10:]
-                                                  Total_assets_annual = annual_data['total_assets'][-10:]
-                                                  Short_term_debt_annual = annual_data['st_debt'][-10:]
-                                                  LongTerm_debt_annual = annual_data['lt_debt'][-10:]
-                                                  Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
-                                                  Total_liabilities_annual = annual_data['total_liabilities'][-10:]
-                                                  Total_Equity_annual = annual_data['total_equity'][-10:]
-
-                                             # Create a DataFrame
-                                                  index = range(len(period_end_dates))
-                                                  df = pd.DataFrame({'Period End Date': period_end_dates,
-                                                                 'Cash and Equivalents': cash_und_cash_investments_annual,
-                                                                 'Short term Investments': st_investments_annual
-                                                                 }, index=index)
-
-                                                  # Add the columns together
-                                                  #df['Total Cash'] = df['cash_and_equiv'] + df['st_investments']
-                                                  if 'Short term Investments' in df.columns:
-                                                            df['Total Cash'] = df['Cash and Equivalents'] + df['Short term Investments']
-                                                  else:
-                                                            df['Total Cash'] = df['Cash and Equivalents']
-                                                       # Transpose the DataFrame
-                                                       #total = df.T
-                                                  # Transpose the DataFrame
-                                                  total = df.T
-
-                                             # Replace the numbering with the actual date
-                                                  total.columns = total.iloc[0]  # Use the first row as column names
-                                                  total = total[1:]  # Remove the first row
-
-                                                  # Convert the numbers to billions and display with 2 decimal places
-                                                  #total = (total / 1e9).round(2)
-                                                  
-                                                  #total = "{:.2f}B".format((total/1000000000))
-                                                  #total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9))
-                                                  total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
-
-                                                  
-                                                  #------------------------------------------------------------------
-                                                  Inventories_annual_table= ["{:.2f}B".format(inventories / 1000000000) if abs(inventories) >= 1000000000 else "{:,.0f}M".format(inventories / 1000000)for inventories in Inventories_annual]
-                                                  Inventories_annual_df = pd.DataFrame(Inventories_annual_table, index=date_list_annual,  columns=["Inventory"])
-                                                  Inventories_annual_df = Inventories_annual_df.transpose()
-
-                                                  Total_current_assets_table= ["{:.2f}B".format(total_current_assets / 1000000000) if abs(total_current_assets) >= 1000000000 else "{:,.0f}M".format(total_current_assets / 1000000)for total_current_assets in Total_current_assets_annual]
-                                                  Total_current_assets_df = pd.DataFrame(Total_current_assets_table, index=date_list_annual,  columns=["Total Current Assets"])
-                                                  Total_current_assets_df = Total_current_assets_df.transpose()
-
-                                                  Intangible_assets_annual_table= ["{:.2f}B".format(intangible_assets / 1000000000) if abs(intangible_assets) >= 1000000000 else "{:,.0f}M".format(intangible_assets / 1000000)for intangible_assets in Intangible_assets_annual]
-                                                  Intangible_assets_annual_df = pd.DataFrame(Intangible_assets_annual_table, index=date_list_annual,  columns=["Intangible Assets"])
-                                                  Intangible_assets_annual_df = Intangible_assets_annual_df.transpose()
-
-                                                  Net_goodwill_table= ["{:.2f}B".format(goodwill / 1000000000) if abs(goodwill) >= 1000000000 else "{:,.0f}M".format(goodwill / 1000000)for goodwill in Net_goodwill_annual]
-                                                  Net_goodwill_annual_df = pd.DataFrame(Net_goodwill_table, index=date_list_annual,  columns=["Goodwill"])
-                                                  Net_goodwill_annual_df = Net_goodwill_annual_df.transpose()
-
-                                                  Total_assets_annual_table= ["{:.2f}B".format(total_assets / 1000000000) if abs(total_assets) >= 1000000000 else "{:,.0f}M".format(total_assets / 1000000)for total_assets in Total_assets_annual]
-                                                  Total_assets_annual_df = pd.DataFrame(Total_assets_annual_table, index=date_list_annual,  columns=["Total Assets"])
-                                                  Total_assets_annual_df = Total_assets_annual_df.transpose()
-
-                                                  Short_term_debt_annual_table= ["{:.2f}B".format(st_debt / 1000000000) if abs(st_debt) >= 1000000000 else "{:,.0f}M".format(st_debt / 1000000)for st_debt in Short_term_debt_annual]
-                                                  Short_term_debt_annual_df = pd.DataFrame(Short_term_debt_annual_table, index=date_list_annual,  columns=["Short Term Debt"])
-                                                  Short_term_debt_annual_df = Short_term_debt_annual_df.transpose()
-
-                                                  Income_Tax_payable_annual_table= ["{:.2f}B".format(tax_payable / 1000000000) if abs(tax_payable) >= 1000000000 else "{:,.0f}M".format(tax_payable / 1000000)for tax_payable in Income_Tax_payable_annual]
-                                                  Income_Tax_payable_annual_df = pd.DataFrame(Income_Tax_payable_annual_table, index=date_list_annual,  columns=["Income Tax payable"])
-                                                  Income_Tax_payable_annual_df = Income_Tax_payable_annual_df.transpose()
-
-                                                  Total_current_liabilities_annual_table= ["{:.2f}B".format(total_current_liabilities / 1000000000) if abs(total_current_liabilities) >= 1000000000 else "{:,.0f}M".format(total_current_liabilities / 1000000)for total_current_liabilities in Total_current_liabilities_annual]
-                                                  Total_current_liabilities_annual_df = pd.DataFrame(Total_current_liabilities_annual_table, index=date_list_annual,  columns=["Total current liabilities"])
-                                                  Total_current_liabilities_annual_df = Total_current_liabilities_annual_df.transpose()
-
-                                                  LongTerm_debt_annual_table= ["{:.2f}B".format(lt_debt / 1000000000) if abs(lt_debt) >= 1000000000 else "{:,.0f}M".format(lt_debt / 1000000)for lt_debt in LongTerm_debt_annual]
-                                                  LongTerm_debt_annual_df = pd.DataFrame(LongTerm_debt_annual_table, index=date_list_annual,  columns=["Long-Term Debt"])
-                                                  LongTerm_debt_annual_df = LongTerm_debt_annual_df.transpose()
-
-                                                  Other_longterm_liabilities_annual_table= ["{:.2f}B".format(other_lt_liabilities / 1000000000) if abs(other_lt_liabilities) >= 1000000000 else "{:,.0f}M".format(other_lt_liabilities / 1000000)for other_lt_liabilities in Other_longterm_liabilities_annual]
-                                                  Other_longterm_liabilities_annual_df = pd.DataFrame(Other_longterm_liabilities_annual_table, index=date_list_annual,  columns=["Other Non-current Liabilities"])
-                                                  Other_longterm_liabilities_annual_df = Other_longterm_liabilities_annual_df.transpose()
-
-                                                  Total_liabilities_annual_table= ["{:.2f}B".format(total_liabilities / 1000000000) if abs(total_liabilities) >= 1000000000 else "{:,.0f}M".format(total_liabilities / 1000000)for total_liabilities in Total_liabilities_annual]
-                                                  Total_liabilities_annual_df = pd.DataFrame(Total_liabilities_annual_table, index=date_list_annual,  columns=["Total Liabilities"])
-                                                  Total_liabilities_annual_df = Total_liabilities_annual_df.transpose()
-
-                                                  Total_Equity_annual_table= ["{:.2f}B".format(total_equity / 1000000000) if abs(total_equity) >= 1000000000 else "{:,.0f}M".format(total_equity / 1000000)for total_equity in Total_Equity_annual]
-                                                  Total_Equity_annual_df = pd.DataFrame(Total_Equity_annual_table, index=date_list_annual,  columns=["Total Equity"])
-                                                  Total_Equity_annual_df = Total_Equity_annual_df.transpose()
-
-
-
-                                                  #Nopat_Annual_table= ["{:.2f}B".format(nopat / 1000000000)for nopat in Nopat_Annual]
-                                                  #Nopat_Annual_df = pd.DataFrame(Nopat_Annual_table, index=date_list_annual,  columns=["Nopat"])
-                                                  #Nopat_Annual_df = Nopat_Annual_df.transpose()
-
-                                                  
-
-
-
-     
-                                                  merged_df =pd.concat([total_annual,Inventories_annual_df,Total_current_assets_df,Intangible_assets_annual_df,Net_goodwill_annual_df,Total_assets_annual_df,Short_term_debt_annual_df,Total_current_liabilities_annual_df,LongTerm_debt_annual_df,Other_longterm_liabilities_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
-
-                                                  
-                                                  st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                                  #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                             
-                                             # st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
-                                                  #pass
-
-
-
-                                        #except KeyError:
-                                        #
-                                         #    st.write()
-
-                                          #   pass
-
-
-
-
-
-                                        with Quarterly:
-
-                                             try:
-                                                   
-                                                  cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
-                                                  st_investments_quarterly_Balance_Sheet = quarterly_data['total_investments'][-10:]
-                                                  Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
-                                                  Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
-                                                  Total_assets_quarter = quarterly_data['total_assets'][-10:]
-                                                  Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
-                                                  LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
-                                                  Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
-                                                  Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
-                                                  Total_Equity_quarter = quarterly_data['total_equity'][-10:]
-                                                  Deposits_quarter = quarterly_data['deposits_liability'][-10:]
-                                                  Gross_loans_quarter = quarterly_data['loans_gross'][-10:]
-                                                  Loans_loss_quarter = quarterly_data['allowance_for_loan_losses'][-10:]
-                                                  Net_Loan_quarter = quarterly_data['loans_net'][-10:]
-
-
-                                                  cash_und_cash_investments_quarter_table= ["{:.2f}B".format(cash_and_equiv / 1000000000) if abs(cash_and_equiv) >= 1000000000 else "{:,.0f}M".format(cash_and_equiv / 1000000)for cash_and_equiv in cash_and_equiv_quarterly_Balance_Sheet]
-                                                  cash_und_cash_investments_quarter_df = pd.DataFrame(cash_und_cash_investments_quarter_table, index=date_list_quarter,  columns=["Total Cash"])
-                                                  cash_und_cash_investments_quarter_df = cash_und_cash_investments_quarter_df.transpose()
-
-                                                  Intangible_assets_quarter_table= ["{:.2f}B".format(intangible_assets / 1000000000) if abs(intangible_assets) >= 1000000000 else "{:,.0f}M".format(intangible_assets / 1000000)for intangible_assets in Intangible_assets_quarter]
-                                                  Intangible_assets_quarter_df = pd.DataFrame(Intangible_assets_quarter_table, index=date_list_quarter,  columns=["Intangible Assets"])
-                                                  Intangible_assets_quarter_df = Intangible_assets_quarter_df.transpose()
-
-                                                  Net_goodwill_quarter_table= ["{:.2f}B".format(goodwill / 1000000000) if abs(goodwill) >= 1000000000 else "{:,.0f}M".format(goodwill / 1000000)for goodwill in Net_goodwill_quarter]
-                                                  Net_goodwill_quarter_df = pd.DataFrame(Net_goodwill_quarter_table, index=date_list_quarter,  columns=["Goodwill"])
-                                                  Net_goodwill_quarter_df = Net_goodwill_quarter_df.transpose()
-
-                                                  Total_assets_quarter_table= ["{:.2f}B".format(total_assets / 1000000000) if abs(total_assets) >= 1000000000 else "{:,.0f}M".format(total_assets / 1000000)for total_assets in Total_assets_quarter]
-                                                  Total_assets_quarter_df = pd.DataFrame(Total_assets_quarter_table, index=date_list_quarter,  columns=["Total Assets"])
-                                                  Total_assets_quarter_df = Total_assets_quarter_df.transpose()
-
-                                                  Short_term_debt_quarter_table= ["{:.2f}B".format(st_debt / 1000000000) if abs(st_debt) >= 1000000000 else "{:,.0f}M".format(st_debt / 1000000)for st_debt in Short_term_debt_quarter]
-                                                  Short_term_debt_quarter_df = pd.DataFrame(Short_term_debt_quarter_table, index=date_list_quarter,  columns=["Short Term Debt"])
-                                                  Short_term_debt_quarter_df = Short_term_debt_quarter_df.transpose()
-
-                                                  LongTerm_debt_quarter_table= ["{:.2f}B".format(lt_debt / 1000000000) if abs(lt_debt) >= 1000000000 else "{:,.0f}M".format(lt_debt / 1000000)for lt_debt in LongTerm_debt_quarter]
-                                                  LongTerm_debt_quarter_df = pd.DataFrame(LongTerm_debt_quarter_table, index=date_list_quarter,  columns=["Long-Term Debt"])
-                                                  LongTerm_debt_quarter_df = LongTerm_debt_quarter_df.transpose()
-
-                                                  Other_longterm_liabilities_quarter_table= ["{:.2f}B".format(other_lt_liabilities / 1000000000) if abs(other_lt_liabilities) >= 1000000000 else "{:,.0f}M".format(other_lt_liabilities / 1000000)for other_lt_liabilities in Other_longterm_liabilities_quarter]
-                                                  Other_longterm_liabilities_quarter_df = pd.DataFrame(Other_longterm_liabilities_quarter_table, index=date_list_quarter,  columns=["Other Non-current Liabilities"])
-                                                  Other_longterm_liabilities_quarter_df = Other_longterm_liabilities_quarter_df.transpose()
-
-                                                  Total_liabilities_quarter_table= ["{:.2f}B".format(total_liabilities / 1000000000) if abs(total_liabilities) >= 1000000000 else "{:,.0f}M".format(total_liabilities / 1000000)for total_liabilities in Total_liabilities_quarter]
-                                                  Total_liabilities_quarter_df = pd.DataFrame(Total_liabilities_quarter_table, index=date_list_quarter,  columns=["Total Liabilities"])
-                                                  Total_liabilities_quarter_df = Total_liabilities_quarter_df.transpose()
-
-                                                  Total_Equity_quarter_table= ["{:.2f}B".format(total_equity / 1000000000) if abs(total_equity) >= 1000000000 else "{:,.0f}M".format(total_equity / 1000000)for total_equity in Total_Equity_quarter]
-                                                  Total_Equity_quarter_df = pd.DataFrame(Total_Equity_quarter_table, index=date_list_quarter,  columns=["Total Equity"])
-                                                  Total_Equity_quarter_df = Total_Equity_quarter_df.transpose()
-
-                                                  deposits_liability_quarter_table= ["{:.2f}B".format(deposits_liability / 1000000000) if abs(deposits_liability) >= 1000000000 else "{:,.0f}M".format(deposits_liability / 1000000)for deposits_liability in Deposits_quarter]
-                                                  deposits_liability_quarter_df = pd.DataFrame(deposits_liability_quarter_table, index=date_list_quarter,  columns=["Deposits"])
-                                                  deposits_liability_quarter_df = deposits_liability_quarter_df.transpose()
-
-
-                                                  Gross_loans_quarter_table= ["{:.2f}B".format(loans_gross / 1000000000) if abs(loans_gross) >= 1000000000 else "{:,.0f}M".format(loans_gross / 1000000)for loans_gross in Gross_loans_quarter]
-                                                  Gross_loans_quarter_df = pd.DataFrame(Gross_loans_quarter_table, index=date_list_quarter,  columns=["Gross Loans"])
-                                                  Gross_loans_quarter_df = Gross_loans_quarter_df.transpose()
-
-                                                  Loans_loss_quarter_table= ["{:.2f}B".format(allowance_for_loan_losses / 1000000000) if abs(allowance_for_loan_losses) >= 1000000000 else "{:,.0f}M".format(allowance_for_loan_losses / 1000000)for allowance_for_loan_losses in Loans_loss_quarter]
-                                                  Loans_loss_quarter_df = pd.DataFrame(Loans_loss_quarter_table, index=date_list_quarter,  columns=["Loan Losses"])
-                                                  Loans_loss_quarter_df = Loans_loss_quarter_df.transpose()
-
-                                                  Net_Loan_quarter_table= ["{:.2f}B".format(loans_net / 1000000000) if abs(loans_net) >= 1000000000 else "{:,.0f}M".format(loans_net / 1000000)for loans_net in Net_Loan_quarter]
-                                                  Net_Loan_quarter_df = pd.DataFrame(Net_Loan_quarter_table, index=date_list_quarter,  columns=["Net Loans"])
-                                                  Net_Loan_quarter_df = Net_Loan_quarter_df.transpose()
-
-                                                  merged_df_quarter = pd.concat([cash_und_cash_investments_quarter_df,Gross_loans_quarter_df,Loans_loss_quarter_df,Net_Loan_quarter_df,Intangible_assets_quarter_df,Net_goodwill_quarter_df,Total_assets_quarter_df,deposits_liability_quarter_df,Short_term_debt_quarter_df,LongTerm_debt_quarter_df,Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])           
-                                                  st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-                                                  pass
-                                             
-                                             except KeyError:
-                                                  try:
-                                                       cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
-                                                       Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
-                                                       Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
-                                                       Total_assets_quarter = quarterly_data['total_assets'][-10:]
-                                                       Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
-                                                       LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
-                                                       Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
-                                                       Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
-                                                       Total_Equity_quarter = quarterly_data['total_equity'][-10:]
-
-                                                       cash_und_cash_investments_quarter_table= ["{:.2f}B".format(cash_and_equiv / 1000000000) if abs(cash_and_equiv) >= 1000000000 else "{:,.0f}M".format(cash_and_equiv / 1000000)for cash_and_equiv in cash_and_equiv_quarterly_Balance_Sheet]
-                                                       cash_und_cash_investments_quarter_df = pd.DataFrame(cash_und_cash_investments_quarter_table, index=date_list_quarter,  columns=["Total Cash"])
-                                                       cash_und_cash_investments_quarter_df = cash_und_cash_investments_quarter_df.transpose()
-
-                                                       Intangible_assets_quarter_table= ["{:.2f}B".format(intangible_assets / 1000000000) if abs(intangible_assets) >= 1000000000 else "{:,.0f}M".format(intangible_assets / 1000000)for intangible_assets in Intangible_assets_quarter]
-                                                       Intangible_assets_quarter_df = pd.DataFrame(Intangible_assets_quarter_table, index=date_list_quarter,  columns=["Intangible Assets"])
-                                                       Intangible_assets_quarter_df = Intangible_assets_quarter_df.transpose()
-
-                                                       Net_goodwill_quarter_table= ["{:.2f}B".format(goodwill / 1000000000) if abs(goodwill) >= 1000000000 else "{:,.0f}M".format(goodwill / 1000000)for goodwill in Net_goodwill_quarter]
-                                                       Net_goodwill_quarter_df = pd.DataFrame(Net_goodwill_quarter_table, index=date_list_quarter,  columns=["Goodwill"])
-                                                       Net_goodwill_quarter_df = Net_goodwill_quarter_df.transpose()
-
-                                                       Total_assets_quarter_table= ["{:.2f}B".format(total_assets / 1000000000) if abs(total_assets) >= 1000000000 else "{:,.0f}M".format(total_assets / 1000000)for total_assets in Total_assets_quarter]
-                                                       Total_assets_quarter_df = pd.DataFrame(Total_assets_quarter_table, index=date_list_quarter,  columns=["Total Assets"])
-                                                       Total_assets_quarter_df = Total_assets_quarter_df.transpose()
-
-                                                       Short_term_debt_quarter_table= ["{:.2f}B".format(st_debt / 1000000000) if abs(st_debt) >= 1000000000 else "{:,.0f}M".format(st_debt / 1000000)for st_debt in Short_term_debt_quarter]
-                                                       Short_term_debt_quarter_df = pd.DataFrame(Short_term_debt_quarter_table, index=date_list_quarter,  columns=["Short Term Debt"])
-                                                       Short_term_debt_quarter_df = Short_term_debt_quarter_df.transpose()
-
-                                                       LongTerm_debt_quarter_table= ["{:.2f}B".format(lt_debt / 1000000000) if abs(lt_debt) >= 1000000000 else "{:,.0f}M".format(lt_debt / 1000000)for lt_debt in LongTerm_debt_quarter]
-                                                       LongTerm_debt_quarter_df = pd.DataFrame(LongTerm_debt_quarter_table, index=date_list_quarter,  columns=["Long-Term Debt"])
-                                                       LongTerm_debt_quarter_df = LongTerm_debt_quarter_df.transpose()
-
-                                                       Other_longterm_liabilities_quarter_table= ["{:.2f}B".format(other_lt_liabilities / 1000000000) if abs(other_lt_liabilities) >= 1000000000 else "{:,.0f}M".format(other_lt_liabilities / 1000000)for other_lt_liabilities in Other_longterm_liabilities_quarter]
-                                                       Other_longterm_liabilities_quarter_df = pd.DataFrame(Other_longterm_liabilities_quarter_table, index=date_list_quarter,  columns=["Other Non-current Liabilities"])
-                                                       Other_longterm_liabilities_quarter_df = Other_longterm_liabilities_quarter_df.transpose()
-
-                                                       Total_liabilities_quarter_table= ["{:.2f}B".format(total_liabilities / 1000000000) if abs(total_liabilities) >= 1000000000 else "{:,.0f}M".format(total_liabilities / 1000000)for total_liabilities in Total_liabilities_quarter]
-                                                       Total_liabilities_quarter_df = pd.DataFrame(Total_liabilities_quarter_table, index=date_list_quarter,  columns=["Total Liabilities"])
-                                                       Total_liabilities_quarter_df = Total_liabilities_quarter_df.transpose()
-
-                                                       Total_Equity_quarter_table= ["{:.2f}B".format(total_equity / 1000000000) if abs(total_equity) >= 1000000000 else "{:,.0f}M".format(total_equity / 1000000)for total_equity in Total_Equity_quarter]
-                                                       Total_Equity_quarter_df = pd.DataFrame(Total_Equity_quarter_table, index=date_list_quarter,  columns=["Total Equity"])
-                                                       Total_Equity_quarter_df = Total_Equity_quarter_df.transpose()
-
-
-
-                                        
-                                                       merged_df_quarter = pd.concat([cash_und_cash_investments_quarter_df,Intangible_assets_quarter_df,Net_goodwill_quarter_df,Total_assets_quarter_df,Short_term_debt_quarter_df,LongTerm_debt_quarter_df,Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])           
-                                                       st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                                       pass
-                                                  except KeyError:
-                                                  #.............................................quarterly..................................................................................
-                                                       date_quarterly_Balance_Sheet = quarterly_data['period_end_date'][-10:] 
-
-
-                                                       cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
-                                                       st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
-                                                       Inventories_quarter = quarterly_data['inventories'][-10:]
-                                                  
-                                                       Total_current_assets_quarter = quarterly_data['total_current_assets'][-10:]
-                                                       Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
-                                                       Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
-                                                       #Other_assets_quarter = quarterly_data['other_assets'][-10:]
-                                                       Total_assets_quarter = quarterly_data['total_assets'][-10:]
-                                                       st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
-                                                       Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
-                                                       Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
-                                                       Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
-                                                       Other_current_liabilities_quarter = quarterly_data['other_current_liabilities'][-10:]
-                                                       Current_deferred_revenue_quarter = quarterly_data['current_deferred_revenue'][-10:]
-                                                       Total_current_liabilities_quarter = quarterly_data['total_current_liabilities'][-10:] 
-                                                       Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
-                                                       current_portion_of_lease_obligation = quarterly_data['current_capital_leases'][-10:]
-                                                       capital_leases = quarterly_data['noncurrent_capital_leases'][-10:]
-                                                       LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
-                                                       #Total_debt_quarter = quarterly_data[''][-10:]
-                                                       Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
-                                                       Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
-                                                       #Total_Sharehold_equity_quarter = quarterly_data[''][-10:]
-                                                       Total_Equity_quarter = quarterly_data['total_equity'][-10:]
-                                                            #Liabili_shareholders_Equity_quarter = quarterly_data[''][-10:]
-                                                            #Nopat_quarter= quarterly_data['nopat'][-10:]
-                                                  #-----------------------------------------------------------
-                                                       index = range(len(date_list_quarter))
-                                                       df = pd.DataFrame({'Period End Date': date_list_quarter,
-                                                                      'Cash and Equivalents': cash_and_equiv_quarterly_Balance_Sheet,
-                                                                      'Short term Investments': st_investments_quarterly_Balance_Sheet
-                                                                      }, index=index)
-
-
-                                                       # Add the columns together
-                                                       #df['Total Cash'] = df['cash_and_equiv'] + df['st_investments']
-                                                  # Check if 'st_investments_quarterly_Balance_Sheet' column exists in the DataFrame
-                                                       if 'Short term Investments' in df.columns:
-                                                            df['Total Cash'] = df['Cash and Equivalents'] + df['Short term Investments']
-                                                       else:
-                                                            df['Total Cash'] = df['Cash and Equivalents']
-                                                       # Transpose the DataFrame
-                                                       total = df.T
-                                                       
-
-                                                  # Replace the numbering with the actual date
-                                                       total.columns = total.iloc[0]  # Use the first row as column names
-                                                       total = total[1:]  # Remove the first row
-
-                                                       # Convert the numbers to billions and display with 2 decimal places
-                                                       #total = (total / 1e9).round(2)
-                                                       #total = total.applymap(lambda x: "{:.2f}B".format(x / 1e9))
-                                                       total = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
-
-
-                                                       Inventories_quarter_table= ["{:.2f}B".format(inventories / 1000000000) if abs(inventories) >= 1000000000 else "{:,.0f}M".format(inventories / 1000000)for inventories in Inventories_quarter]
-                                                       #["{:.2f}B".format(inventories / 1000000000)for inventories in Inventories_quarter]
-                                                       Inventories_quarter_df = pd.DataFrame(Inventories_quarter_table, index=date_list_quarter,  columns=["Inventory"])
-                                                       Inventories_quarter_df = Inventories_quarter_df.transpose()
-
-                                                       Total_current_assets_table_quarter= ["{:.2f}B".format(total_current_assets / 1000000000) if abs(total_current_assets) >= 1000000000 else "{:,.0f}M".format(total_current_assets / 1000000)for total_current_assets in Total_current_assets_quarter]
-                                                       Total_current_assets_quarter_df = pd.DataFrame(Total_current_assets_table_quarter, index=date_list_quarter,  columns=["Total Current Assets"])
-                                                       Total_current_assets_quarter_df = Total_current_assets_quarter_df.transpose()
-
-                                                       Intangible_assets_quarter_table= ["{:.2f}B".format(intangible_assets / 1000000000) if abs(intangible_assets) >= 1000000000 else "{:,.0f}M".format(intangible_assets / 1000000)for intangible_assets in Intangible_assets_quarter]
-                                                       Intangible_assets_quarter_df = pd.DataFrame(Intangible_assets_quarter_table, index=date_list_quarter,  columns=["Intangible Assets"])
-                                                       Intangible_assets_quarter_df = Intangible_assets_quarter_df.transpose()
-
-                                                       Net_goodwill_quarter_table= ["{:.2f}B".format(goodwill / 1000000000) if abs(goodwill) >= 1000000000 else "{:,.0f}M".format(goodwill / 1000000)for goodwill in Net_goodwill_quarter]
-                                                       Net_goodwill_quarter_df = pd.DataFrame(Net_goodwill_quarter_table, index=date_list_quarter,  columns=["Goodwill"])
-                                                       Net_goodwill_quarter_df = Net_goodwill_quarter_df.transpose()
-
-                                                       Total_assets_quarter_table= ["{:.2f}B".format(total_assets / 1000000000) if abs(total_assets) >= 1000000000 else "{:,.0f}M".format(total_assets / 1000000)for total_assets in Total_assets_quarter]
-                                                       Total_assets_quarter_df = pd.DataFrame(Total_assets_quarter_table, index=date_list_quarter,  columns=["Total Assets"])
-                                                       Total_assets_quarter_df = Total_assets_quarter_df.transpose()
-
-
-                                                       #Income_Tax_payable_quarter_table= ["{:.2f}B".format(tax_payable / 1000000000) if tax_payable >= 1000000000 else "{:,.0f}M".format(tax_payable / 1000000)for tax_payable in Income_Tax_payable_quarter]
-                                                       #Income_Tax_payable_quarter_df = pd.DataFrame(Income_Tax_payable_quarter_table, index=date_list_quarter,  columns=["Income Tax payable"])
-                                                       #Income_Tax_payable_quarter_df = Income_Tax_payable_quarter_df.transpose()
-
-                                                       Total_current_liabilities_quarter_table= ["{:.2f}B".format(total_current_liabilities / 1000000000) if abs(total_current_liabilities) >= 1000000000 else "{:,.0f}M".format(total_current_liabilities / 1000000)for total_current_liabilities in Total_current_liabilities_quarter]
-                                                       Total_current_liabilities_quarter_df = pd.DataFrame(Total_current_liabilities_quarter_table, index=date_list_quarter,  columns=["Total current liabilities"])
-                                                       Total_current_liabilities_quarter_df = Total_current_liabilities_quarter_df.transpose()
-
-                                                       Short_term_debt_quarter_table= ["{:.2f}B".format(st_debt / 1000000000) if abs(st_debt) >= 1000000000 else "{:,.0f}M".format(st_debt / 1000000)for st_debt in Short_term_debt_quarter]
-                                                       Short_term_debt_quarter_df = pd.DataFrame(Short_term_debt_quarter_table, index=date_list_quarter,  columns=["Short Term Debt"])
-                                                       Short_term_debt_quarter_df = Short_term_debt_quarter_df.transpose()
-
-                                                       LongTerm_debt_quarter_table= ["{:.2f}B".format(lt_debt / 1000000000) if abs(lt_debt) >= 1000000000 else "{:,.0f}M".format(lt_debt / 1000000)for lt_debt in LongTerm_debt_quarter]
-                                                       LongTerm_debt_quarter_df = pd.DataFrame(LongTerm_debt_quarter_table, index=date_list_quarter,  columns=["Long-Term Debt"])
-                                                       LongTerm_debt_quarter_df = LongTerm_debt_quarter_df.transpose()
-
-                                                       Other_longterm_liabilities_quarter_table= ["{:.2f}B".format(other_lt_liabilities / 1000000000) if abs(other_lt_liabilities) >= 1000000000 else "{:,.0f}M".format(other_lt_liabilities / 1000000)for other_lt_liabilities in Other_longterm_liabilities_quarter]
-                                                       Other_longterm_liabilities_quarter_df = pd.DataFrame(Other_longterm_liabilities_quarter_table, index=date_list_quarter,  columns=["Other Non-current Liabilities"])
-                                                       Other_longterm_liabilities_quarter_df = Other_longterm_liabilities_quarter_df.transpose()
-
-                                                       Total_liabilities_quarter_table= ["{:.2f}B".format(total_liabilities / 1000000000) if abs(total_liabilities) >= 1000000000 else "{:,.0f}M".format(total_liabilities / 1000000)for total_liabilities in Total_liabilities_quarter]
-                                                       Total_liabilities_quarter_df = pd.DataFrame(Total_liabilities_quarter_table, index=date_list_quarter,  columns=["Total Liabilities"])
-                                                       Total_liabilities_quarter_df = Total_liabilities_quarter_df.transpose()
-
-                                                       Total_Equity_quarter_table= ["{:.2f}B".format(total_equity / 1000000000) if abs(total_equity) >= 1000000000 else "{:,.0f}M".format(total_equity / 1000000)for total_equity in Total_Equity_quarter]
-                                                       Total_Equity_quarter_df = pd.DataFrame(Total_Equity_quarter_table, index=date_list_quarter,  columns=["Total Equity"])
-                                                       Total_Equity_quarter_df = Total_Equity_quarter_df.transpose()
-
-
-                                                       
-                                                       merged_df_quarter = pd.concat([total,Inventories_quarter_df,Total_current_assets_quarter_df,Intangible_assets_quarter_df,Net_goodwill_quarter_df,Total_assets_quarter_df,Short_term_debt_quarter_df,Total_current_liabilities_quarter_df,LongTerm_debt_quarter_df,Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])        
-                                                       st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                                 # pass
-                                             #except KeyError:
-                                                                                          
-                                                 # st.write()
-
-                                                 # pass
-
-                                                  #st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                             #st.dataframe(merged_df_quarter.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                        
-                                        # st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)
-                                             
-                                        
 
           #................................................................................................................................................
 
                                              
 
-          #...........................................................................
-                                             with Income_Statement:
-                                             #with Balance_Sheet: 
-                                                  Annual,Quarterly = st.tabs(["Annual","Quarterly"])
-
-                                                  with Quarterly:
-                                                       #if "Consumer Finance" in Industry or "Banks" in Industry or ticker == "MAIN":
-                                                       try:               
-                                                            revenue_2013_quarterly = quarterly_data['revenue'][-10:] 
-                                                            Pretax_income_quarterly = quarterly_data['pretax_income'][-10:]
-                                                            eps_basic_quarterly= quarterly_data['eps_basic'][-10:]
-                                                            shares_basic_quarterly = quarterly_data['shares_basic'][-10:]
-                                                            eps_diluted_quarterly = quarterly_data['eps_diluted'][-10:]
-                                                            shares_diluted_quarterly = quarterly_data['shares_diluted'][-10:]
-                                                            Income_tax_quarterly = quarterly_data['income_tax'][-10:]
-                                                            net_income_quarterly = quarterly_data['net_income'][-10:]
-                                                            Total_interest_income_list_quarterly = quarterly_data['total_interest_income'][-10:]
-                                                            Total_interest_expense_list_quarterly = quarterly_data['total_interest_expense'][-10:]
-                                                            Net_interest_Income_quarterly = quarterly_data['net_interest_income'][-10:]
-                                                            Prov_Credit_losses_quarterly = quarterly_data['credit_losses_provision'][-10:]
-                                                            Netinterest_Prov_Credit_losses_quarterly = quarterly_data['net_interest_income_after_credit_losses_provision'][-10:]
-                                                            Total_Non_interest_expenses_quarterly = quarterly_data['total_noninterest_expense'][-10:]
-                                                            Total_Non_interest_revenue_quarterly = quarterly_data['total_noninterest_revenue'][-10:]
-                                                       #....................................................................................................
-                                                            revenue_quarterly_list_billion = ["{:.2f}B".format(revenue / 1000000000) if abs(revenue)>= 1000000000 else "{:,.0f}M".format(revenue / 1000000) for revenue in revenue_2013_quarterly]
-                                                            revenue_quarterly_df = pd.DataFrame(revenue_quarterly_list_billion, index=date_list_quarter,  columns=["Revenue"])
-                                                            revenue_quarterly_df = revenue_quarterly_df.transpose()
-                                                       #..........................................................................................................................................
-                                                            Pretax_income_quarterly_table = ["{:.2f}B".format(pretax_income / 1000000000) if abs(pretax_income) >= 1000000000 else "{:,.0f}M".format(pretax_income / 1000000) for pretax_income in Pretax_income_quarterly]
-                                                            Pretax_income_quarterly_df = pd.DataFrame(Pretax_income_quarterly_table, index=date_list_quarter,  columns=["Pre_Tax Income"])
-                                                            Pretax_income_quarterly_df = Pretax_income_quarterly_df.transpose()
-                                                       #----------------------------------------------------------------    
-                                                            
-                                                            net_income_quarterly_table = ["{:.2f}B".format(net_income / 1000000000) if abs(net_income) >= 1000000000 else "{:,.0f}M".format(net_income / 1000000) for net_income in net_income_quarterly]
-                                                            net_income_quarterly_df = pd.DataFrame(net_income_quarterly_table, index=date_list_quarter,  columns=["Net Income"])
-                                                            net_income_quarterly_df = net_income_quarterly_df.transpose()
-                                                       #----------------------------------------------------------------   
-                                                            eps_basic_quarterly_table = ["{:.2f}".format(eps_basic) for eps_basic in eps_basic_quarterly]
-                                                                      #eps_basic_table = [int(eps_basic) for eps_basic in eps_basic_annual]
-                                                            eps_basic_quarterly_df = pd.DataFrame(eps_basic_quarterly_table, index=date_list_quarter,  columns=["EPS(basic)"])
-                                                            eps_basic_quarterly_df = eps_basic_quarterly_df.transpose()
-                                                       #----------------------------------------------------------------    
-                                                            shares_basic_quarterly_table = ["{:.2f}B".format(shares_basic / 1000000000) if shares_basic >= 1000000000 else "{:,.0f}M".format(shares_basic / 1000000) for shares_basic in shares_basic_quarterly]
-                                                            shares_basic_quarterly_df = pd.DataFrame(shares_basic_quarterly_table, index=date_list_quarter,  columns=["Basic Shares Outstanding"])
-                                                            shares_basic_quarterly_df = shares_basic_quarterly_df.transpose()
-                                                       #----------------------------------------------------------------    
-                                                            eps_diluted_quarterly_table = ["{:.2f}".format(eps_diluted / 1) for eps_diluted in eps_diluted_quarterly]
-                                                            eps_diluted_quarterly_df = pd.DataFrame(eps_diluted_quarterly_table, index=date_list_quarter,  columns=["EPS(diluted)"])
-                                                            eps_diluted_quarterly_df = eps_diluted_quarterly_df.transpose()
-                                                       #----------------------------------------------------------------    
-                                                            shares_diluted_quarterly_table = ["{:.2f}B".format(shares_diluted / 1000000000) if shares_diluted >= 1000000000 else "{:,.0f}M".format(shares_diluted / 1000000) for shares_diluted in shares_diluted_quarterly]
-                                                            shares_diluted_quarterly_df = pd.DataFrame(shares_diluted_quarterly_table, index=date_list_quarter,  columns=["Diluted Shares Outstanding"])
-                                                            shares_diluted_quarterly_df = shares_diluted_quarterly_df.transpose()
-                                                       #----------------------------------------------------------------      
-                                                       
-                                                            # Convert interest income values to billion USD and round to 3 decimal places
-                                                            Total_interestincome_list_quarterly_billion = ["{:.2f}B".format(total_interest_income / 1000000000) if abs(total_interest_income) >= 1000000000 else "{:,.0f}M".format(total_interest_income / 1000000) for total_interest_income in Total_interest_income_list_quarterly]
-                                                            total_interestincome_quarterly_df = pd.DataFrame(Total_interestincome_list_quarterly_billion,  index=date_list_quarter, columns=["Total Interest Income"])
-                                                            total_interestincome_quarterly_df = total_interestincome_quarterly_df.transpose()
-                                                            #-------------------------------------------------------------
-                                                                                                         # Convert interest income values to billion USD and round to 3 decimal places
-                                                            Total_interest_expense_list_quarterly_billion = ["{:.2f}B".format(total_interest_expense / 1000000000) if abs(total_interest_expense) >= 1000000000 else "{:,.0f}M".format(total_interest_expense / 1000000) for total_interest_expense in Total_interest_expense_list_quarterly]
-                                                            total_interest_expense_quarterly_df = pd.DataFrame(Total_interest_expense_list_quarterly_billion,  index=date_list_quarter, columns=["Total Interest Expense"])
-                                                            total_interest_expense_quarterly_df = total_interest_expense_quarterly_df.transpose()
-                                                            #-------------------------------------------------------------
-                                        
-                                                            Net_interest_Income_list_quarterly_billion = ["{:.2f}B".format(net_interest_income / 1000000000) if abs(net_interest_income) >= 1000000000 else "{:,.0f}M".format(net_interest_income / 1000000) for net_interest_income in Total_interest_income_list_quarterly]
-                                                            Net_interest_Income_quarterly_df = pd.DataFrame(Net_interest_Income_list_quarterly_billion,  index=date_list_quarter, columns=["Net Interest Income"])
-                                                            Net_interest_Income_quarterly_df = Net_interest_Income_quarterly_df.transpose()
-                                                            #-------------------------------------------------------------
-                                                                      
-                                                            Prov_Credit_losses_list_quarterly_billion = ["{:.2f}B".format(credit_losses_provision / 1000000000) if abs(credit_losses_provision) >= 1000000000 else "{:,.0f}M".format(credit_losses_provision / 1000000) for credit_losses_provision in Prov_Credit_losses_quarterly]
-                                                            Prov_Credit_losses_quarterly_df = pd.DataFrame(Prov_Credit_losses_list_quarterly_billion,  index=date_list_quarter, columns=["Provision for Credit Losses"])
-                                                            Prov_Credit_losses_quarterly_df = Prov_Credit_losses_quarterly_df.transpose()
-                                                            #-------------------------------------------------------------
-                                                            Netinterest_Prov_Credit_losses_list_quarterly_billion = ["{:.2f}B".format(net_interest_income_after_credit_losses_provision / 1000000000) if abs(net_interest_income_after_credit_losses_provision) >= 1000000000 else "{:,.0f}M".format(net_interest_income_after_credit_losses_provision / 1000000) for net_interest_income_after_credit_losses_provision in Netinterest_Prov_Credit_losses_quarterly]
-                                                            Netinterest_Prov_Credit_losses_quarterly_df = pd.DataFrame(Netinterest_Prov_Credit_losses_list_quarterly_billion,  index=date_list_quarter, columns=["Net Interest Income After Provision"])
-                                                            Netinterest_Prov_Credit_losses_quarterly_df = Netinterest_Prov_Credit_losses_quarterly_df.transpose()
-                                                            #-------------------------------------------------------------
-                                                            
-                                                                      
-                                                            Total_Non_interest_expenses_list_quarterly_billion = ["{:.2f}B".format(total_noninterest_expense / 1000000000) if abs(total_noninterest_expense) >= 1000000000 else "{:,.0f}M".format(total_noninterest_expense / 1000000) for total_noninterest_expense in Total_Non_interest_expenses_quarterly]
-                                                            Total_Non_interest_expenses_quarterly_df = pd.DataFrame(Total_interestincome_list_quarterly_billion,  index=date_list_quarter, columns=["Non Interest Expense"])
-                                                            Total_Non_interest_expenses_quarterly_df = Total_Non_interest_expenses_quarterly_df.transpose()
-                                                            #-------------------------------------------------------------
-                                        
-                                                            Total_Non_interest_revenue_list_quarterly_billion = ["{:.2f}B".format(total_noninterest_revenue / 1000000000) if abs(total_noninterest_revenue) >= 1000000000 else "{:,.0f}M".format(total_noninterest_revenue / 1000000) for total_noninterest_revenue in Total_Non_interest_revenue_quarterly]
-                                                            Total_Non_interest_revenue_quarterly_df = pd.DataFrame(Total_Non_interest_revenue_list_quarterly_billion,  index=date_list_quarter, columns=["Non Interest Revenue"])
-                                                            Total_Non_interest_revenue_quarterly_df =Total_Non_interest_revenue_quarterly_df.transpose()
-                                                            #-------------------------------------------------------------
-                                                            
-                                                            merged_df_banks = pd.concat([total_interest_expense_quarterly_df,total_interestincome_quarterly_df,Net_interest_Income_quarterly_df,Prov_Credit_losses_quarterly_df,Total_Non_interest_expenses_quarterly_df,Total_Non_interest_revenue_quarterly_df,net_income_quarterly_df,Pretax_income_quarterly_df,eps_basic_quarterly_df,shares_basic_quarterly_df,eps_diluted_quarterly_df,shares_diluted_quarterly_df])    
-
-                                                            st.table(merged_df_banks.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                                                      
-                                                                      #st.dataframe(merged_df_banks.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                                 
-                                                                 # st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)   
-                                                            pass
-                                                       
-                                                  # elif "Insurance" in Industry or "Health Care Providers & Services" in Industry :
-                                                       except KeyError:
-                                                                      try:
-                                                                           Net_premiums_earned = quarterly_data['premiums_earned'][-10:] 
-                                                                           Net_investment_income = quarterly_data['net_investment_income'][-10:] 
-                                                                           Fees_and_other_income = quarterly_data['fees_and_other_income'][-10:] 
-                                                                           Interest_Expense_insurance = quarterly_data['interest_expense_insurance'][-10:] 
-                                                                           revenue_2013 = quarterly_data['revenue'][-10:] 
-                                                                           Pretax_income_annual = quarterly_data['pretax_income'][-10:]
-                                                                           net_income_annual = quarterly_data['net_income'][-10:] 
-                                                                           eps_basic_annual = quarterly_data['eps_basic'][-10:]
-                                                                           shares_basic_annual = quarterly_data['shares_basic'][-10:]
-                                                                           eps_diluted_annual = quarterly_data['eps_diluted'][-10:]
-                                                                           shares_diluted_annual = quarterly_data['shares_diluted'][-10:]
-                                                                           Income_tax_annual = quarterly_data['income_tax'][-10:]
-
-                                                                           Net_premiums_earned_list_billion = ["{:.2f}B".format(premiums_earned / 1000000000) if abs(premiums_earned) >= 1000000000 else "{:,.0f}M".format(premiums_earned / 1000000) for premiums_earned in Net_premiums_earned]
-                                                                           net_premiums_earned_df = pd.DataFrame(Net_premiums_earned_list_billion, index=date_list_quarter,  columns=["Net Premiums Earned"])
-                                                                           net_premiums_earned_df = net_premiums_earned_df.transpose()
-                                                                           #....................................................................................................
-                                                                           #Net_investment_income = quarterly_data['net_investment_income'][-10:] 
-                                                                      
-                                                                           Net_investment_income_list_billion = ["{:.2f}B".format(net_investment_income / 1000000000) if abs(net_investment_income) >= 1000000000 else "{:,.0f}M".format(net_investment_income / 1000000) for net_investment_income in Net_investment_income]
-                                                                           net_investment_income_df = pd.DataFrame(Net_investment_income_list_billion, index=date_list_quarter,  columns=["Net Investment Income"])
-                                                                           net_investment_income_df = net_investment_income_df.transpose()
-                                                                           #....................................................................................................
-                                                                                #Fees_and_other_income = quarterly_data['fees_and_other_income'][-10:] 
-                                                                           
-                                                                           Fees_and_other_income_list_billion = ["{:.2f}B".format(fees_and_other_income / 1000000000) if abs(fees_and_other_income) >= 1000000000 else "{:,.0f}M".format(fees_and_other_income / 1000000) for fees_and_other_income in Fees_and_other_income]
-                                                                           Fees_and_other_income_df = pd.DataFrame(Fees_and_other_income_list_billion, index=date_list_quarter,  columns=["Fees And Other Income"])
-                                                                           Fees_and_other_income_df = Fees_and_other_income_df.transpose()
-                                                                           #....................................................................................................
-                                                                           #Interest_Expense_insurance = quarterly_data['interest_Expense_insurance'][-10:] 
-                                                                           Interest_Expense_insurance_list_billion = ["{:.2f}B".format(interest_expense_insurance / 1000000000) if abs(interest_expense_insurance) >= 1000000000 else "{:,.0f}M".format(interest_expense_insurance / 1000000) for interest_expense_insurance in Interest_Expense_insurance]
-                                                                           Interest_Expense_insurance_df = pd.DataFrame(Interest_Expense_insurance_list_billion, index=date_list_quarter,  columns=["Interest Expense"])
-                                                                           Interest_Expense_insurance_df = Interest_Expense_insurance_df.transpose()
-                                                                           
-                                                                           #....................................................................................................
-                                                                           revenue_list_billion = ["{:.2f}B".format(revenue / 1000000000) if abs(revenue) >= 1000000000 else "{:,.0f}M".format(revenue / 1000000) for revenue in revenue_2013]
-                                                                           revenue_df = pd.DataFrame(revenue_list_billion, index=date_list_quarter,  columns=["Total Revenue"])
-                                                                           revenue_df = revenue_df.transpose()
-                                                                           
-                                                                           #..........................................................................................................................................
-                                                                           Pretax_income_table = ["{:.2f}B".format(pretax_income / 1000000000) if abs(pretax_income) >= 1000000000 else "{:,.0f}M".format(pretax_income / 1000000) for pretax_income in Pretax_income_annual]
-                                                                           Pretax_income_df = pd.DataFrame(Pretax_income_table, index=date_list_quarter,  columns=["Pre-Tax Income"])
-                                                                           Pretax_income_df = Pretax_income_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                 
-                                                                           net_income_table = ["{:.2f}B".format(net_income / 1000000000) if abs(net_income) >= 1000000000 else "{:,.0f}M".format(net_income / 1000000) for net_income in net_income_annual]
-                                                                           net_income_df = pd.DataFrame(net_income_table, index=date_list_quarter,  columns=["Net Income"])
-                                                                           net_income_df = net_income_df.transpose()
-                                                            #----------------------------------------------------------------   
-                                                                           eps_basic_table = ["{:.2f}".format(eps_basic) for eps_basic in eps_basic_annual]
-                                                                           #eps_basic_table = [int(eps_basic) for eps_basic in eps_basic_annual]
-                                                                           eps_basic_df = pd.DataFrame(eps_basic_table, index=date_list_quarter,  columns=["EPS(basic)"])
-                                                                           eps_basic_df = eps_basic_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                           shares_basic_table = ["{:.2f}B".format(shares_basic / 1000000000) if shares_basic >= 1000000000 else "{:,.0f}M".format(shares_basic / 1000000) for shares_basic in shares_basic_annual]
-                                                                           shares_basic_df = pd.DataFrame(shares_basic_table, index=date_list_quarter,  columns=["Basic Shares Outstanding"])
-                                                                           shares_basic_df = shares_basic_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                           eps_diluted_table = ["{:.2f}".format(eps_diluted / 1) for eps_diluted in eps_diluted_annual]
-                                                                           eps_diluted_df = pd.DataFrame(eps_diluted_table, index=date_list_quarter,  columns=["EPS(diluted)"])
-                                                                           eps_diluted_df = eps_diluted_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                           shares_diluted_table = ["{:.2f}B".format(shares_diluted / 1000000000) if shares_diluted >= 1000000000 else "{:,.0f}M".format(shares_diluted / 1000000) for shares_diluted in shares_diluted_annual]
-                                                                           shares_diluted_df = pd.DataFrame(shares_diluted_table, index=date_list_quarter,  columns=["Diluted Shares Outstanding"])
-                                                                           shares_diluted_df = shares_diluted_df.transpose()
-                                                       
-                                                                           merged_df_insurance = pd.concat([net_premiums_earned_df,net_investment_income_df,Fees_and_other_income_df,revenue_df,Interest_Expense_insurance_df,Pretax_income_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df]) 
-                                                  
-                                                                           st.table(merged_df_insurance.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                                                           #st.dataframe(merged_df_insurance.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-
-                                                                           #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True) 
-                                                                           
-                                                                      except KeyError:
-
-
-               #                                                             revenue_2013 = quarterly_data['revenue'][-10:] 
-               #                                                             Pretax_income_annual = quarterly_data['pretax_income'][-10:]
-               #                                                             eps_basic_annual = quarterly_data['eps_basic'][-10:]
-               #                                                             shares_basic_annual = quarterly_data['shares_basic'][-10:]
-               #                                                             eps_diluted_annual = quarterly_data['eps_diluted'][-10:]
-               #                                                             shares_diluted_annual = quarterly_data['shares_diluted'][-10:]
-               #                                                             Income_tax_annual = quarterly_data['income_tax'][-10:]
-               #                                                             net_income_annual = quarterly_data['net_income'][-10:]
-               #                                                             cogs_list = quarterly_data['cogs'][-10:]
-               #                                                             gross_profit_2013 = quarterly_data['gross_profit'][-10:]
-               #                                                             SGA_Expense_annual = quarterly_data['total_opex'][-10:]
-               #                                                             Research_Dev_annual = quarterly_data['rnd'][-10:]
-               #                                                             interest_expense_list = quarterly_data['interest_expense'][-10:]
-               #                                                             #Total_interest_income_list = annual_data['total_interest_income'][-10:]
-               #                                                             interest_income_list = quarterly_data['interest_income'][-10:]
-               #                                                             Ebita_annual = quarterly_data['ebitda'][-10:]
-               #                                                             operating_income_list = quarterly_data['operating_income'][-10:]  
-               # #....................................................................................................
-               #                                                             revenue_list_billion = ["{:.2f}B".format(revenue / 1000000000) if abs(revenue) >= 1000000000 else "{:,.0f}M".format(revenue / 1000000) for revenue in revenue_2013]
-               #                                                             revenue_df = pd.DataFrame(revenue_list_billion, index=date_list_quarter,  columns=["Revenue"])
-               #                                                             revenue_df = revenue_df.transpose()
-
-               #                                              #-----------------------------------------------------------
-               #                                              # Convert cogs values to billion USD and round to 3 decimal places
-               #                                                             #cogs_list_billion = ["{:.2f}B".format(cogs / 1000000000) for cogs in cogs_list]
-               #                                                             cogs_list_billion = ["{:.2f}B".format(cogs / 1000000000) if abs(cogs) >= 1000000000 else "{:,.0f}M".format(cogs / 1000000) for cogs in cogs_list]
-               #                                                             cogs_df = pd.DataFrame(cogs_list_billion,  index=date_list_quarter, columns=["Cost of Goods Sold"])
-               #                                                             cogs_df = cogs_df.transpose()
-               #                                              #----------------------------------------------------------
-               #                                              # Convert gross profit values to billion USD and round to 3 decimal places
-               #                                                             gross_profit_list_billion = ["{:.2f}B".format(gross_profit / 1000000000) if abs(gross_profit) >= 1000000000 else "{:,.0f}M".format(gross_profit / 1000000) for gross_profit in gross_profit_2013]
-               #                                                             gross_profit_df = pd.DataFrame(gross_profit_list_billion, index=date_list_quarter,  columns=["Gross Profit"])
-               #                                                             gross_profit_df = gross_profit_df.transpose()
-               #                                              #----------------------------------------------------------------
-
-               #                                                             SGA_Expense_table = ["{:.2f}B".format(total_opex / 1000000000) if abs(total_opex) >= 1000000000 else "{:,.0f}M".format(total_opex / 1000000) for total_opex in SGA_Expense_annual]
-               #                                                             SGA_Expense_df = pd.DataFrame(SGA_Expense_table, index=date_list_quarter,  columns=["Operating Expense"])
-               #                                                             SGA_Expense_df = SGA_Expense_df.transpose()
-               #                                              #----------------------------------------------------------------
-               #                                                             Research_Dev_table = ["{:.2f}B".format(rnd / 1000000000) if abs(rnd) >= 1000000000 else "{:,.0f}M".format(rnd / 1000000) for rnd in Research_Dev_annual]
-               #                                                             Research_Dev_df = pd.DataFrame(Research_Dev_table, index=date_list_quarter,  columns=["Research & Development"])
-               #                                                             Research_Dev_df = Research_Dev_df.transpose()
-               #                                              #----------------------------------------------------------------    
-               #                                                             interestexpense_list_billion = ["{:.2f}B".format(interest_expense / -1000000000) if abs(interest_expense) >= 1000000000 else "{:,.0f}M".format(interest_expense / -1000000) for interest_expense in interest_expense_list]
-               #                                                             interestexxpense_df = pd.DataFrame(interestexpense_list_billion, index=date_list_quarter, columns=["Interest Expense"])                                   
-               #                                                             interestexxpense_df = interestexxpense_df.transpose()                                                                  
-               #                                              # -------------------------------------------------------------------
-               #                                                             Pretax_income_table = ["{:.2f}B".format(pretax_income / 1000000000) if abs(pretax_income) >= 1000000000 else "{:,.0f}M".format(pretax_income / 1000000) for pretax_income in Pretax_income_annual]
-               #                                                             Pretax_income_df = pd.DataFrame(Pretax_income_table, index=date_list_quarter,  columns=["Pre-Tax Income"])
-               #                                                             Pretax_income_df = Pretax_income_df.transpose()
-               #                                              #----------------------------------------------------------------    
-               #                                                             Income_tax_table = ["{:.2f}B".format(income_tax / -1000000000) if abs(income_tax) >= 1000000000 else "{:,.0f}M".format(income_tax / -1000000) for income_tax in Income_tax_annual]
-               #                                                             Income_tax_df = pd.DataFrame(Income_tax_table, index=date_list_quarter,  columns=["Income Tax"])
-               #                                                             Income_tax_df = Income_tax_df.transpose()
-               #                                              #----------------------------------------------------------------       
-               #                                                             net_income_table = ["{:.2f}B".format(net_income / 1000000000) if abs(net_income) >= 1000000000 else "{:,.0f}M".format(net_income / 1000000) for net_income in net_income_annual]
-               #                                                             net_income_df = pd.DataFrame(net_income_table, index=date_list_quarter,  columns=["Net Income"])
-               #                                                             net_income_df = net_income_df.transpose()
-               #                                              #----------------------------------------------------------------   
-               #                                                             eps_basic_table = ["{:.2f}".format(eps_basic) for eps_basic in eps_basic_annual]
-               #                                                             #eps_basic_table = [int(eps_basic) for eps_basic in eps_basic_annual]
-               #                                                             eps_basic_df = pd.DataFrame(eps_basic_table, index=date_list_quarter,  columns=["EPS(basic)"])
-               #                                                             eps_basic_df = eps_basic_df.transpose()
-               #                                              #----------------------------------------------------------------    
-               #                                                             shares_basic_table = ["{:.2f}B".format(shares_basic / 1000000000) if shares_basic >= 1000000000 else "{:,.0f}M".format(shares_basic / 1000000) for shares_basic in shares_basic_annual]
-               #                                                             shares_basic_df = pd.DataFrame(shares_basic_table, index=date_list_quarter,  columns=["Basic Shares Outstanding"])
-               #                                                             shares_basic_df = shares_basic_df.transpose()
-               #                                              #----------------------------------------------------------------    
-               #                                                             eps_diluted_table = ["{:.2f}".format(eps_diluted / 1) for eps_diluted in eps_diluted_annual]
-               #                                                             eps_diluted_df = pd.DataFrame(eps_diluted_table, index=date_list_quarter,  columns=["EPS(diluted)"])
-               #                                                             eps_diluted_df = eps_diluted_df.transpose()
-               #                                              #----------------------------------------------------------------    
-               #                                                             shares_diluted_table = ["{:.2f}B".format(shares_diluted / 1000000000) if shares_diluted >= 1000000000 else "{:,.0f}M".format(shares_diluted / 1000000) for shares_diluted in shares_diluted_annual]
-               #                                                             shares_diluted_df = pd.DataFrame(shares_diluted_table, index=date_list_quarter,  columns=["Diluted Shares Outstanding"])
-               #                                                             shares_diluted_df = shares_diluted_df.transpose()
-               #                                              #----------------------------------------------------------------      
-               #                                                             Ebitda_table = ["{:.2f}B".format(ebitda / 1000000000) if abs(ebitda) >= 1000000000 else "{:,.0f}M".format(ebitda / 1000000) for ebitda in Ebita_annual]
-               #                                                             Ebitda_df = pd.DataFrame(Ebitda_table, index=date_list_quarter,  columns=["EBITDA"])
-               #                                                             Ebitda_df = Ebitda_df.transpose()
-               #                                              #----------------------------------------------------------------                                    
-               #                                                             operatingincome_list_billion = ["{:.2f}B".format(operating_income / 1000000000) if abs(operating_income) >= 1000000000 else "{:,.0f}M".format(operating_income / 1000000) for operating_income in operating_income_list]
-               #                                                             operatingincome_df = pd.DataFrame(operatingincome_list_billion,  index=date_list_quarter, columns=["Operating Income"])
-               #                                                             operatingincome_df = operatingincome_df.transpose()
-               #                                              #-------------------------------------------------------------
-
-               #                                              # Convert interest income values to billion USD and round to 3 decimal places
-               #                                                             interestincome_list_billion = ["{:.2f}B".format(interest_income / 1000000000) if abs(interest_income) >= 1000000000 else "{:,.0f}M".format(interest_income / 1000000) for interest_income in interest_income_list]
-               #                                                             interestincome_df = pd.DataFrame(interestincome_list_billion,  index=date_list_quarter, columns=["Non-Operating Interest Income"])
-               #                                                             interestincome_df = interestincome_df.transpose()
-               #                                                   #------------------------------------------------------------
-
-                                                                           
-               #                                                             merged_df_insurance = pd.concat([revenue_df,cogs_df, gross_profit_df,SGA_Expense_df, Research_Dev_df,interestincome_df,interestexxpense_df,Pretax_income_df,Income_tax_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df,Ebitda_df])  
-                                                                           
-               #                                                             st.table(merged_df_insurance.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-          
-                                                                           pass
-                                                       #else:
-                                                       try:          #st.write("no")       
-                                                            revenue_2013 = quarterly_data['revenue'][-10:] 
-                                                            Pretax_income_annual = quarterly_data['pretax_income'][-10:]
-                                                            eps_basic_annual = quarterly_data['eps_basic'][-10:]
-                                                            shares_basic_annual = quarterly_data['shares_basic'][-10:]
-                                                            eps_diluted_annual = quarterly_data['eps_diluted'][-10:]
-                                                            shares_diluted_annual = quarterly_data['shares_diluted'][-10:]
-                                                            Income_tax_annual = quarterly_data['income_tax'][-10:]
-                                                            net_income_annual = quarterly_data['net_income'][-10:]
-                                                            cogs_list = quarterly_data['cogs'][-10:]
-                                                            gross_profit_2013 = quarterly_data['gross_profit'][-10:]
-                                                            SGA_Expense_annual = quarterly_data['total_opex'][-10:]
-                                                            Research_Dev_annual = quarterly_data['rnd'][-10:]
-                                                            interest_expense_list = quarterly_data['interest_expense'][-10:]
-                                                                      #Total_interest_income_list = annual_data['total_interest_income'][-10:]
-                                                            interest_income_list = quarterly_data['interest_income'][-10:]
-                                                            Ebita_annual = quarterly_data['ebitda'][-10:]
-                                                            operating_income_list = quarterly_data['operating_income'][-10:]                                   
-                                                       #....................................................................................................
-                                                            revenue_list_billion = ["{:.2f}B".format(revenue / 1000000000) if abs(revenue) >= 1000000000 else "{:,.0f}M".format(revenue / 1000000) for revenue in revenue_2013]
-                                                            revenue_df = pd.DataFrame(revenue_list_billion, index=date_list_quarter,  columns=["Revenue"])
-                                                            revenue_df = revenue_df.transpose()
-
-                                                       #-----------------------------------------------------------
-                                                       # Convert cogs values to billion USD and round to 3 decimal places
-                                                                      #cogs_list_billion = ["{:.2f}B".format(cogs / 1000000000) for cogs in cogs_list]
-                                                            cogs_list_billion = ["{:.2f}B".format(cogs / 1000000000) if abs(cogs) >= 1000000000 else "{:,.0f}M".format(cogs / 1000000) for cogs in cogs_list]
-                                                            cogs_df = pd.DataFrame(cogs_list_billion,  index=date_list_quarter, columns=["Cost of Goods Sold"])
-                                                            cogs_df = cogs_df.transpose()
-                                                       #----------------------------------------------------------
-                                                       # Convert gross profit values to billion USD and round to 3 decimal places
-                                                            gross_profit_list_billion = ["{:.2f}B".format(gross_profit / 1000000000) if abs(gross_profit) >= 1000000000 else "{:,.0f}M".format(gross_profit / 1000000) for gross_profit in gross_profit_2013]
-                                                            gross_profit_df = pd.DataFrame(gross_profit_list_billion, index=date_list_quarter,  columns=["Gross Profit"])
-                                                            gross_profit_df = gross_profit_df.transpose()
-                                                       #----------------------------------------------------------------
-
-                                                            SGA_Expense_table = ["{:.2f}B".format(total_opex / 1000000000) if abs(total_opex) >= 1000000000 else "{:,.0f}M".format(total_opex / 1000000) for total_opex in SGA_Expense_annual]
-                                                            SGA_Expense_df = pd.DataFrame(SGA_Expense_table, index=date_list_quarter,  columns=["Operating Expense"])
-                                                            SGA_Expense_df = SGA_Expense_df.transpose()
-                                                       #----------------------------------------------------------------
-                                                            Research_Dev_table = ["{:.2f}B".format(rnd / 1000000000) if abs(rnd) >= 1000000000 else "{:,.0f}M".format(rnd / 1000000) for rnd in Research_Dev_annual]
-                                                            Research_Dev_df = pd.DataFrame(Research_Dev_table, index=date_list_quarter,  columns=["Research & Development"])
-                                                            Research_Dev_df = Research_Dev_df.transpose()
-                                                       #----------------------------------------------------------------    
-                                                            interestexpense_list_billion = ["{:.2f}B".format(interest_expense / -1000000000) if abs(interest_expense) >= 1000000000 else "{:,.0f}M".format(interest_expense / -1000000) for interest_expense in interest_expense_list]
-                                                            interestexxpense_df = pd.DataFrame(interestexpense_list_billion, index=date_list_quarter, columns=["Interest Expense"])                                   
-                                                            interestexxpense_df = interestexxpense_df.transpose()                                                                  
-                                                       # -------------------------------------------------------------------
-                                                            Pretax_income_table = ["{:.2f}B".format(pretax_income / 1000000000) if abs(pretax_income) >= 1000000000 else "{:,.0f}M".format(pretax_income / 1000000) for pretax_income in Pretax_income_annual]
-                                                            Pretax_income_df = pd.DataFrame(Pretax_income_table, index=date_list_quarter,  columns=["Pre-Tax Income"])
-                                                            Pretax_income_df = Pretax_income_df.transpose()
-                                                       #----------------------------------------------------------------    
-                                                            Income_tax_table = ["{:.2f}B".format(income_tax / -1000000000) if abs(income_tax) >= 1000000000 else "{:,.0f}M".format(income_tax / -1000000) for income_tax in Income_tax_annual]
-                                                            Income_tax_df = pd.DataFrame(Income_tax_table, index=date_list_quarter,  columns=["Income Tax"])
-                                                            Income_tax_df = Income_tax_df.transpose()
-                                                       #----------------------------------------------------------------       
-                                                            net_income_table = ["{:.2f}B".format(net_income / 1000000000) if abs(net_income) >= 1000000000 else "{:,.0f}M".format(net_income / 1000000) for net_income in net_income_annual]
-                                                            net_income_df = pd.DataFrame(net_income_table, index=date_list_quarter,  columns=["Net Income"])
-                                                            net_income_df = net_income_df.transpose()
-                                                       #----------------------------------------------------------------   
-                                                            eps_basic_table = ["{:.2f}".format(eps_basic) for eps_basic in eps_basic_annual]
-                                                                      #eps_basic_table = [int(eps_basic) for eps_basic in eps_basic_annual]
-                                                            eps_basic_df = pd.DataFrame(eps_basic_table, index=date_list_quarter,  columns=["EPS(basic)"])
-                                                            eps_basic_df = eps_basic_df.transpose()
-                                                       #----------------------------------------------------------------    
-                                                            shares_basic_table = ["{:.2f}B".format(shares_basic / 1000000000) if shares_basic >= 1000000000 else "{:,.0f}M".format(shares_basic / 1000000) for shares_basic in shares_basic_annual]
-                                                            shares_basic_df = pd.DataFrame(shares_basic_table, index=date_list_quarter,  columns=["Basic Shares Outstanding"])
-                                                            shares_basic_df = shares_basic_df.transpose()
-                                                       #----------------------------------------------------------------    
-                                                            eps_diluted_table = ["{:.2f}".format(eps_diluted / 1) for eps_diluted in eps_diluted_annual]
-                                                            eps_diluted_df = pd.DataFrame(eps_diluted_table, index=date_list_quarter,  columns=["EPS(diluted)"])
-                                                            eps_diluted_df = eps_diluted_df.transpose()
-                                                       #----------------------------------------------------------------    
-                                                            shares_diluted_table = ["{:.2f}B".format(shares_diluted / 1000000000) if shares_diluted >= 1000000000 else "{:,.0f}M".format(shares_diluted / 1000000) for shares_diluted in shares_diluted_annual]
-                                                            shares_diluted_df = pd.DataFrame(shares_diluted_table, index=date_list_quarter,  columns=["Diluted Shares Outstanding"])
-                                                            shares_diluted_df = shares_diluted_df.transpose()
-                                                       #----------------------------------------------------------------      
-                                                            Ebitda_table = ["{:.2f}B".format(ebitda / 1000000000) if abs(ebitda) >= 1000000000 else "{:,.0f}M".format(ebitda / 1000000) for ebitda in Ebita_annual]
-                                                            Ebitda_df = pd.DataFrame(Ebitda_table, index=date_list_quarter,  columns=["EBITDA"])
-                                                            Ebitda_df = Ebitda_df.transpose()
-                                                       #----------------------------------------------------------------                                    
-                                                            operatingincome_list_billion = ["{:.2f}B".format(operating_income / 1000000000) if abs(operating_income) >= 1000000000 else "{:,.0f}M".format(operating_income / 1000000) for operating_income in operating_income_list]
-                                                            operatingincome_df = pd.DataFrame(operatingincome_list_billion,  index=date_list_quarter, columns=["Operating Income"])
-                                                            operatingincome_df = operatingincome_df.transpose()
-                                                       #-------------------------------------------------------------
-
-                                                       # Convert interest income values to billion USD and round to 3 decimal places
-                                                            interestincome_list_billion = ["{:.2f}B".format(interest_income / 1000000000) if abs(interest_income) >= 1000000000 else "{:,.0f}M".format(interest_income / 1000000) for interest_income in interest_income_list]
-                                                            interestincome_df = pd.DataFrame(interestincome_list_billion,  index=date_list_quarter, columns=["Non-Operating Interest Income"])
-                                                            interestincome_df = interestincome_df.transpose()
-                                                            #------------------------------------------------------------
-
-                                                            merged_df = pd.concat([revenue_df,cogs_df, gross_profit_df,SGA_Expense_df, Research_Dev_df,interestincome_df,interestexxpense_df,Pretax_income_df,Income_tax_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df,Ebitda_df])  
-                                                            st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                                                      
-                                                                      #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                                 
-                                                                 # st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)      
-                                                       
-                                                            pass
-                                                       except KeyError:   
-
-                                                            st.write()
-                                                            pass  
-                                                  
-
-                                                       with Annual: 
-
-                                                       #if "Consumer Finance" in Industry or "Banks" in Industry or ticker == "MAIN":
-                                                            try:               
-                                                                 revenue_2013_quarterly = annual_data['revenue'][-10:] 
-                                                                 Pretax_income_quarterly = annual_data['pretax_income'][-10:]
-                                                                 eps_basic_quarterly= annual_data['eps_basic'][-10:]
-                                                                 shares_basic_quarterly = annual_data['shares_basic'][-10:]
-                                                                 eps_diluted_quarterly = annual_data['eps_diluted'][-10:]
-                                                                 shares_diluted_quarterly = annual_data['shares_diluted'][-10:]
-                                                                 Income_tax_quarterly = annual_data['income_tax'][-10:]
-                                                                 net_income_quarterly = annual_data['net_income'][-10:]
-                                                                 Total_interest_income_list_quarterly = annual_data['total_interest_income'][-10:]
-                                                                 Total_interest_expense_list_quarterly = annual_data['total_interest_expense'][-10:]
-                                                                 Net_interest_Income_quarterly = annual_data['net_interest_income'][-10:]
-                                                                 Prov_Credit_losses_quarterly = annual_data['credit_losses_provision'][-10:]
-                                                                 Netinterest_Prov_Credit_losses_quarterly = annual_data['net_interest_income_after_credit_losses_provision'][-10:]
-                                                                 Total_Non_interest_expenses_quarterly = annual_data['total_noninterest_expense'][-10:]
-                                                                 Total_Non_interest_revenue_quarterly = annual_data['total_noninterest_revenue'][-10:]
-                                                            #....................................................................................................
-                                                                 revenue_quarterly_list_billion = ["{:.2f}B".format(revenue / 1000000000) if abs(revenue)>= 1000000000 else "{:,.0f}M".format(revenue / 1000000) for revenue in revenue_2013_quarterly]
-                                                                 revenue_quarterly_df = pd.DataFrame(revenue_quarterly_list_billion, index=date_list_annual,  columns=["Revenue"])
-                                                                 revenue_quarterly_df = revenue_quarterly_df.transpose()
-                                                            #..........................................................................................................................................
-                                                                 Pretax_income_quarterly_table = ["{:.2f}B".format(pretax_income / 1000000000) if abs(pretax_income) >= 1000000000 else "{:,.0f}M".format(pretax_income / 1000000) for pretax_income in Pretax_income_quarterly]
-                                                                 Pretax_income_quarterly_df = pd.DataFrame(Pretax_income_quarterly_table, index=date_list_annual,  columns=["Pre_Tax Income"])
-                                                                 Pretax_income_quarterly_df = Pretax_income_quarterly_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                 
-                                                                 net_income_quarterly_table = ["{:.2f}B".format(net_income / 1000000000) if abs(net_income) >= 1000000000 else "{:,.0f}M".format(net_income / 1000000) for net_income in net_income_quarterly]
-                                                                 net_income_quarterly_df = pd.DataFrame(net_income_quarterly_table, index=date_list_annual,  columns=["Net Income"])
-                                                                 net_income_quarterly_df = net_income_quarterly_df.transpose()
-                                                            #----------------------------------------------------------------   
-                                                                 eps_basic_quarterly_table = ["{:.2f}".format(eps_basic) for eps_basic in eps_basic_quarterly]
-                                                                           #eps_basic_table = [int(eps_basic) for eps_basic in eps_basic_annual]
-                                                                 eps_basic_quarterly_df = pd.DataFrame(eps_basic_quarterly_table, index=date_list_annual,  columns=["EPS(basic)"])
-                                                                 eps_basic_quarterly_df = eps_basic_quarterly_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                 shares_basic_quarterly_table = ["{:.2f}B".format(shares_basic / 1000000000) if shares_basic >= 1000000000 else "{:,.0f}M".format(shares_basic / 1000000) for shares_basic in shares_basic_quarterly]
-                                                                 shares_basic_quarterly_df = pd.DataFrame(shares_basic_quarterly_table, index=date_list_annual,  columns=["Basic Shares Outstanding"])
-                                                                 shares_basic_quarterly_df = shares_basic_quarterly_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                 eps_diluted_quarterly_table = ["{:.2f}".format(eps_diluted / 1) for eps_diluted in eps_diluted_quarterly]
-                                                                 eps_diluted_quarterly_df = pd.DataFrame(eps_diluted_quarterly_table, index=date_list_annual,  columns=["EPS(diluted)"])
-                                                                 eps_diluted_quarterly_df = eps_diluted_quarterly_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                 shares_diluted_quarterly_table = ["{:.2f}B".format(shares_diluted / 1000000000) if shares_diluted >= 1000000000 else "{:,.0f}M".format(shares_diluted / 1000000) for shares_diluted in shares_diluted_quarterly]
-                                                                 shares_diluted_quarterly_df = pd.DataFrame(shares_diluted_quarterly_table, index=date_list_annual,  columns=["Diluted Shares Outstanding"])
-                                                                 shares_diluted_quarterly_df = shares_diluted_quarterly_df.transpose()
-                                                            #----------------------------------------------------------------      
-                                                            
-                                                                 # Convert interest income values to billion USD and round to 3 decimal places
-                                                                 Total_interestincome_list_quarterly_billion = ["{:.2f}B".format(total_interest_income / 1000000000) if abs(total_interest_income) >= 1000000000 else "{:,.0f}M".format(total_interest_income / 1000000) for total_interest_income in Total_interest_income_list_quarterly]
-                                                                 total_interestincome_quarterly_df = pd.DataFrame(Total_interestincome_list_quarterly_billion,  index=date_list_annual, columns=["Total Interest Income"])
-                                                                 total_interestincome_quarterly_df = total_interestincome_quarterly_df.transpose()
-                                                                 #-------------------------------------------------------------
-                                                                                                              # Convert interest income values to billion USD and round to 3 decimal places
-                                                                 Total_interest_expense_list_quarterly_billion = ["{:.2f}B".format(total_interest_expense / 1000000000) if abs(total_interest_expense) >= 1000000000 else "{:,.0f}M".format(total_interest_expense / 1000000) for total_interest_expense in Total_interest_expense_list_quarterly]
-                                                                 total_interest_expense_quarterly_df = pd.DataFrame(Total_interest_expense_list_quarterly_billion,  index=date_list_annual, columns=["Total Interest Expense"])
-                                                                 total_interest_expense_quarterly_df = total_interest_expense_quarterly_df.transpose()
-                                                                 #-------------------------------------------------------------
-                                             
-                                                                 Net_interest_Income_list_quarterly_billion = ["{:.2f}B".format(net_interest_income / 1000000000) if abs(net_interest_income) >= 1000000000 else "{:,.0f}M".format(net_interest_income / 1000000) for net_interest_income in Total_interest_income_list_quarterly]
-                                                                 Net_interest_Income_quarterly_df = pd.DataFrame(Net_interest_Income_list_quarterly_billion,  index=date_list_annual, columns=["Net Interest Income"])
-                                                                 Net_interest_Income_quarterly_df = Net_interest_Income_quarterly_df.transpose()
-                                                                 #-------------------------------------------------------------
-                                                                           
-                                                                 Prov_Credit_losses_list_quarterly_billion = ["{:.2f}B".format(credit_losses_provision / 1000000000) if abs(credit_losses_provision) >= 1000000000 else "{:,.0f}M".format(credit_losses_provision / 1000000) for credit_losses_provision in Prov_Credit_losses_quarterly]
-                                                                 Prov_Credit_losses_quarterly_df = pd.DataFrame(Prov_Credit_losses_list_quarterly_billion,  index=date_list_annual, columns=["Provision for Credit Losses"])
-                                                                 Prov_Credit_losses_quarterly_df = Prov_Credit_losses_quarterly_df.transpose()
-                                                                 #-------------------------------------------------------------
-                                                                 Netinterest_Prov_Credit_losses_list_quarterly_billion = ["{:.2f}B".format(net_interest_income_after_credit_losses_provision / 1000000000) if abs(net_interest_income_after_credit_losses_provision) >= 1000000000 else "{:,.0f}M".format(net_interest_income_after_credit_losses_provision / 1000000) for net_interest_income_after_credit_losses_provision in Netinterest_Prov_Credit_losses_quarterly]
-                                                                 Netinterest_Prov_Credit_losses_quarterly_df = pd.DataFrame(Netinterest_Prov_Credit_losses_list_quarterly_billion,  index=date_list_annual, columns=["Net Interest Income After Provision"])
-                                                                 Netinterest_Prov_Credit_losses_quarterly_df = Netinterest_Prov_Credit_losses_quarterly_df.transpose()
-                                                                 #-------------------------------------------------------------
-                                                                 
-                                                                           
-                                                                 Total_Non_interest_expenses_list_quarterly_billion = ["{:.2f}B".format(total_noninterest_expense / 1000000000) if abs(total_noninterest_expense) >= 1000000000 else "{:,.0f}M".format(total_noninterest_expense / 1000000) for total_noninterest_expense in Total_Non_interest_expenses_quarterly]
-                                                                 Total_Non_interest_expenses_quarterly_df = pd.DataFrame(Total_interestincome_list_quarterly_billion,  index=date_list_annual, columns=["Non Interest Expense"])
-                                                                 Total_Non_interest_expenses_quarterly_df = Total_Non_interest_expenses_quarterly_df.transpose()
-                                                                 #-------------------------------------------------------------
-                                             
-                                                                 Total_Non_interest_revenue_list_quarterly_billion = ["{:.2f}B".format(total_noninterest_revenue / 1000000000) if abs(total_noninterest_revenue) >= 1000000000 else "{:,.0f}M".format(total_noninterest_revenue / 1000000) for total_noninterest_revenue in Total_Non_interest_revenue_quarterly]
-                                                                 Total_Non_interest_revenue_quarterly_df = pd.DataFrame(Total_Non_interest_revenue_list_quarterly_billion,  index=date_list_annual, columns=["Non Interest Revenue"])
-                                                                 Total_Non_interest_revenue_quarterly_df =Total_Non_interest_revenue_quarterly_df.transpose()
-                                                                 #-------------------------------------------------------------
-
-                                                                 merged_df_banks = pd.concat([total_interest_expense_quarterly_df,total_interestincome_quarterly_df,Net_interest_Income_quarterly_df,Prov_Credit_losses_quarterly_df,Total_Non_interest_expenses_quarterly_df,Total_Non_interest_revenue_quarterly_df,net_income_quarterly_df,Pretax_income_quarterly_df,eps_basic_quarterly_df,shares_basic_quarterly_df,eps_diluted_quarterly_df,shares_diluted_quarterly_df])    
-
-                                                                 st.table(merged_df_banks.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                                                           
-                                                                           #st.dataframe(merged_df_banks.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                                      
-                                                                      # st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)   
-                                                                 pass
-                                                            
-                                                       # elif "Insurance" in Industry or "Health Care Providers & Services" in Industry :
-                                                            except KeyError:
-                                                                           try:
-                                                                                Net_premiums_earned = annual_data['premiums_earned'][-10:] 
-                                                                                Net_investment_income = annual_data['net_investment_income'][-10:] 
-                                                                                Fees_and_other_income = annual_data['fees_and_other_income'][-10:] 
-                                                                                Interest_Expense_insurance = annual_data['interest_expense_insurance'][-10:] 
-                                                                                revenue_2013 = annual_data['revenue'][-10:] 
-                                                                                Pretax_income_annual = annual_data['pretax_income'][-10:]
-                                                                                net_income_annual = annual_data['net_income'][-10:] 
-                                                                                eps_basic_annual = annual_data['eps_basic'][-10:]
-                                                                                shares_basic_annual = annual_data['shares_basic'][-10:]
-                                                                                eps_diluted_annual = annual_data['eps_diluted'][-10:]
-                                                                                shares_diluted_annual = annual_data['shares_diluted'][-10:]
-                                                                                Income_tax_annual = annual_data['income_tax'][-10:]
-
-                                                                                Net_premiums_earned_list_billion = ["{:.2f}B".format(premiums_earned / 1000000000) if abs(premiums_earned) >= 1000000000 else "{:,.0f}M".format(premiums_earned / 1000000) for premiums_earned in Net_premiums_earned]
-                                                                                net_premiums_earned_df = pd.DataFrame(Net_premiums_earned_list_billion, index=date_list_annual,  columns=["Net Premiums Earned"])
-                                                                                net_premiums_earned_df = net_premiums_earned_df.transpose()
-                                                                                #....................................................................................................
-                                                                                #Net_investment_income = quarterly_data['net_investment_income'][-10:] 
-                                                                           
-                                                                                Net_investment_income_list_billion = ["{:.2f}B".format(net_investment_income / 1000000000) if abs(net_investment_income) >= 1000000000 else "{:,.0f}M".format(net_investment_income / 1000000) for net_investment_income in Net_investment_income]
-                                                                                net_investment_income_df = pd.DataFrame(Net_investment_income_list_billion, index=date_list_annual,  columns=["Net Investment Income"])
-                                                                                net_investment_income_df = net_investment_income_df.transpose()
-                                                                                #....................................................................................................
-                                                                                     #Fees_and_other_income = quarterly_data['fees_and_other_income'][-10:] 
-                                                                                
-                                                                                Fees_and_other_income_list_billion = ["{:.2f}B".format(fees_and_other_income / 1000000000) if abs(fees_and_other_income) >= 1000000000 else "{:,.0f}M".format(fees_and_other_income / 1000000) for fees_and_other_income in Fees_and_other_income]
-                                                                                Fees_and_other_income_df = pd.DataFrame(Fees_and_other_income_list_billion, index=date_list_annual,  columns=["Fees And Other Income"])
-                                                                                Fees_and_other_income_df = Fees_and_other_income_df.transpose()
-                                                                                #....................................................................................................
-                                                                                #Interest_Expense_insurance = quarterly_data['interest_Expense_insurance'][-10:] 
-                                                                                Interest_Expense_insurance_list_billion = ["{:.2f}B".format(interest_expense_insurance / 1000000000) if abs(interest_expense_insurance) >= 1000000000 else "{:,.0f}M".format(interest_expense_insurance / 1000000) for interest_expense_insurance in Interest_Expense_insurance]
-                                                                                Interest_Expense_insurance_df = pd.DataFrame(Interest_Expense_insurance_list_billion, index=date_list_annual,  columns=["Interest Expense"])
-                                                                                Interest_Expense_insurance_df = Interest_Expense_insurance_df.transpose()
-                                                                                
-                                                                                #....................................................................................................
-                                                                                revenue_list_billion = ["{:.2f}B".format(revenue / 1000000000) if abs(revenue) >= 1000000000 else "{:,.0f}M".format(revenue / 1000000) for revenue in revenue_2013]
-                                                                                revenue_df = pd.DataFrame(revenue_list_billion, index=date_list_annual,  columns=["Total Revenue"])
-                                                                                revenue_df = revenue_df.transpose()
-                                                                                
-                                                                                #..........................................................................................................................................
-                                                                                Pretax_income_table = ["{:.2f}B".format(pretax_income / 1000000000) if abs(pretax_income) >= 1000000000 else "{:,.0f}M".format(pretax_income / 1000000) for pretax_income in Pretax_income_annual]
-                                                                                Pretax_income_df = pd.DataFrame(Pretax_income_table, index=date_list_annual,  columns=["Pre-Tax Income"])
-                                                                                Pretax_income_df = Pretax_income_df.transpose()
-                                                                 #----------------------------------------------------------------    
-                                                                      
-                                                                                net_income_table = ["{:.2f}B".format(net_income / 1000000000) if abs(net_income) >= 1000000000 else "{:,.0f}M".format(net_income / 1000000) for net_income in net_income_annual]
-                                                                                net_income_df = pd.DataFrame(net_income_table, index=date_list_annual,  columns=["Net Income"])
-                                                                                net_income_df = net_income_df.transpose()
-                                                                 #----------------------------------------------------------------   
-                                                                                eps_basic_table = ["{:.2f}".format(eps_basic) for eps_basic in eps_basic_annual]
-                                                                                #eps_basic_table = [int(eps_basic) for eps_basic in eps_basic_annual]
-                                                                                eps_basic_df = pd.DataFrame(eps_basic_table, index=date_list_annual,  columns=["EPS(basic)"])
-                                                                                eps_basic_df = eps_basic_df.transpose()
-                                                                 #----------------------------------------------------------------    
-                                                                                shares_basic_table = ["{:.2f}B".format(shares_basic / 1000000000) if shares_basic >= 1000000000 else "{:,.0f}M".format(shares_basic / 1000000) for shares_basic in shares_basic_annual]
-                                                                                shares_basic_df = pd.DataFrame(shares_basic_table, index=date_list_annual,  columns=["Basic Shares Outstanding"])
-                                                                                shares_basic_df = shares_basic_df.transpose()
-                                                                 #----------------------------------------------------------------    
-                                                                                eps_diluted_table = ["{:.2f}".format(eps_diluted / 1) for eps_diluted in eps_diluted_annual]
-                                                                                eps_diluted_df = pd.DataFrame(eps_diluted_table, index=date_list_annual,  columns=["EPS(diluted)"])
-                                                                                eps_diluted_df = eps_diluted_df.transpose()
-                                                                 #----------------------------------------------------------------    
-                                                                                shares_diluted_table = ["{:.2f}B".format(shares_diluted / 1000000000) if shares_diluted >= 1000000000 else "{:,.0f}M".format(shares_diluted / 1000000) for shares_diluted in shares_diluted_annual]
-                                                                                shares_diluted_df = pd.DataFrame(shares_diluted_table, index=date_list_annual,  columns=["Diluted Shares Outstanding"])
-                                                                                shares_diluted_df = shares_diluted_df.transpose()
-                                                            
-                                                                                merged_df_insurance = pd.concat([net_premiums_earned_df,net_investment_income_df,Fees_and_other_income_df,revenue_df,Interest_Expense_insurance_df,Pretax_income_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df]) 
-                                                       
-                                                                                st.table(merged_df_insurance.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                                                                #st.dataframe(merged_df_insurance.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-
-                                                                                #st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True) 
-                                                                                
-                                                                           except KeyError:
-
-
-                    #                                                             revenue_2013 = quarterly_data['revenue'][-10:] 
-                    #                                                             Pretax_income_annual = quarterly_data['pretax_income'][-10:]
-                    #                                                             eps_basic_annual = quarterly_data['eps_basic'][-10:]
-                    #                                                             shares_basic_annual = quarterly_data['shares_basic'][-10:]
-                    #                                                             eps_diluted_annual = quarterly_data['eps_diluted'][-10:]
-                    #                                                             shares_diluted_annual = quarterly_data['shares_diluted'][-10:]
-                    #                                                             Income_tax_annual = quarterly_data['income_tax'][-10:]
-                    #                                                             net_income_annual = quarterly_data['net_income'][-10:]
-                    #                                                             cogs_list = quarterly_data['cogs'][-10:]
-                    #                                                             gross_profit_2013 = quarterly_data['gross_profit'][-10:]
-                    #                                                             SGA_Expense_annual = quarterly_data['total_opex'][-10:]
-                    #                                                             Research_Dev_annual = quarterly_data['rnd'][-10:]
-                    #                                                             interest_expense_list = quarterly_data['interest_expense'][-10:]
-                    #                                                             #Total_interest_income_list = annual_data['total_interest_income'][-10:]
-                    #                                                             interest_income_list = quarterly_data['interest_income'][-10:]
-                    #                                                             Ebita_annual = quarterly_data['ebitda'][-10:]
-                    #                                                             operating_income_list = quarterly_data['operating_income'][-10:]  
-                    # #....................................................................................................
-                    #                                                             revenue_list_billion = ["{:.2f}B".format(revenue / 1000000000) if abs(revenue) >= 1000000000 else "{:,.0f}M".format(revenue / 1000000) for revenue in revenue_2013]
-                    #                                                             revenue_df = pd.DataFrame(revenue_list_billion, index=date_list_quarter,  columns=["Revenue"])
-                    #                                                             revenue_df = revenue_df.transpose()
-
-                    #                                              #-----------------------------------------------------------
-                    #                                              # Convert cogs values to billion USD and round to 3 decimal places
-                    #                                                             #cogs_list_billion = ["{:.2f}B".format(cogs / 1000000000) for cogs in cogs_list]
-                    #                                                             cogs_list_billion = ["{:.2f}B".format(cogs / 1000000000) if abs(cogs) >= 1000000000 else "{:,.0f}M".format(cogs / 1000000) for cogs in cogs_list]
-                    #                                                             cogs_df = pd.DataFrame(cogs_list_billion,  index=date_list_quarter, columns=["Cost of Goods Sold"])
-                    #                                                             cogs_df = cogs_df.transpose()
-                    #                                              #----------------------------------------------------------
-                    #                                              # Convert gross profit values to billion USD and round to 3 decimal places
-                    #                                                             gross_profit_list_billion = ["{:.2f}B".format(gross_profit / 1000000000) if abs(gross_profit) >= 1000000000 else "{:,.0f}M".format(gross_profit / 1000000) for gross_profit in gross_profit_2013]
-                    #                                                             gross_profit_df = pd.DataFrame(gross_profit_list_billion, index=date_list_quarter,  columns=["Gross Profit"])
-                    #                                                             gross_profit_df = gross_profit_df.transpose()
-                    #                                              #----------------------------------------------------------------
-
-                    #                                                             SGA_Expense_table = ["{:.2f}B".format(total_opex / 1000000000) if abs(total_opex) >= 1000000000 else "{:,.0f}M".format(total_opex / 1000000) for total_opex in SGA_Expense_annual]
-                    #                                                             SGA_Expense_df = pd.DataFrame(SGA_Expense_table, index=date_list_quarter,  columns=["Operating Expense"])
-                    #                                                             SGA_Expense_df = SGA_Expense_df.transpose()
-                    #                                              #----------------------------------------------------------------
-                    #                                                             Research_Dev_table = ["{:.2f}B".format(rnd / 1000000000) if abs(rnd) >= 1000000000 else "{:,.0f}M".format(rnd / 1000000) for rnd in Research_Dev_annual]
-                    #                                                             Research_Dev_df = pd.DataFrame(Research_Dev_table, index=date_list_quarter,  columns=["Research & Development"])
-                    #                                                             Research_Dev_df = Research_Dev_df.transpose()
-                    #                                              #----------------------------------------------------------------    
-                    #                                                             interestexpense_list_billion = ["{:.2f}B".format(interest_expense / -1000000000) if abs(interest_expense) >= 1000000000 else "{:,.0f}M".format(interest_expense / -1000000) for interest_expense in interest_expense_list]
-                    #                                                             interestexxpense_df = pd.DataFrame(interestexpense_list_billion, index=date_list_quarter, columns=["Interest Expense"])                                   
-                    #                                                             interestexxpense_df = interestexxpense_df.transpose()                                                                  
-                    #                                              # -------------------------------------------------------------------
-                    #                                                             Pretax_income_table = ["{:.2f}B".format(pretax_income / 1000000000) if abs(pretax_income) >= 1000000000 else "{:,.0f}M".format(pretax_income / 1000000) for pretax_income in Pretax_income_annual]
-                    #                                                             Pretax_income_df = pd.DataFrame(Pretax_income_table, index=date_list_quarter,  columns=["Pre-Tax Income"])
-                    #                                                             Pretax_income_df = Pretax_income_df.transpose()
-                    #                                              #----------------------------------------------------------------    
-                    #                                                             Income_tax_table = ["{:.2f}B".format(income_tax / -1000000000) if abs(income_tax) >= 1000000000 else "{:,.0f}M".format(income_tax / -1000000) for income_tax in Income_tax_annual]
-                    #                                                             Income_tax_df = pd.DataFrame(Income_tax_table, index=date_list_quarter,  columns=["Income Tax"])
-                    #                                                             Income_tax_df = Income_tax_df.transpose()
-                    #                                              #----------------------------------------------------------------       
-                    #                                                             net_income_table = ["{:.2f}B".format(net_income / 1000000000) if abs(net_income) >= 1000000000 else "{:,.0f}M".format(net_income / 1000000) for net_income in net_income_annual]
-                    #                                                             net_income_df = pd.DataFrame(net_income_table, index=date_list_quarter,  columns=["Net Income"])
-                    #                                                             net_income_df = net_income_df.transpose()
-                    #                                              #----------------------------------------------------------------   
-                    #                                                             eps_basic_table = ["{:.2f}".format(eps_basic) for eps_basic in eps_basic_annual]
-                    #                                                             #eps_basic_table = [int(eps_basic) for eps_basic in eps_basic_annual]
-                    #                                                             eps_basic_df = pd.DataFrame(eps_basic_table, index=date_list_quarter,  columns=["EPS(basic)"])
-                    #                                                             eps_basic_df = eps_basic_df.transpose()
-                    #                                              #----------------------------------------------------------------    
-                    #                                                             shares_basic_table = ["{:.2f}B".format(shares_basic / 1000000000) if shares_basic >= 1000000000 else "{:,.0f}M".format(shares_basic / 1000000) for shares_basic in shares_basic_annual]
-                    #                                                             shares_basic_df = pd.DataFrame(shares_basic_table, index=date_list_quarter,  columns=["Basic Shares Outstanding"])
-                    #                                                             shares_basic_df = shares_basic_df.transpose()
-                    #                                              #----------------------------------------------------------------    
-                    #                                                             eps_diluted_table = ["{:.2f}".format(eps_diluted / 1) for eps_diluted in eps_diluted_annual]
-                    #                                                             eps_diluted_df = pd.DataFrame(eps_diluted_table, index=date_list_quarter,  columns=["EPS(diluted)"])
-                    #                                                             eps_diluted_df = eps_diluted_df.transpose()
-                    #                                              #----------------------------------------------------------------    
-                    #                                                             shares_diluted_table = ["{:.2f}B".format(shares_diluted / 1000000000) if shares_diluted >= 1000000000 else "{:,.0f}M".format(shares_diluted / 1000000) for shares_diluted in shares_diluted_annual]
-                    #                                                             shares_diluted_df = pd.DataFrame(shares_diluted_table, index=date_list_quarter,  columns=["Diluted Shares Outstanding"])
-                    #                                                             shares_diluted_df = shares_diluted_df.transpose()
-                    #                                              #----------------------------------------------------------------      
-                    #                                                             Ebitda_table = ["{:.2f}B".format(ebitda / 1000000000) if abs(ebitda) >= 1000000000 else "{:,.0f}M".format(ebitda / 1000000) for ebitda in Ebita_annual]
-                    #                                                             Ebitda_df = pd.DataFrame(Ebitda_table, index=date_list_quarter,  columns=["EBITDA"])
-                    #                                                             Ebitda_df = Ebitda_df.transpose()
-                    #                                              #----------------------------------------------------------------                                    
-                    #                                                             operatingincome_list_billion = ["{:.2f}B".format(operating_income / 1000000000) if abs(operating_income) >= 1000000000 else "{:,.0f}M".format(operating_income / 1000000) for operating_income in operating_income_list]
-                    #                                                             operatingincome_df = pd.DataFrame(operatingincome_list_billion,  index=date_list_quarter, columns=["Operating Income"])
-                    #                                                             operatingincome_df = operatingincome_df.transpose()
-                    #                                              #-------------------------------------------------------------
-
-                    #                                              # Convert interest income values to billion USD and round to 3 decimal places
-                    #                                                             interestincome_list_billion = ["{:.2f}B".format(interest_income / 1000000000) if abs(interest_income) >= 1000000000 else "{:,.0f}M".format(interest_income / 1000000) for interest_income in interest_income_list]
-                    #                                                             interestincome_df = pd.DataFrame(interestincome_list_billion,  index=date_list_quarter, columns=["Non-Operating Interest Income"])
-                    #                                                             interestincome_df = interestincome_df.transpose()
-                    #                                                   #------------------------------------------------------------
-
-                                                                                
-                    #                                                             merged_df_insurance = pd.concat([revenue_df,cogs_df, gross_profit_df,SGA_Expense_df, Research_Dev_df,interestincome_df,interestexxpense_df,Pretax_income_df,Income_tax_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df,Ebitda_df])  
-                                                                                
-                    #                                                             st.table(merged_df_insurance.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-               
-                                                                                pass
-                                                            #else:
-                                                            try:          #st.write("no")       
-                                                                 revenue_2013 = annual_data['revenue'][-10:] 
-                                                                 Pretax_income_annual = annual_data['pretax_income'][-10:]
-                                                                 eps_basic_annual = annual_data['eps_basic'][-10:]
-                                                                 shares_basic_annual = annual_data['shares_basic'][-10:]
-                                                                 eps_diluted_annual = annual_data['eps_diluted'][-10:]
-                                                                 shares_diluted_annual = annual_data['shares_diluted'][-10:]
-                                                                 Income_tax_annual = annual_data['income_tax'][-10:]
-                                                                 net_income_annual = annual_data['net_income'][-10:]
-                                                                 cogs_list = annual_data['cogs'][-10:]
-                                                                 gross_profit_2013 = annual_data['gross_profit'][-10:]
-                                                                 SGA_Expense_annual = annual_data['total_opex'][-10:]
-                                                                 Research_Dev_annual = annual_data['rnd'][-10:]
-                                                                 interest_expense_list = annual_data['interest_expense'][-10:]
-                                                                           #Total_interest_income_list = annual_data['total_interest_income'][-10:]
-                                                                 interest_income_list = annual_data['interest_income'][-10:]
-                                                                 Ebita_annual = annual_data['ebitda'][-10:]
-                                                                 operating_income_list = annual_data['operating_income'][-10:]                                   
-                                                            #....................................................................................................
-                                                                 revenue_list_billion = ["{:.2f}B".format(revenue / 1000000000) if abs(revenue) >= 1000000000 else "{:,.0f}M".format(revenue / 1000000) for revenue in revenue_2013]
-                                                                 revenue_df = pd.DataFrame(revenue_list_billion, index=date_list_annual,  columns=["Revenue"])
-                                                                 revenue_df = revenue_df.transpose()
-
-                                                            #-----------------------------------------------------------
-                                                            # Convert cogs values to billion USD and round to 3 decimal places
-                                                                           #cogs_list_billion = ["{:.2f}B".format(cogs / 1000000000) for cogs in cogs_list]
-                                                                 cogs_list_billion = ["{:.2f}B".format(cogs / 1000000000) if abs(cogs) >= 1000000000 else "{:,.0f}M".format(cogs / 1000000) for cogs in cogs_list]
-                                                                 cogs_df = pd.DataFrame(cogs_list_billion,  index=date_list_annual, columns=["Cost of Goods Sold"])
-                                                                 cogs_df = cogs_df.transpose()
-                                                            #----------------------------------------------------------
-                                                            # Convert gross profit values to billion USD and round to 3 decimal places
-                                                                 gross_profit_list_billion = ["{:.2f}B".format(gross_profit / 1000000000) if abs(gross_profit) >= 1000000000 else "{:,.0f}M".format(gross_profit / 1000000) for gross_profit in gross_profit_2013]
-                                                                 gross_profit_df = pd.DataFrame(gross_profit_list_billion, index=date_list_annual,  columns=["Gross Profit"])
-                                                                 gross_profit_df = gross_profit_df.transpose()
-                                                            #----------------------------------------------------------------
-
-                                                                 SGA_Expense_table = ["{:.2f}B".format(total_opex / 1000000000) if abs(total_opex) >= 1000000000 else "{:,.0f}M".format(total_opex / 1000000) for total_opex in SGA_Expense_annual]
-                                                                 SGA_Expense_df = pd.DataFrame(SGA_Expense_table, index=date_list_annual,  columns=["Operating Expense"])
-                                                                 SGA_Expense_df = SGA_Expense_df.transpose()
-                                                            #----------------------------------------------------------------
-                                                                 Research_Dev_table = ["{:.2f}B".format(rnd / 1000000000) if abs(rnd) >= 1000000000 else "{:,.0f}M".format(rnd / 1000000) for rnd in Research_Dev_annual]
-                                                                 Research_Dev_df = pd.DataFrame(Research_Dev_table, index=date_list_annual,  columns=["Research & Development"])
-                                                                 Research_Dev_df = Research_Dev_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                 interestexpense_list_billion = ["{:.2f}B".format(interest_expense / -1000000000) if abs(interest_expense) >= 1000000000 else "{:,.0f}M".format(interest_expense / -1000000) for interest_expense in interest_expense_list]
-                                                                 interestexxpense_df = pd.DataFrame(interestexpense_list_billion, index=date_list_annual, columns=["Interest Expense"])                                   
-                                                                 interestexxpense_df = interestexxpense_df.transpose()                                                                  
-                                                            # -------------------------------------------------------------------
-                                                                 Pretax_income_table = ["{:.2f}B".format(pretax_income / 1000000000) if abs(pretax_income) >= 1000000000 else "{:,.0f}M".format(pretax_income / 1000000) for pretax_income in Pretax_income_annual]
-                                                                 Pretax_income_df = pd.DataFrame(Pretax_income_table, index=date_list_annual,  columns=["Pre-Tax Income"])
-                                                                 Pretax_income_df = Pretax_income_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                 Income_tax_table = ["{:.2f}B".format(income_tax / -1000000000) if abs(income_tax) >= 1000000000 else "{:,.0f}M".format(income_tax / -1000000) for income_tax in Income_tax_annual]
-                                                                 Income_tax_df = pd.DataFrame(Income_tax_table, index=date_list_annual,  columns=["Income Tax"])
-                                                                 Income_tax_df = Income_tax_df.transpose()
-                                                            #----------------------------------------------------------------       
-                                                                 net_income_table = ["{:.2f}B".format(net_income / 1000000000) if abs(net_income) >= 1000000000 else "{:,.0f}M".format(net_income / 1000000) for net_income in net_income_annual]
-                                                                 net_income_df = pd.DataFrame(net_income_table, index=date_list_annual,  columns=["Net Income"])
-                                                                 net_income_df = net_income_df.transpose()
-                                                            #----------------------------------------------------------------   
-                                                                 eps_basic_table = ["{:.2f}".format(eps_basic) for eps_basic in eps_basic_annual]
-                                                                           #eps_basic_table = [int(eps_basic) for eps_basic in eps_basic_annual]
-                                                                 eps_basic_df = pd.DataFrame(eps_basic_table, index=date_list_annual,  columns=["EPS(basic)"])
-                                                                 eps_basic_df = eps_basic_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                 shares_basic_table = ["{:.2f}B".format(shares_basic / 1000000000) if shares_basic >= 1000000000 else "{:,.0f}M".format(shares_basic / 1000000) for shares_basic in shares_basic_annual]
-                                                                 shares_basic_df = pd.DataFrame(shares_basic_table, index=date_list_annual,  columns=["Basic Shares Outstanding"])
-                                                                 shares_basic_df = shares_basic_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                 eps_diluted_table = ["{:.2f}".format(eps_diluted / 1) for eps_diluted in eps_diluted_annual]
-                                                                 eps_diluted_df = pd.DataFrame(eps_diluted_table, index=date_list_annual,  columns=["EPS(diluted)"])
-                                                                 eps_diluted_df = eps_diluted_df.transpose()
-                                                            #----------------------------------------------------------------    
-                                                                 shares_diluted_table = ["{:.2f}B".format(shares_diluted / 1000000000) if shares_diluted >= 1000000000 else "{:,.0f}M".format(shares_diluted / 1000000) for shares_diluted in shares_diluted_annual]
-                                                                 shares_diluted_df = pd.DataFrame(shares_diluted_table, index=date_list_annual,  columns=["Diluted Shares Outstanding"])
-                                                                 shares_diluted_df = shares_diluted_df.transpose()
-                                                            #----------------------------------------------------------------      
-                                                                 Ebitda_table = ["{:.2f}B".format(ebitda / 1000000000) if abs(ebitda) >= 1000000000 else "{:,.0f}M".format(ebitda / 1000000) for ebitda in Ebita_annual]
-                                                                 Ebitda_df = pd.DataFrame(Ebitda_table, index=date_list_annual,  columns=["EBITDA"])
-                                                                 Ebitda_df = Ebitda_df.transpose()
-                                                            #----------------------------------------------------------------                                    
-                                                                 operatingincome_list_billion = ["{:.2f}B".format(operating_income / 1000000000) if abs(operating_income) >= 1000000000 else "{:,.0f}M".format(operating_income / 1000000) for operating_income in operating_income_list]
-                                                                 operatingincome_df = pd.DataFrame(operatingincome_list_billion,  index=date_list_annual, columns=["Operating Income"])
-                                                                 operatingincome_df = operatingincome_df.transpose()
-                                                            #-------------------------------------------------------------
-
-                                                            # Convert interest income values to billion USD and round to 3 decimal places
-                                                                 interestincome_list_billion = ["{:.2f}B".format(interest_income / 1000000000) if abs(interest_income) >= 1000000000 else "{:,.0f}M".format(interest_income / 1000000) for interest_income in interest_income_list]
-                                                                 interestincome_df = pd.DataFrame(interestincome_list_billion,  index=date_list_annual, columns=["Non-Operating Interest Income"])
-                                                                 interestincome_df = interestincome_df.transpose()
-                                                                 #------------------------------------------------------------
-
-                                                                 merged_df = pd.concat([revenue_df,cogs_df, gross_profit_df,SGA_Expense_df, Research_Dev_df,interestincome_df,interestexxpense_df,Pretax_income_df,Income_tax_df,net_income_df,eps_basic_df,shares_basic_df,eps_diluted_df,shares_diluted_df,Ebitda_df])  
-                                                                 st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                                                           
-                                                                           #st.dataframe(merged_df.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                                                      
-                                                                      # st.markdown('<div style="margin-bottom: 100px;"></div>', unsafe_allow_html=True)      
-                                                            
-                                                                 pass
-                                                            except KeyError:   
-
-                                                                 st.write()
-                                                                 pass  
-
-
-
+ 
           #pillar_analysis_width = 1  # Adjust this value as needed
 
           # Apply custom CSS style to control the width of the content
