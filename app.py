@@ -10240,6 +10240,7 @@ if selected == "Stock Analysis Tool":
                                    Short_term_debt_annual = annual_data['st_debt'][-10:]
                                    LongTerm_debt_annual = annual_data['lt_debt'][-10:]
                                    Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
+                                   Retained_earnings_annual = annual_data['retained_earnings'][-10:]
                                    Total_liabilities_annual = annual_data['total_liabilities'][-10:]
                                    Total_Equity_annual = annual_data['total_equity'][-10:]
 
@@ -10275,6 +10276,7 @@ if selected == "Stock Analysis Tool":
                                    Short_term_debt_annual_df = financials_df(Short_term_debt_annual, date_annual, "Short-Term Debt")
                                    LongTerm_debt_annual_df = financials_df(LongTerm_debt_annual, date_annual, "Long-Term Debt")
                                    Other_longterm_liabilities_annual_df = financials_df(Other_longterm_liabilities_annual, date_annual, "Other Long-Term Liabilities")
+                                   Retained_earnings_annual_df = financials_df(Retained_earnings_annual, date_annual, "Retained Earnings")
                                    Total_liabilities_annual_df = financials_df(Total_liabilities_annual, date_annual, "Total Liabilities")
                                    Total_Equity_annual_df = financials_df(Total_Equity_annual, date_annual, "Total Equity")
 
@@ -10284,7 +10286,7 @@ if selected == "Stock Analysis Tool":
                                    merged_df =pd.concat([total_annual,Inventories_annual_df,Total_current_assets_annual_df,
                                                          Net_goodwill_annual_df,Intangible_assets_annual_df,Other_lt_assets_annual_df,Total_assets_annual_df,
                                                          Short_term_debt_annual_df,Total_current_liabilities_annual_df,LongTerm_debt_annual_df,
-                                                         Other_longterm_liabilities_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
+                                                         Other_longterm_liabilities_annual_df,Retained_earnings_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
 
                                                   
 
@@ -10414,13 +10416,13 @@ if selected == "Stock Analysis Tool":
   
 
 
+
                                    date_quarterly_Balance_Sheet = quarterly_data['period_end_date'][-10:] 
 
 
                                    cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
                                    st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
                                    Inventories_quarter = quarterly_data['inventories'][-10:]
-                                                  
                                    Total_current_assets_quarter = quarterly_data['total_current_assets'][-10:]
                                    Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
                                    Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
@@ -10438,6 +10440,7 @@ if selected == "Stock Analysis Tool":
                                    capital_leases = quarterly_data['noncurrent_capital_leases'][-10:]
                                    LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
                                    Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
+                                   Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
                                    Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
                                    Total_Equity_quarter = quarterly_data['total_equity'][-10:]
                                                   #-----------------------------------------------------------
@@ -10479,6 +10482,7 @@ if selected == "Stock Analysis Tool":
                                    current_portion_of_lease_obligation_df = financials_df(current_portion_of_lease_obligation, date_quarter, "Current Portion of Lease Obligation")
                                    capital_leases_df = financials_df(capital_leases, date_quarter, "Capital Leases (Noncurrent)")
                                    LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter, date_quarter, "Long-Term Debt")
+                                   Retained_earnings_quarter_df = financials_df(Retained_earnings_quarter, date_quarter, "Retained Earnings")
                                    Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter, date_quarter, "Other Long-Term Liabilities")
                                    Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter, date_quarter, "Total Liabilities")
                                    Total_Equity_quarter_df = financials_df(Total_Equity_quarter, date_quarter, "Total Equity")
@@ -10488,7 +10492,7 @@ if selected == "Stock Analysis Tool":
                                                                   Intangible_assets_quarter_df,
                                                                   Other_lt_assets_quarter_df,Total_assets_quarter_df,Short_term_debt_quarter_df,
                                                                   Total_current_liabilities_quarter_df,LongTerm_debt_quarter_df,Other_longterm_liabilities_quarter_df,
-                                                                  Total_liabilities_quarter_df,Total_Equity_quarter_df])        
+                                                                  Retained_earnings_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])        
                                    st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
                                    pass
