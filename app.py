@@ -9831,8 +9831,17 @@ if selected == "Stock Analysis Tool":
      @st.cache_data
      def financials_df(data_list, date_list, column_name):
           #formatted_data = ["{:.2f}B".format(value / 1_000_000_000) if abs(value) >= 1_000_000_000 else "{:,.0f}M".format(value / 1_000_000) for value in data_list]
-          formatted_data = ["{:.2f}B".format(value / 1_000_000_000) if abs(value) >= 1_000_000_000 else 
-           "{:,.0f}M".format(value / 1_000_000) if abs(value) >= 1_000_000 else "{:.2f}".format(value)for value in data_list]
+          #formatted_data = ["{:.2f}B".format(value / 1000000000) if abs(value) >= 1000000000 else 
+           #"{:,.0f}M".format(value / 1000000.00) if abs(value) >= 1000000.00 else "{:.2f}".format(value)for value in data_list]
+          
+          formatted_data = [
+          "{:.2f}B".format(value / 1000000000) if abs(value) >= 1000000000 else
+          "{:.0f}M".format(value / 1000000) if abs(value) >= 1000000 else
+          "{:.0f}K".format(value / 1000) if abs(value) >= 1000 else
+          "{:.2f}".format(value)
+          for value in data_list
+          ]
+                    
           df = pd.DataFrame(formatted_data, index=date_list, columns=[column_name])
           return df.transpose()   
       
