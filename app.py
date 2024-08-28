@@ -7927,7 +7927,7 @@ if selected == "Stock Analysis Tool":
 
      
      #@st.fragment
-     #@st.cache_data
+     
      def calculate_stock_performance(ticker):
           periods = {
                "1mo": "1 Month",
@@ -10553,14 +10553,13 @@ if selected == "Stock Analysis Tool":
                     with Annual:
                          Changes_in_working_capital_annual = annual_data['cfo_change_in_working_capital'][-10:] 
                          Capex_annual = annual_data['capex'][-10:] 
-                         Net_Assets_from_Acquisitions_annual = annual_data['cfi_acquisitions'][-10:] 
+                         
                          Purchase_of_Investment_annual = annual_data['cfi_investment_purchases'][-10:]
                          Sale_maturity_of_Investments_annual = annual_data['cfi_investment_sales'][-10:]
                          Net_investing_CashFlow_annual = annual_data['cf_cfi'][-10:] 
                          Insurance_Reduction_of_DebtNet_annual = annual_data['cff_debt_net'][-10:]
-                         Debt_issued_annual = annual_data['cff_debt_issued'][-10:]
-                         Debt_repaid_annual = annual_data['cff_debt_repaid'][-10:]
-                         Stock_issued_of_common_Preferred_stock_annual = annual_data['cff_common_stock_issued'][-10:]
+
+                         
                          Repurchase_of_common_Preferred_stock_annual = annual_data['cff_common_stock_repurchased'][-10:]
                          Cash_Dividends_paid_Total_annual = annual_data['cff_dividend_paid'][-10:] 
                          Net_Financing_cashFlow_annual = annual_data['cf_cff'][-10:]
@@ -10584,11 +10583,26 @@ if selected == "Stock Analysis Tool":
 
                          Changes_in_working_capital_annual_df = financials_df(Changes_in_working_capital_annual, date_annual, "Changes in Working Capital")
                          Capex_annual_df = financials_df(Capex_annual, date_annual, "Capital Expenditure")
-                         Net_Assets_from_Acquisitions_annual_df = financials_df(Net_Assets_from_Acquisitions_annual, date_annual, "Acquisitions, net")
+                         
                          Purchase_of_Investment_annual_df = financials_df(Purchase_of_Investment_annual, date_annual, "Purchase of Investments")
                          Sale_maturity_of_Investments_annual_df = financials_df(Sale_maturity_of_Investments_annual, date_annual, "Sale/Maturity of Investments")
                          Net_investing_CashFlow_annual_df = financials_df(Net_investing_CashFlow_annual, date_annual, "Net Investing Cash Flow")
                          Insurance_Reduction_of_DebtNet_annual_df = financials_df(Insurance_Reduction_of_DebtNet_annual, date_annual, "Issuance/Reduction of Net Debt")
+                         try:
+                              Debt_issued_annual = annual_data['cff_debt_issued'][-10:]
+                              Debt_repaid_annual = annual_data['cff_debt_repaid'][-10:]
+                              Stock_issued_of_common_Preferred_stock_annual = annual_data['cff_common_stock_issued'][-10:]
+                              Net_Assets_from_Acquisitions_annual = annual_data['cfi_acquisitions'][-10:] 
+
+
+
+                         except Exception as e:
+                              Debt_issued_annual  = [0] * 10
+                              Debt_repaid_annual = [0] * 10
+                              Stock_issued_of_common_Preferred_stock_annual = [0] * 10
+                              Net_Assets_from_Acquisitions_annual = [0] * 10
+
+                         Net_Assets_from_Acquisitions_annual_df = financials_df(Net_Assets_from_Acquisitions_annual, date_annual, "Acquisitions, net")
                          Debt_issued_annual_df = financials_df(Debt_issued_annual, date_annual, "Longterm Debt Issued")
                          Debt_repaid_annual_df = financials_df(Debt_repaid_annual, date_annual, "Longterm Debt Repaid")
                          Stock_issued_of_common_Preferred_stock_annual_df  = financials_df(Stock_issued_of_common_Preferred_stock_annual, date_annual, "Common Stock Repurchased")
@@ -10620,20 +10634,29 @@ if selected == "Stock Analysis Tool":
                               Net_Operating_CashFlow_quarter = quarterly_data['cf_cfo'][-10:] 
                               changes_in_working_capital_quarter = quarterly_data['cfo_change_in_working_capital'][-10:] 
                               Capex_quarter = quarterly_data['capex'][-10:] 
-                              Net_Assets_from_Acquisitions_quarter = quarterly_data['cfi_acquisitions'][-10:] 
+                               
                               Purchase_of_Investment_quarter = quarterly_data['cfi_investment_purchases'][-10:]
                               Sale_maturity_of_Investments_quarter = quarterly_data['cfi_investment_sales'][-10:]
                               Net_investing_CashFlow_quarter = quarterly_data['cf_cfi'][-10:] 
                               Cash_Dividends_paid_Total_quarter = quarterly_data['cff_dividend_paid'][-10:] 
                               Insurance_Reduction_of_DebtNet_quarter = quarterly_data['cff_debt_net'][-10:]
-                              Debt_issued_quarter = quarterly_data['cff_debt_issued'][-10:]
-                              Debt_repaid_quarter = quarterly_data['cff_debt_repaid'][-10:]
-                              Stock_issued_of_common_Preferred_stock_quarter = quarterly_data['cff_common_stock_issued'][-10:]
-                              Cash_Dividends_paid_Total_annual = quarterly_data['cff_dividend_paid'][-10:]
+                           
+                              
                               Repurchase_of_common_Preferred_stock_quarter = quarterly_data['cff_common_stock_repurchased'][-10:]
                               Net_Financing_cashFlow_quarter = quarterly_data['cf_cff'][-10:]
                               Net_change_in_cash_quarter = quarterly_data['cf_net_change_in_cash'][-10:]
                               Free_cash_flow_quarter = quarterly_data['fcf'][-10:]
+                              try:
+                                   Debt_issued_quarter = quarterly_data['cff_debt_issued'][-10:]
+                                   Debt_repaid_quarter = quarterly_data['cff_debt_repaid'][-10:]
+                                   Stock_issued_of_common_Preferred_stock_quarter = quarterly_data['cff_common_stock_issued'][-10:]
+                                   Net_Assets_from_Acquisitions_quarter = quarterly_data['cfi_acquisitions'][-10:]
+                              except Exception as e:
+                                   
+                                   Debt_issued_quarter  = [0] * 10
+                                   Debt_repaid_quarter = [0] * 10
+                                   Stock_issued_of_common_Preferred_stock_quarter = [0] * 10
+                                   Net_Assets_from_Acquisitions_quarter = [0] * 10
 
 
                          
@@ -10658,14 +10681,20 @@ if selected == "Stock Analysis Tool":
                               Net_Operating_CashFlow_quarter_df = financials_df(Net_Operating_CashFlow_quarter, date_quarter, "Net Operating Cash Flow")
                               changes_in_working_capital_quarter_df = financials_df(changes_in_working_capital_quarter, date_quarter, "Changes in Working Capital")
                               Capex_quarter_df = financials_df(Capex_quarter, date_quarter, "Capital Expenditure")
-                              Net_Assets_from_Acquisitions_quarter_df = financials_df(Net_Assets_from_Acquisitions_quarter, date_quarter, "Acquisitions, net")
+                              
                               Purchase_of_Investment_quarter_df = financials_df(Purchase_of_Investment_quarter, date_quarter, "Purchase of Investments")
                               Sale_maturity_of_Investments_quarter_df = financials_df(Sale_maturity_of_Investments_quarter, date_quarter, "Sale/Maturity of Investments")
                               Net_investing_CashFlow_quarter_df = financials_df(Net_investing_CashFlow_quarter, date_quarter, "Net Investing Cash Flow")
                               Cash_Dividends_paid_Total_quarter_df = financials_df(Cash_Dividends_paid_Total_quarter, date_quarter, "Cash Dividends Paid")
-                              Debt_issued_quarter_df = financials_df(Debt_issued_annual, date_quarter, "Longterm Debt Issued")
-                              Debt_repaid_quarter_df = financials_df(Debt_repaid_annual, date_quarter, "Longterm Debt Repaid")
-                              Stock_issued_of_common_Preferred_stock_quarter_df  = financials_df(Stock_issued_of_common_Preferred_stock_annual, date_quarter, "Common Stock Repurchased")
+                              
+                              Net_Assets_from_Acquisitions_quarter_df = financials_df(Net_Assets_from_Acquisitions_quarter, date_quarter, "Acquisitions, net")
+                              Debt_issued_quarter_df = financials_df(Debt_issued_quarter, date_quarter, "Longterm Debt Issued")
+                              Debt_repaid_quarter_df = financials_df(Debt_repaid_quarter, date_quarter, "Longterm Debt Repaid")
+                              Stock_issued_of_common_Preferred_stock_quarter_df  = financials_df(Stock_issued_of_common_Preferred_stock_quarter, date_quarter, "Common Stock Repurchased")
+
+
+
+                         
                               Insurance_Reduction_of_DebtNet_quarter_df = financials_df(Insurance_Reduction_of_DebtNet_quarter, date_quarter, "Issuance/Reduction of Net Debt")
                               Repurchase_of_common_Preferred_stock_quarter_df = financials_df(Repurchase_of_common_Preferred_stock_quarter, date_quarter, "Repurchase Comm. & Pref. Stks")
                               Net_Financing_cashFlow_quarter_df = financials_df(Net_Financing_cashFlow_quarter, date_quarter, "Net Financing Cash Flow")
@@ -10674,7 +10703,8 @@ if selected == "Stock Analysis Tool":
 
 
                               merged_df = pd.concat([total_quarter,Capex_quarter_df,Net_Assets_from_Acquisitions_quarter_df,
-                                                     Purchase_of_Investment_quarter_df,Sale_maturity_of_Investments_quarter_df,Net_investing_CashFlow_quarter_df,
+                                                     Purchase_of_Investment_quarter_df,Sale_maturity_of_Investments_quarter_df,
+                                                     Net_investing_CashFlow_quarter_df,
                                                      Debt_issued_quarter_df,
                                                      Debt_repaid_quarter_df,
                                                      Stock_issued_of_common_Preferred_stock_quarter_df,
