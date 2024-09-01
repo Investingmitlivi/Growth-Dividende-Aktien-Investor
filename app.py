@@ -7137,6 +7137,9 @@ if selected == "Stock Analysis Tool":
      </style>
      """, unsafe_allow_html=True)
 
+
+     
+
      ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
 
      col1, col2 = st.columns(2)
@@ -7510,7 +7513,8 @@ if selected == "Stock Analysis Tool":
      if __name__ == "__main__":
           main()
 
-
+     current_price = get_current_price(ticker)  # Get current price
+     converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
 
       ########################
@@ -7868,7 +7872,7 @@ if selected == "Stock Analysis Tool":
      #@st.fragment
      #@st.cache_data(show_spinner=False)
      def display_stock_chart():
-          global ticker
+          #global ticker
                #ticker = ticker 
           if 'previous_ticker' not in st.session_state or st.session_state.previous_ticker != ticker:
                     # Reset fragment state
@@ -7925,7 +7929,7 @@ if selected == "Stock Analysis Tool":
      def main():
           #st.title("Stock Performance Chart")
           #global ticker
-          global ticker, name, symbol          
+          #global ticker, name, symbol          
           if ticker:
                display_stock_chart()          
      # Run the app
@@ -10976,8 +10980,8 @@ if selected == "Stock Analysis Tool":
                #@st.cache_data
                
                def display_growth_rate_form():
-                    current_price = get_current_price(ticker)  # Get current price
-                    converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+                    #current_price = get_current_price(ticker)  # Get current price
+                    #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
                     with st.form(key='growth_rate_form31'):
                          #converted_amount =340 
