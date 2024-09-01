@@ -7216,9 +7216,7 @@ if selected == "Stock Analysis Tool":
      date_quarter = quarterly_data['period_end_date'][-10:] 
      date_annual = annual_data['period_end_date'][-10:] 
      Stock_description=data["data"]["metadata"]["description"]
-     #gross_margin_ttm=Financial_data['ttm']['gross_margin']
      stock_sector=data["data"]["metadata"]["sector"]
-     #Industry=data["data"]["metadata"]["industry"]
      cik=data["data"]["metadata"]["CIK"]
      FCF_Cagr_10 = annual_data['fcf_cagr_10'][-1:]
      EPS_Cagr_10 = annual_data['eps_diluted_cagr_10'][-1:]
@@ -7232,18 +7230,7 @@ if selected == "Stock Analysis Tool":
                
      quote = Quote(ticker)
      #--------------------------10K-----------------------------------
-     #st.title('Chart:',{name})
-     #st.title(name)
-     # st.markdown(
-     #     '<div style="text-align:center;"><b>{}</b></div>'.format(name),
-     #     unsafe_allow_html=True
-     # )
 
-     # st.text("")  # This adds a line break
-     # st.markdown(f"Sector: {stock_sector}")
-     # #st.sidebar.text(f"Sector: {stock_sector}")
-     # st.text("")  # This adds a line break
-     # st.markdown(f"Industry: {Industry}")
      link = f"https://www.sec.gov/edgar/browse/?CIK={cik}&owner=exclude"
 
      styled_link = f'<div style="display: flex; justify-content: center;"><a href="{link}" style="color: green; font-family: serif;" target="_blank">Annual/Quarterly Reports &rarr;</a></div>'
@@ -7253,35 +7240,12 @@ if selected == "Stock Analysis Tool":
 
      
 
-     # Display name centered in the first column
-    
-
-     # Add a line break
      st.text("")
-     # col1, col2,col3 = st.columns(3)
-     # # Display sector and industry information in the second column
-     # with col1:
-     #      st.write(f"Sector: {stock_sector}", unsafe_allow_html=True)
-     # with col2:
-     #      st.markdown(
-     # '<div style="text-align:center;"><b>{}</b></div>'.format(name),
-     # unsafe_allow_html=True
-     # )
-     #      #st.write(f"Industry: {Industry}", unsafe_allow_html=True)
 
-     # with col3:
-     #      st.write(styled_link, unsafe_allow_html=True)
 
      right, middle, left = st.columns(3, gap="small")
-     # Display stock information in the columns
      with right:
           st.write(f"Sector: {stock_sector}", unsafe_allow_html=True)
-
-     # with middle:
-     #      st.markdown(
-     # '<div style="text-align:center;"><b>{}</b></div>'.format(name),
-     # unsafe_allow_html=True)
-     
 
      with left:
           st.write(styled_link, unsafe_allow_html=True)
@@ -7297,16 +7261,14 @@ if selected == "Stock Analysis Tool":
           ticker ='BRK-B'
 
      else:
-     # Handle other cases if needed
      
           ticker = ticker
       
 
      stock_info = yf.Ticker(ticker)
-     #print(stock_info)
 
 
-###################################################
+###########################################################################################################
 
      # #@st.cache_data
      # #@st.fragment
@@ -7332,206 +7294,300 @@ if selected == "Stock Analysis Tool":
      # converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
 
-     #############
+     ######################################################################################################
 
-
-     # Function to fetch current price with caching
      @st.cache_data(show_spinner=False)
      def get_current_price(ticker):
           stock_info = yf.Ticker(ticker)
           try:
                current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
+               #current_price = stock_info.info["previousClose"]
           except Exception as e:
                try:
-                    # Fallback method in case the first fails
                     current_price = stock_info.info["previousClose"]
                except Exception as e:
-                    current_price = 23  # Fallback default value
+                    current_price = quote.fundamental_df.at[0, "Price"]
 
           return current_price
 
-     # Function to convert price from USD to EUR
      def convert_to_eur(usd_price, conversion_rate=usd_to_eur_rate):
           return usd_price * conversion_rate
 
-     # Streamlit App
      def main():
-          #st.title("Stock Price Analyzer")
-          
-          # Input for the stock ticker
-          #ticker = st.text_input("Enter Stock Ticker (e.g., AAPL):", "AAPL").upper()
 
-          # Check if the ticker has changed
           if 'ticker' not in st.session_state or st.session_state.ticker != ticker:
                st.session_state.ticker = ticker
                st.session_state.current_price = get_current_price(ticker)
                st.session_state.converted_amount = convert_to_eur(st.session_state.current_price)
 
-          # Access current_price and converted_amount from session state
-          #current_price = st.session_state.current_price
-          #converted_amount = st.session_state.converted_amount
-
-
-          # Further usage of current_price and converted_amount across the app
-          # For example, let's use these values in another function or calculation
           display_price_analysis()
 
-          # Example function using session state values
      def display_price_analysis():
           st.write("")
-          #st.write(f"The stock price in USD is: ${st.session_state.current_price:.2f}")
-          #st.write(f"The stock price in EUR is: €{st.session_state.converted_amount:.2f}")
-          # Add more analysis based on current_price and converted_amount
+
 
      if __name__ == "__main__":
           main()
 
      current_price = st.session_state.current_price
      amount = current_price 
-#######     
-     #current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
- 
-     #print("current_price",current_price) 
+########################################################################################################     
+
+
+     # @st.cache_data(show_spinner=False)
+     # def format_date(date):
+     #      return date.strftime('%Y/%m/%d')
+     
+
+     # @st.cache_data(show_spinner=False)
+     # def get_all_time_high_and_low_price(ticker):
+     #      data = stock_info.history(period="max", actions=False) 
+
+
+     #      all_time_highs = data[data['Close'] == data['Close'].max()]
+     #      fifty_two_week_low = data['Close'].iloc[-260:].min()
+
+     #      if not all_time_highs.empty:
+
+     #           first_all_time_high = all_time_highs.iloc[0]
+     #           all_time_high_date = first_all_time_high.name
+     #           all_time_high_price = first_all_time_high['Close']
+     #           return all_time_high_date, all_time_high_price, fifty_two_week_low
+
+     #      else:
+     #           return None, None, None
+     # try:
+     #      all_time_high_date, all_time_high_price, fifty_two_week_low = get_all_time_high_and_low_price(ticker)
+     # except Exception as e:
+     #      st.write(" ")
+     # try:      
+     #      if all_time_high_date and all_time_high_price:
+     #           formatted_date = format_date(all_time_high_date)
+
+
+     #      if fifty_two_week_low:
+     #           st.write("")
+
+     #      else:
+     #           st.write(" ")
+
+     #      historical_data = stock_info.history(period='1y', actions=False)
+
+     #      min_price = historical_data['Close'].min()
+     #      min_price_date = historical_data[historical_data['Close'] == min_price].index[0]
+
+     # except Exception as e:
+     #      st.write(" ")
+
+
+######################
+
+     # start_date = datetime.now() - timedelta(days=39 * 365)
+
+     # end_date=datetime.now() 
+
+     # data = yf.download(ticker,start=start_date, end=end_date)
+
+     # try:
+     #      close_price = round(data['Close'][-2],2)
+
+
+     #      percentage_difference = round(((current_price - close_price) / close_price) * 100,2)
+         
+
+     #      converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+
+     # except Exception as e:
+     #      st.write(" ")
+
+
+     # green_style = "color: green;"
+
+
+     # formatted_value = f"{current_price:.2f} $"
+     # formatted_price_with_color = f"<span style='{green_style}'>{formatted_value}</span>"
+
+     # formatted_value2 = f"{converted_amount} €"
+     # formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
 
 
 
+     # with middle:
+            
+     # # Calculate the text color based on the percentage difference
+     # #arrow_text = "🟩 " if percentage_difference >= 0 else "🔻"
+     #      try:
+     #           arrow_text = " 🔼 " if percentage_difference > 0 else " 🔻 "
+     #           text_color = "green" if percentage_difference > 0 else "red"
+
+
+     #           text_color = "green" if percentage_difference >= 0 else "red"
+     #           #formatted_value2 = f" {converted_amount} €"
+     #                #formatted_price_euro = "&euro; {:.2f}".format(formatted_value2)  # Format with Euro sign
+
+     #           st.markdown(
+     #      f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
+     #           f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
+     #           unsafe_allow_html=True
+     #      ) 
+     #      except Exception as e:
+     #           st.markdown(
+     #      f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
+     #           f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
+     #           #unsafe_allow_html=True
+     #      unsafe_allow_html=True
+     #      )
+               
+############
+
+     start_date = datetime.now() - timedelta(days=39 * 365)
+     end_date=datetime.now() 
+     # Function to format date
+     def format_date(date):
+          return date.strftime('%Y/%m/%d')
+
+     # Function to get historical data and calculate price differences
+
+     @st.cache_data(show_spinner=False)
+     def get_price_data(ticker, current_price, usd_to_eur_rate):
+          start_date = datetime.now() - timedelta(days=39 * 365)
+          end_date=datetime.now() 
+
+          start_date = datetime.now() - timedelta(days=39 * 365)
+          end_date = datetime.now()
+
+          data = yf.download(ticker, start=start_date, end=end_date)
+     
+          try:
+               close_price = round(data['Close'][-2], 2)
+               percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
+               converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+          except Exception as e:
+               close_price = None
+               percentage_difference = None
+               converted_amount = None
+          
+          return close_price, percentage_difference, converted_amount
+
+     # Main function to run the app
+     def main():
+          #ticker = st.text_input("Enter Ticker Symbol", "AAPL")  # Example ticker input
+          #usd_to_eur_rate = 0.85  # Example conversion rate
+
+          # Check if ticker has changed
+          if ticker not in st.session_state or st.session_state.ticker != ticker:
+               st.session_state.ticker = ticker
+               st.session_state.current_price = get_current_price(ticker)  # Define this function as needed
+               st.session_state.price_data = get_price_data(ticker, st.session_state.current_price, usd_to_eur_rate)
+
+          current_price = st.session_state.current_price
+          close_price, percentage_difference, converted_amount = st.session_state.price_data
+
+          green_style = "color: green;"
+          formatted_value = f"{current_price:.2f} $"
+          formatted_price_with_color = f"<span style='{green_style}'>{formatted_value}</span>"
+
+          formatted_value2 = f"{converted_amount} €"
+          formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
+
+          with st.container():
+               try:
+                    arrow_text = " 🔼 " if percentage_difference > 0 else " 🔻 "
+                    text_color = "green" if percentage_difference > 0 else "red"
+
+                    st.markdown(
+                         f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color} "
+                         f"Aktueller Preis: {formatted_price_with_color2} {arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
+                         unsafe_allow_html=True
+                    )
+               except Exception as e:
+                    st.markdown(
+                         f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color} "
+                         f"Aktueller Preis: {formatted_price_with_color2}</div>",
+                         unsafe_allow_html=True
+                    )
+
+     if __name__ == "__main__":
+          main()
+
+
+
+
+      ########################
+     # Function to format date without time
      @st.cache_data(show_spinner=False)
      def format_date(date):
           return date.strftime('%Y/%m/%d')
-     
 
+          # Function to get the all-time high and 52-week low prices and their dates
      @st.cache_data(show_spinner=False)
-     def get_all_time_high_and_low_price(ticker):
-          data = stock_info.history(period="max", actions=False)  # Exclude dividend data
+     def get_all_time_high_and_low_date(ticker):
+          stock_info = yf.Ticker(ticker)
+          data = stock_info.history(period="max", actions=False)
 
-     # Find all-time high points
+          # Get all-time high date and price
           all_time_highs = data[data['Close'] == data['Close'].max()]
-          fifty_two_week_low = data['Close'].iloc[-260:].min()
-
           if not all_time_highs.empty:
-               # Get the date and price of the first all-time high point
                first_all_time_high = all_time_highs.iloc[0]
                all_time_high_date = first_all_time_high.name
                all_time_high_price = first_all_time_high['Close']
-               return all_time_high_date, all_time_high_price, fifty_two_week_low
-
           else:
-               return None, None, None
-     try:
-          all_time_high_date, all_time_high_price, fifty_two_week_low = get_all_time_high_and_low_price(ticker)
-     except Exception as e:
-          st.write(" ")
-     try:      
-          if all_time_high_date and all_time_high_price:
-               formatted_date = format_date(all_time_high_date)
-          # print(f"All-Time High for {ticker}:")
-               #print(f"Date: {formatted_date}")
-               #print(f"Price: {all_time_high_price:.2f}$")
-     # else:
-               #print(f"No all-time high data found for {ticker}")
+               all_time_high_date, all_time_high_price = None, None
 
-          if fifty_two_week_low:
-               st.write("")
-               #print(f"Price: {fifty_two_week_low:.2f}$")
-          else:
-               st.write(" ")
+          # Get 52-week low date and price
+          fifty_two_week_low_data = data.iloc[-260:]  # Last 52 weeks
+          fifty_two_week_low = fifty_two_week_low_data['Close'].min()
+          fifty_two_week_low_date = fifty_two_week_low_data[fifty_two_week_low_data['Close'] == fifty_two_week_low].index[0] if not fifty_two_week_low_data.empty else None
 
-          # Fetch historical data and exclude dividend data
-          historical_data = stock_info.history(period='1y', actions=False)
+          return all_time_high_date, all_time_high_price, fifty_two_week_low_date, fifty_two_week_low
+     
+    
 
-          min_price = historical_data['Close'].min()
-          min_price_date = historical_data[historical_data['Close'] == min_price].index[0]
-
-     except Exception as e:
-          st.write(" ")
-
-     #print(f"52-Week Low for {ticker}:")
-     #print(f"Datedgfdhggjhkgj: {min_price_date.strftime('%Y-%m-%d')}")
-     #print(f"Price: ${min_price:.2f}")
-
-
-     #..............
-     #start_date = datetime.now() - timedelta(days=1095)
-     start_date = datetime.now() - timedelta(days=39 * 365)
-     #end_date = st.sidebar.date_input('End Date')
-     end_date=datetime.now() 
-
-     data = yf.download(ticker,start=start_date, end=end_date)
-     #data = yf.Ticker(ticker)
-     try:
-          close_price = round(data['Close'][-2],2)#-2 meaning a day before
-          #st.write(close_price)
-          #current_price = stock_info.history(period="1d",interval="1m")["Close"].iloc[-1] 
-
-          percentage_difference = round(((current_price - close_price) / close_price) * 100,2)
-         
-          #converted_amount = "{:.2f}".format(amount * usd_to_eur_rate)
-          #converted_amount=45
-          converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
-
-     except Exception as e:
-          st.write(" ")
-
-
-     green_style = "color: green;"
-
-
-     formatted_value = f"{current_price:.2f} $"
-     formatted_price_with_color = f"<span style='{green_style}'>{formatted_value}</span>"
-
-     formatted_value2 = f"{converted_amount} €"
-     formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
-
-          # Display the metric with the formatted price and green font color using st.markdown
-     #st.markdown("Current Price: " + formatted_price_with_color, unsafe_allow_html=True)
-
-
-     with middle:
-            
-     # Calculate the text color based on the percentage difference
-     #arrow_text = "🟩 " if percentage_difference >= 0 else "🔻"
-          try:
-               arrow_text = " 🔼 " if percentage_difference > 0 else " 🔻 "
-               text_color = "green" if percentage_difference > 0 else "red"
-
-
-               text_color = "green" if percentage_difference >= 0 else "red"
-               #formatted_value2 = f" {converted_amount} €"
-                    #formatted_price_euro = "&euro; {:.2f}".format(formatted_value2)  # Format with Euro sign
-
-               st.markdown(
-          f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
-               f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
-               unsafe_allow_html=True
-          ) 
-          except Exception as e:
-               st.markdown(
-          f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
-               f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
-               #unsafe_allow_html=True
-          unsafe_allow_html=True
-          )
+     # Streamlit App
+     def main():
           
-     #...............................................................................................................
+          if ticker not in st.session_state or st.session_state.ticker != ticker:
+               st.session_state.ticker = ticker
+               (
+                    st.session_state.all_time_high_date,
+                    st.session_state.all_time_high_price,
+                    st.session_state.fifty_two_week_low_date,
+                    st.session_state.fifty_two_week_low
+               ) = get_all_time_high_and_low_date(ticker)
 
-     # col2, col3, col4, col5, col6, col7, col8,col9= st.columns(8)
+          # Access all_time_high_date and fifty_two_week_low_date from session state
+          all_time_high_date = st.session_state.all_time_high_date
+          all_time_high_price = st.session_state.all_time_high_price
+          fifty_two_week_low_date = st.session_state.fifty_two_week_low_date
+          fifty_two_week_low = st.session_state.fifty_two_week_low
 
-     # with col2:
-     #     button2 = col2.button("1mo")
-     # with col3:
-     #     button3 = col3.button("3mo")
-     # with col4:
-     #     button4 = col4.button("6mo")
-     # with col5:
-     #     button5 = col5.button("1y")
-     # with col6:
-     #     button6 = col6.button("2y")
-     # with col7:
-     #     button7 = col7.button("5y")
-     # with col8:
-     #     button8 = col8.button("10y")
-     # with col9:
-     #     button9 = col9.button("max")
+          # Display the all-time high and 52-week low dates and prices
+          if all_time_high_date and all_time_high_price:
+               formatted_high_date = format_date(all_time_high_date)
+               #st.write(f"All-Time High Date: {formatted_high_date}")
+               #st.write(f"All-Time High Price: ${all_time_high_price:.2f}")
+
+          if fifty_two_week_low_date and fifty_two_week_low:
+               formatted_low_date = format_date(fifty_two_week_low_date)
+               #st.write(f"52-Week Low Date: {formatted_low_date}")
+               #st.write(f"52-Week Low Price: ${fifty_two_week_low:.2f}")
+
+          # Additional analysis and data fetching as needed
+          display_price_analysis()
+
+     # Example function using session state values
+     def display_price_analysis():
+          st.write("")
+          #st.write(f"The stock price reached its all-time high on {format_date(st.session_state.all_time_high_date)} at ${st.session_state.all_time_high_price:.2f}.")
+          #st.write(f"The 52-week low was on {format_date(st.session_state.fifty_two_week_low_date)} at ${st.session_state.fifty_two_week_low:.2f}.")
+          # Additional analysis based on historical data
+
+     if __name__ == "__main__":
+          main()
+ 
+
+     all_time_high_price,fifty_two_week_low,all_time_high_date,fifty_two_week_low_date=get_all_time_high_and_low_date(ticker)
+
  ######################################################   
      # def calculate_stock_performance(periods):
      #        # Define time periods
@@ -9032,17 +9088,20 @@ if selected == "Stock Analysis Tool":
                else:
                     P_OCF_ttm = "-"
                #print(P_OCF_ttm)
-               try:
-                    # Calculate the percentage increase
-                    percentage_difference_52_week_low = "{:.2f}%".format(((current_price - fifty_two_week_low) / fifty_two_week_low) * 100)
+               # try:
+               #      # Calculate the percentage increase
+                    
+               #      percentage_difference_52_week_low = "{:.2f}%".format(((current_price - fifty_two_week_low) / fifty_two_week_low) * 100)
 
-                    percentage_diff_ATH = "{:.2f}%".format(((current_price - all_time_high_price) / all_time_high_price) * 100)
+               #      percentage_diff_ATH = "{:.2f}%".format(((current_price - all_time_high_price) / all_time_high_price) * 100)
+
+               #      #all_time_high_price,fifty_two_week_low,all_time_high_date,fifty_two_week_low_date=get_all_time_high_and_low_date(ticker)
                
                
                     
-               except Exception as e:
-                    percentage_difference_52_week_low =""
-                    percentage_difference_ATH=""
+               # except Exception as e:
+               #      percentage_difference_52_week_low =""
+               #      percentage_difference_ATH=""
                
                
           
@@ -9153,9 +9212,10 @@ if selected == "Stock Analysis Tool":
                'ROIC': [ROIC_annual_one],
                '5 YR ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
                'ROCE': [ "{:.2f}%".format(One_YR_ROCE)],
-               f'ATH ({all_time_high_date})': f"$ {all_time_high_price:.2f} ({percentage_diff_ATH})",
-               f'52WK LOW ({min_price_date.strftime("%Y/%m/%d")})': f"$ {fifty_two_week_low:.2f} ({percentage_difference_52_week_low})"
+               f'ATH ({format_date(st.session_state.all_time_high_date)})': f"$ {st.session_state.all_time_high_price:.2f}",
+               f'52WK LOW ({format_date(st.session_state.fifty_two_week_low_date)})': f"$ {st.session_state.fifty_two_week_low:.2f}"
                }
+
 
                data4 = {
                'EPS (TTM)': " {:.2f}".format(eps_diluted_ttm),
