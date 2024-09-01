@@ -7315,7 +7315,7 @@ if selected == "Stock Analysis Tool":
 
      def main():
 
-          if 'ticker' not in st.session_state or st.session_state.ticker != ticker:
+          if ticker not in st.session_state or st.session_state.ticker != ticker:
                st.session_state.ticker = ticker
                st.session_state.current_price = get_current_price(ticker)
                st.session_state.converted_amount = convert_to_eur(st.session_state.current_price)
