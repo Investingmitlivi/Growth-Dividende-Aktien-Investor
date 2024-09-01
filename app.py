@@ -7299,38 +7299,96 @@ if selected == "Stock Analysis Tool":
      else:
      # Handle other cases if needed
      
-      ticker = ticker
+          ticker = ticker
       
 
      stock_info = yf.Ticker(ticker)
      #print(stock_info)
 
 
+###################################################
 
-
-     #@st.cache_data
-     #@st.fragment
-     @st.cache_data(show_spinner=False)
-     def get_current_price():
+     # #@st.cache_data
+     # #@st.fragment
+     # @st.cache_data(show_spinner=False)
+     # def get_current_price():
     
+     #      try:
+     #           current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
+              
+     #           #current_price = stock_info.history(period="1d")["Close"].iloc[-1]
+
+     #      except Exception as e: #except all errors
+     #           try:
+     #                current_price = quote.fundamental_df.at[0, "Price"]
+     #           #current_price = 23
+     #           except Exception as e:
+     #                current_price = 23  
+
+     #      return current_price 
+
+     # current_price = get_current_price()
+     # amount = current_price 
+     # converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+
+
+     #############
+
+
+     # Function to fetch current price with caching
+     @st.cache_data(show_spinner=False)
+     def get_current_price(ticker):
+          stock_info = yf.Ticker(ticker)
           try:
                current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
-              
-               #current_price = stock_info.history(period="1d")["Close"].iloc[-1]
-
-          except Exception as e: #except all errors
+          except Exception as e:
                try:
-                    current_price = quote.fundamental_df.at[0, "Price"]
-               #current_price = 23
+                    # Fallback method in case the first fails
+                    current_price = stock_info.info["previousClose"]
                except Exception as e:
-                    current_price = 23  
+                    current_price = 23  # Fallback default value
 
-          return current_price 
+          return current_price
 
-     current_price = get_current_price()
+     # Function to convert price from USD to EUR
+     def convert_to_eur(usd_price, conversion_rate=usd_to_eur_rate):
+          return usd_price * conversion_rate
+
+     # Streamlit App
+     def main():
+          #st.title("Stock Price Analyzer")
+          
+          # Input for the stock ticker
+          #ticker = st.text_input("Enter Stock Ticker (e.g., AAPL):", "AAPL").upper()
+
+          # Check if the ticker has changed
+          if 'ticker' not in st.session_state or st.session_state.ticker != ticker:
+               st.session_state.ticker = ticker
+               st.session_state.current_price = get_current_price(ticker)
+               st.session_state.converted_amount = convert_to_eur(st.session_state.current_price)
+
+          # Access current_price and converted_amount from session state
+          #current_price = st.session_state.current_price
+          #converted_amount = st.session_state.converted_amount
+
+
+          # Further usage of current_price and converted_amount across the app
+          # For example, let's use these values in another function or calculation
+          display_price_analysis()
+
+          # Example function using session state values
+     def display_price_analysis():
+          st.write("")
+          #st.write(f"The stock price in USD is: ${st.session_state.current_price:.2f}")
+          #st.write(f"The stock price in EUR is: €{st.session_state.converted_amount:.2f}")
+          # Add more analysis based on current_price and converted_amount
+
+     if __name__ == "__main__":
+          main()
+
+     current_price = st.session_state.current_price
      amount = current_price 
-     converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
-     
+#######     
      #current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
  
      #print("current_price",current_price) 
@@ -10858,7 +10916,7 @@ if selected == "Stock Analysis Tool":
                #@st.cache_data
                
                def display_growth_rate_form():
-                    current_price = get_current_price()  # Get current price
+                    current_price = get_current_price(ticker)  # Get current price
                     converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
                     with st.form(key='growth_rate_form31'):
