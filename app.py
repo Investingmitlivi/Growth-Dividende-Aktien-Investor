@@ -10484,7 +10484,7 @@ if selected == "Stock Analysis Tool":
                     schuld= "✅"  # Gree
 
  #################################################      
-               @st.cache_data(show_spinner=False)
+               
                def display_metrics():
                     st.markdown("""
                     <style>
