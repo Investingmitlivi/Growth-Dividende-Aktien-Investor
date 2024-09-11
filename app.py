@@ -7299,7 +7299,7 @@ if selected == "Stock Analysis Tool":
 
      ######################################################################################################
 
-     @st.cache_data(show_spinner=False)
+    
      def get_current_price(ticker):
           stock_info = yf.Ticker(ticker)
           try:
