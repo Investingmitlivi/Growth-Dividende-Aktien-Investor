@@ -7278,8 +7278,33 @@ if selected == "Stock Analysis Tool":
 
 ###########################################################################################################
 
+     # #@st.cache_data
+     # #@st.fragment
+     # @st.cache_data(show_spinner=False)
+     # def get_current_price():
+    
+     #      try:
+     #           current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
+              
+     #           #current_price = stock_info.history(period="1d")["Close"].iloc[-1]
 
-     #@st.cache_data(show_spinner=False)
+     #      except Exception as e: #except all errors
+     #           try:
+     #                current_price = quote.fundamental_df.at[0, "Price"]
+     #           #current_price = 23
+     #           except Exception as e:
+     #                current_price = 23  
+
+     #      return current_price 
+
+     # current_price = get_current_price()
+     # amount = current_price 
+     # converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+
+
+     ######################################################################################################
+
+     @st.cache_data(show_spinner=False)
      def get_current_price(ticker):
           stock_info = yf.Ticker(ticker)
           quote = Quote(ticker)
@@ -11247,7 +11272,7 @@ if selected == "Stock Analysis Tool":
                     schuld= "✅"  # Gree
 
  #################################################      
-               #@st.cache_data(show_spinner=False)
+               @st.cache_data(show_spinner=False)
                def display_metrics():
                     st.markdown("""
                     <style>
