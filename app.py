@@ -17,6 +17,8 @@ import plotly.graph_objects as go
 import time
 import firebase_admin
 import os
+from typing import List, Dict, Union
+
 #import math
 #import textwrap
 #import sklearn
@@ -7210,6 +7212,7 @@ if selected == "Stock Analysis Tool":
      shares_basic_ttm = (Financial_data['ttm']['shares_basic'])/1000000000
      shares_eop_ttm=(Financial_data['ttm']['shares_eop'])/1000000000
      shares_eop_change_ttm=(Financial_data['ttm']['shares_eop_change'])/1000000000
+     current_Operating_cash_Flow =Financial_data['ttm']['cf_cfo']
      shares_eop_annual=annual_data['shares_eop'][-1:]
      shares_eop_quarter=quarterly_data['shares_eop'][-1:]
      period_end_price_ttm = (Financial_data['ttm']['period_end_price'])
@@ -7221,14 +7224,16 @@ if selected == "Stock Analysis Tool":
      Stock_description=data["data"]["metadata"]["description"]
      stock_sector=data["data"]["metadata"]["sector"]
      cik=data["data"]["metadata"]["CIK"]
-     FCF_Cagr_10 = annual_data['fcf_cagr_10'][-1:]
-     EPS_Cagr_10 = annual_data['eps_diluted_cagr_10'][-1:]
-     Revenue_Cagr_10 = annual_data['revenue_cagr_10'][-1:]
+ 
      date_list_quarter = [period_end_date for period_end_date in date_quarter]
      date_list_annual = [period_end_date for period_end_date in date_annual]
 
      shares_basic_annual_one = annual_data['shares_basic'][-1:]
+     shares_basic_annual_funf_unpacked = annual_data['shares_basic'][-5:]
+
      Average_shares_basic_annual_one = round((sum(shares_basic_annual_one) / len(shares_basic_annual_one)) / 1000000000, 2)
+     EPS_growth = annual_data['eps_diluted_growth'][-10:]
+     Dividend_per_share = Financial_data['ttm']['dividends']
      #---------------------------pyfinanz-----------------------------------
                
      quote = Quote(ticker)
@@ -7273,48 +7278,24 @@ if selected == "Stock Analysis Tool":
 
 ###########################################################################################################
 
-     # #@st.cache_data
-     # #@st.fragment
-     # @st.cache_data(show_spinner=False)
-     # def get_current_price():
-    
-     #      try:
-     #           current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
-              
-     #           #current_price = stock_info.history(period="1d")["Close"].iloc[-1]
 
-     #      except Exception as e: #except all errors
-     #           try:
-     #                current_price = quote.fundamental_df.at[0, "Price"]
-     #           #current_price = 23
-     #           except Exception as e:
-     #                current_price = 23  
-
-     #      return current_price 
-
-     # current_price = get_current_price()
-     # amount = current_price 
-     # converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
-
-
-     ######################################################################################################
-
-     @st.cache_data(show_spinner=False)
+     #@st.cache_data(show_spinner=False)
      def get_current_price(ticker):
           stock_info = yf.Ticker(ticker)
+          quote = Quote(ticker)
           try:
                current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
-               #current_price = stock_info.info["previousClose"]
+               #current_price = float(quote.fundamental_df.at[0, "Price"])
           except Exception as e:
                try:
-                    current_price = stock_info.info["previousClose"]
+                    current_price = float(stock_info.info["previousClose"])
                except Exception as e:
-                    current_price = quote.fundamental_df.at[0, "Price"]
+                    current_price = float(quote.fundamental_df.at[0, "Price"])
 
           return current_price
 
      def convert_to_eur(usd_price, conversion_rate=usd_to_eur_rate):
-          return usd_price * conversion_rate
+          return float(usd_price) * float(conversion_rate)
 
      def main():
 
@@ -7334,114 +7315,10 @@ if selected == "Stock Analysis Tool":
 
      current_price = st.session_state.current_price
      amount = current_price 
-########################################################################################################     
-
-
-     # @st.cache_data(show_spinner=False)
-     # def format_date(date):
-     #      return date.strftime('%Y/%m/%d')
+     #current_price____ = quote.fundamental_df.at[0, "Price"]
+     #print("current_price____",current_price____)
      
-
-     # @st.cache_data(show_spinner=False)
-     # def get_all_time_high_and_low_price(ticker):
-     #      data = stock_info.history(period="max", actions=False) 
-
-
-     #      all_time_highs = data[data['Close'] == data['Close'].max()]
-     #      fifty_two_week_low = data['Close'].iloc[-260:].min()
-
-     #      if not all_time_highs.empty:
-
-     #           first_all_time_high = all_time_highs.iloc[0]
-     #           all_time_high_date = first_all_time_high.name
-     #           all_time_high_price = first_all_time_high['Close']
-     #           return all_time_high_date, all_time_high_price, fifty_two_week_low
-
-     #      else:
-     #           return None, None, None
-     # try:
-     #      all_time_high_date, all_time_high_price, fifty_two_week_low = get_all_time_high_and_low_price(ticker)
-     # except Exception as e:
-     #      st.write(" ")
-     # try:      
-     #      if all_time_high_date and all_time_high_price:
-     #           formatted_date = format_date(all_time_high_date)
-
-
-     #      if fifty_two_week_low:
-     #           st.write("")
-
-     #      else:
-     #           st.write(" ")
-
-     #      historical_data = stock_info.history(period='1y', actions=False)
-
-     #      min_price = historical_data['Close'].min()
-     #      min_price_date = historical_data[historical_data['Close'] == min_price].index[0]
-
-     # except Exception as e:
-     #      st.write(" ")
-
-
-######################
-
-     # start_date = datetime.now() - timedelta(days=39 * 365)
-
-     # end_date=datetime.now() 
-
-     # data = yf.download(ticker,start=start_date, end=end_date)
-
-     # try:
-     #      close_price = round(data['Close'][-2],2)
-
-
-     #      percentage_difference = round(((current_price - close_price) / close_price) * 100,2)
-         
-
-     #      converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
-
-     # except Exception as e:
-     #      st.write(" ")
-
-
-     # green_style = "color: green;"
-
-
-     # formatted_value = f"{current_price:.2f} $"
-     # formatted_price_with_color = f"<span style='{green_style}'>{formatted_value}</span>"
-
-     # formatted_value2 = f"{converted_amount} €"
-     # formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
-
-
-
-     # with middle:
-            
-     # # Calculate the text color based on the percentage difference
-     # #arrow_text = "🟩 " if percentage_difference >= 0 else "🔻"
-     #      try:
-     #           arrow_text = " 🔼 " if percentage_difference > 0 else " 🔻 "
-     #           text_color = "green" if percentage_difference > 0 else "red"
-
-
-     #           text_color = "green" if percentage_difference >= 0 else "red"
-     #           #formatted_value2 = f" {converted_amount} €"
-     #                #formatted_price_euro = "&euro; {:.2f}".format(formatted_value2)  # Format with Euro sign
-
-     #           st.markdown(
-     #      f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
-     #           f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
-     #           unsafe_allow_html=True
-     #      ) 
-     #      except Exception as e:
-     #           st.markdown(
-     #      f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color}          Aktueller Preis: {formatted_price_with_color2} "
-     #           f"{arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
-     #           #unsafe_allow_html=True
-     #      unsafe_allow_html=True
-     #      )
-               
-############
+########################################################################################################     
 
      start_date = datetime.now() - timedelta(days=39 * 365)
      end_date=datetime.now() 
@@ -7449,9 +7326,7 @@ if selected == "Stock Analysis Tool":
      def format_date(date):
           return date.strftime('%Y/%m/%d')
 
-     # Function to get historical data and calculate price differences
 
-     @st.cache_data(show_spinner=False)
      def get_price_data(ticker, current_price, usd_to_eur_rate):
           start_date = datetime.now() - timedelta(days=39 * 365)
           end_date=datetime.now() 
@@ -7484,7 +7359,8 @@ if selected == "Stock Analysis Tool":
                st.session_state.price_data = get_price_data(ticker, st.session_state.current_price, usd_to_eur_rate)
 
           current_price = st.session_state.current_price
-          close_price, percentage_difference, converted_amount = st.session_state.price_data
+          close_price, percentage_difference,converted_amount= st.session_state.price_data
+          converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
           green_style = "color: green;"
           formatted_value = f"{current_price:.2f} $"
@@ -7519,12 +7395,11 @@ if selected == "Stock Analysis Tool":
 
       ########################
      # Function to format date without time
-     @st.cache_data(show_spinner=False)
+  
      def format_date(date):
           return date.strftime('%Y/%m/%d')
 
-          # Function to get the all-time high and 52-week low prices and their dates
-     @st.cache_data(show_spinner=False)
+    
      def get_all_time_high_and_low_date(ticker):
           stock_info = yf.Ticker(ticker)
           data = stock_info.history(period="max", actions=False)
@@ -7565,26 +7440,19 @@ if selected == "Stock Analysis Tool":
           fifty_two_week_low_date = st.session_state.fifty_two_week_low_date
           fifty_two_week_low = st.session_state.fifty_two_week_low
 
-          # Display the all-time high and 52-week low dates and prices
+         
           if all_time_high_date and all_time_high_price:
                formatted_high_date = format_date(all_time_high_date)
-               #st.write(f"All-Time High Date: {formatted_high_date}")
-               #st.write(f"All-Time High Price: ${all_time_high_price:.2f}")
-
+ 
           if fifty_two_week_low_date and fifty_two_week_low:
                formatted_low_date = format_date(fifty_two_week_low_date)
-               #st.write(f"52-Week Low Date: {formatted_low_date}")
-               #st.write(f"52-Week Low Price: ${fifty_two_week_low:.2f}")
 
-          # Additional analysis and data fetching as needed
           display_price_analysis()
 
      # Example function using session state values
      def display_price_analysis():
           st.write("")
-          #st.write(f"The stock price reached its all-time high on {format_date(st.session_state.all_time_high_date)} at ${st.session_state.all_time_high_price:.2f}.")
-          #st.write(f"The 52-week low was on {format_date(st.session_state.fifty_two_week_low_date)} at ${st.session_state.fifty_two_week_low:.2f}.")
-          # Additional analysis based on historical data
+     
 
      if __name__ == "__main__":
           main()
@@ -7592,104 +7460,9 @@ if selected == "Stock Analysis Tool":
 
      all_time_high_price,fifty_two_week_low,all_time_high_date,fifty_two_week_low_date=get_all_time_high_and_low_date(ticker)
 
- ######################################################   
-     # def calculate_stock_performance(periods):
-     #        # Define time periods
-     #      #performances = {}
+###########################################################################################################################
 
 
-          
-     #      periods = {
-     #           "1mo": "1 Month",
-     #           "3mo": "3 Months",
-     #           "6mo": "6 Months",
-     #           "1y": "1 Year",
-     #           "2y": "2 Years",
-     #           "5y": "5 Years",
-     #           "10y": "10 Years",
-     #           "max": "MAX"
-     #      }
-
-     #      # Get stock data
-     #      #stock = yf.Ticker(ticker)
-    
-     #      performances = []
-    
-     #      for period, label in periods.items():
-     #           try:
-     #                # Get historical data
-     #                hist = stock_info.history(period=period)
-                    
-     #                if len(hist) > 0:
-     #                     start_price = hist['Close'].iloc[0]
-     #                     end_price = hist['Close'].iloc[-1]
-                         
-     #                     # Calculate performance
-     #                     performance = ((end_price - start_price) / start_price) * 100
-     #                     performances.append({
-     #                          "Period": label,
-     #                          "Performance": f"{performance:.2f}%"
-     #                     })
-     #                else:
-     #                     performances.append({
-     #                          "Period": label,
-     #                          "Performance": "No data"
-     #                     })
-     #           except Exception as e:
-     #                performances.append({
-     #                     "Period": label,
-     #                     "Performance": f"Error: {str(e)}"
-     #                })
-          
-     #      # Create DataFrame
-     #      df = pd.DataFrame(performances)
-          
-     #      return df
-
-     #      # Example usage
-     # #ticker = ticker  # Replace with your desired stock ticker
-     # performance_df = calculate_stock_performance(ticker)
-
-
-     # #st.title(f"Stock Performance for {ticker}")
-     # #.dataframe(performance_df.style.highlight_max(axis=0, color='lightgreen'))
-     # #st.dataframe(performance_df, hide_index=True)
-     # st.dataframe(
-     # performance_df.style.highlight_max(axis=0, subset=['Performance'], color='lightgreen'),
-     # hide_index=True
-     # )
-
-
-     #####################################################################
-
-
-
-     #st.dataframe(performance_df, hide_index=True, width=1000)
-
-
-     # if button2:
-     #     start_date = datetime.now() - timedelta(days=5)
-     
-     # elif button3:
-     #     start_date = datetime.now() - timedelta(days=31)
-     # elif button4:
-     #     start_date = datetime(datetime.now().year, 1, 1)
-     # elif button5:
-     #     start_date = datetime.now() - timedelta(days=365)
-     # elif button6:
-     
-     #     start_date = datetime.now() - timedelta(days=5 * 365)
-     # elif button7:
-          
-     #     start_date = datetime(1984, 1, 1)
-     # #---------------..........................................
-     # #---------------...........................................
-
-
-
-     #start_date = datetime(1986, 1, 1)
-
-     #start_date_input = st.sidebar.date_input('Start Date', start_date)
      start_date_input=start_date
 
      if start_date_input is None:
@@ -7704,75 +7477,7 @@ if selected == "Stock Analysis Tool":
 
      data['Adj Close'] = data['Adj Close'].round(2)
 
-
-     # fig = px.line(data, x=data.index, y='Adj Close', labels={'x ': 'Date', 'Adj Close': 'Price ($)'})
-
-     # fig.update_layout(
-     # #title=f'{ticker} Price',
-     # xaxis_title='Date',
-     # yaxis_title='Price ',
-     # )
-
-    
-     # st.plotly_chart(fig,use_container_width=True,config={'displayModeBar': False})
-
-#############################################################################################################
-
-     # fig = go.Figure()
-
-     # # Add the area fill
-     # fig.add_trace(go.Scatter(
-     # x=data.index,
-     # y=data['Adj Close'],
-     # fill='tozeroy',
-     # fillcolor='rgba(0, 100, 80, 0.1)',  # Very light green, adjust as needed
-     # line_color='rgba(0, 0, 0, 0)',  # Transparent line for fill
-     # showlegend=False
-     # ))
-
-     # # Add the line trace
-     # fig.add_trace(go.Scatter(
-     # x=data.index,
-     # y=data['Adj Close'],
-     # line=dict(color='rgb(0, 100, 80)', width=2),  # Darker green line, adjust as needed
-     # name=name
-     
-     # ))
-
-     # # Update the layout
-     # fig.update_layout(
-     # xaxis_title='Date',
-     # yaxis_title='Price ($)',
-     # plot_bgcolor='white',  # White background
-     # paper_bgcolor='white',  # White surrounding area
-     # xaxis=dict(
-     #      showgrid=True,
-     #      gridcolor='lightgrey',
-     #      showline=True,
-     #      linecolor='lightgrey'
-     # ),
-     # yaxis=dict(
-     #      showgrid=True,
-     #      gridcolor='lightgrey',
-     #      showline=True,
-     #      linecolor='lightgrey',
-     #      tickprefix='$'  # Add dollar sign prefix to y-axis ticks
-     # ),
-     # margin=dict(l=40, r=40, t=40, b=40)
-     # )
-
-     # # Format hover text to include dollar sign
-     # fig.update_traces(
-     # hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
-     # )
-     # col1,col2 =st.columns(2)
-     # # Display the chart in Streamlit
-     
-     # st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-     
-    #############################################################################################################
-          
-          #st.plotly_chart(fig, config={'displayModeBar': False})
+############################################################################################################
      
      @st.cache_data(show_spinner=False)
      def calculate_stock_performance(ticker):
@@ -7803,17 +7508,18 @@ if selected == "Stock Analysis Tool":
                except Exception as e:
                     performances[label] = f"Error: {str(e)}"
           
+              # Store the performances in session state
+          st.session_state[f'{ticker}_performances'] = performances
           return performances
-     
-     #st.cache_data
-     #@st.fragment
+ 
      def get_detailed_data(ticker, period):
           stock_info = yf.Ticker(ticker)
           detailed_data = stock_info.history(period=period)
           return detailed_data
-     #@st.cache_data
+  
+
      def create_figure(detailed_data):
-           # Create the figure
+         
           fig = go.Figure()
 
           # Add the area fill
@@ -7872,25 +7578,21 @@ if selected == "Stock Analysis Tool":
      #@st.fragment
      #@st.cache_data(show_spinner=False)
      def display_stock_chart():
-          #global ticker
-               #ticker = ticker 
           if 'previous_ticker' not in st.session_state or st.session_state.previous_ticker != ticker:
-                    # Reset fragment state
                st.session_state.selected_period = None
                st.session_state.previous_ticker = ticker
 
           with st.container():
-               
-               performances = calculate_stock_performance(ticker)
+               if f'{ticker}_performances' not in st.session_state:
+                    performances = calculate_stock_performance(ticker)
+               else:
+                    performances = st.session_state[f'{ticker}_performances']
 
-               # Create options for the menu with performance data
                options = [f"{period} ({perf})" for period, perf in performances.items()]
-               
                
                if 'selected_period' not in st.session_state:
                     st.session_state.selected_period = "MAX"
-                    #st.markdown(f"**{period}**")
-                    #st.markdown(f"{performance}")
+
 
                selected = option_menu(
                     menu_title=None,  # required
@@ -7939,144 +7641,6 @@ if selected == "Stock Analysis Tool":
 
 ###############################################################################################
 
-
-     data2 = data
-     data2['% change'] = data['Adj Close'] / data['Adj Close'].shift(1)-1
-     data2.dropna(inplace = True)
-     #--------------------------------------
-
-     # Format the percentages in thousands
-     #data2['% change'] = data2['% change'] * 1000
-
-
-
-
-     #-------------------------------------------------------------------------------------------------------------------
-     # st.subheader("Candlestick Chart")
-     # candlestick_chart = go.Figure(data=[go.Candlestick(x=data.index, open=data['Open'], high=data['High'], low=data['Low'], close=data['Close'])])
-     # candlestick_chart.update_layout(title=f"{symbol} Candlestick Chart", xaxis_rangeslider_visible=False)
-     # st.plotly_chart(candlestick_chart, use_container_width=True)
-     #............................................................................
-
-
-     price_movement = data['Adj Close']
-     initial_price = price_movement.iloc[0]
-     final_price = price_movement.iloc[-1]
-     percentage_return = ((final_price - initial_price) / initial_price) * 100
-
-     #annual_return = data2['% change'].mean()*252*100
-     formatted_percentage_return = "{:,.2f}%".format(percentage_return)
-
-     aufrundung = round(percentage_return, 2)
-
-     color = "#2E8B57" if aufrundung >= 0 else "red"
-     # try:
-
-     #      if button2:
-     #           st.write(f'5 Days Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
-
-     #      elif button3:
-     #           st.write(f'1 Month Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
-
-     #      elif button4:
-     #           st.write(f'YTD Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
-
-     #      elif button5:
-     #           st.write(f'1 YR Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)
-
-     #      elif button6:
-     #           st.write(f'5 YR Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True)  
-
-     #      elif button7:
-     #           st.write(f'MAX Return: <span style="color:{color}">{formatted_percentage_return}</span>', unsafe_allow_html=True) 
-
-     # except NameError as ne:
-     #           st.write("")
-
-
-               
-
-     #..............................................................
-     #st.write(data2)
-     #...................................................................
-     # Create a session state variable to track authentication
-     # if 'authenticated' not in st.session_state:
-     #     st.session_state.authenticated = False
-
-     # correct_password = "123"
-     # correct_Username = "chinedu"
-
-     # # Prompt the user for a password
-     # #username = st.sidebar.text_input("Enter the username:")
-
-     # #password = st.sidebar.text_input("Enter the password:", type="password")
-
-     # # Define the ticker variable
-     # #ticker = ""
-     # ticker ='MSFT'
-
-     # if not st.session_state.authenticated:
-     #     # Only show the username and password input fields if not authenticated
-     #     password = st.sidebar.text_input("Enter the password:", type="password")
-     #     username = st.sidebar.text_input("Enter the username:")
-     # else:
-     #     # Hide the input fields if authenticated
-     #     password = username = " "
-
-     # # Define the ticker symbols and names outside of the password check
-     # ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()}
-
-     # if password == correct_password and username == correct_Username:
-     #     st.session_state.authenticated = True
-     #     st.sidebar.write("Authentication successful.")
-     #     selected_ticker = st.sidebar.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')
-
-     #     ticker = ticker_symbol_name.get(selected_ticker) 
-
-     #     name, symbol = selected_ticker.split(' : ')
-     #     st.write("{name}") 
-
-     #     start_date = datetime.now() - timedelta(days=1095)  # 3 years (approximately 1095 days)
-
-     #     start_date_input = st.sidebar.date_input('Start Date', start_date)
-
-     #     if start_date_input is None:
-     #         # Set the default start date to "3 years ago"
-     #         start_date_input = start_date
-
-     #     end_date = st.sidebar.date_input('End Date')
-
-     #     data = yf.download(ticker, start=start_date_input, end=end_date)
-     #     fig = px.line(data, x=data.index, y=round(data['Adj Close'], 2))
-     #     st.plotly_chart(fig) 
-
-     #     data2 = data
-     #     data2['% change'] = data['Adj Close'] / data['Adj Close'].shift(1) - 1
-     #     data2.dropna(inplace=True)
-     
-     #     # Calculate annual return
-     #     annual_return = data2['% change'].mean() * 252 * 100
-     #     aufrundung = round(annual_return, 2)
-     
-     #     #st.write(f"Annual Return: {aufrundung}%")
-     # else:
-     #     st.sidebar.error("Authentication failed. Please enter the correct username and password.")
-
-
-     # Display some statistics
-     #st.write(f"Start Price: {detailed_data['Close'].iloc[0]:.2f}")
-     #st.write(f"End Price: {detailed_data['Close'].iloc[-1]:.2f}")
-     #st.write(f"Highest Price: {detailed_data['High'].max():.2f}")
-     #st.write(f"Lowest Price: {detailed_data['Low'].min():.2f}")
-
-
-
-
-
-
-#if selected == "Stock Analysis Tool":
-
-
      #..............................................Stock beta......................................................
 
      # Define the stock symbol and the market index symbol (e.g., S&P 500)
@@ -8109,66 +7673,9 @@ if selected == "Stock Analysis Tool":
           #print(f"Beta of {ticker} could not be calculated. Using default value: {beta:.2f}")
 
 
+############################################################################################################
 
-
-     #......................................Disclaimer.......................................
-
-
-     #------------------------currency conversin-----------------------------------------------
-     # try:
-     #      base_currency = 'USD'
-     #      target_currency ='EUR'
-     #      amount = current_price 
-     #      convert = requests.get(f"https://api.frankfurter.app/latest?amount={amount}&from={base_currency}&to={target_currency}")
-     #      data10 = convert.json()
-     #      # Extract the converted amount from the response
-     #      converted_amount = data10['rates'][target_currency]
-     #      #st.write(f"{current_price} USD is approximately {converted_amount:.2f} EUR")
-
-     # except Exception as e:
-     #      st.warning("Error occurred. Using alternative conversion method.")
-          
-     #      c = CurrencyRates()
-     #      converted_amount = c.convert("USD", "EUR", current_price)
-     #      print(f"{current_price} USD is approximately {converted_amount:.2f} EUR")
-
-
-
-     # #print(f"{amount} USD is approximately {amount_euro:.2f} EUR")
-
-     #      # Display the result
-     #      #print(f"{amount} {base_currency} is equal to {converted_amount} {target_currency}")
-     # # .   ....................................................................................   
-     # formatted_value = f"{current_price:.2f} "
-     # formatted_value2 = f" {converted_amount:.2f} "
-     # #after_hours_price_ = f" {after_hours_price:.2f} "
-
-     # # Calculate the percentage difference
-     # #percentage_difference = ((after_hours_price - current_price) / current_price) * 100
-
-     # # Determine the arrow color and direction
-     # #arrow_color = 'green' if percentage_difference >= 0 else 'red'
-     # #arrow_direction = '▲' if percentage_difference >= 0 else '▼'
-
-     # #st.write('Price:',formatted_value,'oder', formatted_value2)
-
-     # # Display the values with arrows
-     # #st.write(f'<span style="color:#2E8B57">&dollar; {formatted_value}</span>',unsafe_allow_html=True)
-
-     # #st.write(f'<span style="color: #2E8B57">&euro; {formatted_value2}</span>', unsafe_allow_html=True)
-     # #st.write("Current Price:",f'<span style="color:#2E8B57">&dollar; {formatted_value}  </span> <span style="color:#2E8B57">&euro; {formatted_value2}</span>', unsafe_allow_html=True)
-
-     # col2,col3, col4 = st.columns(3)
-     # with col2:
-     #     #price_usd = "${:.2f}".format(formatted_value)
-     #     #price_euro = "&euro; {:.2f}".format(formatted_value2)
-     #     st.metric("Current Price:", formatted_value, "USD")
-     #     st.metric("", formatted_value2, "EUR")
-
-     # with col3:
-     #     st.metric("ATH High", f"${all_time_high_price:.2f}")
-     # with col4:
-     #     st.metric("52-Week Low", f"${fifty_two_week_low:.2f}")
+   
      # Define the correct username and password
      # Define the correct username and password
 
@@ -8208,366 +7715,1459 @@ if selected == "Stock Analysis Tool":
      # 	c.execute('SELECT * FROM userstable')
      # 	data = c.fetchall()
      # 	return data
-
+############################################################################################################
 
      Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,Dividend_Discount_Model,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","Dividend Discount Model","Charts","Key Ratios","Calculator","Top 10 News"])
   
-     
-          #st.header('Price / Total return')
-
-
-     
-          #st.write(data['info'])
-          #color = st.markdown('<svg height="100" width="100"><circle cx="50" cy="50" r="15" fill="red" /></svg>', unsafe_allow_html=True)
-     # Round to 2 decimal places
-     #st.write(annual_return)
-
-
-     #------------------------------------------------------------
-     #..........................................................
 
      with st.container():
           use_container_width=True
           with Metric:  
-     
 
+               #@st.cache_data(show_spinner=False)
+               def get_market_cap(stock_info, ticker):
                #stock_info = yf.Ticker(ticker)
-               try:
-                    # Get market capitalization
-                    Marketcap = stock_info.info['marketCap']
-                    Marketcap_in_million=Marketcap
-                    Marketcap =Marketcap /1000000000
-                    #Marketcap_in_Billion = "{:.2f}B".format(Marketcap)            
-                    Marketcap_in_Billion = "{:.2f}T".format(Marketcap / 1000) if abs(Marketcap) >= 1000 else "{:,.1f}B".format(Marketcap / 1)
-     
-                    #print("10-year Treasury yield:", treasury_yield)
 
-               except Exception as e:
-                    st.write("     ")
-                    #print(f"yfinance: HTTP Error: {e}")
-                    #print("     ")
-
-               #except (KeyError, TypeError):
-               #    st.write("     ")
-                    #print("Yfinace: Error: No data found for Marketcap.")
-                    #print("     ")
-
-               try:
-               
-                    fundamental_df = quote.fundamental_df
-                    market_cap_original = quote.fundamental_df.at[0, "Market Cap"] 
-                    #print("market_cap",market_cap_original)
+                    if f'{ticker}_market_cap' in st.session_state:
+                         return st.session_state[f'{ticker}_market_cap'], st.session_state[f'{ticker}_market_cap_formatted']
 
                     try:
-                         Marketcap = float(market_cap_original.replace('B', ''))  
-                         #Marketcap = float(market_cap.replace('B', '').replace('M', '')) 
-                         # Remove 'B' and convert to float
-
-                         #Marketcap =Marketcap /1000000000
-                         Marketcap_in_Billion = "{:.2f}T".format(Marketcap / 1000) if abs(Marketcap) >= 1000 else "{:,.2f}B".format(Marketcap / 1)
-                         
+                         # Get market capitalization
+                         Marketcap = stock_info.info['marketCap']
+                         Marketcap_in_million=Marketcap
+                         Marketcap =Marketcap /1000000000
+                         Marketcap_in_Billion = (
+                              "{:.2f}T".format(Marketcap / 1000) if abs(Marketcap) >= 1000 else "{:,.2f}B".format(Marketcap / 1)
+                         )
+                         st.session_state[f'{ticker}_market_cap'] = Marketcap
+                         st.session_state[f'{ticker}_market_cap_formatted'] = Marketcap_in_Billion
+                         return Marketcap, Marketcap_in_Billion
+                    
                     except Exception as e:
-                         Marketcap_in_Billion=market_cap_original   
+
+                         try:
                          
-               except Exception as e:
-                    # Handle the specific exceptions here
-                    Forward_PE="NA"   
-                    RSI="N/A"
-                    #print("     ")
-                    #print(f"Pyfinance: An error occurred: {e}")
-                    #print("     ")
+                              fundamental_df = quote.fundamental_df
+                              market_cap_original = quote.fundamental_df.at[0, "Market Cap"] 
+                              #print("market_cap",market_cap_original)
 
-               if 'market_cap' not in locals():  
-                              #print("Error: No data found Marketcap.")
-                    Marketcap = current_price * shares_eop_ttm
+                              try:
+                                   Marketcap = float(market_cap_original.replace('B', ''))  
+                                   #Marketcap = float(market_cap.replace('B', '').replace('M', '')) 
+                                   # Remove 'B' and convert to float
 
-                    Marketcap_in_Billion = "{:.2f}T".format(Marketcap / 1000) if abs(Marketcap) >= 1000 else "{:,.2f}B".format(Marketcap / 1)
+                                   #Marketcap =Marketcap /1000000000
+                                   Marketcap_in_Billion = (
+                                        "{:.2f}T".format(Marketcap / 1000) if abs(Marketcap) >= 1000 else "{:,.2f}B".format(Marketcap / 1)
+                                   )
 
-                    #Marketcap_in_Billion = "{:.2f}B".format(current_price * shares_eop_ttm) 
+                                   st.session_state[f'{ticker}_market_cap'] = Marketcap
+                                   st.session_state[f'{ticker}_market_cap_formatted'] = Marketcap_in_Billion
+                                   return Marketcap, Marketcap_in_Billion
+                              
+                              except Exception as e:
+                                   Marketcap_in_Billion=market_cap_original
+                                   st.session_state[f'{ticker}_market_cap'] = None
+                                   st.session_state[f'{ticker}_market_cap_formatted'] = Marketcap_in_Billion
+                                   return None, Marketcap_in_Billion   
+                                   
+                         except Exception as e:
+                              # Handle the specific exceptions here
+                              Forward_PE="NA"   
+                              RSI="N/A"
+                              #print("     ")
+                              #print(f"Pyfinance: An error occurred: {e}")
+                              #print("     ")
+
+                              if 'market_cap' not in locals():  
+                                             #print("Error: No data found Marketcap.")
+                                   Marketcap = current_price * shares_eop_ttm
+
+                                   Marketcap_in_Billion = (
+                                        "{:.2f}T".format(Marketcap / 1000) if abs(Marketcap) >= 1000 else "{:,.2f}B".format(Marketcap / 1)
+                                   )        
+
+                                   st.session_state[f'{ticker}_market_cap'] = Marketcap
+                                   st.session_state[f'{ticker}_market_cap_formatted'] = Marketcap_in_Billion
+                                   return Marketcap, Marketcap_in_Billion
+                              
+                              else:
+                                   st.write("Insufficient data to calculate market cap.")
+                                   return None, "N/A"         
+                                                                      
+
+                              #Marketcap_in_Billion = "{:.2f}B".format(current_price * shares_eop_ttm) 
+                              
+               Marketcap, Marketcap_in_Billion = get_market_cap(stock_info, ticker)
+               Marketcap_in_million =Marketcap
+  ###################################################################################################             
+
+               def calculate_eps_growth(annual_data,quarterly_data, ticker):
+
+                    if f'{ticker}_eps_last' in st.session_state:
+                         return (st.session_state[f'{ticker}_eps_last'],
+                                   st.session_state[f'{ticker}_eps_growth_3yrs'],
+                                   st.session_state[f'{ticker}_eps_growth_5yrs'],
+                                   st.session_state[f'{ticker}_eps_basic_annual_5_unpacked'],
+                                   st.session_state[f'{ticker}_eps_growth_10yrs'],
+                                   st.session_state[f'{ticker}_eps_basic_annual_10_unpacked'],
+                                   st.session_state[f'{ticker}_eps_diluted_annual_10_unpacked'],
+                                   st.session_state[f'{ticker}_Eps_diluted_quarterly_10_unpacked'],
+                                   st.session_state[f'{ticker}_eps_basic_quarterly_10_unpacked'])
+                    
+ 
+                    EPS_last = annual_data['eps_basic'][-1:]
+                    EPS_last_average  = ((sum(EPS_last) / len(EPS_last))) 
+                    #EPS_last_average_one=EPS_last_average
+
+                    EPS_growth_3years = annual_data['eps_diluted_growth'][-3:]
+                    EPS_growth_3years = sum(EPS_growth_3years)/len(EPS_growth_3years)
+                    EPS_growth_3years =EPS_growth_3years*100
+
+                    EPS_growth_5yrs = annual_data['eps_diluted_growth'][-5:]
+                    EPS_growth_5yrs = (sum(EPS_growth_5yrs)/len(EPS_growth_5yrs))*100
+                   
+
+                    #eps_basic_annual_5_unpacked = annual_data['eps_basic'][-5:]
+                    eps_basic_annual_5_unpacked = annual_data['eps_basic'][-5:] 
+
+                    EPS_growth_10yrs= annual_data['eps_diluted_growth'][-10:]
+
+                    eps_basic_annual_10_unpacked = annual_data['eps_basic'][-10:]
+
+                    eps_diluted_annual_10_unpacked = annual_data['eps_diluted'][-10:]
+
+                    Eps_diluted_quarterly_10_unpacked = quarterly_data['eps_diluted'][-10:]
+
+                    eps_basic_quarterly_10_unpacked =quarterly_data['eps_basic'][-10:] 
+
+
+
+
+                        # Store results in session state
+                    st.session_state[f'{ticker}_eps_last'] = EPS_last_average
+                    st.session_state[f'{ticker}_eps_growth_3yrs'] = EPS_growth_3years
+                    st.session_state[f'{ticker}_eps_growth_5yrs'] = EPS_growth_5yrs
+                    st.session_state[f'{ticker}_eps_basic_annual_5_unpacked'] = eps_basic_annual_5_unpacked
+                    st.session_state[f'{ticker}_eps_growth_10yrs'] = EPS_growth_10yrs
+                    st.session_state[f'{ticker}_eps_basic_annual_10_unpacked'] = eps_basic_annual_10_unpacked
+                    st.session_state[f'{ticker}_eps_diluted_annual_10_unpacked'] = eps_diluted_annual_10_unpacked
+                    st.session_state[f'{ticker}_Eps_diluted_quarterly_10_unpacked'] = Eps_diluted_quarterly_10_unpacked
+                    st.session_state[f'{ticker}_eps_basic_quarterly_10_unpacked'] = eps_basic_quarterly_10_unpacked
+                   
+
+                    return (EPS_last_average, EPS_growth_3years, EPS_growth_5yrs, eps_basic_annual_5_unpacked,
+                            EPS_growth_10yrs,eps_basic_annual_10_unpacked,
+                            eps_diluted_annual_10_unpacked,Eps_diluted_quarterly_10_unpacked,eps_basic_quarterly_10_unpacked)
+
+
+               (EPS_last_average, EPS_growth_3years,EPS_growth_5yrs,eps_basic_annual_5_unpacked,EPS_growth_10yrs, eps_basic_annual_10_unpacked,
+                eps_diluted_annual_10_unpacked,Eps_diluted_quarterly_10_unpacked,eps_basic_quarterly_10_unpacked
+                   ) = calculate_eps_growth(annual_data,quarterly_data, ticker)
+  ###################################################################################################             
+
+               EPS_growth_10yrs = (sum(EPS_growth_10yrs)/len(EPS_growth_10yrs)*100)
+               Average_eps_basic_annual_five = sum(eps_basic_annual_5_unpacked)/len(eps_basic_annual_5_unpacked) 
+
+              
+  ###################################################################################################             
+               def calculate_fcf_averages(annual_data,quarterly_data, ticker):
+                    if f'{ticker}_fcf_last' in st.session_state:
+                         return (st.session_state[f'{ticker}_fcf_last'],
+                              #st.session_state[f'{ticker}_fcf_five_years'],
+                              st.session_state[f'{ticker}_fcf_ten_years'],
+                              st.session_state[f'{ticker}_FCF_annual_five_unpacked'],
+                              st.session_state[f'{ticker}_fcf_ten_years_unpacked'],
+
+                              st.session_state[f'{ticker}_FCF_quarter_10_unpacked'],
+
+                              st.session_state[f'{ticker}_fcf_growth_annual_3_unpacked'],
+                              st.session_state[f'{ticker}_fcf_growth_annual_5_unpacked'],
+                              st.session_state[f'{ticker}_fcf_growth_annual_10_unpacked'])
+
+                    FCF_annual1_unpacked =annual_data['fcf'][-1:]
+
+
+
+                    FCF_annual_ten =annual_data['fcf'][-10:]
+                    rounded_fcf_Annual_ten = float((sum(FCF_annual_ten) / len(FCF_annual_ten)))
+
+                    FCF_annual_five_unpacked =annual_data['fcf'][-5:]
+
+                    FCF_annual_ten_unpacked =annual_data['fcf'][-10:]
+
+                    FCF_quarter_10_unpacked =quarterly_data['fcf'][-10:]
+
+                    fcf_growth_annual_3_unpacked =annual_data['fcf_growth'][-3:]
+
+                    fcf_growth_annual_5_unpacked =annual_data['fcf_growth'][-5:]
+                    fcf_growth_annual_10_unpacked =annual_data['fcf_growth'][-10:]
+
+
+                    st.session_state[f'{ticker}_fcf_last'] = FCF_annual1_unpacked
+                    st.session_state[f'{ticker}_fcf_ten_years'] = rounded_fcf_Annual_ten
+                    st.session_state[f'{ticker}_FCF_annual_five_unpacked'] = FCF_annual_five_unpacked
+                    st.session_state[f'{ticker}_fcf_ten_years_unpacked'] = FCF_annual_ten_unpacked
+
+                    st.session_state[f'{ticker}_FCF_quarter_10_unpacked'] = FCF_quarter_10_unpacked
+
+                    st.session_state[f'{ticker}_fcf_growth_annual_3_unpacked'] = fcf_growth_annual_3_unpacked
+                    st.session_state[f'{ticker}_fcf_growth_annual_5_unpacked'] = fcf_growth_annual_5_unpacked
+                    st.session_state[f'{ticker}_fcf_growth_annual_10_unpacked'] = fcf_growth_annual_10_unpacked
+
+                    return FCF_annual1_unpacked, rounded_fcf_Annual_ten,FCF_annual_five_unpacked,FCF_annual_ten_unpacked,FCF_quarter_10_unpacked,fcf_growth_annual_3_unpacked,fcf_growth_annual_5_unpacked,fcf_growth_annual_10_unpacked
+
+                    # Assuming `annual_data` and `ticker` are defined elsewhere
+               FCF_annual1_unpacked, rounded_fcf_Annual_ten,FCF_annual_five_unpacked,FCF_annual_ten_unpacked,FCF_quarter_10_unpacked,fcf_growth_annual_3_unpacked,fcf_growth_annual_5_unpacked,fcf_growth_annual_10_unpacked = calculate_fcf_averages(annual_data,quarterly_data, ticker)
+###################################################################################################
+               rounded_fcf_Annual_five = (sum(FCF_annual_five_unpacked) / len(FCF_annual_five_unpacked))
+               Average_fcf_growth_3years =  "{:.2f}%".format(((sum(fcf_growth_annual_3_unpacked) / len(fcf_growth_annual_3_unpacked)))*100)
+
+               average_fcf_Annual_one = ((sum(FCF_annual1_unpacked) / len(FCF_annual1_unpacked)))/1000000000
+               rounded_fcf_Annual_one = "{:.2f}B".format(average_fcf_Annual_one)
+###################################################################################################
+
+               def calculate_roic_averages(annual_data, ticker):
+                    if f'{ticker}_roic_last' in st.session_state:
+                         return (st.session_state[f'{ticker}_roic_last'],
+                              st.session_state[f'{ticker}_ROIC_annual_5_unpacked'],
+                              st.session_state[f'{ticker}_ROIC_annual_10_unpacked'],
+                              st.session_state[f'{ticker}_roic_three_years'],
+                              st.session_state[f'{ticker}_ROE_annual_5_unpacked'],
+                              st.session_state[f'{ticker}_ROE_annual_10_unpacked'])
+
+
+                    ROIC_annual_one = "{:.2f}%".format(annual_data['roic'][-1]*100)
+
+                    ROIC_annual_5_unpacked =annual_data['roic'][-5:]
+                    
+                    ROIC_annual_10_unpacked =annual_data['roic'][-10:]
+
+                    ROIC_annual_3years = annual_data['roic'][-3:]
+                    ROIC_annual_3years=sum(ROIC_annual_3years)/len(ROIC_annual_3years)
+                    ROIC_annual_3years = "{:.2f}%".format(ROIC_annual_3years*100)
+
+                    ROE_annual_5_unpacked =annual_data['roic'][-5:]
+                    ROE_annual_10_unpacked =annual_data['roic'][-10:]
+
+                    st.session_state[f'{ticker}_roic_last'] = ROIC_annual_one
+                    st.session_state[f'{ticker}_ROIC_annual_5_unpacked'] = ROIC_annual_5_unpacked
+                    st.session_state[f'{ticker}_ROIC_annual_10_unpacked'] = ROIC_annual_10_unpacked
+                    st.session_state[f'{ticker}_roic_three_years'] = ROIC_annual_3years
+                    st.session_state[f'{ticker}_ROE_annual_5_unpacked'] = ROE_annual_5_unpacked
+                    st.session_state[f'{ticker}_ROE_annual_10_unpacked'] = ROE_annual_10_unpacked
+
+                    return ROIC_annual_one,ROIC_annual_5_unpacked,ROIC_annual_10_unpacked, ROIC_annual_3years,ROE_annual_5_unpacked,ROE_annual_10_unpacked
+
+           
+               ROIC_annual_one, ROIC_annual_5_unpacked,ROIC_annual_10_unpacked, ROIC_annual_3years,ROE_annual_5_unpacked,ROE_annual_10_unpacked = calculate_roic_averages(annual_data, ticker)
+               
+               Average_ROIC_funf = ((sum(ROIC_annual_5_unpacked) / len(ROIC_annual_5_unpacked))*100)
+###################################################################################################
+               def calculate_net_income_averages(annual_data, quarterly_data,ticker):
+                    # Check if the results are already in session state
+                    if f'{ticker}_net_income_last' in st.session_state:
+                         return (st.session_state[f'{ticker}_net_income_last'],
+                                   st.session_state[f'{ticker}_net_income_annual_funf_unpacked'],
+                                   st.session_state[f'{ticker}_net_income_annual_10_unpacked'],
+                                   st.session_state[f'{ticker}_net_income_five_years'],
+                                   st.session_state[f'{ticker}_net_income_quarter_10_unpacked'],
+
+                                   st.session_state[f'{ticker}_price_to_fcf_annual21_unpacked'],
+                                   st.session_state[f'{ticker}_date_annual_20yrs'],
+                                   st.session_state[f'{ticker}_Price_TBV_quarter10_unpacked'],
+                                   st.session_state[f'{ticker}_pe_annual_5_unpacked'],
+                                   st.session_state[f'{ticker}_pe_annual_10_unpacked'],
+
+                                   st.session_state[f'{ticker}_TBVPS_quater1_unpacked'],
+                                   st.session_state[f'{ticker}_BVPS_quater1_unpacked'],
+
+                                   st.session_state[f'{ticker}_AverageEndPrice_annual5_unpacked'],
+                                   st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_5_unpacked'])
+
+                    net_income_annual_one = annual_data['net_income'][-1:]
+                    round_net_income_annual_one =(sum(net_income_annual_one) / len(net_income_annual_one))
+
+
+                    net_income_annual_funf_unpacked = annual_data['net_income'][-5:] 
+
+                    net_income_annual_10_unpacked =annual_data['net_income'][-10:]
+
+
+                    net_income_annual_funf = annual_data['net_income'][-5:] 
+                    Average_net_income_annual_funf = sum(net_income_annual_funf) / len(net_income_annual_funf)
+
+                    net_income_quarter_10_unpacked = quarterly_data['net_income'][-10:] 
+
+                    price_to_fcf_annual21_unpacked=annual_data['price_to_fcf'][-21:]  
+                    date_annual_20yrs = annual_data['period_end_date'][-21:] 
+                    Price_TBV_quarter10_unpacked = quarterly_data['price_to_tangible_book'][-10:]
+
+                    pe_annual_5_unpacked  =annual_data['price_to_earnings'][-5:]
+                    pe_annual_10_unpacked  =annual_data['price_to_earnings'][-10:]
+
+                    TBVPS_quater1_unpacked = quarterly_data['tangible_book_per_share'][-1:]
+                    BVPS_quater1_unpacked = quarterly_data['book_value_per_share'][-1:]
+
+                    AverageEndPrice_annual5_unpacked = annual_data['period_end_price'][-5:]
+                    Net_Operating_CashFlow_annual_5_unpacked = annual_data['cf_cfo'][-5:]
+
+                    st.session_state[f'{ticker}_net_income_last'] = round_net_income_annual_one
+                    st.session_state[f'{ticker}_net_income_annual_funf_unpacked'] = net_income_annual_funf_unpacked
+                    st.session_state[f'{ticker}_net_income_annual_10_unpacked'] = net_income_annual_10_unpacked
+                    st.session_state[f'{ticker}_net_income_five_years'] = Average_net_income_annual_funf
+                    st.session_state[f'{ticker}_net_income_quarter_10_unpacked'] =net_income_quarter_10_unpacked
+                    st.session_state[f'{ticker}_price_to_fcf_annual21_unpacked'] = price_to_fcf_annual21_unpacked
+                    st.session_state[f'{ticker}_date_annual_20yrs'] = date_annual_20yrs
+                    st.session_state[f'{ticker}_Price_TBV_quarter10_unpacked'] = Price_TBV_quarter10_unpacked
+                    st.session_state[f'{ticker}_pe_annual_5_unpacked']= pe_annual_5_unpacked
+                    st.session_state[f'{ticker}_pe_annual_10_unpacked']= pe_annual_10_unpacked
+
+                    st.session_state[f'{ticker}_TBVPS_quater1_unpacked']= TBVPS_quater1_unpacked
+                    st.session_state[f'{ticker}_BVPS_quater1_unpacked']= BVPS_quater1_unpacked
+
+                    st.session_state[f'{ticker}_AverageEndPrice_annual5_unpacked']= AverageEndPrice_annual5_unpacked
+                    st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_5_unpacked']= Net_Operating_CashFlow_annual_5_unpacked
+
+                    
+
+                    return (round_net_income_annual_one,net_income_annual_funf_unpacked, net_income_annual_10_unpacked,
+                            Average_net_income_annual_funf,net_income_quarter_10_unpacked,
+                            price_to_fcf_annual21_unpacked,date_annual_20yrs,Price_TBV_quarter10_unpacked,pe_annual_5_unpacked,
+                              pe_annual_10_unpacked, 
+                              TBVPS_quater1_unpacked,
+                              BVPS_quater1_unpacked,
+                              AverageEndPrice_annual5_unpacked,
+                              Net_Operating_CashFlow_annual_5_unpacked
+                              )
+
+               (round_net_income_annual_one, net_income_annual_funf_unpacked,net_income_annual_10_unpacked,
+                Average_net_income_annual_funf,net_income_quarter_10_unpacked,price_to_fcf_annual21_unpacked,date_annual_20yrs,
+                Price_TBV_quarter10_unpacked,pe_annual_5_unpacked,
+                    pe_annual_10_unpacked, 
+                    TBVPS_quater1_unpacked,
+                    BVPS_quater1_unpacked,
+                    AverageEndPrice_annual5_unpacked,
+                    Net_Operating_CashFlow_annual_5_unpacked
+                    ) = calculate_net_income_averages(annual_data,quarterly_data, ticker)
+
+###################################################################################################
+
+
+
+               Average_net_income_annual_funf_Billion_Million = (
+               "{:.2f}B".format(Average_net_income_annual_funf / 1e9) 
+               if Average_net_income_annual_funf >= 1e9
+               else "{:,.1f}M".format(Average_net_income_annual_funf / 1e6)
+
+               )               
+
+               Average_net_income_annual_one_Bill_Milli ="{:.2f}B".format(round_net_income_annual_one/ 1000000000) if(round_net_income_annual_one) >= 1000000000 else "{:,.1f}M".format(round_net_income_annual_one / 1000000)
+
+###################################################################################################
+
+               def calculate_revenue_and_growth(annual_data,quarterly_data, ticker):
+               # Check if the results are already in session state
+                    if f'{ticker}_revenue_last' in st.session_state:
+                         return (st.session_state[f'{ticker}_revenue_last'],
+                                   st.session_state[f'{ticker}_revenue_5years'],
+                                   st.session_state[f'{ticker}_revenue_10years'],
+                                   st.session_state[f'{ticker}_revenue_quarter_10'],
+                                   st.session_state[f'{ticker}_revenue_10years_growth'],
+                                   st.session_state[f'{ticker}_revenue_growth_1year'],
+                                   st.session_state[f'{ticker}_revenue_growth_3years'],
+                                   st.session_state[f'{ticker}_revenue_growth_5years'],
+                                   st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'],
+                                   st.session_state[f'{ticker}_revenue_growth_10years'],
+
+                                   st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked'],
+                                   st.session_state[f'{ticker}_shares_basic_annual_10_unpacked'],
+                                   st.session_state[f'{ticker}_shares_diluted_quarter_10_unpacked'],
+                                   st.session_state[f'{ticker}_shares_basic_quarterly_10_unpacked'])
+                    
+                         
+                    revenue_annual_ttm = annual_data['revenue'][-1:] 
+                    average_revenue_annual_ttm = ((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000)
+
+                    Revenue_annual_5_unpacked = annual_data['revenue'][-5:] 
+                    
+
+                    Revenue_annual_10_unpacked  = annual_data['revenue'][-10:] 
+
+                    Revenue_quarter_10_unpacked  = quarterly_data['revenue'][-10:] 
+
+                    Revenue_growth_10_unpacked = annual_data['revenue_growth'][-10:]
+
+                    Revenue_growth_1year = annual_data['revenue_growth'][-1:]
+                    Revenue_growth_1year=sum(Revenue_growth_1year)/len(Revenue_growth_1year)
+                    Revenue_growth_1year = (Revenue_growth_1year*100)
+
+                    Revenue_growth_3years = annual_data['revenue_growth'][-3:]
+                    Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
+                    Revenue_growth_3years = (Revenue_growth_3years*100)
+
+                    Revenue_growth_5years = annual_data['revenue_growth'][-5:]
+                    Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
+                    Revenue_growth_5years = (Revenue_growth_5years*100)
+
+
+                    Revenue_growth_10quarter_unpacked= quarterly_data['revenue_growth'][-10:]
+
+                    Revenue_growth_10years = annual_data['revenue_growth'][-10:]
+                    Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
+                    Revenue_growth_10years = (Revenue_growth_10years*100)
+
+                    shares_diluted_annual_10_unpacked =annual_data['shares_diluted'][-10:]
+                    shares_basic_annual_10_unpacked=annual_data['shares_basic'][-10:]
+                    shares_diluted_quarter_10_unpacked =quarterly_data['shares_diluted'][-10:]
+                    shares_basic_quarterly_10_unpacked =quarterly_data['shares_basic'][-10:]
+
+
+                    # Store results in session state
+                    st.session_state[f'{ticker}_revenue_last'] = average_revenue_annual_ttm
+                    st.session_state[f'{ticker}_revenue_5years'] = Revenue_annual_5_unpacked
+                    st.session_state[f'{ticker}_revenue_10years'] = Revenue_annual_10_unpacked
+                    st.session_state[f'{ticker}_revenue_quarter_10'] = Revenue_quarter_10_unpacked
+
+                    
+                    st.session_state[f'{ticker}_revenue_10years_growth'] = Revenue_growth_10_unpacked
+                    st.session_state[f'{ticker}_revenue_growth_1year'] = Revenue_growth_1year
+                    st.session_state[f'{ticker}_revenue_growth_3years'] = Revenue_growth_3years
+                    st.session_state[f'{ticker}_revenue_growth_5years'] = Revenue_growth_5years
+                    st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'] = Revenue_growth_10quarter_unpacked
+                    st.session_state[f'{ticker}_revenue_growth_10years'] = Revenue_growth_10years
+
+                    st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked']=shares_diluted_annual_10_unpacked
+                    st.session_state[f'{ticker}_shares_basic_annual_10_unpacked']=shares_basic_annual_10_unpacked
+                    st.session_state[f'{ticker}_shares_diluted_quarter_10_unpacked'] =shares_diluted_quarter_10_unpacked
+                    st.session_state[f'{ticker}_shares_basic_quarterly_10_unpacked']=shares_basic_quarterly_10_unpacked
+
+
+                    return (average_revenue_annual_ttm,
+                              Revenue_annual_5_unpacked,
+                              Revenue_annual_10_unpacked,Revenue_quarter_10_unpacked,
+                              Revenue_growth_10_unpacked,
+                              Revenue_growth_1year,
+                              Revenue_growth_3years,
+                              Revenue_growth_5years,
+                              Revenue_growth_10quarter_unpacked,
+                              Revenue_growth_10years,shares_diluted_annual_10_unpacked,
+                              shares_basic_annual_10_unpacked,shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked
+)
+
+               # Assuming `annual_data` and `ticker` are defined elsewhere
+               (average_revenue_annual_ttm,
+               Revenue_annual_5_unpacked,
+               Revenue_annual_10_unpacked,Revenue_quarter_10_unpacked,
+               Revenue_growth_10_unpacked,
+               Revenue_growth_1year,
+               Revenue_growth_3years,
+               Revenue_growth_5years,Revenue_growth_10quarter_unpacked,Revenue_growth_10years,
+               shares_diluted_annual_10_unpacked,shares_basic_annual_10_unpacked,shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked
+               ) = calculate_revenue_and_growth(annual_data,quarterly_data, ticker)
+
+###################################################################################################
+               def calculate_dividend_cagr(annual_data, quarterly_data, ticker):
+                    if f'{ticker}_dividend_cagr_10' in st.session_state:
+                         return (st.session_state[f'{ticker}_dividend_cagr_10'],
+                              st.session_state[f'{ticker}_dividend_cagr_10_quarter'],
+                              st.session_state[f'{ticker}_Divdend_per_share_ttm'],
+                              st.session_state[f'{ticker}_Dividend_per_share_annual10_unpacked'],
+                              st.session_state[f'{ticker}_Dividend_per_share_quarter14_unpacked'],
+                              st.session_state[f'{ticker}_Divdends_paid_annual_5_unpacked'])
+
+                    Dividend_per_share_cagr_10 = annual_data['dividends_per_share_cagr_10'][-1:]  
+                    Dividend_per_share_cagr_10 = sum(Dividend_per_share_cagr_10)/len(Dividend_per_share_cagr_10)
+                    Dividend_per_share_cagr_10= round((Dividend_per_share_cagr_10*100),2)
+
+                    Dividend_per_share_cagr_10_quarter = quarterly_data['dividends_per_share_cagr_10'][-1:]  
+                    Dividend_per_share_cagr_10_quarter = sum(Dividend_per_share_cagr_10_quarter)/len(Dividend_per_share_cagr_10_quarter)
+                    Dividend_per_share_cagr_10_quarter= round((Dividend_per_share_cagr_10_quarter*100),2)
+
+                    Divdend_per_share_ttm =Financial_data['ttm']['dividends']
+
+                    Dividend_per_share_annual10_unpacked = annual_data['dividends'][-10:]
+
+                    Dividend_per_share_quarter14_unpacked = quarterly_data['dividends'][-14:] 
+
+                    Divdends_paid_annual_5_unpacked =annual_data['dividends'][-5:]
+
+                    
+
+                    # Store results in session state
+                    st.session_state[f'{ticker}_dividend_cagr_10'] = Dividend_per_share_cagr_10
+                    st.session_state[f'{ticker}_dividend_cagr_10_quarter'] = Dividend_per_share_cagr_10_quarter
+                    st.session_state[f'{ticker}_Divdend_per_share_ttm'] = Divdend_per_share_ttm
+                    st.session_state[f'{ticker}_Dividend_per_share_annual10_unpacked'] = Dividend_per_share_annual10_unpacked
+                    st.session_state[f'{ticker}_Dividend_per_share_quarter14_unpacked'] = Dividend_per_share_quarter14_unpacked
+                    st.session_state[f'{ticker}_Divdends_paid_annual_5_unpacked'] = Divdends_paid_annual_5_unpacked
+
+                    return (Dividend_per_share_cagr_10, Dividend_per_share_cagr_10_quarter,
+                     Divdend_per_share_ttm,Dividend_per_share_annual10_unpacked,Dividend_per_share_quarter14_unpacked,Divdends_paid_annual_5_unpacked)
+
+               (Dividend_per_share_cagr_10, Dividend_per_share_cagr_10_quarter,Divdend_per_share_ttm,
+                Dividend_per_share_annual10_unpacked,Dividend_per_share_quarter14_unpacked,Divdends_paid_annual_5_unpacked) = calculate_dividend_cagr(annual_data, quarterly_data, ticker)
+
+###################################################################################################
+               def calculate_cagr_10_years(annual_data, ticker):
+               # Check if the results are already in session state
+                    if f'{ticker}_fcf_cagr_10' in st.session_state:
+                         return (st.session_state[f'{ticker}_fcf_cagr_10'],
+                                   st.session_state[f'{ticker}_eps_cagr_10'],
+                                   st.session_state[f'{ticker}_revenue_cagr_10'])
+
+
+                   
                     
                     
+                    FCF_Cagr_10 = annual_data['fcf_cagr_10'][-1:]
+                    FCF_Cagr_10 = sum(FCF_Cagr_10)/len(FCF_Cagr_10)
+                    FCF_Cagr_10 =round((FCF_Cagr_10*100),2)
 
-               EPS_last = annual_data['eps_basic'][-1:]
-               EPS_last_average  = ((sum(EPS_last) / len(EPS_last))) 
-               EPS_last_average_one=EPS_last_average
+                    EPS_Cagr_10 = annual_data['eps_diluted_cagr_10'][-1:]
+                    EPS_Cagr_10 = sum(EPS_Cagr_10)/len(EPS_Cagr_10)
+                    EPS_Cagr_10 =round((EPS_Cagr_10*100),2)
 
-               EPS_growth_3years = annual_data['eps_diluted_growth'][-3:]
-               EPS_growth_3years = sum(EPS_growth_3years)/len(EPS_growth_3years)
-               EPS_growth_3years =EPS_growth_3years*100
+                    Revenue_Cagr_10 = annual_data['revenue_cagr_10'][-1:]
+                    Revenue_Cagr_10 = sum(Revenue_Cagr_10)/len(Revenue_Cagr_10)
+                    Revenue_Cagr_10= round((Revenue_Cagr_10*100),2)
 
-               EPS_growth_five = annual_data['eps_diluted_growth'][-5:]
-               EPS_growth_5yrs = sum(EPS_growth_five)/len(EPS_growth_five)
-               EPS_growth_5yrs =EPS_growth_5yrs*100
+                    st.session_state[f'{ticker}_fcf_cagr_10'] = FCF_Cagr_10
+                    st.session_state[f'{ticker}_eps_cagr_10'] = EPS_Cagr_10
+                    st.session_state[f'{ticker}_revenue_cagr_10'] = Revenue_Cagr_10
 
-               EPS_growth = annual_data['eps_diluted_growth'][-10:]
-               EPS_growth_10yrs = sum(EPS_growth)/len(EPS_growth)
-               EPS_growth_10yrs =EPS_growth_10yrs*100
+                    return FCF_Cagr_10, EPS_Cagr_10, Revenue_Cagr_10
 
+               FCF_Cagr_10, EPS_Cagr_10, Revenue_Cagr_10 = calculate_cagr_10_years(annual_data, ticker)
 
-               #Neticome_five = annual_data['revenue'][-5:]
-               #average_Revenue_five =round(((sum(Revenue_five) / len(Revenue_five)))/1000000000, 2)
-
-               
-
-               FCF_annual_one =annual_data['fcf'][-1:]
-               average_fcf_Annual_one = (sum(FCF_annual_one) / len(FCF_annual_one)) / 1000000000
-               rounded = "{:.2f}B".format(average_fcf_Annual_one)
-               
-               FCF_annual_five =annual_data['fcf'][-5:]
-               average_FCF_annual_five = float((sum(FCF_annual_five) / len(FCF_annual_five)))
-
-               FCF_annual_ten =annual_data['fcf'][-10:]
-               average_FCF_annual_ten = float((sum(FCF_annual_ten) / len(FCF_annual_ten)))
-               #average_FCF_annual_five_we = float((sum(FCF_annual_five) / len(FCF_annual_five)))
-
-               #average_FCF_annual_five_rounded = "{:.2f}B".format(average_FCF_annual_five)
-
-          
-
-               ROIC_annual_one = "{:.2f}%".format(annual_data['roic'][-1]*100)
-
-               ROIC_annual_funf =annual_data['roic'][-5:]
-               #ROIC_annual_funf =annual_data['roic'][-5:]
-               Average_ROIC_funf = "{:.2f}%".format((sum(ROIC_annual_funf) / len(ROIC_annual_funf))*100)
-
-          
-               ROIC_annual_3years = annual_data['roic'][-3:]
-               ROIC_annual_3years=sum(ROIC_annual_3years)/len(ROIC_annual_3years)
-               ROIC_annual_3years = "{:.2f}%".format(ROIC_annual_3years*100)
-               
-
-               net_income_annual_funf = annual_data['net_income'][-5:] 
-               Average_netIncome_annual = (sum(net_income_annual_funf) / len(net_income_annual_funf)) / 1000000000
-               Average_netIncome_annual_we = (sum(net_income_annual_funf) / len(net_income_annual_funf))
-
-               #fcf_ttm =fcf_ttm*1000000000
-               Average_netIncome_annual_we ="{:.2f}B".format(Average_netIncome_annual_we/ 1000000000) if abs(Average_netIncome_annual_we) >= 1000000000 else "{:,.1f}M".format(Average_netIncome_annual_we / 1000000)
-               #Avg_netincome = "{:.2f}B".format(Average_netIncome_annual)
-
-               net_income_annual_one = annual_data['net_income'][-1:]
-               Average_net_income_annual_one = "{:.2f}B".format((sum(net_income_annual_one) / len(net_income_annual_one)) / 1000000000) 
-               
-               round_net_income_annual_one =(sum(net_income_annual_one) / len(net_income_annual_one)) / 1000000000
-
-          # Revenue_last = annual_data['revenue'][-1:]
-               #average_Revenue_last_ohne_billion = (sum(Revenue_last) / len(Revenue_last))/1000000000
-               #average_Revenue_last = "{:.2f}B".format(round(((sum(Revenue_last) / len(Revenue_last)))/1000000000, 2))
-
-               revenue_annual_ttm = annual_data['revenue'][-1:] 
-               average_revenue_annual_ttm = ((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000)
-
-               eps_basic_annual = annual_data['eps_basic'][-10:]
-               Revenue_growth = annual_data['revenue_growth'][-10:]
-               revenue_2013 = annual_data['revenue'][-10:] 
-
-
-               Dividend_per_share = annual_data['dividends'][-10:]
-               Dividend_per_share = Financial_data['ttm']['dividends']
-          
-
-               #...........................................CAGR..........................................................................
-               FCF_Cagr_10 = sum(FCF_Cagr_10)/len(FCF_Cagr_10)
-               FCF_Cagr_10 =round((FCF_Cagr_10*100),2)
-
-          #........................................................................................................................
-               EPS_Cagr_10 = sum(EPS_Cagr_10)/len(EPS_Cagr_10)
-               EPS_Cagr_10 =round((EPS_Cagr_10*100),2)
-          #...........................................................................
-               Revenue_Cagr_10 = sum(Revenue_Cagr_10)/len(Revenue_Cagr_10)
-               Revenue_Cagr_10= round((Revenue_Cagr_10*100),2)
+###################################################################################################
 
           #....................................................
-               Dividend_per_share_cagr_10 = annual_data['dividends_per_share_cagr_10'][-1:]  
-               Dividend_per_share_cagr_10 = sum(Dividend_per_share_cagr_10)/len(Dividend_per_share_cagr_10)
-               Dividend_per_share_cagr_10= round((Dividend_per_share_cagr_10*100),2)
-          #................................................
-
-          #-------------------------------------------------------------------------------------------- 
-               Dividend_per_share_cagr_10_quarter = quarterly_data['dividends_per_share_cagr_10'][-1:]  
-               Dividend_per_share_cagr_10_quarter = sum(Dividend_per_share_cagr_10_quarter)/len(Dividend_per_share_cagr_10_quarter)
-               Dividend_per_share_cagr_10_quarter= round((Dividend_per_share_cagr_10_quarter*100),2)
-
-               
-               try:
-                    value_at_index_6 = FCF_annual_ten[-6]
-                    value_at_index_last  = FCF_annual_ten[-1]
-
-               except Exception as e:
-                    value_at_index_6 = 0
-                    value_at_index_last = 0
-               try:
-                    
-                    if value_at_index_6 == 0:
-                         FCF_5_CAGR = 0
-
-                    else:
-                              try:
-                                   FCF_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
-                                   #CAGR = round(CAGR, 2)
-
-                                   if isinstance(FCF_5_CAGR, complex):
-                                             FCF_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
-                                   else:
-                                        FCF_5_CAGR = "{:.2f}".format(FCF_5_CAGR)
-
-                              except Exception as e:
-                                   FCF_5_CAGR = 0
-
-               except Exception as e:  
-
-                    FCF_5_CAGR =0;    
-                    
-          
-          #......................................................................................................................     
-               
-               try:
-                    value_at_index_6 = eps_basic_annual[-6]
-                    value_at_index_last = eps_basic_annual[-1]
-
-               except Exception as e:
-                    value_at_index_6 = 0
-                    value_at_index_last = 0
-               try:
-                    
-                    if value_at_index_6 == 0:
-                         EPS_5_CAGR = 0
-
-                    else:
-                              try:
-                                   EPS_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
-                                   #CAGR = round(CAGR, 2)
-
-                                   if isinstance(EPS_5_CAGR, complex):
-                                             EPS_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
-                                   else:
-                                        EPS_5_CAGR = "{:.2f}".format(EPS_5_CAGR)
-
-                              except Exception as e:
-                                   EPS_5_CAGR = 0
-
-               except Exception as e:  
-
-                    EPS_5_CAGR =0;    
-                    
-     #------------------------------------------------------------------------------------------------------------------------------------------------------------
-               
-
-                    
-               try:
-                    value_at_index_6 = revenue_2013[-6]
-                    value_at_index_last = revenue_2013[-1]
-
-               except Exception as e:
-                    value_at_index_6 = 0
-                    value_at_index_last = 0
-               try:
-                    
-                    if value_at_index_6 == 0:
-                         Revenue_5_CAGR = 0
-
-                    else:
-                              try:
-                                   Revenue_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
-                                   #CAGR = round(CAGR, 2)
-
-                                   if isinstance(Revenue_5_CAGR, complex):
-                                             Revenue_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
-                                   else:
-                                        Revenue_5_CAGR = "{:.2f}".format(Revenue_5_CAGR)
-
-                              except Exception as e:
-                                   Revenue_5_CAGR = 0
-
-               except Exception as e:  
-
-                    Revenue_5_CAGR =0;    
-                    
-     #------------------------------------------------------------------------------------------------------------------------------------------------------------
-               
-               #10years
-
-               Revenue_growth_3years = annual_data['revenue_growth'][-3:]
-               Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
-               Revenue_growth_3years = (Revenue_growth_3years*100)
-
-
-               Revenue_growth_1year = annual_data['revenue_growth'][-1:]
-               Revenue_growth_1year=sum(Revenue_growth_1year)/len(Revenue_growth_1year)
-               Revenue_growth_1year = (Revenue_growth_1year*100)
-
-          
-
-               FCF_Margin = annual_data['fcf_margin'][-10:] #10years
-               FCF_Margin_10 =sum(FCF_Margin)/len(FCF_Margin)
-               #FCF_Margin_10 = (FCF_Margin_10*100)
-
-               FCF_Margin_5 = annual_data['fcf_margin'][-5:] 
-               FCF_Margin_5=sum(FCF_Margin_5)/len(FCF_Margin_5)
-               #FCF_Margin_5 = (FCF_Margin_5*100)
-
-               FCF_Margin_1 = annual_data['fcf_margin'][-1:]
-               FCF_Margin_1=sum(FCF_Margin_1)/len(FCF_Margin_1)
-               FCF_Margin_1 = (FCF_Margin_1*100)
-
-               One_YR_ROCE = annual_data['roce'][-1:]  
-               One_YR_ROCE=sum(One_YR_ROCE)/len(One_YR_ROCE)
-               One_YR_ROCE = (One_YR_ROCE*100)
-
-               five_yrs_ROCE = annual_data['roce'][-5:]
-               five_yrs_ROCE=sum(five_yrs_ROCE)/len(five_yrs_ROCE)
-               five_yrs_ROCE = (five_yrs_ROCE*100)
-
-
 
                Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
                Average_Free_cash_flow_annual_one = ((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000
                Average_Free_cash_flow_annual_one_one =Average_Free_cash_flow_annual_one
-          
+###################################################################################################
+               def calculate_financial_ratios(annual_data, quarterly_data, ticker):
+               # Check if the results are already in session state
+                    if f'{ticker}_roa_ttm' in st.session_state:
+                         return (st.session_state[f'{ticker}_roa_ttm'],
+                                   st.session_state[f'{ticker}_one_yr_roce'],
+                                   st.session_state[f'{ticker}_five_yrs_roce'],
+                                   st.session_state[f'{ticker}_total_equity'],
+                                   st.session_state[f'{ticker}_net_income_margin_10_unpacked'],
+                                   st.session_state[f'{ticker}_net_income_margin_annual5_unpacked'],
+                                   st.session_state[f'{ticker}_net_income_margin_1'],
+                                   st.session_state[f'{ticker}_FCF_Margin_annual_10unpacked'],
+                                   st.session_state[f'{ticker}_fcf_margin_5'],
+                                   st.session_state[f'{ticker}_fcf_margin_1'],
+                                   st.session_state[f'{ticker}_debt_equity_annual_10'] ,
+                                   st.session_state[f'{ticker}_Price_to_tangible_book_annual_10'] ,
+                                   st.session_state[f'{ticker}_EBITDA_growth_annual_10'] ,
+                                   st.session_state[f'{ticker}_Price_to_book_annual_10'] ,
+                                   st.session_state[f'{ticker}_fcf_per_share_annual_10'] ,
+                                   st.session_state[f'{ticker}_revenue_per_share_annual_10'] ,
+                                   st.session_state[f'{ticker}_Payout_ratio_annual_10'],
+                                   st.session_state[f'{ticker}_NetIncome_growth_annual_10'] ,
+                                   st.session_state[f'{ticker}_Book_Value_growth_annual_10'] ,
+                                   st.session_state[f'{ticker}_Price_to_sales_annual_10'] ,
+                                   st.session_state[f'{ticker}_Price_to_earnings_annual_10'] ,
+                                   st.session_state[f'{ticker}_shares_diluted_growth_annual_10'] ,
+                                   st.session_state[f'{ticker}_FCF_Margin_quarter_10'],
+                                   st.session_state[f'{ticker}_debt_equity_quarter_10'] ,
+                                   st.session_state[f'{ticker}_EBITDA_growth_quarter_10'] ,
+                                   st.session_state[f'{ticker}_Price_to_book_quarter_10'] ,
+                                   st.session_state[f'{ticker}_Dividend_per_share_quarter_10'],
+                                   st.session_state[f'{ticker}_fcf_per_share_quarter_10'] ,
+                                   st.session_state[f'{ticker}_revenue_per_share_quarter_10'] ,
+                                   st.session_state[f'{ticker}_ROE_quarter_10'],
+                                   st.session_state[f'{ticker}_Payout_ratio_quarter_10'] ,
+                                   st.session_state[f'{ticker}_NetIncome_growth_quarter_10'] ,
+                                   st.session_state[f'{ticker}_FCF_growth_quarter_10'],
+                                   st.session_state[f'{ticker}_Book_Value_growth_quarter_10'] ,
+                                   st.session_state[f'{ticker}_Price_to_sales_quarter_10'] ,
+                                   st.session_state[f'{ticker}_Price_to_earnings_quarter_10'] ,
+                                   st.session_state[f'{ticker}_EPS_growth_quarter_10'],
+                                   st.session_state[f'{ticker}_ROIC_quarter_10'],
+                                   st.session_state[f'{ticker}_shares_diluted_growth_quarter_10'] ,
+                                   st.session_state[f'{ticker}_Dividend_per_share_growth_quarter_10'],
+                                   st.session_state[f'{ticker}_gross_margin_quarter1_unpacked'],
+                                   st.session_state[f'{ticker}_gross_margin_quarter10_unpacked']
+                              )
 
-               #Revenue_growth_3years = annual_data['revenue_growth'][-3:]
-               #Revenue_growth_3years=sum(Revenue_growth_3years)/len(Revenue_growth_3years)
-               #Revenue_growth_3years = (Revenue_growth_3years*100)
+                    ROA_annual_ttm = annual_data['roa'][-1:] 
+                    average_ROA_annual_ttm = "{:.2f}%".format((sum(ROA_annual_ttm) / len(ROA_annual_ttm))*100)
 
-               Revenue_growth_5years = annual_data['revenue_growth'][-5:]
-               Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
-               Revenue_growth_5years = (Revenue_growth_5years*100)
 
-               try:
-                    fcf_yield_ttm = "{:.2f}%".format((fcf_per_share/amount)*100)
-               except Exception as e:
-                    fcf_yield_ttm = "NA"
+                    One_YR_ROCE = annual_data['roce'][-1:]  
+                    One_YR_ROCE=sum(One_YR_ROCE)/len(One_YR_ROCE)
+                    One_YR_ROCE = (One_YR_ROCE*100)
 
-               PE_historical = annual_data['price_to_earnings'][-10:] 
 
-               # if len(PE_historical) == 10:
+                    five_yrs_ROCE = annual_data['roce'][-5:]
+                    five_yrs_ROCE=sum(five_yrs_ROCE)/len(five_yrs_ROCE)
+                    five_yrs_ROCE = (five_yrs_ROCE*100)
+
+                    Total_Equity_annual_one = annual_data['total_equity'][-1:]
+                    Average_total_equity_annual = (sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000
                
-               #      average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
-               # else:
+                    Net_income_margin_10_unpacked = annual_data['net_income_margin'][-10:]
+
+                    Net_income_margin_annual5_unpacked = annual_data['net_income_margin'][-5:]
                     
-               #       average_PE_historical="-"
 
-               ROA_annual_ttm = annual_data['roa'][-1:] 
-               average_ROA_annual_ttm = "{:.2f}%".format((sum(ROA_annual_ttm) / len(ROA_annual_ttm))*100)
+                    Net_income_margin_1 = annual_data['net_income_margin'][-1:]
+                    
 
-               Total_Equity_annual_one = annual_data['total_equity'][-1:]
-               Average_total_equity_annual = (sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000
-          
-               Net_income_margin_10_ = annual_data['net_income_margin'][-10:]
-               Net_income_margin_10 = sum(Net_income_margin_10_)/len(Net_income_margin_10_)
+                    FCF_Margin_annual_10unpacked = annual_data['fcf_margin'][-10:]
 
-               Net_income_margin_5 = annual_data['net_income_margin'][-5:]
-               Net_income_margin_5 = sum(Net_income_margin_5)/len(Net_income_margin_5)
+                    #FCF_Margin_annual10_unpacked = annual_data['fcf_margin'][-10:] #10years
+                    #FCF_Margin_10 =float(sum(FCF_Margin)/len(FCF_Margin))
 
-               Net_income_margin_1 = annual_data['net_income_margin'][-1:]
+                    FCF_Margin_5 = annual_data['fcf_margin'][-5:] 
+                    FCF_Margin_5=sum(FCF_Margin_5)/len(FCF_Margin_5)
+
+                    FCF_Margin_1 = annual_data['fcf_margin'][-1:]
+                    FCF_Margin_1=sum(FCF_Margin_1)/len(FCF_Margin_1)
+                    FCF_Margin_1 = (FCF_Margin_1*100)
+
+
+
+                    debt_equity_annual_10_unpacked = annual_data['debt_to_equity'][-10:]
+                    Price_to_tangible_book_annual_10_unpacked = annual_data['price_to_tangible_book'][-10:]
+                    EBITDA_growth_annual_10_unpacked = annual_data['ebitda_growth'][-10:]
+                    Price_to_book_10_annual_unpacked = annual_data['price_to_book'][-10:]
+                    fcf_per_share_annual_10_unpacked = annual_data['fcf_per_share'][-10:]
+                    revenue_per_share_annual_10_unpacked = annual_data['revenue_per_share'][-10:]
+                    Payout_ratio_annual_10_unpacked = annual_data['payout_ratio'][-10:]
+                    NetIncome_growth_annual_10_unpacked = annual_data['net_income_growth'][-10:]
+                    Book_Value_growth_annual_10_unpacked = annual_data['book_value'][-10:]
+                    Price_to_sales_annual_10_unpacked = annual_data['price_to_sales'][-10:]
+                    Price_to_earnings_annual_10_unpacked = annual_data['price_to_earnings'][-10:]
+                    shares_diluted_annual_growth_10_unpacked = annual_data['shares_diluted_growth'][-10:]
+
+                    # Calculate the financial ratios (quarterly data)
+                    FCF_Margin_quarter_10_unpacked = quarterly_data['fcf_margin'][-10:]
+                    debt_equity_quarter_10_unpacked = quarterly_data['debt_to_equity'][-10:]
+                    EBITDA_growth_quarter_10_unpacked = quarterly_data['ebitda_growth'][-10:]
+                    Price_to_book_quarter_10_unpacked = quarterly_data['price_to_book'][-10:]
+                    Dividend_per_share_quarter_10_unpacked = quarterly_data['dividends'][-10:]
+                    fcf_per_share_quarter_10_unpacked = quarterly_data['fcf_per_share'][-10:]
+                    revenue_per_share_quarter_10_unpacked = quarterly_data['revenue_per_share'][-10:]
+                    ROE_quarter_10_unpacked = quarterly_data['roe'][-10:]
+                    Payout_ratio_quarter_10_unpacked = quarterly_data['payout_ratio'][-10:]
+                    NetIncome_growth_quarter_10_unpacked = quarterly_data['net_income_growth'][-10:]
+                    FCF_growth_quarter_10_unpacked = quarterly_data['fcf_growth'][-10:]
+                    Book_Value_growth_quarter_10_unpacked = quarterly_data['book_value'][-10:]
+                    Price_to_sales_quarter_10_unpacked = quarterly_data['price_to_sales'][-10:]
+                    Price_to_earnings_quarter_10_unpacked = quarterly_data['price_to_earnings'][-10:]
+                    EPS_growth_quarter_10_unpacked = quarterly_data['eps_diluted_growth'][-10:]
+                    ROIC_quarter_10_unpacked = quarterly_data['roic'][-10:]
+                    shares_diluted_quarter_growth_10_unpacked = quarterly_data['shares_diluted_growth'][-10:]
+                    Dividend_per_share_growth_quarter_10_unpacked = quarterly_data['dividends_per_share_growth'][-10:]
+
+                    try:
+                         gross_margin_quarter1_unpacked = quarterly_data['gross_margin'][-1:]
+                         gross_margin_quarter10_unpacked = quarterly_data['gross_margin'][-10:]
+                         
+
+                    except Exception as e:
+
+                         gross_margin_quarter1_unpacked = [0]*1
+                         gross_margin_quarter10_unpacked = [0]*10
+
+
+                    # Store results in session state
+                    st.session_state[f'{ticker}_roa_ttm'] = average_ROA_annual_ttm
+                    st.session_state[f'{ticker}_one_yr_roce'] = One_YR_ROCE
+                    st.session_state[f'{ticker}_five_yrs_roce'] = five_yrs_ROCE
+                    st.session_state[f'{ticker}_total_equity'] = Average_total_equity_annual
+                    st.session_state[f'{ticker}_net_income_margin_10_unpacked'] = Net_income_margin_10_unpacked
+                    st.session_state[f'{ticker}_net_income_margin_annual5_unpacked'] = Net_income_margin_annual5_unpacked
+                    st.session_state[f'{ticker}_net_income_margin_1'] = Net_income_margin_1
+                    st.session_state[f'{ticker}_FCF_Margin_annual_10unpacked'] = FCF_Margin_annual_10unpacked
+                    st.session_state[f'{ticker}_fcf_margin_5'] = FCF_Margin_5
+                    st.session_state[f'{ticker}_fcf_margin_1'] = FCF_Margin_1
+                    st.session_state[f'{ticker}_debt_equity_annual_10'] = debt_equity_annual_10_unpacked
+                    st.session_state[f'{ticker}_Price_to_tangible_book_annual_10'] = Price_to_tangible_book_annual_10_unpacked
+                    st.session_state[f'{ticker}_EBITDA_growth_annual_10'] = EBITDA_growth_annual_10_unpacked
+                    st.session_state[f'{ticker}_Price_to_book_annual_10'] = Price_to_book_10_annual_unpacked
+                    st.session_state[f'{ticker}_fcf_per_share_annual_10'] = fcf_per_share_annual_10_unpacked
+                    st.session_state[f'{ticker}_revenue_per_share_annual_10'] = revenue_per_share_annual_10_unpacked
+                    st.session_state[f'{ticker}_Payout_ratio_annual_10'] = Payout_ratio_annual_10_unpacked
+                    st.session_state[f'{ticker}_NetIncome_growth_annual_10'] = NetIncome_growth_annual_10_unpacked
+                    st.session_state[f'{ticker}_Book_Value_growth_annual_10'] = Book_Value_growth_annual_10_unpacked
+                    st.session_state[f'{ticker}_Price_to_sales_annual_10'] = Price_to_sales_annual_10_unpacked
+                    st.session_state[f'{ticker}_Price_to_earnings_annual_10'] = Price_to_earnings_annual_10_unpacked
+                    st.session_state[f'{ticker}_shares_diluted_growth_annual_10'] = shares_diluted_annual_growth_10_unpacked
+
+                    st.session_state[f'{ticker}_FCF_Margin_quarter_10'] = FCF_Margin_quarter_10_unpacked
+                    st.session_state[f'{ticker}_debt_equity_quarter_10'] = debt_equity_quarter_10_unpacked
+                    st.session_state[f'{ticker}_EBITDA_growth_quarter_10'] = EBITDA_growth_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Price_to_book_quarter_10'] = Price_to_book_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Dividend_per_share_quarter_10'] = Dividend_per_share_quarter_10_unpacked
+                    st.session_state[f'{ticker}_fcf_per_share_quarter_10'] = fcf_per_share_quarter_10_unpacked
+                    st.session_state[f'{ticker}_revenue_per_share_quarter_10'] = revenue_per_share_quarter_10_unpacked
+                    st.session_state[f'{ticker}_ROE_quarter_10'] = ROE_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Payout_ratio_quarter_10'] = Payout_ratio_quarter_10_unpacked
+                    st.session_state[f'{ticker}_NetIncome_growth_quarter_10'] = NetIncome_growth_quarter_10_unpacked
+                    st.session_state[f'{ticker}_FCF_growth_quarter_10'] = FCF_growth_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Book_Value_growth_quarter_10'] = Book_Value_growth_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Price_to_sales_quarter_10'] = Price_to_sales_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Price_to_earnings_quarter_10'] = Price_to_earnings_quarter_10_unpacked
+                    st.session_state[f'{ticker}_EPS_growth_quarter_10'] = EPS_growth_quarter_10_unpacked
+                    st.session_state[f'{ticker}_ROIC_quarter_10'] = ROIC_quarter_10_unpacked
+                    st.session_state[f'{ticker}_shares_diluted_growth_quarter_10'] = shares_diluted_quarter_growth_10_unpacked
+                    st.session_state[f'{ticker}_Dividend_per_share_growth_quarter_10'] = Dividend_per_share_growth_quarter_10_unpacked
+                    st.session_state[f'{ticker}_gross_margin_quarter1_unpacked'] = gross_margin_quarter1_unpacked
+                    st.session_state[f'{ticker}_gross_margin_quarter10_unpacked'] = gross_margin_quarter10_unpacked
+
+                    return (
+                         average_ROA_annual_ttm, One_YR_ROCE, five_yrs_ROCE, Average_total_equity_annual,
+                         Net_income_margin_10_unpacked, Net_income_margin_annual5_unpacked, Net_income_margin_1,
+                         FCF_Margin_annual_10unpacked, FCF_Margin_5, FCF_Margin_1,
+                         debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,
+                         EBITDA_growth_annual_10_unpacked, Price_to_book_10_annual_unpacked, 
+                         fcf_per_share_annual_10_unpacked, revenue_per_share_annual_10_unpacked,
+                         Payout_ratio_annual_10_unpacked, NetIncome_growth_annual_10_unpacked,
+                         Book_Value_growth_annual_10_unpacked, Price_to_sales_annual_10_unpacked,
+                         Price_to_earnings_annual_10_unpacked, shares_diluted_annual_growth_10_unpacked,
+                         FCF_Margin_quarter_10_unpacked, debt_equity_quarter_10_unpacked, EBITDA_growth_quarter_10_unpacked,
+                         Price_to_book_quarter_10_unpacked, Dividend_per_share_quarter_10_unpacked,
+                         fcf_per_share_quarter_10_unpacked, revenue_per_share_quarter_10_unpacked,
+                         ROE_quarter_10_unpacked, Payout_ratio_quarter_10_unpacked, NetIncome_growth_quarter_10_unpacked,
+                         FCF_growth_quarter_10_unpacked, Book_Value_growth_quarter_10_unpacked,
+                         Price_to_sales_quarter_10_unpacked, Price_to_earnings_quarter_10_unpacked,
+                         EPS_growth_quarter_10_unpacked, ROIC_quarter_10_unpacked,
+                         shares_diluted_quarter_growth_10_unpacked, Dividend_per_share_growth_quarter_10_unpacked,
+                         gross_margin_quarter1_unpacked,gross_margin_quarter10_unpacked
+                    )
+
+               # Example call to the function
+               (average_ROA_annual_ttm, One_YR_ROCE, five_yrs_ROCE, Average_total_equity_annual,
+               Net_income_margin_10_unpacked, Net_income_margin_annual5_unpacked, Net_income_margin_1,
+               FCF_Margin_annual_10unpacked, FCF_Margin_5, FCF_Margin_1,
+               debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,
+               EBITDA_growth_annual_10_unpacked, Price_to_book_10_annual_unpacked, 
+               fcf_per_share_annual_10_unpacked, revenue_per_share_annual_10_unpacked,
+               Payout_ratio_annual_10_unpacked, NetIncome_growth_annual_10_unpacked,
+               Book_Value_growth_annual_10_unpacked, Price_to_sales_annual_10_unpacked,
+               Price_to_earnings_annual_10_unpacked, shares_diluted_annual_growth_10_unpacked,
+               FCF_Margin_quarter_10_unpacked, debt_equity_quarter_10_unpacked, EBITDA_growth_quarter_10_unpacked,
+               Price_to_book_quarter_10_unpacked, Dividend_per_share_quarter_10_unpacked,
+               fcf_per_share_quarter_10_unpacked, revenue_per_share_quarter_10_unpacked,
+               ROE_quarter_10_unpacked, Payout_ratio_quarter_10_unpacked, NetIncome_growth_quarter_10_unpacked,
+               FCF_growth_quarter_10_unpacked, Book_Value_growth_quarter_10_unpacked,
+               Price_to_sales_quarter_10_unpacked, Price_to_earnings_quarter_10_unpacked,
+               EPS_growth_quarter_10_unpacked, ROIC_quarter_10_unpacked,
+               shares_diluted_quarter_growth_10_unpacked, Dividend_per_share_growth_quarter_10_unpacked,
+               gross_margin_quarter1_unpacked,gross_margin_quarter10_unpacked) = calculate_financial_ratios(annual_data, quarterly_data, ticker)
+###################################################################################################
+               FCF_Margin_10 =(sum(FCF_Margin_annual_10unpacked)/len(FCF_Margin_annual_10unpacked))*100
                Net_income_margin_1 = sum(Net_income_margin_1)/len(Net_income_margin_1)
+
+               Net_income_margin_10years = sum(Net_income_margin_10_unpacked)/len(Net_income_margin_10_unpacked)
+               Net_income_margin_annual5 = sum(Net_income_margin_annual5_unpacked)/len(Net_income_margin_annual5_unpacked)
+
+
+
+
+###################################################################################################
+               def unpack_annual21_data(annual_data,ticker):
+
+                    if f'{ticker}_revenue_annual21' in st.session_state:
+                         return (st.session_state[f'{ticker}_revenue_annual21'],
+                              st.session_state[f'{ticker}_eps_diluted_annual21'],
+                              st.session_state[f'{ticker}_dividendPaidInTheLast21Years'],
+                              st.session_state[f'{ticker}_Dividends_per_share_growth_annual10'],
+                              st.session_state[f'{ticker}_revenue_growth_annual21'],
+                              st.session_state[f'{ticker}_shares_diluted_annual21'],
+                              st.session_state[f'{ticker}_Free_cash_flow_annual_21_unpacked'])
+
+               # Unpacking the last 21 years of revenue data
+                    revenue_annual21_unpacked = annual_data['revenue'][-21:]
+
+                    eps_diluted_annual_21_unpacked = annual_data['eps_diluted'][-21:]
+
+                    dividendPaidInTheLast21Years_unpacked = [abs(value) for value in annual_data['cff_dividend_paid'][-21:]]
+
+                    Dividends_per_share_growth_annual10_unpacked = annual_data['dividends_per_share_growth'][-10:]
+
+                    revenue_growth_annual21_unpacked = annual_data['revenue_growth'][-21:]
+
+                    shares_diluted_annual21_unpacked = annual_data['shares_diluted'][-21:]
+
+                    Free_cash_flow_annual_21_unpacked = annual_data['fcf'][-21:]
+
+                        # Storing the unpacked data in session state
+                    st.session_state[f'{ticker}_revenue_annual21'] = revenue_annual21_unpacked
+                    st.session_state[f'{ticker}_eps_diluted_annual21'] = eps_diluted_annual_21_unpacked
+                    st.session_state[f'{ticker}_dividendPaidInTheLast21Years'] = dividendPaidInTheLast21Years_unpacked
+                    st.session_state[f'{ticker}_Dividends_per_share_growth_annual10'] = Dividends_per_share_growth_annual10_unpacked
+                    st.session_state[f'{ticker}_revenue_growth_annual21'] = revenue_growth_annual21_unpacked
+                    st.session_state[f'{ticker}_shares_diluted_annual21'] = shares_diluted_annual21_unpacked
+                    st.session_state[f'{ticker}_Free_cash_flow_annual_21_unpacked'] = Free_cash_flow_annual_21_unpacked
+
+
+
+                    return (revenue_annual21_unpacked, eps_diluted_annual_21_unpacked, 
+                              dividendPaidInTheLast21Years_unpacked, Dividends_per_share_growth_annual10_unpacked, 
+                              revenue_growth_annual21_unpacked, shares_diluted_annual21_unpacked,Free_cash_flow_annual_21_unpacked)
+
+               (revenue_annual21_unpacked, eps_diluted_annual_21_unpacked, 
+                              dividendPaidInTheLast21Years_unpacked, Dividends_per_share_growth_annual10_unpacked, 
+                              revenue_growth_annual21_unpacked, shares_diluted_annual21_unpacked,Free_cash_flow_annual_21_unpacked) = unpack_annual21_data(annual_data,ticker)
+
+
+###################################################################################################
+               def calculate_fcf_5_cagr(FCF_annual_ten_unpacked, ticker):
+               # Check if the result is already in session state
+                    if f'{ticker}_FCF_5_CAGR' in st.session_state:
+                         return st.session_state[f'{ticker}_FCF_5_CAGR']
+
+                    try:
+                         # Get the value at index -6 (5 years ago) and the most recent value
+                         value_at_index_6 = FCF_annual_ten_unpacked[-6]
+                         value_at_index_last = FCF_annual_ten_unpacked[-1]
+                    except Exception as e:
+                         # If there's an error (e.g., insufficient data), set both to 0
+                         value_at_index_6 = 0
+                         value_at_index_last = 0
+
+                    try:
+                         if value_at_index_6 == 0:
+                              # If value at index -6 is 0, CAGR is 0
+                              FCF_5_CAGR = 0
+                         else:
+                              try:
+                                   # Calculate CAGR
+                                   FCF_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
+                                   # Handle complex number case
+                                   if isinstance(FCF_5_CAGR, complex):
+                                        FCF_5_CAGR = 0
+                                   else:
+                                        FCF_5_CAGR = "{:.2f}".format(FCF_5_CAGR)
+                              except Exception as e:
+                                   FCF_5_CAGR = 0
+                    except Exception as e:
+                         FCF_5_CAGR = 0
+
+                    # Store the result in session state
+                    st.session_state[f'{ticker}_FCF_5_CAGR'] = FCF_5_CAGR
+
+                    return FCF_5_CAGR
+
+                    # Usage example:
+                   
+               FCF_5_CAGR = calculate_fcf_5_cagr(FCF_annual_ten_unpacked, ticker)
+ ###################################################################################################
                
+
+               def calculate_eps_5_cagr(eps_basic_annual_10_unpacked, ticker):
+                    # Check if the result is already in session state
+                    if f'{ticker}_EPS_5_CAGR' in st.session_state:
+                         return st.session_state[f'{ticker}_EPS_5_CAGR']
+
+                    try:
+                         # Get the value at index -6 (5 years ago) and the most recent value
+                         value_at_index_6 = eps_basic_annual_10_unpacked[-6]
+                         value_at_index_last = eps_basic_annual_10_unpacked[-1]
+                    except Exception as e:
+                         # If there's an error (e.g., insufficient data), set both to 0
+                         value_at_index_6 = 0
+                         value_at_index_last = 0
+
+                    try:
+                         if value_at_index_6 == 0:
+                              # If value at index -6 is 0, CAGR is 0
+                              EPS_5_CAGR = 0
+                         else:
+                              try:
+                                   # Calculate CAGR
+                                   EPS_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
+                                   # Handle complex number case
+                                   if isinstance(EPS_5_CAGR, complex):
+                                        EPS_5_CAGR = 0
+                                   else:
+                                        EPS_5_CAGR = "{:.2f}".format(EPS_5_CAGR)
+                              except Exception as e:
+                                   EPS_5_CAGR = 0
+                    except Exception as e:
+                         EPS_5_CAGR = 0
+
+                    # Store the result in session state
+                    st.session_state[f'{ticker}_EPS_5_CAGR'] = EPS_5_CAGR
+
+                    return EPS_5_CAGR
+
+
+               EPS_5_CAGR = calculate_eps_5_cagr(eps_basic_annual_10_unpacked, ticker)
+
+###################################################################################################
+               
+               def calculate_revenue_5_cagr(Revenue_annual_10_unpacked, ticker):
+                    # Check if the result is already in session state
+                    if f'{ticker}_Revenue_5_CAGR' in st.session_state:
+                         return st.session_state[f'{ticker}_Revenue_5_CAGR']
+
+                    try:
+                         # Get the value at index -6 (5 years ago) and the most recent value
+                         value_at_index_6 = Revenue_annual_10_unpacked[-6]
+                         value_at_index_last = Revenue_annual_10_unpacked[-1]
+                    except Exception as e:
+                         # If there's an error (e.g., insufficient data), set both to 0
+                         value_at_index_6 = 0
+                         value_at_index_last = 0
+
+                    try:
+                         if value_at_index_6 == 0:
+                              # If value at index -6 is 0, CAGR is 0
+                              Revenue_5_CAGR = 0
+                         else:
+                              try:
+                                   # Calculate CAGR
+                                   Revenue_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
+                                   # Handle complex number case
+                                   if isinstance(Revenue_5_CAGR, complex):
+                                        Revenue_5_CAGR = 0
+                                   else:
+                                        Revenue_5_CAGR = "{:.2f}".format(Revenue_5_CAGR)
+                              except Exception as e:
+                                   Revenue_5_CAGR = 0
+                    except Exception as e:
+                         Revenue_5_CAGR = 0
+
+                    # Store the result in session state
+                    st.session_state[f'{ticker}_Revenue_5_CAGR'] = Revenue_5_CAGR
+
+                    return Revenue_5_CAGR
+
+
+
+               Revenue_5_CAGR = calculate_revenue_5_cagr(Revenue_annual_10_unpacked, ticker)
+   
+                    
+###################################################################################################
+
+               def unpack_data_Cashflow_statement(annual_data, quarterly_data, ticker):
+               # Annual data unpacking (10 years)
+                    if f'{ticker}_Changes_in_working_capital_annual_10' in st.session_state:
+                         # If the data already exists in session state, return the unpacked values
+                         return (st.session_state[f'{ticker}_Changes_in_working_capital_annual_10'],
+                                   st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_10_unpacked'],
+                                   st.session_state[f'{ticker}_Capex_annual_10'],
+                                   st.session_state[f'{ticker}_Purchase_of_Investment_annual_10'],
+                                   st.session_state[f'{ticker}_Sale_maturity_of_Investments_annual_10'],
+                                   st.session_state[f'{ticker}_Net_investing_CashFlow_annual_10'],
+                                   st.session_state[f'{ticker}_Insurance_Reduction_of_DebtNet_annual_10'],
+                                   st.session_state[f'{ticker}_Debt_issued_annual_10'],
+                                   st.session_state[f'{ticker}_Debt_repaid_annual_10'],
+                                   st.session_state[f'{ticker}_Stock_issued_of_common_Preferred_stock_annual_10'],
+                                   st.session_state[f'{ticker}_Net_Assets_from_Acquisitions_annual_10'],
+                                   st.session_state[f'{ticker}_StockBased_Compansation_annual_10'],
+                                   st.session_state[f'{ticker}_Repurchase_of_common_Preferred_stock_annual_10'],
+                                   st.session_state[f'{ticker}_Cash_Dividends_paid_Total_annual_10'],
+                                   st.session_state[f'{ticker}_Net_Financing_cashFlow_annual_10'],
+                                   st.session_state[f'{ticker}_Net_change_in_cash_annual_10'],
+                                   st.session_state[f'{ticker}_Net_Operating_CashFlow_quarter_10'],
+                                   st.session_state[f'{ticker}_changes_in_working_capital_quarter_10'],
+                                   st.session_state[f'{ticker}_Capex_quarter_10'],
+                                   st.session_state[f'{ticker}_Purchase_of_Investment_quarter_10'],
+                                   st.session_state[f'{ticker}_Sale_maturity_of_Investments_quarter_10'],
+                                   st.session_state[f'{ticker}_Net_investing_CashFlow_quarter_10'],
+                                   st.session_state[f'{ticker}_Cash_Dividends_paid_Total_quarter_10'],
+                                   st.session_state[f'{ticker}_Insurance_Reduction_of_DebtNet_quarter_10'],
+                                   st.session_state[f'{ticker}_Repurchase_of_common_Preferred_stock_quarter_10'],
+                                   st.session_state[f'{ticker}_Net_Financing_cashFlow_quarter_10'],
+                                   st.session_state[f'{ticker}_Net_change_in_cash_quarter_10'],
+                                   st.session_state[f'{ticker}_Debt_issued_quarter_10'],
+                                   st.session_state[f'{ticker}_Debt_repaid_quarter_10'],
+                                   st.session_state[f'{ticker}_Stock_issued_of_common_Preferred_stock_quarter_10'],
+                                   st.session_state[f'{ticker}_Net_Assets_from_Acquisitions_quarter_10'],
+                                   st.session_state[f'{ticker}_StockBased_Compansation_quarter_10'])
+
+                    # Unpacking annual data (last 10 years)
+                   
+                    Changes_in_working_capital_annual_10_unpacked = annual_data['cfo_change_in_working_capital'][-10:]
+                    Net_Operating_CashFlow_annual_10_unpacked = annual_data['cf_cfo'][-10:]
+                    Capex_annual_10_unpacked = annual_data['capex'][-10:]
+                    Purchase_of_Investment_annual_10_unpacked = annual_data['cfi_investment_purchases'][-10:]
+                    Sale_maturity_of_Investments_annual_10_unpacked = annual_data['cfi_investment_sales'][-10:]
+                    Net_investing_CashFlow_annual_10_unpacked = annual_data['cf_cfi'][-10:]
+                    Insurance_Reduction_of_DebtNet_annual_10_unpacked = annual_data['cff_debt_net'][-10:]
+
+                    try:
+                         Debt_issued_annual_10_unpacked = annual_data['cff_debt_issued'][-10:]
+                         Debt_repaid_annual_10_unpacked = annual_data['cff_debt_repaid'][-10:]
+                         Stock_issued_of_common_Preferred_stock_annual_10_unpacked = annual_data['cff_common_stock_issued'][-10:]
+                         Net_Assets_from_Acquisitions_annual_10_unpacked = annual_data['cfi_acquisitions'][-10:]
+                         StockBased_Compansation_annual_10_unpacked = annual_data['cfo_stock_comp'][-10:]
+                    except Exception as e:
+                         Debt_issued_annual_10_unpacked = [0] * 10
+                         Debt_repaid_annual_10_unpacked = [0] * 10
+                         Stock_issued_of_common_Preferred_stock_annual_10_unpacked = [0] * 10
+                         Net_Assets_from_Acquisitions_annual_10_unpacked = [0] * 10
+                         StockBased_Compansation_annual_10_unpacked = [0] * 10
+
+                    Repurchase_of_common_Preferred_stock_annual_10_unpacked = annual_data['cff_common_stock_repurchased'][-10:]
+                    Cash_Dividends_paid_Total_annual_10_unpacked = annual_data['cff_dividend_paid'][-10:]
+                    Net_Financing_cashFlow_annual_10_unpacked = annual_data['cf_cff'][-10:]
+                    Net_change_in_cash_annual_10_unpacked = annual_data['cf_net_change_in_cash'][-10:]
+
+                    # Unpacking quarterly data (last 10 quarters)
+                    Net_Operating_CashFlow_quarter_10_unpacked = quarterly_data['cf_cfo'][-10:]
+                    changes_in_working_capital_quarter_10_unpacked = quarterly_data['cfo_change_in_working_capital'][-10:]
+                    Capex_quarter_10_unpacked = quarterly_data['capex'][-10:]
+                    Purchase_of_Investment_quarter_10_unpacked = quarterly_data['cfi_investment_purchases'][-10:]
+                    Sale_maturity_of_Investments_quarter_10_unpacked = quarterly_data['cfi_investment_sales'][-10:]
+                    Net_investing_CashFlow_quarter_10_unpacked = quarterly_data['cf_cfi'][-10:]
+                    Cash_Dividends_paid_Total_quarter_10_unpacked = quarterly_data['cff_dividend_paid'][-10:]
+                    Insurance_Reduction_of_DebtNet_quarter_10_unpacked = quarterly_data['cff_debt_net'][-10:]
+
+                    try:
+                         Debt_issued_quarter_10_unpacked = quarterly_data['cff_debt_issued'][-10:]
+                         Debt_repaid_quarter_10_unpacked = quarterly_data['cff_debt_repaid'][-10:]
+                         Stock_issued_of_common_Preferred_stock_quarter_10_unpacked = quarterly_data['cff_common_stock_issued'][-10:]
+                         Net_Assets_from_Acquisitions_quarter_10_unpacked = quarterly_data['cfi_acquisitions'][-10:]
+                         StockBased_Compansation_quarter_10_unpacked = quarterly_data['cfo_stock_comp'][-10:]
+                    except Exception as e:
+                         Debt_issued_quarter_10_unpacked = [0] * 10
+                         Debt_repaid_quarter_10_unpacked = [0] * 10
+                         Stock_issued_of_common_Preferred_stock_quarter_10_unpacked = [0] * 10
+                         Net_Assets_from_Acquisitions_quarter_10_unpacked = [0] * 10
+                         StockBased_Compansation_quarter_10_unpacked = [0] * 10
+
+                    Repurchase_of_common_Preferred_stock_quarter_10_unpacked = quarterly_data['cff_common_stock_repurchased'][-10:]
+                    Net_Financing_cashFlow_quarter_10_unpacked = quarterly_data['cf_cff'][-10:]
+                    Net_change_in_cash_quarter_10_unpacked = quarterly_data['cf_net_change_in_cash'][-10:]
+
+                    # Store annual data in session state
+                    st.session_state[f'{ticker}_Changes_in_working_capital_annual_10'] = Changes_in_working_capital_annual_10_unpacked
+                    st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_10_unpacked'] = Net_Operating_CashFlow_annual_10_unpacked 
+                    st.session_state[f'{ticker}_Capex_annual_10'] = Capex_annual_10_unpacked
+                    st.session_state[f'{ticker}_Purchase_of_Investment_annual_10'] = Purchase_of_Investment_annual_10_unpacked
+                    st.session_state[f'{ticker}_Sale_maturity_of_Investments_annual_10'] = Sale_maturity_of_Investments_annual_10_unpacked
+                    st.session_state[f'{ticker}_Net_investing_CashFlow_annual_10'] = Net_investing_CashFlow_annual_10_unpacked
+                    st.session_state[f'{ticker}_Insurance_Reduction_of_DebtNet_annual_10'] = Insurance_Reduction_of_DebtNet_annual_10_unpacked
+                    st.session_state[f'{ticker}_Debt_issued_annual_10'] = Debt_issued_annual_10_unpacked
+                    st.session_state[f'{ticker}_Debt_repaid_annual_10'] = Debt_repaid_annual_10_unpacked
+                    st.session_state[f'{ticker}_Stock_issued_of_common_Preferred_stock_annual_10'] = Stock_issued_of_common_Preferred_stock_annual_10_unpacked
+                    st.session_state[f'{ticker}_Net_Assets_from_Acquisitions_annual_10'] = Net_Assets_from_Acquisitions_annual_10_unpacked
+                    st.session_state[f'{ticker}_StockBased_Compansation_annual_10'] = StockBased_Compansation_annual_10_unpacked
+                    st.session_state[f'{ticker}_Repurchase_of_common_Preferred_stock_annual_10'] = Repurchase_of_common_Preferred_stock_annual_10_unpacked
+                    st.session_state[f'{ticker}_Cash_Dividends_paid_Total_annual_10'] = Cash_Dividends_paid_Total_annual_10_unpacked
+                    st.session_state[f'{ticker}_Net_Financing_cashFlow_annual_10'] = Net_Financing_cashFlow_annual_10_unpacked
+                    st.session_state[f'{ticker}_Net_change_in_cash_annual_10'] = Net_change_in_cash_annual_10_unpacked
+
+                    # Store quarterly data in session state
+                    st.session_state[f'{ticker}_Net_Operating_CashFlow_quarter_10'] = Net_Operating_CashFlow_quarter_10_unpacked
+                    st.session_state[f'{ticker}_changes_in_working_capital_quarter_10'] = changes_in_working_capital_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Capex_quarter_10'] = Capex_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Purchase_of_Investment_quarter_10'] = Purchase_of_Investment_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Sale_maturity_of_Investments_quarter_10'] = Sale_maturity_of_Investments_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Net_investing_CashFlow_quarter_10'] = Net_investing_CashFlow_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Cash_Dividends_paid_Total_quarter_10'] = Cash_Dividends_paid_Total_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Insurance_Reduction_of_DebtNet_quarter_10'] = Insurance_Reduction_of_DebtNet_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Debt_issued_quarter_10'] = Debt_issued_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Debt_repaid_quarter_10'] = Debt_repaid_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Stock_issued_of_common_Preferred_stock_quarter_10'] = Stock_issued_of_common_Preferred_stock_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Net_Assets_from_Acquisitions_quarter_10'] = Net_Assets_from_Acquisitions_quarter_10_unpacked
+                    st.session_state[f'{ticker}_StockBased_Compansation_quarter_10'] = StockBased_Compansation_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Repurchase_of_common_Preferred_stock_quarter_10'] = Repurchase_of_common_Preferred_stock_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Net_Financing_cashFlow_quarter_10'] = Net_Financing_cashFlow_quarter_10_unpacked
+                    st.session_state[f'{ticker}_Net_change_in_cash_quarter_10'] = Net_change_in_cash_quarter_10_unpacked
+
+                    return (Changes_in_working_capital_annual_10_unpacked, Net_Operating_CashFlow_annual_10_unpacked ,Capex_annual_10_unpacked,
+                              Purchase_of_Investment_annual_10_unpacked, Sale_maturity_of_Investments_annual_10_unpacked,
+                              Net_investing_CashFlow_annual_10_unpacked, Insurance_Reduction_of_DebtNet_annual_10_unpacked,
+                              Debt_issued_annual_10_unpacked, Debt_repaid_annual_10_unpacked,
+                              Stock_issued_of_common_Preferred_stock_annual_10_unpacked, Net_Assets_from_Acquisitions_annual_10_unpacked,
+                              StockBased_Compansation_annual_10_unpacked, Repurchase_of_common_Preferred_stock_annual_10_unpacked,
+                              Cash_Dividends_paid_Total_annual_10_unpacked, Net_Financing_cashFlow_annual_10_unpacked,
+                              Net_change_in_cash_annual_10_unpacked, Net_Operating_CashFlow_quarter_10_unpacked,
+                              changes_in_working_capital_quarter_10_unpacked, Capex_quarter_10_unpacked,
+                              Purchase_of_Investment_quarter_10_unpacked, Sale_maturity_of_Investments_quarter_10_unpacked,
+                              Net_investing_CashFlow_quarter_10_unpacked, Cash_Dividends_paid_Total_quarter_10_unpacked,
+                              Insurance_Reduction_of_DebtNet_quarter_10_unpacked, Debt_issued_quarter_10_unpacked,
+                              Debt_repaid_quarter_10_unpacked, Stock_issued_of_common_Preferred_stock_quarter_10_unpacked,
+                              Net_Assets_from_Acquisitions_quarter_10_unpacked, StockBased_Compansation_quarter_10_unpacked,
+                              Repurchase_of_common_Preferred_stock_quarter_10_unpacked, Net_Financing_cashFlow_quarter_10_unpacked,
+                              Net_change_in_cash_quarter_10_unpacked)
+               
+               (Changes_in_working_capital_annual_10_unpacked,Net_Operating_CashFlow_annual_10_unpacked,Capex_annual_10_unpacked,
+                              Purchase_of_Investment_annual_10_unpacked, Sale_maturity_of_Investments_annual_10_unpacked,
+                              Net_investing_CashFlow_annual_10_unpacked, Insurance_Reduction_of_DebtNet_annual_10_unpacked,
+                              Debt_issued_annual_10_unpacked, Debt_repaid_annual_10_unpacked,
+                              Stock_issued_of_common_Preferred_stock_annual_10_unpacked, Net_Assets_from_Acquisitions_annual_10_unpacked,
+                              StockBased_Compansation_annual_10_unpacked, Repurchase_of_common_Preferred_stock_annual_10_unpacked,
+                              Cash_Dividends_paid_Total_annual_10_unpacked, Net_Financing_cashFlow_annual_10_unpacked,
+                              Net_change_in_cash_annual_10_unpacked, Net_Operating_CashFlow_quarter_10_unpacked,
+                              changes_in_working_capital_quarter_10_unpacked, Capex_quarter_10_unpacked,
+                              Purchase_of_Investment_quarter_10_unpacked, Sale_maturity_of_Investments_quarter_10_unpacked,
+                              Net_investing_CashFlow_quarter_10_unpacked, Cash_Dividends_paid_Total_quarter_10_unpacked,
+                              Insurance_Reduction_of_DebtNet_quarter_10_unpacked, Debt_issued_quarter_10_unpacked,
+                              Debt_repaid_quarter_10_unpacked, Stock_issued_of_common_Preferred_stock_quarter_10_unpacked,
+                              Net_Assets_from_Acquisitions_quarter_10_unpacked, StockBased_Compansation_quarter_10_unpacked,
+                              Repurchase_of_common_Preferred_stock_quarter_10_unpacked, Net_Financing_cashFlow_quarter_10_unpacked,
+                              Net_change_in_cash_quarter_10_unpacked) =unpack_data_Cashflow_statement(annual_data, quarterly_data, ticker)
+
+###################################################################################################
+
+
+###################################################################################################
+
+               def unpack_and_store_quarterly_data(quarterly_data, annual_data, Financial_data):
+                    if f'{ticker}_Accounts_payable_quarter10' in st.session_state:
+                         return (
+                              st.session_state[f'{ticker}_Accounts_payable_quarter10'],
+                              st.session_state[f'{ticker}_Current_accrued_liab_quarter10'],
+                              st.session_state[f'{ticker}_Tax_payable_quarter10'],
+                              st.session_state[f'{ticker}_Other_current_liabilities_quarter10'],
+                              st.session_state[f'{ticker}_Current_deferred_revenue_quarter10'],
+                              st.session_state[f'{ticker}_Total_current_liabilities_quarter10'],
+                              st.session_state[f'{ticker}_Short_term_debt_quarter10'],
+                              st.session_state[f'{ticker}_current_portion_of_lease_obligation_quarter10'],
+                              st.session_state[f'{ticker}_capital_leases_quarter10'],
+                              st.session_state[f'{ticker}_LongTerm_debt_quarter10'],
+                              st.session_state[f'{ticker}_Other_longterm_liabilities_quarter10'],
+                              st.session_state[f'{ticker}_Total_liabilities_quarter10'],
+                              st.session_state[f'{ticker}_Total_Equity_quarter10'],
+                              st.session_state[f'{ticker}_Total_Equity_quarter1'],
+                              st.session_state[f'{ticker}_Total_Equity_annual1'],
+                              st.session_state[f'{ticker}_st_investments_quarter1'],
+                              st.session_state[f'{ticker}_gross_margin_annual5'],
+                              st.session_state[f'{ticker}_gross_margin_annual10'],
+                              st.session_state[f'{ticker}_operating_margin_quater1'],
+                              st.session_state[f'{ticker}_operating_margin_quater10'],
+                              st.session_state[f'{ticker}_operating_margin_annual1'],
+                              st.session_state[f'{ticker}_operating_margin_annual5'],
+                              st.session_state[f'{ticker}_operating_margin_annual10'],
+                              st.session_state[f'{ticker}_Ebita_ttm'],
+                              st.session_state[f'{ticker}_debt_Assets_annual1'],
+                              st.session_state[f'{ticker}_debt_equity_annual1'],
+                              st.session_state[f'{ticker}_debt_Assets_annual10'],
+                              st.session_state[f'{ticker}_LongTerm_debt_annual1'],
+                              st.session_state[f'{ticker}_Short_term_debt_annual1'],
+                              st.session_state[f'{ticker}_Total_assets_annual1'],
+                              st.session_state[f'{ticker}_Cash_Dividends_paid_Total_annual1'],
+                              st.session_state[f'{ticker}_cash_equiv_quarter1']
+                         )
+
+                    try:
+                         Accounts_payable_quarter10_unpacked = quarterly_data['accounts_payable'][-10:]
+                         Current_accrued_liab_quarter10_unpacked = quarterly_data['current_accrued_liabilities'][-10:]
+                         Tax_payable_quarter10_unpacked = quarterly_data['tax_payable'][-10:]
+                         Other_current_liabilities_quarter10_unpacked = quarterly_data['other_current_liabilities'][-10:]
+                         Current_deferred_revenue_quarter10_unpacked = quarterly_data['current_deferred_revenue'][-10:]
+                         Total_current_liabilities_quarter10_unpacked = quarterly_data['total_current_liabilities'][-10:]
+                         Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
+                         current_portion_of_lease_obligation_quarter10_unpacked = quarterly_data['current_capital_leases'][-10:]
+                         capital_leases_quarter10_unpacked = quarterly_data['noncurrent_capital_leases'][-10:]
+                         LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
+                         Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
+                         Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
+                         Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
+                         Total_Equity_quarter1_unpacked = quarterly_data['total_equity'][-1:]
+                         Total_Equity_annual1_unpacked = annual_data['total_equity'][-1:]
+                         st_investments_quarter1_unpacked = quarterly_data['st_investments'][-1:]
+
+                         gross_margin_annual5_unpacked = annual_data['gross_margin'][-5:]
+                         gross_margin_annual10_unpacked = annual_data['gross_margin'][-10:]
+
+                         operating_margin_quater1_unpacked = quarterly_data['operating_margin'][-1:]
+                         operating_margin_quater10_unpacked = quarterly_data['operating_margin'][-10:]
+
+                         operating_margin_annual1_unpacked = annual_data['operating_margin'][-1:]
+                         operating_margin_annual5_unpacked = annual_data['operating_margin'][-5:]
+                         operating_margin_annual10_unpacked = annual_data['operating_margin'][-10:]
+
+                         Ebita_ttm = Financial_data['ttm']['ebitda'] / 1000000000
+
+                         debt_Assets_annual1_unpacked = annual_data['debt_to_assets'][-1:]
+                         debt_equity_annual1_unpacked = quarterly_data['debt_to_equity'][-1:]
+                         debt_Assets_annual10_unpacked = annual_data['debt_to_assets'][-10:]
+                         LongTerm_debt_annual1_unpacked = annual_data['lt_debt'][-1:]
+                         Short_term_debt_annual1_unpacked = annual_data['st_debt'][-1:]
+                         Total_assets_annual1_unpacked = annual_data['total_assets'][-1:]
+                         Cash_Dividends_paid_Total_annual1_unpacked = annual_data['cff_dividend_paid'][-1:]
+                         cash_equiv_quarter1_unpacked = quarterly_data['cash_and_equiv'][-1:]
+
+
+                         # Store the unpacked data in session state
+                         st.session_state[f'{ticker}_Accounts_payable_quarter10'] = Accounts_payable_quarter10_unpacked
+                         st.session_state[f'{ticker}_Current_accrued_liab_quarter10'] = Current_accrued_liab_quarter10_unpacked
+                         st.session_state[f'{ticker}_Tax_payable_quarter10'] = Tax_payable_quarter10_unpacked
+                         st.session_state[f'{ticker}_Other_current_liabilities_quarter10'] = Other_current_liabilities_quarter10_unpacked
+                         st.session_state[f'{ticker}_Current_deferred_revenue_quarter10'] = Current_deferred_revenue_quarter10_unpacked
+                         st.session_state[f'{ticker}_Total_current_liabilities_quarter10'] = Total_current_liabilities_quarter10_unpacked
+                         st.session_state[f'{ticker}_Short_term_debt_quarter10'] = Short_term_debt_quarter10_unpacked
+                         st.session_state[f'{ticker}_current_portion_of_lease_obligation_quarter10'] = current_portion_of_lease_obligation_quarter10_unpacked
+                         st.session_state[f'{ticker}_capital_leases_quarter10'] = capital_leases_quarter10_unpacked
+                         st.session_state[f'{ticker}_LongTerm_debt_quarter10'] = LongTerm_debt_quarter10_unpacked
+                         st.session_state[f'{ticker}_Other_longterm_liabilities_quarter10'] = Other_longterm_liabilities_quarter10_unpacked
+                         st.session_state[f'{ticker}_Total_liabilities_quarter10'] = Total_liabilities_quarter10_unpacked
+                         st.session_state[f'{ticker}_Total_Equity_quarter10'] = Total_Equity_quarter10_unpacked
+                         st.session_state[f'{ticker}_Total_Equity_quarter1'] = Total_Equity_quarter1_unpacked
+                         st.session_state[f'{ticker}_Total_Equity_annual1'] = Total_Equity_annual1_unpacked
+                         st.session_state[f'{ticker}_st_investments_quarter1'] = st_investments_quarter1_unpacked
+                         st.session_state[f'{ticker}_gross_margin_annual5'] = gross_margin_annual5_unpacked
+                         st.session_state[f'{ticker}_gross_margin_annual10'] = gross_margin_annual10_unpacked
+                         st.session_state[f'{ticker}_operating_margin_quater1'] = operating_margin_quater1_unpacked
+                         st.session_state[f'{ticker}_operating_margin_quater10'] = operating_margin_quater10_unpacked
+                         st.session_state[f'{ticker}_operating_margin_annual1'] = operating_margin_annual1_unpacked
+                         st.session_state[f'{ticker}_operating_margin_annual5'] = operating_margin_annual5_unpacked
+                         st.session_state[f'{ticker}_operating_margin_annual10'] = operating_margin_annual10_unpacked
+                         st.session_state[f'{ticker}_Ebita_ttm'] = Ebita_ttm
+                         st.session_state[f'{ticker}_debt_Assets_annual1'] = debt_Assets_annual1_unpacked
+                         st.session_state[f'{ticker}_debt_equity_annual1'] = debt_equity_annual1_unpacked
+                         st.session_state[f'{ticker}_debt_Assets_annual10'] = debt_Assets_annual10_unpacked
+                         st.session_state[f'{ticker}_LongTerm_debt_annual1'] = LongTerm_debt_annual1_unpacked
+                         st.session_state[f'{ticker}_Short_term_debt_annual1'] = Short_term_debt_annual1_unpacked
+                         st.session_state[f'{ticker}_Total_assets_annual1'] = Total_assets_annual1_unpacked
+                         st.session_state[f'{ticker}_Cash_Dividends_paid_Total_annual1'] = Cash_Dividends_paid_Total_annual1_unpacked
+                         st.session_state[f'{ticker}_cash_equiv_quarter1'] = cash_equiv_quarter1_unpacked
+
+                         return (
+                              Accounts_payable_quarter10_unpacked,
+                              Current_accrued_liab_quarter10_unpacked,
+                              Tax_payable_quarter10_unpacked,
+                              Other_current_liabilities_quarter10_unpacked,
+                              Current_deferred_revenue_quarter10_unpacked,
+                              Total_current_liabilities_quarter10_unpacked,
+                              Short_term_debt_quarter10_unpacked,
+                              current_portion_of_lease_obligation_quarter10_unpacked,
+                              capital_leases_quarter10_unpacked,
+                              LongTerm_debt_quarter10_unpacked,
+                              Other_longterm_liabilities_quarter10_unpacked,
+                              Total_liabilities_quarter10_unpacked,
+                              Total_Equity_quarter10_unpacked,
+                              Total_Equity_quarter1_unpacked,
+                              Total_Equity_annual1_unpacked,
+                              st_investments_quarter1_unpacked,
+                              gross_margin_annual5_unpacked,
+                              gross_margin_annual10_unpacked,
+                              operating_margin_quater1_unpacked,
+                              operating_margin_quater10_unpacked,
+                              operating_margin_annual1_unpacked,
+                              operating_margin_annual5_unpacked,
+                              operating_margin_annual10_unpacked,
+                              Ebita_ttm,
+                              debt_Assets_annual1_unpacked,
+                              debt_equity_annual1_unpacked,
+                              debt_Assets_annual10_unpacked,
+                              LongTerm_debt_annual1_unpacked,
+                              Short_term_debt_annual1_unpacked,
+                              Total_assets_annual1_unpacked,
+                              Cash_Dividends_paid_Total_annual1_unpacked,
+                              cash_equiv_quarter1_unpacked
+                         )
+                    
+                    except Exception as e:
+                         Accounts_payable_quarter10_unpacked = [0]*10
+                         Current_accrued_liab_quarter10_unpacked = [0]*10
+                         Tax_payable_quarter10_unpacked = [0]*10
+                         Other_current_liabilities_quarter10_unpacked = [0]*10
+                         Current_deferred_revenue_quarter10_unpacked = [0]*10
+                         Total_current_liabilities_quarter10_unpacked = [0]*10
+                         Short_term_debt_quarter10_unpacked = [0]*10
+                         current_portion_of_lease_obligation_quarter10_unpacked = [0]*10
+                         capital_leases_quarter10_unpacked = [0]*10
+                         LongTerm_debt_quarter10_unpacked = [0]*10
+                         Other_longterm_liabilities_quarter10_unpacked = [0]*10
+                         Total_liabilities_quarter10_unpacked = [0]*10
+                         Total_Equity_quarter10_unpacked = [0]*10
+                         Total_Equity_quarter1_unpacked = [0]*1
+                         Total_Equity_annual1_unpacked = [0]*1
+                         st_investments_quarter1_unpacked = [0]*1
+                         gross_margin_annual5_unpacked = [0]*5
+                         gross_margin_annual10_unpacked = [0]*10
+                         operating_margin_quater1_unpacked = [0]*1
+                         operating_margin_quater10_unpacked = [0]*10
+                         operating_margin_annual1_unpacked = [0]*1
+                         operating_margin_annual5_unpacked = [0]*5
+                         operating_margin_annual10_unpacked = [0]*10
+                         Ebita_ttm = [0]*1
+                         debt_Assets_annual1_unpacked = [0]*1
+                         debt_equity_annual1_unpacked = [0]*1
+                         debt_Assets_annual10_unpacked = [0]*10
+                         LongTerm_debt_annual1_unpacked = [0]*1
+                         Short_term_debt_annual1_unpacked = [0]*1
+                         Total_assets_annual1_unpacked = [0]*1
+                         Cash_Dividends_paid_Total_annual1_unpacked = [0]*1
+                         cash_equiv_quarter1_unpacked = [0]*1
+
+                         return (
+                              Accounts_payable_quarter10_unpacked,
+                              Current_accrued_liab_quarter10_unpacked,
+                              Tax_payable_quarter10_unpacked,
+                              Other_current_liabilities_quarter10_unpacked,
+                              Current_deferred_revenue_quarter10_unpacked,
+                              Total_current_liabilities_quarter10_unpacked,
+                              Short_term_debt_quarter10_unpacked,
+                              current_portion_of_lease_obligation_quarter10_unpacked,
+                              capital_leases_quarter10_unpacked,
+                              LongTerm_debt_quarter10_unpacked,
+                              Other_longterm_liabilities_quarter10_unpacked,
+                              Total_liabilities_quarter10_unpacked,
+                              Total_Equity_quarter10_unpacked,
+                              Total_Equity_quarter1_unpacked,
+                              Total_Equity_annual1_unpacked,
+                              st_investments_quarter1_unpacked,
+                              gross_margin_annual5_unpacked,
+                              gross_margin_annual10_unpacked,
+                              operating_margin_quater1_unpacked,
+                              operating_margin_quater10_unpacked,
+                              operating_margin_annual1_unpacked,
+                              operating_margin_annual5_unpacked,
+                              operating_margin_annual10_unpacked,
+                              Ebita_ttm,
+                              debt_Assets_annual1_unpacked,
+                              debt_equity_annual1_unpacked,
+                              debt_Assets_annual10_unpacked,
+                              LongTerm_debt_annual1_unpacked,
+                              Short_term_debt_annual1_unpacked,
+                              Total_assets_annual1_unpacked,
+                              Cash_Dividends_paid_Total_annual1_unpacked,
+                              cash_equiv_quarter1_unpacked
+                         )
+
+               # Usage
+               (
+               Accounts_payable_quarter10_unpacked,
+               Current_accrued_liab_quarter10_unpacked,
+               Tax_payable_quarter10_unpacked,
+               Other_current_liabilities_quarter10_unpacked,
+               Current_deferred_revenue_quarter10_unpacked,
+               Total_current_liabilities_quarter10_unpacked,
+               Short_term_debt_quarter10_unpacked,
+               current_portion_of_lease_obligation_quarter10_unpacked,
+               capital_leases_quarter10_unpacked,
+               LongTerm_debt_quarter10_unpacked,
+               Other_longterm_liabilities_quarter10_unpacked,
+               Total_liabilities_quarter10_unpacked,
+               Total_Equity_quarter10_unpacked,
+               Total_Equity_quarter1_unpacked,
+               Total_Equity_annual1_unpacked,
+               st_investments_quarter1_unpacked,
+               gross_margin_annual5_unpacked,
+               gross_margin_annual10_unpacked,
+               operating_margin_quater1_unpacked,
+               operating_margin_quater10_unpacked,
+               operating_margin_annual1_unpacked,
+               operating_margin_annual5_unpacked,
+               operating_margin_annual10_unpacked,
+               Ebita_ttm,
+               debt_Assets_annual1_unpacked,
+               debt_equity_annual1_unpacked,
+               debt_Assets_annual10_unpacked,
+               LongTerm_debt_annual1_unpacked,
+               Short_term_debt_annual1_unpacked,
+               Total_assets_annual1_unpacked,
+               Cash_Dividends_paid_Total_annual1_unpacked,
+               cash_equiv_quarter1_unpacked
+               ) = unpack_and_store_quarterly_data(quarterly_data, annual_data, Financial_data)
+
+
+               Average_debt_equity_annual1 = round(sum(debt_equity_annual1_unpacked) / len(debt_equity_annual1_unpacked), 2)
+               Average_debt_assets_annual = round(sum(debt_Assets_annual1_unpacked) / len(debt_Assets_annual1_unpacked), 2)
+
+###################################################################################################
+
+               def unpack_and_store_fundamental_data(quote, ticker):
+                    # Check if data is already in session state
+                    if f'{ticker}_forwardPE' in st.session_state:
+                         return (
+                              st.session_state[f'{ticker}_forwardPE'],
+                              st.session_state[f'{ticker}_RSI'],
+                              st.session_state[f'{ticker}_PEG'],
+                              st.session_state[f'{ticker}_Beta'],
+                              st.session_state[f'{ticker}_Moving_200'],
+                              st.session_state[f'{ticker}_Moving_50'],
+                              st.session_state[f'{ticker}_Target_Price'],
+                              st.session_state[f'{ticker}_Dividend_TTM'],
+                              st.session_state[f'{ticker}_Dividend_Est'],
+                              st.session_state[f'{ticker}_Dividend_Ex_Date'],
+                              st.session_state[f'{ticker}_Earnings_this_yr'],
+                              st.session_state[f'{ticker}_Earnings_next_yr_in_prozent'],
+                              st.session_state[f'{ticker}_Earnings_next_yr_in_value'],
+                              st.session_state[f'{ticker}_Earnings_next_5_yrs'],
+                              st.session_state[f'{ticker}_Average_debt_equity_one']
+                         )
+                    
+                    # Unpacking the data from quote.fundamental_df
+                    try:
+                         forwardPE = quote.fundamental_df.at[0, "Forward P/E"]
+                         RSI = quote.fundamental_df.at[0, "RSI (14)"]
+                         PEG = quote.fundamental_df.at[0, "PEG"]
+                         Beta = quote.fundamental_df.at[0, "Beta"]
+                         Moving_200 = quote.fundamental_df.at[0, "SMA200"]
+                         Moving_50 = quote.fundamental_df.at[0, "SMA50"]
+                         Target_Price = quote.fundamental_df.at[0, "Target Price"]
+                         Dividend_TTM = quote.fundamental_df.at[0, "Dividend TTM"]
+                         Dividend_Est = quote.fundamental_df.at[0, "Dividend Est."]
+                         Dividend_Ex_Date = quote.fundamental_df.at[0, "Dividend Ex-Date"]
+                         Earnings_this_yr = quote.fundamental_df.at[0, "EPS this Y"]
+                         Earnings_next_yr_in_prozent = quote.fundamental_df.at[0, "EPS next Y - EPS growth next year"]
+                         Earnings_next_yr_in_value = quote.fundamental_df.at[0, "EPS next Y - EPS estimate for next year"]
+                         Earnings_next_5_yrs = quote.fundamental_df.at[0, "EPS next 5Y"]
+                         Average_debt_equity_one = quote.fundamental_df.at[0, "Debt/Eq"]
+
+                         try:
+                              checking_valid_debt_equity = float(Average_debt_equity_one) > 0.00
+                         except Exception as e:
+                              Average_debt_equity_one = Average_debt_equity_annual1
+
+                    except Exception as e:
+                         forwardPE = "{:.2f}".format(00.00)
+                         RSI = "{:.2f}".format(0.00)
+                         PEG = "{:.2f}".format(0.00)
+                         Beta = beta
+                         Moving_200 = "{:.2f}".format(0.00)
+                         Moving_50 = "{:.2f}".format(0.00)
+                         Target_Price = "{:.2f}".format(0.00)
+                         Dividend_TTM = "{:.2f}".format(0.00)
+                         Dividend_Est = "{:.2f}".format(0.00)
+                         Dividend_Ex_Date = "{:.2f}".format(0.00)
+                         Earnings_this_yr = "{:.2f}".format(0.00)
+                         Earnings_next_yr_in_prozent = "{:.2f}".format(0.00)
+                         Earnings_next_yr_in_value = "{:.2f}".format(0.00)
+                         Earnings_next_5_yrs = "{:.2f}".format(0.00)
+                         Average_debt_equity_one = round((((sum(debt_equity_annual1_unpacked) / len(debt_equity_annual1_unpacked)))), 2)
+
+                    # Store the data in session state
+                    st.session_state[f'{ticker}_forwardPE'] = forwardPE
+                    st.session_state[f'{ticker}_RSI'] = RSI
+                    st.session_state[f'{ticker}_PEG'] = PEG
+                    st.session_state[f'{ticker}_Beta'] = Beta
+                    st.session_state[f'{ticker}_Moving_200'] = Moving_200
+                    st.session_state[f'{ticker}_Moving_50'] = Moving_50
+                    st.session_state[f'{ticker}_Target_Price'] = Target_Price
+                    st.session_state[f'{ticker}_Dividend_TTM'] = Dividend_TTM
+                    st.session_state[f'{ticker}_Dividend_Est'] = Dividend_Est
+                    st.session_state[f'{ticker}_Dividend_Ex_Date'] = Dividend_Ex_Date
+                    st.session_state[f'{ticker}_Earnings_this_yr'] = Earnings_this_yr
+                    st.session_state[f'{ticker}_Earnings_next_yr_in_prozent'] = Earnings_next_yr_in_prozent
+                    st.session_state[f'{ticker}_Earnings_next_yr_in_value'] = Earnings_next_yr_in_value
+                    st.session_state[f'{ticker}_Earnings_next_5_yrs'] = Earnings_next_5_yrs
+                    st.session_state[f'{ticker}_Average_debt_equity_one'] = Average_debt_equity_one
+
+                    return (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, Average_debt_equity_one)
+
+                    # Usage
+               (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, Average_debt_equity_one) = unpack_and_store_fundamental_data(quote, ticker)
+
+###################################################################################################
+
+
+
+               #PE_historical = annual_data['price_to_earnings'][-10:] 
+
+   
                if Revenue_ttm!=0 and average_revenue_annual_ttm !=0 :
                     Price_to_sales_last = "{:.2f}".format(Marketcap/(Revenue_ttm/1000000000))
-                    #five_yrs_Nettomarge = "{:.2f}%".format((Net_income_margin_5)*100)
                     Net_margin_ttm ="{:.2f}%".format((Net_income_margin_1)*100)
                else:
                     Price_to_sales_last = "NA"
-                    #five_yrs_Nettomarge ="NA"
                     Net_margin_ttm="NA"
                
                
@@ -8577,7 +9177,6 @@ if selected == "Stock Analysis Tool":
 
                if not pd.isna(Marketcap) and not pd.isna(netincome_ttm) and netincome_ttm != 0 and fcf_ttm !=0:
           
-                    #pe_ttm = "{:.2f} ".format(Marketcap / netincome_ttm)
                     try:
                          pe_ttm =quote.fundamental_df.at[0, "P/E"]
 
@@ -8588,20 +9187,18 @@ if selected == "Stock Analysis Tool":
                     
 
                elif not pd.isna(amount) and not pd.isna(eps_diluted_ttm) and eps_diluted_ttm != 0:
-               # Calculate P/E ratio using amount and eps_diluted_ttm
                     pe_ttm = "{:.2f} ".format(amount / eps_diluted_ttm)
 
-               # Check if pe_ttm is still None (no data or division by zero)
+
+
+
                if netincome_ttm is None:
-               # Handle the case where there is no valid data
                     pe_ttm = "{:.2f} ".format(amount / eps_diluted_ttm)
                
                if fcf_ttm is None or fcf_ttm < 0.0:
                     pfcf_ttm="-"
-                    #pe_ttm = "-"  # You can use any value or message you prefer
                if netincome_ttm < 0:
-                    #pfcf_ttm="-"
-                    pe_ttm = "-"  # You can use any value or message you prefer     
+                    pe_ttm = "-"    
                else:
                     pfcf_ttm="-" 
                     
@@ -8616,40 +9213,19 @@ if selected == "Stock Analysis Tool":
                     
                     pfcf_ttm="-"
                     
-               Historical_marketkap=annual_data['market_cap'][-5:]
-               Historical_marketkap = round(sum(Historical_marketkap) / len(Historical_marketkap)/ 1000000000, 2)  
-
-               Net_Operating_CashFlow_annual_5 = annual_data['cf_cfo'][-5:] 
-               Net_Operating_CashFlow_annual = annual_data['cf_cfo'][-10:] 
-
-               Revenue_annual_5 = annual_data['revenue'][-5:] 
-               Revenue_annual_10 = annual_data['revenue'][-10:] 
 
 
-               fcf_growth_five =annual_data['fcf_growth'][-5:]
-               fcf_growth_ten =annual_data['fcf_growth'][-10:]
+               if len(Revenue_annual_10_unpacked) >= 10:
+                    P_OCF_10="{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_10_unpacked)/len(Net_Operating_CashFlow_annual_10_unpacked))/1000000000))
+                    P_sales_10="{:.2f}".format(Marketcap/((sum(Revenue_annual_10_unpacked)/len(Revenue_annual_10_unpacked))/1000000000))
+                    Average_fcf_growth_ten =  "{:.2f}".format(((sum(fcf_growth_annual_10_unpacked) / len(fcf_growth_annual_10_unpacked)))*100)
+                    average_PE_historical = "{:.2f}".format((sum(pe_annual_10_unpacked) / len(pe_annual_10_unpacked)))
+                    pfcf_ten="{:.2f}".format(Marketcap/(rounded_fcf_Annual_ten/1000000000))
 
-               pe_five =annual_data['price_to_earnings'][-5:]
-               pe_ten =annual_data['price_to_earnings'][-10:]
-
-              
-
-               ROE_five = annual_data['roe'][-5:]
-
-
-
-               if len(Net_Operating_CashFlow_annual) >= 10:
-                    P_OCF_10="{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual)/len(Net_Operating_CashFlow_annual))/1000000000))
-                    P_sales_10="{:.2f}".format(Marketcap/((sum(Revenue_annual_10)/len(Revenue_annual_10))/1000000000))
-                    Average_fcf_growth_ten =  "{:.2f}".format(((sum(fcf_growth_ten) / len(fcf_growth_ten)))*100)
-                    average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
-                    pfcf_ten="{:.2f}".format(Marketcap/(average_FCF_annual_ten/1000000000))
-                    #Revenue_growth_10years=sum(Revenue_growth)/len(Revenue_growth)
-                    #Revenue_growth_10years = "{:.2f}%".format(Revenue_growth_10years*100)
-                    Net_income_margin_10 = "{:.2f}".format((Net_income_margin_10)*100)
-                    FCF_Margin_10 = "{:.2f}".format((FCF_Margin_10)*100)
+                    Net_income_margin_10 = "{:.2f}".format((Net_income_margin_10years)*100)
+                    FCF_Margin_10 = "{:.2f}".format(FCF_Margin_10)
                     EPS_growth_10yrs="{:.2f}".format(EPS_growth_10yrs)
-                    Average_pe_ten = "{:.2f}".format(sum(pe_ten) / len(pe_ten))
+                    Average_pe_ten = "{:.2f}".format(sum(pe_annual_10_unpacked) / len(pe_annual_10_unpacked))
 
                else:
                     P_OCF_10= "-"
@@ -8663,213 +9239,85 @@ if selected == "Stock Analysis Tool":
                     FCF_Margin_10 ="-"
                     P_sales_10 = "-"
                     
-               
-               
-          
-
-               fcf_growth_3years =annual_data['fcf_growth'][-3:]
-               Average_fcf_growth_3years =  "{:.2f}%".format(((sum(fcf_growth_3years) / len(fcf_growth_3years)))*100)
-
-               pe_one =annual_data['price_to_earnings'][-1:]
-               Average_pe_one =  "{:.2f}".format(((sum(pe_one) / len(pe_one))))
-
 
                try:
-                    average_end_price_five = annual_data['period_end_price'][-5:]
-                    average_end_price_five = sum(average_end_price_five) / len(average_end_price_five)
 
-                    eps_5years_average_diluted_annual =annual_data['eps_diluted'][-5:]
-                    eps_5years_average_diluted_annual = sum(eps_5years_average_diluted_annual) / len(eps_5years_average_diluted_annual)
+                    AverageEndPrice_annual5 =sum(AverageEndPrice_annual5_unpacked)/len(AverageEndPrice_annual5_unpacked)
+
 
                except Exception as e: 
                     
-                    average_end_price_five = 0.0
-                    eps_5years_average_diluted_annual = 0.0
+                    AverageEndPrice_annual10_unpacked = 0.0
+   
 
-               Divdends_paid_5years =annual_data['dividends'][-5:]
-               #st.write(Divdends_paid_5years)
+               if len(Divdends_paid_annual_5_unpacked) >= 5:
+                    Divdend_per_share_yield_average =sum(Divdends_paid_annual_5_unpacked) / len(Divdends_paid_annual_5_unpacked)
+                    Dividend_yield_average ="{:.2f}%".format(abs((Divdend_per_share_yield_average)/AverageEndPrice_annual5)*100)
+                       
 
-               try:
-                    if len(Divdends_paid_5years) >= 5:
-                         Divdend_per_share_yield_average =sum(Divdends_paid_5years) / len(Divdends_paid_5years)
-                         Dividend_yield_average ="{:.2f}%".format(abs((Divdend_per_share_yield_average)/average_end_price_five)*100)
-
-                    else:
+               else:
                          
-                         Dividend_yield_average =0.00
+                    Dividend_yield_average ="{:.2f}%".format(0.00)
+                 
+               if len(Revenue_annual_5_unpacked) >= 5:
+                    Average_ROIC_funf = "{:.2f}%".format((Average_ROIC_funf))
+                    average_FCF_annual_five_we ="{:.2f}B".format(rounded_fcf_Annual_five/ 1000000000) if abs(rounded_fcf_Annual_five) >= 1000000000 else "{:,.1f}M".format(rounded_fcf_Annual_five / 1000000)
+                    five_ROE="{:.2f}".format(((sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked))*100))
+                    pe_five_ = "{:.2f}".format(float(Marketcap)/(Average_net_income_annual_funf/1000000000))
+                    #print(pe_five_)
+                    pfcf_funf="{:.2f}".format(Marketcap/(rounded_fcf_Annual_five/1000000000))
+                    P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5_unpacked)/len(Net_Operating_CashFlow_annual_5_unpacked))/1000000000))
+                    KCV =  pfcf_funf
+                    KGV = pe_five_
+                    five_Yrs_ROE="{:.2f}".format(((sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked))*100))
+                    Average_fcf_growth_five =  "{:.2f}%".format(((sum(fcf_growth_annual_5_unpacked) / len(fcf_growth_annual_5_unpacked)))*100)
+                    Average_pe_five =  "{:.2f}".format(((sum(pe_annual_5_unpacked) /len(pe_annual_5_unpacked)))) 
+                    five_yrs_Nettomarge = "{:.2f}".format((Net_income_margin_annual5)*100)
+                    FCF_Margin_5 = "{:.2f}".format((FCF_Margin_5)*100)
+                    P_sales_5="{:.2f}".format(Marketcap/((sum(Revenue_annual_5_unpacked)/len(Revenue_annual_5_unpacked))/1000000000))
 
-                         
-               except Exception as e: 
-                    
-                    Dividend_yield_average=0.0
-
-
-                    
-
-          
-
-               try:
-                    
-
-                    if len(FCF_annual_five) >= 5:
-                         Average_ROIC_funf = "{:.2f}%".format(((sum(ROIC_annual_funf) / len(ROIC_annual_funf))*100))
-                         average_FCF_annual_five_we ="{:.2f}B".format(average_FCF_annual_five/ 1000000000) if abs(average_FCF_annual_five) >= 1000000000 else "{:,.1f}M".format(average_FCF_annual_five / 1000000)
-                         five_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
-                         pe_five_ = "{:.2f}".format(float(Marketcap)/Average_netIncome_annual)
-                         pfcf_funf="{:.2f}".format(Marketcap/(average_FCF_annual_five/1000000000))
-                         #average_PE_historical = "{:.2f}".format((sum(PE_historical) / len(PE_historical)))
-                         P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5)/len(Net_Operating_CashFlow_annual_5))/1000000000))
-                         KCV =  pfcf_funf
-                         #five_Yrs_ROE = round((Average_netIncome_annual/Average_total_equity_annual)*100,2)
-                         five_Yrs_ROE="{:.2f}".format(((sum(ROE_five) / len(ROE_five))*100))
-                         Average_fcf_growth_five =  "{:.2f}%".format(((sum(fcf_growth_five) / len(fcf_growth_five)))*100)
-                         #five_yrs_Nettomarge =  "{:.2f}".format((Average_netIncome_annual/average_revenue_annual)*100)  
-                         Average_pe_five =  "{:.2f}".format(((sum(pe_five) /len(pe_five)))) 
-                         five_yrs_Nettomarge = "{:.2f}".format((Net_income_margin_5)*100)
-                         FCF_Margin_5 = "{:.2f}".format((FCF_Margin_5)*100)
-                         #eps_5years_average_diluted_annual = "{:.2f}".format((eps_5years_average_diluted_annual)*100)
-                         P_sales_5="{:.2f}".format(Marketcap/((sum(Revenue_annual_5)/len(Revenue_annual_5))/1000000000))
-                         
-               
-                    
-                         
-
-                         if Average_netIncome_annual==0.0 or Average_netIncome_annual==-0.0:
-                              KGV = round(amount/eps_5years_average_diluted_annual, 2)
-                         else:
-                              KGV = round(Marketcap/Average_netIncome_annual, 2)
-                    
-                    
-                    else:
-                         Average_ROIC_funf ="NA"
-                         average_FCF_annual_five_we="{:.2f}".format(0.0)
-                         #pe_five_ =0
-                         rounded_operating_margin_five ="{:.2f}%".format(0.0)
-                         five_yrs_Nettomarge ="0.00"
-                         five_ROE="0.00"
-                         pfcf_funf="-"
-                         pe_five_="-"
-                         average_PE_historical="-"
-                         P_OCF_5 = "-"
-                         KGV=0.0
-                         KCV=0.0
-                         five_Yrs_ROE=0.0
-                         Average_fcf_growth_five = "0.00"
-                         Average_pe_five = "0.00"
-                         FCF_Margin_5 ="-"
-                         P_sales_5 = "-"
-
-
-
-                    
-               
-
-               except Exception as e:
-                    eps_diluted_annual=annual_data['eps_diluted'][-5:]
-                    eps_5years_average_diluted_annual=sum(eps_diluted_annual)/len(eps_diluted_annual)
+               else:
+                    Average_ROIC_funf ="NA"
+                    average_FCF_annual_five_we="{:.2f}".format(0.0)
+                    five_yrs_Nettomarge ="0.00"
+                    five_ROE="0.00"
+                    pfcf_funf="-"
+                    pe_five_="-"
+                    average_PE_historical="-"
+                    P_OCF_5 = "-"
+                    KGV=0.0
+                    KCV=0.0
+                    five_Yrs_ROE=0.0
+                    Average_fcf_growth_five = "0.00"
+                    Average_pe_five = "0.00"
+                    FCF_Margin_5 ="-"
+                    P_sales_5 = "-"
 
                
-                    pe_five_ = round((amount)/(eps_5years_average_diluted_annual),2)
-               
+               Dividend_per_share_yield_no_percentage =abs((Divdend_per_share_ttm)/current_price)*100
+               Dividend_per_share_yield ="{:.2f}%".format(abs((Divdend_per_share_ttm)/current_price)*100)
 
-                    if average_FCF_annual_five>5:
-                         pfcf_funf="{:.2f}".format(Marketcap_in_million/(average_FCF_annual_five/1000000000))
-                    else: 
-                         
-                         pfcf_funf ="-"
+               Average_total_equity_annual = (sum(Total_Equity_annual1_unpacked) / len(Total_Equity_annual1_unpacked))
 
-               Total_Equity_quarter = quarterly_data['total_equity'][-1:]
-               Total_Equity_quarter = (((sum(Total_Equity_quarter) / len(Total_Equity_quarter))))
- 
-          
-               try:
-                    #debt_equity_annual_one =quarterly_data['debt_to_equity'][-1:]
-                    debt_equity_annual =annual_data['debt_to_equity'][-1:]
+               average_gross_margin_quater1 = "{:.2f}%".format(((sum(gross_margin_quarter1_unpacked) / len(gross_margin_quarter1_unpacked)) * 100))
 
-                    debt_Assets_annual =annual_data['debt_to_assets'][-1:]
-               
-                    Average_debt_equity_annual = round((((sum(debt_equity_annual) / len(debt_equity_annual)))),2)
-                    
-                    Average_debt_assets_annual = round(((sum(debt_Assets_annual) / len(debt_Assets_annual))), 2)
+               five_yrs_average_gross_margin = "{:.2f}%".format((sum(gross_margin_annual5_unpacked) / len(gross_margin_annual5_unpacked)) * 100)
 
-                    #Total_Equity_quarter = quarterly_data['total_equity'][-1:]
-               
-               
-                    
+               average_operating_margin1_quarter = "{:.2f}%".format((sum(operating_margin_quater1_unpacked) / len(operating_margin_quater1_unpacked)) * 100)
 
-               except Exception as e:
-                    Average_debt_equity_one=0.00
-                    debt_Assets_annual_one = pd.Series()
-                    Average_debt_assets_one =0.00
-                    Average_debt_equity_annual =0.00
+               five_yrs_average_operating_margin= "{:.2f}%".format((sum(operating_margin_annual5_unpacked) / len(operating_margin_annual5_unpacked)) * 100)
+
+               st_investments_quarter1 = ((sum(st_investments_quarter1_unpacked) / len(st_investments_quarter1_unpacked)) / 1000000000)
+               cash_equiv_quarter1 = ((sum(cash_equiv_quarter1_unpacked) / len(cash_equiv_quarter1_unpacked)) / 1000000000)
+               Total_cash_last_years = (st_investments_quarter1+cash_equiv_quarter1)
 
 
                
                try:
-                    
-                    forwardPE=quote.fundamental_df.at[0, "Forward P/E"]
-                    RSI=quote.fundamental_df.at[0, "RSI (14)"]
-                    PEG=quote.fundamental_df.at[0, "PEG"]
-                    Beta=quote.fundamental_df.at[0, "Beta"]
-                    #Earnings = quote.fundamental_df.at[0, "Earnings"]
-                    Moving_200=quote.fundamental_df.at[0, "SMA200"]
-                    Moving_50=quote.fundamental_df.at[0, "SMA50"]
-                    Target_Price = quote.fundamental_df.at[0,"Target Price"] 
-                    #Target_Price='{:.2f}'.format(Target_Price)   
-                    Dividend_TTM = quote.fundamental_df.at[0,"Dividend TTM"]
-                    Dividend_Est = quote.fundamental_df.at[0,"Dividend Est."]
-                    Dividend_Ex_Date= quote.fundamental_df.at[0,"Dividend Ex-Date"]
-                    Earnings_this_yr=quote.fundamental_df.at[0,"EPS this Y"]
-                    Earnings_next_yr_in_prozent=quote.fundamental_df.at[0,"EPS next Y - EPS growth next year"]
-                    Earnings_next_yr_in_value=quote.fundamental_df.at[0,"EPS next Y - EPS estimate for next year"]
-                    Earnings_next_5_yrs=quote.fundamental_df.at[0,"EPS next 5Y"]
-                    Average_debt_equity_one=quote.fundamental_df.at[0,"Debt/Eq"]
 
-                    try:
-                         checking_valid_debt_equity=float(Average_debt_equity_one) >1
-                         
-                    except Exception as e: 
-                         Average_debt_equity_one=Average_debt_equity_annual
-               
-                    
-
-                    
-               except Exception as e: 
-
-                    forwardPE ="-"
-                    Earnings ="-"
-                    RSI="-"
-                    PEG="-"
-                    Beta=beta
-                    Dividend_TTM = Dividend_per_share
-                    Moving_200="-"
-                    Moving_50="-"
-                    Target_Price ="-"
-                    Dividend_Est ="-"
-                    Dividend_Ex_Date = "-"
-                    Earnings_this_yr="-"
-                    Earnings_next_yr_in_prozent="-"
-                    Earnings_next_yr_in_value ="-"
-                    Earnings_next_5_yrs="-"
-                    Average_debt_equity_one=Average_debt_equity_annual
-               
-
-
-
-               Divdend_per_share =Financial_data['ttm']['dividends']
-               Dividend_per_share_yield ="{:.2f}%".format(abs((Divdend_per_share)/current_price)*100)
-
-
-               Divdend_per_share =Financial_data['ttm']['dividends']
-               Dividend_per_share_yield_no_percentage =abs((Divdend_per_share)/current_price)*100
-               Dividend_per_share_yield ="{:.2f}%".format(abs((Divdend_per_share)/current_price)*100)
-
-               shares_basic_annual_funf = annual_data['shares_basic'][-5:]
-               try:
-
-                    Buyback_yield = ((shares_basic_annual_funf[-2]-shares_basic_annual_funf[-1])/abs(shares_basic_annual_funf[-2]))*100
+                    Buyback_yield = ((shares_basic_annual_funf_unpacked[-2]-shares_basic_annual_funf_unpacked[-1])/abs(shares_basic_annual_funf_unpacked[-2]))*100
            
-                    if shares_basic_annual_funf[-2] ==0:
+                    if shares_basic_annual_funf_unpacked[-2] ==0:
                          
                          Buyback_yield=0
 
@@ -8880,245 +9328,193 @@ if selected == "Stock Analysis Tool":
           
 
           
-
-          
                try:
                     ROE_ttm_ohne = (round_net_income_annual_one/Average_total_equity_annual)*100
-               #ROE_ttm_ohne = 100
                     ROE_ttm="{:.2f}%".format(ROE_ttm_ohne)
+                    fcf_yield_ttm = "{:.2f}%".format((fcf_per_share/amount)*100)
                except Exception as e: 
-                    ROE_ttm = "-"
-               
+                    ROE_ttm  ="{:.2f}%".format(0.00)
+                    fcf_yield_ttm ="{:.2f}%".format(0.00)
 
-               cash_equiv_quarter =quarterly_data['cash_and_equiv'][-1:]
-               cash_equiv_quarter = round((sum(cash_equiv_quarter) / len(cash_equiv_quarter)) / 1000000000, 3)
+#####################################################################################################
+               def calculate_total_debt(ticker, date_quarter, 
+                                        Accounts_payable_quarter10_unpacked, Current_accrued_liab_quarter10_unpacked, 
+                                        Tax_payable_quarter10_unpacked, Other_current_liabilities_quarter10_unpacked, 
+                                        Current_deferred_revenue_quarter10_unpacked, Total_current_liabilities_quarter10_unpacked, 
+                                        capital_leases_quarter10_unpacked, LongTerm_debt_quarter10_unpacked):
+                         # Check if the result is already in session state
+                    if f'{ticker}_Total_Debt' in st.session_state:
+                         return st.session_state[f'{ticker}_Total_Debt']
 
-                                             #------------------------------------------------------------------
-
-               try:
-                    Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
-               except KeyError:
-                    Accounts_payable_quarter = [0] * 10
-
-               try:
-                    Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
-               except KeyError:
-                    Current_accrued_liab_quarter = [0] * 10
-
-               try:
-                    Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
-               except KeyError:
-                    Tax_payable_quarter = [0] * 10
-
-               try:
-                    Other_current_liabilities_quarter = quarterly_data['other_current_liabilities'][-10:]
-               except KeyError:
-                    Other_current_liabilities_quarter = [0] * 10
-
-               try:
-                    Current_deferred_revenue_quarter = quarterly_data['current_deferred_revenue'][-10:]
-               except KeyError:
-                    Current_deferred_revenue_quarter = [0] * 10
-
-               try:
-                    Total_current_liabilities_quarter = quarterly_data['total_current_liabilities'][-10:]
-               except KeyError:
-                    Total_current_liabilities_quarter = [0] * 10
-
-               try:
-                    Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
-               except KeyError:
-                    Short_term_debt_quarter = [0] * 10
-
-               try:
-                    current_portion_of_lease_obligation = quarterly_data['current_capital_leases'][-10:]
-               except KeyError:
-                    current_portion_of_lease_obligation = [0] * 10
-
-               try:
-                    capital_leases = quarterly_data['noncurrent_capital_leases'][-10:]
-               except KeyError:
-                    capital_leases = [0] * 10
-
-               try:
-                    LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
-               except KeyError:
-                    LongTerm_debt_quarter = [0] * 10
-
-               try:
-                    Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
-               except KeyError:
-                    Other_longterm_liabilities_quarter = [0] * 10
-
-               try:
-                    Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
-               except KeyError:
-                    Total_liabilities_quarter = [0] * 10
-
-               try:
-                    Total_Equity_quarter = quarterly_data['total_equity'][-10:]
-               except KeyError:
-                    Total_Equity_quarter = [0] * 10
-
-               try:
-                    st_investments_annual = quarterly_data['st_investments'][-1:]
-               except KeyError:
-                    st_investments_annual = [0]
-
-                    
-               st_investments_annual = round((sum(st_investments_annual) / len(st_investments_annual)) / 1000000000, 3)
-
-               try:
-                    gross_margin = quarterly_data['gross_margin'][-1:]
-               except KeyError:
-                    gross_margin = [0]
-
-               average_gross_margin = round((sum(gross_margin) / len(gross_margin)) * 100, 2)
-               rounded_gross_margin = "{:.2f}%".format(average_gross_margin)
-
-               try:
-                    five_yrs_average_gross_margin = annual_data['gross_margin'][-5:]
-               except KeyError:
-                    five_yrs_average_gross_margin = [0] * 5
-
-               five_yrs_average_gross_margin = round((sum(five_yrs_average_gross_margin) / len(five_yrs_average_gross_margin)) * 100, 2)
-               five_yrs_average_gross_margin = "{:.2f}%".format(five_yrs_average_gross_margin)
-
-               try:
-                    operating_margin = annual_data['operating_margin'][-1:]
-               except KeyError:
-                    operating_margin = [0]
-
-               average_operating_margin = round((sum(operating_margin) / len(operating_margin)) * 100, 2)
-               rounded_operating_margin = "{:.2f}%".format(average_operating_margin)
-
-               try:
-                    operating_margin_five = annual_data['operating_margin'][-5:]
-               except KeyError:
-                    operating_margin_five = [0] * 5
-
-               average_operating_margin_five = round((sum(operating_margin_five) / len(operating_margin_five)) * 100, 2)
-               rounded_operating_margin_five = "{:.2f}%".format(average_operating_margin_five)
-
-
-
-               Total_cash_last_years = round((st_investments_annual+cash_equiv_quarter),3)
-                                                  
-
-
-               index = range(len(date_quarter))
-               df = pd.DataFrame({
+                    # Create DataFrame
+                    index = range(len(date_quarter))
+                    df = pd.DataFrame({
                          'period_end_date': date_quarter,
-                         'accounts_payable': Accounts_payable_quarter,
-                         'current_accrued_liabilities': Current_accrued_liab_quarter,
-                         'tax_payable': Tax_payable_quarter,
-                         'other_current_liabilities': Other_current_liabilities_quarter,
-                         'current_deferred_revenue': Current_deferred_revenue_quarter,
+                         'accounts_payable': Accounts_payable_quarter10_unpacked,
+                         'current_accrued_liabilities': Current_accrued_liab_quarter10_unpacked,
+                         'tax_payable': Tax_payable_quarter10_unpacked,
+                         'other_current_liabilities': Other_current_liabilities_quarter10_unpacked,
+                         'current_deferred_revenue': Current_deferred_revenue_quarter10_unpacked,
+                         'total_current_liabilities': Total_current_liabilities_quarter10_unpacked,
+                         'noncurrent_capital_leases': capital_leases_quarter10_unpacked,
+                         'lt_debt': LongTerm_debt_quarter10_unpacked
+                    }, index=index)
 
-                         'total_current_liabilities': Total_current_liabilities_quarter,
-                         'noncurrent_capital_leases': capital_leases,
-                         'lt_debt': LongTerm_debt_quarter}, index=index)
-                                                  
-               df['Total Difference'] = df['total_current_liabilities'] - \
-                                             (df['accounts_payable'] + df['current_accrued_liabilities'] + df['tax_payable'] +
-                                             df['other_current_liabilities'] + df['current_deferred_revenue'])
-                                                  
-               df['Total add'] =df['noncurrent_capital_leases']+df['lt_debt']
+                    # Perform calculations
+                    df['Total Difference'] = df['total_current_liabilities'] - (
+                         df['accounts_payable'] + df['current_accrued_liabilities'] + df['tax_payable'] +
+                         df['other_current_liabilities'] + df['current_deferred_revenue']
+                    )
 
-               df['Total Debt'] =df['Total Difference']+df['Total add'] 
-                                                  
-               total = df.T
-               total.columns = total.iloc[0]  # Use the first row as column names
-               total = total[1:]
-               total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
-                                                  
-                    #print("total",total)
+                    df['Total add'] = df['noncurrent_capital_leases'] + df['lt_debt']
+                    df['Total Debt'] = df['Total Difference'] + df['Total add']
 
-                    
+                    # Transpose and format the DataFrame
+                    total = df.T
+                    total.columns = total.iloc[0]  # Use the first row as column names
+                    total = total[1:]
+                    total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
 
-               total_debt_column = df['Total Debt']
-               last_value_total_debt = total_debt_column.iloc[-1]
+                    # Extract the last value from the 'Total Debt' column
+                    total_debt_column = df['Total Debt']
+                    last_value_total_debt = total_debt_column.iloc[-1]
 
-               Total_Debt_from_all_calc = last_value_total_debt/ 1000000000
-               
+                    # Store the result in session state
+                    st.session_state[f'{ticker}_Total_Debt'] = last_value_total_debt
 
+                    return last_value_total_debt
 
-               
-          # Total_DEbt_in_billion = "{:.2f}B".format(df.loc[9, 'Total Debt'] / 1000000000) if df.loc[9, 'Total Debt'] >= 1000000000 else "{:,.0f}M".format(df.loc[9, 'Total Debt'] / 1000000)
-               Total_DEbt_in_billion = "{:.2f}B".format(Total_Debt_from_all_calc/ 1000000000) if abs(Total_Debt_from_all_calc)>= 1000000000 else "{:,.0f}M".format(Total_Debt_from_all_calc / 1000000)
-               #print("Last value from Total Debt column:", Total_DEbt_in_billion)
-               #Total_Debt_from_all_calc=32.22
-               Enterprise_value = "{:.2f}".format((Marketcap)+Total_Debt_from_all_calc-Total_cash_last_years)
-               try:
-                    Enterprise_value = "{:.2f}".format((Marketcap)+Total_Debt_from_all_calc-Total_cash_last_years)
-                    #Enterprise_value =1
-                    #Enterprise_value_in_Billion = "{:.2f}".format((Marketcap)+Total_Debt_from_all_calc-Total_cash_last_years)
-                    enter=((Marketcap)+Total_Debt_from_all_calc-Total_cash_last_years)
-                    Enterprise_value_in_Billion = "{:.2f}T".format(enter/1000) if abs(enter) >= 1000 else "{:,.2f}B".format(enter / 1)
+               # Call the function to calculate total debt and store it in session state
+               Total_Debt_from_all_calc = calculate_total_debt(
+               ticker, date_quarter, Accounts_payable_quarter10_unpacked, Current_accrued_liab_quarter10_unpacked, 
+               Tax_payable_quarter10_unpacked, Other_current_liabilities_quarter10_unpacked, 
+               Current_deferred_revenue_quarter10_unpacked, Total_current_liabilities_quarter10_unpacked, 
+               capital_leases_quarter10_unpacked, LongTerm_debt_quarter10_unpacked
+               )
 
-               except Exception as e:
-          # Handle KeyError or TypeError here
-                    Enterprise_value = "N/A"
-                    Enterprise_value_in_Billion = "N/A"
+#####################################################################################################
 
-
-
-               #Enterprise_value_in_Billion=1
-
-               netincome_ttm=netincome_ttm*1000000000
-               netincome_ttm ="{:.2f}B".format(netincome_ttm/ 1000000000) if abs(netincome_ttm) >= 1000000000 else "{:,.1f}M".format(netincome_ttm / 1000000)
-
-               revenue_ttm = revenue_ttm*1000000000
-
-               if revenue_ttm!=0.00 or Dividend_ttm>0 :
-                    Dividend_ttm ="{:.2f}B".format(abs(Dividend_ttm/ 1000000000)) if abs(Dividend_ttm) >= 1000000000 else "{:,.1f}M".format(abs(Dividend_ttm / 1000000))
-                    revenue_ttm ="{:.2f}B".format(revenue_ttm/ 1000000000) if abs(revenue_ttm)>= 1000000000 else "{:,.1f}M".format(revenue_ttm / 1000000)
-
-               else:
-                    revenue_ttm="-"
-                    Dividend_ttm="-"
-
-               fcf_ttm =fcf_ttm*1000000000
-               fcf_ttm ="{:.2f}B".format(fcf_ttm/ 1000000000) if abs(fcf_ttm) >= 1000000000 else "{:,.1f}M".format(fcf_ttm / 1000000)
-
-               
-         
-               current_Operating_cash_Flow =Financial_data['ttm']['cf_cfo']
-               current_Operating_cash_Flow_Value ="{:.2f}B".format(current_Operating_cash_Flow/ 1000000000) if abs(current_Operating_cash_Flow) >= 1000000000 else "{:,.1f}M".format(current_Operating_cash_Flow / 1000000)
-
-               if Financial_data['ttm']['cf_cfo'] !=0:
-                    P_OCF_ttm = "{:.2f}".format(Marketcap/(current_Operating_cash_Flow/1000000000))
-
-               else:
-                    P_OCF_ttm = "-"
-               #print(P_OCF_ttm)
                # try:
-               #      # Calculate the percentage increase
-                    
-               #      percentage_difference_52_week_low = "{:.2f}%".format(((current_price - fifty_two_week_low) / fifty_two_week_low) * 100)
-
-               #      percentage_diff_ATH = "{:.2f}%".format(((current_price - all_time_high_price) / all_time_high_price) * 100)
-
-               #      #all_time_high_price,fifty_two_week_low,all_time_high_date,fifty_two_week_low_date=get_all_time_high_and_low_date(ticker)
-               
-               
-                    
+               #      Enterprise_value = (Marketcap)+Total_Debt_from_all_calc/ 1000000000-Total_cash_last_years
+               #      #enter=((Marketcap)+Total_Debt_from_all_calc/ 1000000000-Total_cash_last_years)
+               #      Enterprise_value_in_Billion = "{:.2f}T".format(Enterprise_value/1000) if abs(Enterprise_value) >= 1000 else "{:,.2f}B".format(Enterprise_value / 1)
+               #      Debt_to_EBITDA = "{:.2f}".format((Total_Debt_from_all_calc/ 1000000000)/Ebita_ttm)
                # except Exception as e:
-               #      percentage_difference_52_week_low =""
-               #      percentage_difference_ATH=""
-               
-               
-          
-                    
-
-               Ebita_ttm =Financial_data['ttm']['ebitda']
-               Ebita_ttm =Ebita_ttm/1000000000
+               #      Enterprise_value = "N/A"
+               #      Enterprise_value_in_Billion = "N/A"
+               #      Debt_to_EBITDA ="{:.2f}".format(0.00)  
 
 
-               try:
-                    Debt_to_EBITDA = "{:.2f}".format(Total_Debt_from_all_calc/Ebita_ttm)
-               except Exception as e:
-                    Debt_to_EBITDA =0.00
+
+
+               # revenue_ttm = revenue_ttm*1000000000
+
+               # if revenue_ttm!=0.00 or Dividend_ttm>0 :
+               #      Dividend_ttm ="{:.2f}B".format(abs(Dividend_ttm/ 1000000000)) if abs(Dividend_ttm) >= 1000000000 else "{:,.1f}M".format(abs(Dividend_ttm / 1000000))
+               #      revenue_ttm ="{:.2f}B".format(revenue_ttm/ 1000000000) if abs(revenue_ttm)>= 1000000000 else "{:,.1f}M".format(revenue_ttm / 1000000)
+
+               # else:
+               #      revenue_ttm="-"
+               #      Dividend_ttm="-"
+
+
+               # netincome_ttm=netincome_ttm*1000000000
+               # netincome_ttm ="{:.2f}B".format(netincome_ttm/ 1000000000) if abs(netincome_ttm) >= 1000000000 else "{:,.1f}M".format(netincome_ttm / 1000000)
+               # fcf_ttm =fcf_ttm*1000000000
+               # fcf_ttm ="{:.2f}B".format(fcf_ttm/ 1000000000) if abs(fcf_ttm) >= 1000000000 else "{:,.1f}M".format(fcf_ttm / 1000000)
+
+               # current_Operating_cash_Flow_Value ="{:.2f}B".format(current_Operating_cash_Flow/ 1000000000) if abs(current_Operating_cash_Flow) >= 1000000000 else "{:,.1f}M".format(current_Operating_cash_Flow / 1000000)
+
+               # if current_Operating_cash_Flow!=0:
+               #      P_OCF_ttm = "{:.2f}".format(Marketcap/(current_Operating_cash_Flow/1000000000))
+
+               # else:
+               #      P_OCF_ttm = "-"
+
+               def calculate_financial_metrics(ticker, Marketcap, Total_Debt_from_all_calc, Total_cash_last_years, 
+                                                  Ebita_ttm, revenue_ttm, Dividend_ttm, netincome_ttm, 
+                                                  fcf_ttm, current_Operating_cash_Flow):
+                    # Check if financial metrics are already in session state
+                    if f'{ticker}_Enterprise_value' in st.session_state:
+                         return (
+                              st.session_state[f'{ticker}_Enterprise_value'],
+                              st.session_state[f'{ticker}_Enterprise_value_in_Billion'],
+                              st.session_state[f'{ticker}_Debt_to_EBITDA'],
+                              st.session_state[f'{ticker}_revenue_ttm'],
+                              st.session_state[f'{ticker}_Dividend_ttm'],
+                              st.session_state[f'{ticker}_netincome_ttm'],
+                              st.session_state[f'{ticker}_fcf_ttm'],
+                              st.session_state[f'{ticker}_current_Operating_cash_Flow_Value'],
+                              st.session_state[f'{ticker}_P_OCF_ttm']
+                         )
+
+                    try:
+                         # Calculate Enterprise value
+                         Enterprise_value = (Marketcap) + Total_Debt_from_all_calc / 1000000000 - Total_cash_last_years
+                         Enterprise_value_in_Billion = "{:.2f}T".format(Enterprise_value / 1000) if abs(Enterprise_value) >= 1000 else "{:,.2f}B".format(Enterprise_value)
+                         Debt_to_EBITDA = "{:.2f}".format((Total_Debt_from_all_calc / 1000000000) / Ebita_ttm)
+                    except Exception as e:
+                         Enterprise_value = "N/A"
+                         Enterprise_value_in_Billion = "N/A"
+                         Debt_to_EBITDA = "{:.2f}".format(0.00)
+
+                    # Scaling revenue and dividend values
+                    revenue_ttm *= 1000000000
+                    if revenue_ttm != 0.00 or Dividend_ttm > 0:
+                         Dividend_ttm = "{:.2f}B".format(abs(Dividend_ttm / 1000000000)) if abs(Dividend_ttm) >= 1000000000 else "{:,.1f}M".format(abs(Dividend_ttm / 1000000))
+                         revenue_ttm = "{:.2f}B".format(revenue_ttm / 1000000000) if abs(revenue_ttm) >= 1000000000 else "{:,.1f}M".format(revenue_ttm / 1000000)
+                    else:
+                         revenue_ttm = "-"
+                         Dividend_ttm = "-"
+
+                    # Formatting net income, free cash flow, and operating cash flow values
+                    netincome_ttm *= 1000000000
+                    netincome_ttm = "{:.2f}B".format(netincome_ttm / 1000000000) if abs(netincome_ttm) >= 1000000000 else "{:,.1f}M".format(netincome_ttm / 1000000)
+
+                    fcf_ttm *= 1000000000
+                    fcf_ttm = "{:.2f}B".format(fcf_ttm / 1000000000) if abs(fcf_ttm) >= 1000000000 else "{:,.1f}M".format(fcf_ttm / 1000000)
+
+                    current_Operating_cash_Flow_Value = "{:.2f}B".format(current_Operating_cash_Flow / 1000000000) if abs(current_Operating_cash_Flow) >= 1000000000 else "{:,.1f}M".format(current_Operating_cash_Flow / 1000000)
+
+                    if current_Operating_cash_Flow != 0:
+                         P_OCF_ttm = "{:.2f}".format(Marketcap / (current_Operating_cash_Flow / 1000000000))
+                    else:
+                         P_OCF_ttm = "-"
+
+                    # Store calculated values in session_state
+                    st.session_state[f'{ticker}_Enterprise_value'] = Enterprise_value
+                    st.session_state[f'{ticker}_Enterprise_value_in_Billion'] = Enterprise_value_in_Billion
+                    st.session_state[f'{ticker}_Debt_to_EBITDA'] = Debt_to_EBITDA
+                    st.session_state[f'{ticker}_revenue_ttm'] = revenue_ttm
+                    st.session_state[f'{ticker}_Dividend_ttm'] = Dividend_ttm
+                    st.session_state[f'{ticker}_netincome_ttm'] = netincome_ttm
+                    st.session_state[f'{ticker}_fcf_ttm'] = fcf_ttm
+                    st.session_state[f'{ticker}_current_Operating_cash_Flow_Value'] = current_Operating_cash_Flow_Value
+                    st.session_state[f'{ticker}_P_OCF_ttm'] = P_OCF_ttm
+
+                    return (
+                         Enterprise_value,
+                         Enterprise_value_in_Billion,
+                         Debt_to_EBITDA,
+                         revenue_ttm,
+                         Dividend_ttm,
+                         netincome_ttm,
+                         fcf_ttm,
+                         current_Operating_cash_Flow_Value,
+                         P_OCF_ttm
+                    )
+
+               (Enterprise_value,
+                         Enterprise_value_in_Billion,
+                         Debt_to_EBITDA,
+                         revenue_ttm,
+                         Dividend_ttm,
+                         netincome_ttm,
+                         fcf_ttm,
+                         current_Operating_cash_Flow_Value,
+                         P_OCF_ttm)=calculate_financial_metrics(ticker, Marketcap, Total_Debt_from_all_calc, Total_cash_last_years, 
+                                                  Ebita_ttm, revenue_ttm, Dividend_ttm, netincome_ttm, 
+                                                  fcf_ttm, current_Operating_cash_Flow)
 
 ############################################################################
 
@@ -9156,7 +9552,7 @@ if selected == "Stock Analysis Tool":
                     
                     return styled_df
 
-               # Function to display multiple dataframes in columns
+#################################################################################
                def display_dataframes(dfs, cols):
                     for df, col in zip(dfs, cols):
                          with col:
@@ -9168,7 +9564,7 @@ if selected == "Stock Analysis Tool":
                'Enterprise Value': [Enterprise_value_in_Billion], 
                'Debt/EBITDA': [Debt_to_EBITDA],
                'Revenue (TTM)': [revenue_ttm],      
-               '5 YR Net Income': [Average_netIncome_annual_we], 
+               '5 YR Net Income': [Average_net_income_annual_funf_Billion_Million], 
                'Net Income (TTM)': [netincome_ttm], 
                'PEG': [PEG],
                'Forward P/E': [forwardPE], 
@@ -9180,8 +9576,9 @@ if selected == "Stock Analysis Tool":
                '5 YR Price/OCF ': [P_OCF_5],  
                '10 YR Price/OCF': [P_OCF_10],  
                '5 YR Gross Profit Margin': [five_yrs_average_gross_margin],
-               'Gross Profit Margin (TTM)': [rounded_gross_margin],
+               'Gross Profit Margin (TTM)': [average_gross_margin_quater1],
                }
+
 
                data2 = {
                '5 YR Dividend Yield': [Dividend_yield_average], 
@@ -9196,11 +9593,11 @@ if selected == "Stock Analysis Tool":
                'Price/FCF (TTM)': [pfcf_ttm], 
                '5 YR Avg Price/FCF': [pfcf_funf],
                '10 YR Avg Price/FCF': [pfcf_ten],
-               '5 YR Operating Margin': [rounded_operating_margin_five],
-               'Operating Margin': [rounded_operating_margin],
+               '5 YR Operating Margin': [five_yrs_average_operating_margin],
+               'Operating Margin': [average_operating_margin1_quarter],
                '5 YR Net Profit Margin': f"{five_yrs_Nettomarge}%",
                'Net Profit Margin': [Net_margin_ttm],
-               '5 YR FCF Margin': f"{FCF_Margin_5}%",
+               '5 YR FCF Margin':[FCF_Margin_5],
                'FCF Margin': ' {:.2f}%'.format(FCF_Margin_1)
                }
 
@@ -9251,6 +9648,7 @@ if selected == "Stock Analysis Tool":
 
 
 
+#################################################################################
 
 
           #----------------------------------------------------------------------------
@@ -9278,20 +9676,153 @@ if selected == "Stock Analysis Tool":
 
                     
                st.markdown(contact_form, unsafe_allow_html = True)
-               
+#################################################################################
+       
                @st.cache_data
                def local_css(file_name):
                          with open(file_name)as f:
                               st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)      
                local_css("style.css")
+#################################################################################
+     def unpack_financial_data(annual_data, ticker):
+     # Define session state keys based on ticker
+          session_keys = {
+               'Total_interest_income_annual_10': f'{ticker}_Total_interest_income_annual_10',
+               'Total_interest_expense_annual_10': f'{ticker}_Total_interest_expense_annual_10',
+               'Net_interest_Income_annual_10': f'{ticker}_Net_interest_Income_annual_10',
+               'Prov_Credit_losses_annual_10': f'{ticker}_Prov_Credit_losses_annual_10',
+               'Netinterest_Prov_Credit_losses_annual_10': f'{ticker}_Netinterest_Prov_Credit_losses_annual_10',
+               'Total_Non_interest_expenses_annual_10': f'{ticker}_Total_Non_interest_expenses_annual_10',
+               'Total_Non_interest_revenue_annual_10': f'{ticker}_Total_Non_interest_revenue_annual_10',
+               'Net_premiums_earned_annual_10': f'{ticker}_Net_premiums_earned_annual_10',
+               'Net_investment_income_annual_10': f'{ticker}_Net_investment_income_annual_10',
+               'Fees_and_other_income_annual_10': f'{ticker}_Fees_and_other_income_annual_10',
+               'Interest_Expense_insurance_annual_10': f'{ticker}_Interest_Expense_insurance_annual_10',
+               'Policy_benefits_claim_annual_10': f'{ticker}_Policy_benefits_claim_annual_10',
+               'Operating_income_annual_10': f'{ticker}_Operating_income_annual_10',
+               'cogs_list_annual_10': f'{ticker}_cogs_list_annual_10',
+               'gross_profit_annual_10': f'{ticker}_gross_profit_annual_10',
+               'SGA_Expense_annual_10': f'{ticker}_SGA_Expense_annual_10',
+               'Depreciation_Depletion_Amortisation_annual_10': f'{ticker}_Depreciation_Depletion_Amortisation_annual_10',
+               'Interest_Income_annual_10': f'{ticker}_Interest_Income_annual_10',
+               'Research_Dev_annual_10': f'{ticker}_Research_Dev_annual_10',
+               'interest_expense_list_annual_10': f'{ticker}_interest_expense_list_annual_10',
+               'operating_income_list_annual_10': f'{ticker}_operating_income_list_annual_10'
+          }
 
+          # Check if all data is in session state
+          if all(key in st.session_state for key in session_keys.values()):
+               return tuple(st.session_state[key] for key in session_keys.values())
+
+          # Unpack the data if not present in session state
+          try:
+               Total_interest_income_annual_10_unpacked = annual_data['total_interest_income'][-10:]
+               Total_interest_expense_annual_10_unpacked = annual_data['total_interest_expense'][-10:]
+               Net_interest_Income_annual_10_unpacked = annual_data['net_interest_income'][-10:]
+               Prov_Credit_losses_annual_10_unpacked = annual_data['credit_losses_provision'][-10:]
+               Netinterest_Prov_Credit_losses_annual_10_unpacked = annual_data['net_interest_income_after_credit_losses_provision'][-10:]
+               Total_Non_interest_expenses_annual_10_unpacked = annual_data['total_noninterest_expense'][-10:]
+               Total_Non_interest_revenue_annual_10_unpacked = annual_data['total_noninterest_revenue'][-10:]
+
+               # Store unpacked data in session state
+               st.session_state.update({
+                    session_keys['Total_interest_income_annual_10']: Total_interest_income_annual_10_unpacked,
+                    session_keys['Total_interest_expense_annual_10']: Total_interest_expense_annual_10_unpacked,
+                    session_keys['Net_interest_Income_annual_10']: Net_interest_Income_annual_10_unpacked,
+                    session_keys['Prov_Credit_losses_annual_10']: Prov_Credit_losses_annual_10_unpacked,
+                    session_keys['Netinterest_Prov_Credit_losses_annual_10']: Netinterest_Prov_Credit_losses_annual_10_unpacked,
+                    session_keys['Total_Non_interest_expenses_annual_10']: Total_Non_interest_expenses_annual_10_unpacked,
+                    session_keys['Total_Non_interest_revenue_annual_10']: Total_Non_interest_revenue_annual_10_unpacked
+               })
+
+               return (
+                    Total_interest_income_annual_10_unpacked,
+                    Total_interest_expense_annual_10_unpacked,
+                    Net_interest_Income_annual_10_unpacked,
+                    Prov_Credit_losses_annual_10_unpacked,
+                    Netinterest_Prov_Credit_losses_annual_10_unpacked,
+                    Total_Non_interest_expenses_annual_10_unpacked,
+                    Total_Non_interest_revenue_annual_10_unpacked
+               )
+
+          except KeyError:
+               try:
+                    Net_premiums_earned_annual_10_unpacked = annual_data['premiums_earned'][-10:]
+                    Net_investment_income_annual_10_unpacked = annual_data['net_investment_income'][-10:]
+                    Fees_and_other_income_annual_10_unpacked = annual_data['fees_and_other_income'][-10:]
+                    Interest_Expense_insurance_annual_10_unpacked = annual_data['interest_expense_insurance'][-10:]
+                    Policy_benefits_claim_annual_10_unpacked = annual_data['net_policyholder_claims_expense'][-10:]
+                    Operating_income_annual_10_unpacked = annual_data['operating_income'][-10:]
+
+                    # Store unpacked data in session state
+                    st.session_state.update({
+                         session_keys['Net_premiums_earned_annual_10']: Net_premiums_earned_annual_10_unpacked,
+                         session_keys['Net_investment_income_annual_10']: Net_investment_income_annual_10_unpacked,
+                         session_keys['Fees_and_other_income_annual_10']: Fees_and_other_income_annual_10_unpacked,
+                         session_keys['Interest_Expense_insurance_annual_10']: Interest_Expense_insurance_annual_10_unpacked,
+                         session_keys['Policy_benefits_claim_annual_10']: Policy_benefits_claim_annual_10_unpacked,
+                         session_keys['Operating_income_annual_10']: Operating_income_annual_10_unpacked
+                    })
+
+                    return (
+                         Net_premiums_earned_annual_10_unpacked,
+                         Net_investment_income_annual_10_unpacked,
+                         Fees_and_other_income_annual_10_unpacked,
+                         Interest_Expense_insurance_annual_10_unpacked,
+                         Policy_benefits_claim_annual_10_unpacked,
+                         Operating_income_annual_10_unpacked
+                    )
+
+               except KeyError:
+                    try:
+                         cogs_list_annual_10_unpacked = annual_data['cogs'][-10:]
+                         gross_profit_annual_10_unpacked = annual_data['gross_profit'][-10:]
+                         SGA_Expense_annual_10_unpacked = annual_data['total_opex'][-10:]
+
+                         try:
+                              Depreciation_Depletion_Amortisation_annual_10_unpacked = annual_data['cfo_da'][-10:]
+                              Interest_Income_annual_10_unpacked = annual_data['interest_income'][-10:]
+                         except KeyError:
+                              Depreciation_Depletion_Amortisation_annual_10_unpacked = [0] * 10
+                              Interest_Income_annual_10_unpacked = [0] * 10
+
+                         Research_Dev_annual_10_unpacked = annual_data['rnd'][-10:]
+                         interest_expense_list_annual_10_unpacked = annual_data['interest_expense'][-10:]
+                         operating_income_list_annual_10_unpacked = annual_data['operating_income'][-10:]
+
+                         # Store unpacked data in session state
+                         st.session_state.update({
+                              session_keys['cogs_list_annual_10']: cogs_list_annual_10_unpacked,
+                              session_keys['gross_profit_annual_10']: gross_profit_annual_10_unpacked,
+                              session_keys['SGA_Expense_annual_10']: SGA_Expense_annual_10_unpacked,
+                              session_keys['Depreciation_Depletion_Amortisation_annual_10']: Depreciation_Depletion_Amortisation_annual_10_unpacked,
+                              session_keys['Interest_Income_annual_10']: Interest_Income_annual_10_unpacked,
+                              session_keys['Research_Dev_annual_10']: Research_Dev_annual_10_unpacked,
+                              session_keys['interest_expense_list_annual_10']: interest_expense_list_annual_10_unpacked,
+                              session_keys['operating_income_list_annual_10']: operating_income_list_annual_10_unpacked
+                         })
+
+                         return (
+                              cogs_list_annual_10_unpacked,
+                              gross_profit_annual_10_unpacked,
+                              SGA_Expense_annual_10_unpacked,
+                              Depreciation_Depletion_Amortisation_annual_10_unpacked,
+                              Interest_Income_annual_10_unpacked,
+                              Research_Dev_annual_10_unpacked,
+                              interest_expense_list_annual_10_unpacked,
+                              operating_income_list_annual_10_unpacked
+                         )
+
+                    except KeyError:
+                         st.write("Data not available.")
+                         return ()
+
+
+#################################################################################
 
      @st.cache_data(show_spinner=False)
      def financials_df(data_list, date_list, column_name):
-          #formatted_data = ["{:.2f}B".format(value / 1_000_000_000) if abs(value) >= 1_000_000_000 else "{:,.0f}M".format(value / 1_000_000) for value in data_list]
-          #formatted_data = ["{:.2f}B".format(value / 1000000000) if abs(value) >= 1000000000 else 
-           #"{:,.0f}M".format(value / 1000000.00) if abs(value) >= 1000000.00 else "{:.2f}".format(value)for value in data_list]
-          
+
           formatted_data = [
           "{:.2f}B".format(value / 1000000000) if abs(value) >= 1000000000 else
           "{:.0f}M".format(value / 1000000) if abs(value) >= 1000000 else
@@ -9302,6 +9833,9 @@ if selected == "Stock Analysis Tool":
                     
           df = pd.DataFrame(formatted_data, index=date_list, columns=[column_name])
           return df.transpose()   
+         # Define session state keys based on ticker
+
+
       
      with st.container():
           use_container_width=True
@@ -9312,102 +9846,161 @@ if selected == "Stock Analysis Tool":
                     Annual,Quarterly = st.tabs(["Annual","Quarterly"])
                     date_annual = annual_data['period_end_date'][-10:]
                     date_quarter = quarterly_data['period_end_date'][-10:]
-                                                  
+
 
                     with Annual: 
+                         try:
 
-                         try: 
-                                           
-                              revenue_2013_annual = annual_data['revenue'][-10:]
-                              Pretax_income_annual = annual_data['pretax_income'][-10:]
-                              eps_basic_annual= annual_data['eps_basic'][-10:]
-                              shares_basic_annual= annual_data['shares_basic'][-10:]
-                              eps_diluted_annual = annual_data['eps_diluted'][-10:]
-                              shares_diluted_annual = annual_data['shares_diluted'][-10:]
-                              Income_tax_annual = annual_data['income_tax'][-10:]
-                              net_income_annual = annual_data['net_income'][-10:]
-                              Total_interest_income_list_annual = annual_data['total_interest_income'][-10:]
-                              Total_interest_expense_list_annual= annual_data['total_interest_expense'][-10:]
-                              Net_interest_Income_annual = annual_data['net_interest_income'][-10:]
-                              Prov_Credit_losses_annual = annual_data['credit_losses_provision'][-10:]
-                              Netinterest_Prov_Credit_losses_annual = annual_data['net_interest_income_after_credit_losses_provision'][-10:]
-                              Total_Non_interest_expenses_annual = annual_data['total_noninterest_expense'][-10:]
-                              Total_Non_interest_revenue_annual = annual_data['total_noninterest_revenue'][-10:]
+                              if f'{ticker}_Total_interest_income_annual_10' in st.session_state:
+                                   Total_interest_income_annual_10_unpacked = st.session_state[f'{ticker}_Total_interest_income_annual_10']
+                                   Pretax_income_annual_10_unpacked = st.session_state[f'{ticker}_Pretax_income_annual_10']
+                                   Income_tax_annual_10_unpacked = st.session_state[f'{ticker}_Income_tax_annual_10']
+                                   Total_interest_expense_annual_10_unpacked = st.session_state[f'{ticker}_Total_interest_expense_annual_10']
+                                   Net_interest_Income_annual_10_unpacked = st.session_state[f'{ticker}_Net_interest_Income_annual_10']
+                                   Prov_Credit_losses_annual_10_unpacked = st.session_state[f'{ticker}_Prov_Credit_losses_annual_10']
+                                   Netinterest_Prov_Credit_losses_annual_10_unpacked = st.session_state[f'{ticker}_Netinterest_Prov_Credit_losses_annual_10']
+                                   Total_Non_interest_expenses_annual_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_expenses_annual_10']
+                                   Total_Non_interest_revenue_annual_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_revenue_annual_10']
+                                   Ebita_annual_10_unpacked = st.session_state[f'{ticker}_Ebita_annual_10']
+                              else:
+                              
+                                   Pretax_income_annual_10_unpacked = annual_data['pretax_income'][-10:]
+                                   Income_tax_annual_10_unpacked  = annual_data['income_tax'][-10:]
+                                   Total_interest_income_annual_10_unpacked = annual_data['total_interest_income'][-10:]
+                                   Total_interest_expense_annual_10_unpacked = annual_data['total_interest_expense'][-10:]
+                                   Net_interest_Income_annual_10_unpacked  = annual_data['net_interest_income'][-10:]
+                                   Prov_Credit_losses_annual_10_unpacked  = annual_data['credit_losses_provision'][-10:]
+                                   Netinterest_Prov_Credit_losses_annual_10_unpacked = annual_data['net_interest_income_after_credit_losses_provision'][-10:]
+                                   Total_Non_interest_expenses_annual_10_unpacked  = annual_data['total_noninterest_expense'][-10:]
+                                   Total_Non_interest_revenue_annual_10_unpacked  = annual_data['total_noninterest_revenue'][-10:]
+                                   Ebita_annual_10_unpacked = annual_data['ebitda'][-10:]
 
+                                   # Store unpacked data in session state
+                                   st.session_state[f'{ticker}_Pretax_income_annual_10'] = Pretax_income_annual_10_unpacked
+                                   st.session_state[f'{ticker}_Income_tax_annual_10'] = Income_tax_annual_10_unpacked
+                                   st.session_state[f'{ticker}_Total_interest_income_annual_10'] = Total_interest_income_annual_10_unpacked
+                                   st.session_state[f'{ticker}_Total_interest_expense_annual_10'] = Total_interest_expense_annual_10_unpacked
+                                   st.session_state[f'{ticker}_Net_interest_Income_annual_10'] = Net_interest_Income_annual_10_unpacked
+                                   st.session_state[f'{ticker}_Prov_Credit_losses_annual_10'] = Prov_Credit_losses_annual_10_unpacked
+                                   st.session_state[f'{ticker}_Netinterest_Prov_Credit_losses_annual_10'] = Netinterest_Prov_Credit_losses_annual_10_unpacked
+                                   st.session_state[f'{ticker}_Total_Non_interest_expenses_annual_10'] = Total_Non_interest_expenses_annual_10_unpacked
+                                   st.session_state[f'{ticker}_Total_Non_interest_revenue_annual_10'] = Total_Non_interest_revenue_annual_10_unpacked
+                                   st.session_state[f'{ticker}_Ebita_annual_10'] = Ebita_annual_10_unpacked
 
+                                        # Store unpacked data in session state
+                          
 
-                              revenue_2013_annual_df = financials_df(revenue_2013_annual, date_annual, "Revenue")
-                              Pretax_income_annual_df = financials_df(Pretax_income_annual, date_annual, "Pretax Income")
-                              eps_basic_annual_df = financials_df(eps_basic_annual, date_annual, "EPS Basic")
-                              shares_basic_annual_df = financials_df(shares_basic_annual, date_annual, "Shares Basic")
-                              eps_diluted_annual_df = financials_df(eps_diluted_annual, date_annual, "EPS Diluted")
-                              shares_diluted_annual_df = financials_df(shares_diluted_annual, date_annual, "Shares Diluted")
-                              Income_tax_annual_df = financials_df(Income_tax_annual, date_annual, "Income Tax Expense")
-                              net_income_annual_df = financials_df(net_income_annual, date_annual, "Net Income")
-                              Total_interest_income_list_annual_df = financials_df(Total_interest_income_list_annual, date_annual, "Total Interest Income")
-                              Total_interest_expense_list_annual_df = financials_df(Total_interest_expense_list_annual, date_annual, "Total Interest Expense")
-                              Net_interest_Income_annual_df = financials_df(Net_interest_Income_annual, date_annual, "Net Interest Income")
-                              Prov_Credit_losses_annual_df = financials_df(Prov_Credit_losses_annual, date_annual, "Provision for Credit Losses")
-                              Netinterest_Prov_Credit_losses_annual_df = financials_df(Netinterest_Prov_Credit_losses_annual, date_annual, "Net Interest Income After Credit Losses Provision")
-                              Total_Non_interest_expenses_annual_df = financials_df(Total_Non_interest_expenses_annual, date_annual, "Total Non Interest Expenses")
-                              Total_Non_interest_revenue_annual_df = financials_df(Total_Non_interest_revenue_annual, date_annual, "Total Non-Interest Revenue")
+                              revenue_2013_annual_df = financials_df(Revenue_annual_10_unpacked, date_annual, "Revenue")
+                              Pretax_income_annual_df = financials_df(Pretax_income_annual_10_unpacked, date_annual, "Pretax Income")
+                              eps_basic_annual_df = financials_df(eps_basic_annual_10_unpacked, date_annual, "EPS Basic")
+                              shares_basic_annual_df = financials_df(shares_basic_annual_10_unpacked, date_annual, "Shares Basic")
+                              eps_diluted_annual_df = financials_df(eps_diluted_annual_10_unpacked, date_annual, "EPS Diluted")
+                              shares_diluted_annual_df = financials_df(shares_diluted_annual_10_unpacked, date_annual, "Shares Diluted")
+                              Income_tax_annual_df = financials_df(Income_tax_annual_10_unpacked, date_annual, "Income Tax Expense")
+                              net_income_annual_df = financials_df(net_income_annual_10_unpacked, date_annual, "Net Income")
+                              Total_interest_income_list_annual_df = financials_df(Total_interest_income_annual_10_unpacked, date_annual, "Total Interest Income")
+                              Total_interest_expense_list_annual_df = financials_df(Total_interest_expense_annual_10_unpacked, date_annual, "Total Interest Expense")
+                              Net_interest_Income_annual_df = financials_df(Net_interest_Income_annual_10_unpacked, date_annual, "Net Interest Income")
+                              Prov_Credit_losses_annual_df = financials_df(Prov_Credit_losses_annual_10_unpacked, date_annual, "Provision for Credit Losses")
+                              Netinterest_Prov_Credit_losses_annual_df = financials_df(Netinterest_Prov_Credit_losses_annual_10_unpacked, date_annual, "Net Interest Income After Credit Losses Provision")
+                              Total_Non_interest_expenses_annual_df = financials_df(Total_Non_interest_expenses_annual_10_unpacked, date_annual, "Total Non Interest Expenses")
+                              Total_Non_interest_revenue_annual_df = financials_df(Total_Non_interest_revenue_annual_10_unpacked, date_annual, "Total Non-Interest Revenue")
+                              Ebita_annual_df = financials_df(Ebita_annual_10_unpacked, date_annual, "EBITDA")
 
                               merged_df = pd.concat([
                               Total_interest_income_list_annual_df,Total_interest_expense_list_annual_df,Net_interest_Income_annual_df,
                               Total_Non_interest_revenue_annual_df,Prov_Credit_losses_annual_df,revenue_2013_annual_df,
                               Netinterest_Prov_Credit_losses_annual_df, Total_Non_interest_expenses_annual_df,
                               Pretax_income_annual_df,Income_tax_annual_df,net_income_annual_df,eps_basic_annual_df, shares_basic_annual_df,
-                              eps_diluted_annual_df, shares_diluted_annual_df
+                              eps_diluted_annual_df, shares_diluted_annual_df,Ebita_annual_df
                               
                               ])
 
                               st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
                                         
                               pass
-                             
+                                   
 
                          except KeyError:
                               try:
-                                   Net_premiums_earned = annual_data['premiums_earned'][-10:] 
-                                   Net_investment_income = annual_data['net_investment_income'][-10:] 
-                                   Fees_and_other_income = annual_data['fees_and_other_income'][-10:] 
-                                   Interest_Expense_insurance = annual_data['interest_expense_insurance'][-10:] 
-                                   revenue_2013 = annual_data['revenue'][-10:]
-                                   Policy_benenfits_claim_annual= annual_data['net_policyholder_claims_expense'][-10:]
-                                   Operating_income_annual = annual_data['operating_income'][-10:]
-                                   Pretax_income_annual = annual_data['pretax_income'][-10:]
-                                   net_income_annual = annual_data['net_income'][-10:] 
-                                   eps_basic_annual = annual_data['eps_basic'][-10:]
-                                   shares_basic_annual = annual_data['shares_basic'][-10:]
-                                   eps_diluted_annual = annual_data['eps_diluted'][-10:]
-                                   shares_diluted_annual = annual_data['shares_diluted'][-10:]
-                                   Income_tax_annual = annual_data['income_tax'][-10:]
-                                   Ebita_annual = annual_data['ebitda'][-10:]
+                                   if   f'{ticker}_Net_premiums_earned_annual_10' in st.session_state:
+                                        Net_premiums_earned_annual_10_unpacked = st.session_state[f'{ticker}_Net_premiums_earned_annual_10']
+                                        Net_investment_income_annual_10_unpacked = st.session_state[f'{ticker}_Net_investment_income_annual_10']
+                                        Fees_and_other_income_annual_10_unpacked = st.session_state[f'{ticker}_Fees_and_other_income_annual_10']
+                                        Interest_Expense_insurance_annual_10_unpacked = st.session_state[f'{ticker}_Interest_Expense_insurance_annual_10']
+                                        Policy_benefits_claim_annual_10_unpacked = st.session_state[f'{ticker}_Policy_benefits_claim_annual_10']
+                                        Operating_income_annual_10_unpacked = st.session_state[f'{ticker}_Operating_income_annual_10']
+                                        Pretax_income_annual_10_unpacked = st.session_state[f'{ticker}_Pretax_income_annual_10']
+                                        Income_tax_annual_10_unpacked = st.session_state[f'{ticker}_Income_tax_annual_10']
+                                        Ebita_annual_10_unpacked = st.session_state[f'{ticker}_Ebita_annual_10']
+
+                                        Net_premiums_earned_annual_10_unpacked = st.session_state[f'{ticker}_Net_premiums_earned_annual_10']
+                                        Net_investment_income_annual_10_unpacked = st.session_state[f'{ticker}_Net_investment_income_annual_10']
+                                        Fees_and_other_income_annual_10_unpacked = st.session_state[f'{ticker}_Fees_and_other_income_annual_10']
+                                        Interest_Expense_insurance_annual_10_unpacked = st.session_state[f'{ticker}_Interest_Expense_insurance_annual_10']
+                                        Policy_benefits_claim_annual_10_unpacked = st.session_state[f'{ticker}_Policy_benefits_claim_annual_10']
+                                        Operating_income_annual_10_unpacked = st.session_state[f'{ticker}_Operating_income_annual_10']
+                                        Pretax_income_annual_10_unpacked = st.session_state[f'{ticker}_Pretax_income_annual_10']
+                                        Income_tax_annual_10_unpacked = st.session_state[f'{ticker}_Income_tax_annual_10']
+                                        Ebita_annual_10_unpacked = st.session_state[f'{ticker}_Ebita_annual_10']
+                                   else:
+                                             # Unpack data from annual_data
+                                        Net_premiums_earned_annual_10_unpacked = annual_data['premiums_earned'][-10:]
+                                        Net_investment_income_annual_10_unpacked = annual_data['net_investment_income'][-10:]
+                                        Fees_and_other_income_annual_10_unpacked = annual_data['fees_and_other_income'][-10:]
+                                        Interest_Expense_insurance_annual_10_unpacked = annual_data['interest_expense_insurance'][-10:]
+                                        Policy_benefits_claim_annual_10_unpacked = annual_data['net_policyholder_claims_expense'][-10:]
+                                        Operating_income_annual_10_unpacked = annual_data['operating_income'][-10:]
+                                        Pretax_income_annual_10_unpacked = annual_data['pretax_income'][-10:]
+                                        Income_tax_annual_10_unpacked = annual_data['income_tax'][-10:]
+                                        Ebita_annual_10_unpacked = annual_data['ebitda'][-10:]
+
+                                        # Store unpacked data in session state
+                                        st.session_state[f'{ticker}_Net_premiums_earned_annual_10'] = Net_premiums_earned_annual_10_unpacked
+                                        st.session_state[f'{ticker}_Net_investment_income_annual_10'] = Net_investment_income_annual_10_unpacked
+                                        st.session_state[f'{ticker}_Fees_and_other_income_annual_10'] = Fees_and_other_income_annual_10_unpacked
+                                        st.session_state[f'{ticker}_Interest_Expense_insurance_annual_10'] = Interest_Expense_insurance_annual_10_unpacked
+                                        st.session_state[f'{ticker}_Policy_benefits_claim_annual_10'] = Policy_benefits_claim_annual_10_unpacked
+                                        st.session_state[f'{ticker}_Operating_income_annual_10'] = Operating_income_annual_10_unpacked
+                                        st.session_state[f'{ticker}_Pretax_income_annual_10'] = Pretax_income_annual_10_unpacked
+                                        st.session_state[f'{ticker}_Income_tax_annual_10'] = Income_tax_annual_10_unpacked
+                                        st.session_state[f'{ticker}_Ebita_annual_10'] = Ebita_annual_10_unpacked
+
+
+                                   # Net_premiums_earned_annual_10_unpacked = annual_data['premiums_earned'][-10:] 
+                                   # Net_investment_income_annual_10_unpacked  = annual_data['net_investment_income'][-10:] 
+                                   # Fees_and_other_income_annual_10_unpacked  = annual_data['fees_and_other_income'][-10:] 
+                                   # Interest_Expense_insurance_annual_10_unpacked  = annual_data['interest_expense_insurance'][-10:] 
+                                   # Policy_benenfits_claim_annual_10_unpacked = annual_data['net_policyholder_claims_expense'][-10:]
+                                   # Operating_income_annual_10_unpacked  = annual_data['operating_income'][-10:]
+                                   # Pretax_income_annual_10_unpacked  = annual_data['pretax_income'][-10:]
+                                   # Income_tax_annual_10_unpacked = annual_data['income_tax'][-10:]
+                                   # Ebita_annual_10_unpacked = annual_data['ebitda'][-10:]
  
 
-                                   Net_premiums_earned_df = financials_df(Net_premiums_earned, date_annual, "Net Premiums Earned")
-                                   Net_investment_income_df = financials_df(Net_investment_income, date_annual, "Net Investment Income")
-                                   Fees_and_other_income_df = financials_df(Fees_and_other_income, date_annual, "Fees and Other Income")
-                                   revenue_2013_df = financials_df(revenue_2013, date_annual, "Total Revenue")
-                                   Policy_benenfits_claim_annual_df = financials_df(Policy_benenfits_claim_annual, date_annual, "Policy Benefits & Claims")
-                                   Operating_income_annual_df = financials_df(Operating_income_annual, date_annual, "Operating Income")
-                                   Interest_Expense_insurance_df = financials_df(Interest_Expense_insurance, date_annual, "Interest Expense")
+                                   Net_premiums_earned_df = financials_df(Net_premiums_earned_annual_10_unpacked, date_annual, "Net Premiums Earned")
+                                   Net_investment_income_df = financials_df(Net_investment_income_annual_10_unpacked, date_annual, "Net Investment Income")
+                                   Fees_and_other_income_df = financials_df(Fees_and_other_income_annual_10_unpacked, date_annual, "Fees and Other Income")
+                                   revenue_2013_df = financials_df(Revenue_annual_10_unpacked, date_annual, "Total Revenue")
+                                   Policy_benenfits_claim_annual_df = financials_df(Policy_benefits_claim_annual_10_unpacked, date_annual, "Policy Benefits & Claims")
+                                   Operating_income_annual_df = financials_df(Operating_income_annual_10_unpacked, date_annual, "Operating Income")
+                                   Interest_Expense_insurance_df = financials_df(Interest_Expense_insurance_annual_10_unpacked, date_annual, "Interest Expense")
 
-                                   Pretax_income_annual_df = financials_df(Pretax_income_annual, date_annual, "Pretax Income")
-                                   net_income_annual_df = financials_df(net_income_annual, date_annual, "Net Income")
-                                   eps_basic_annual_df = financials_df(eps_basic_annual, date_annual, "EPS Basic")
-                                   shares_basic_annual_df = financials_df(shares_basic_annual, date_annual, "Shares Basic")
-                                   eps_diluted_annual_df = financials_df(eps_diluted_annual, date_annual, "EPS Diluted")
-                                   shares_diluted_annual_df = financials_df(shares_diluted_annual, date_annual, "Shares Diluted")
-                                   Income_tax_annual_df = financials_df(Income_tax_annual, date_annual, "Income Tax Expense")
-                                   Ebita_annual_df = financials_df(Ebita_annual, date_annual, "EBITDA")
+                                   Pretax_income_annual_df = financials_df(Pretax_income_annual_10_unpacked, date_annual, "Pretax Income")
+                                   net_income_annual_df = financials_df(net_income_annual_10_unpacked, date_annual, "Net Income")
+                                   eps_basic_annual_df = financials_df(eps_basic_annual_10_unpacked, date_annual, "EPS Basic")
+                                   shares_basic_annual_df = financials_df(shares_basic_annual_10_unpacked, date_annual, "Shares Basic")
+                                   eps_diluted_annual_df = financials_df(eps_diluted_annual_10_unpacked, date_annual, "EPS Diluted")
+                                   shares_diluted_annual_df = financials_df(shares_diluted_annual_10_unpacked, date_annual, "Shares Diluted")
+                                   Income_tax_annual_df = financials_df(Income_tax_annual_10_unpacked, date_annual, "Income Tax Expense")
+                                   Ebita_annual_df = financials_df(Ebita_annual_10_unpacked, date_annual, "EBITDA")
 
 
                
                                    merged_df = pd.concat([Net_premiums_earned_df,Net_investment_income_df,Fees_and_other_income_df,revenue_2013_df,
-                                                          Policy_benenfits_claim_annual_df,Operating_income_annual_df,Interest_Expense_insurance_df,Pretax_income_annual_df,
-                                                          Income_tax_annual_df,net_income_annual_df,
-                                                          eps_basic_annual_df,shares_basic_annual_df,eps_diluted_annual_df,shares_diluted_annual_df,Ebita_annual_df]) 
+                                                       Policy_benenfits_claim_annual_df,Operating_income_annual_df,Interest_Expense_insurance_df,Pretax_income_annual_df,
+                                                       Income_tax_annual_df,net_income_annual_df,
+                                                       eps_basic_annual_df,shares_basic_annual_df,eps_diluted_annual_df,shares_diluted_annual_df,Ebita_annual_df]) 
           
                                    st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
@@ -9416,44 +10009,79 @@ if selected == "Stock Analysis Tool":
 
                               except KeyError:
                                       
-                                   try:              
-                                        revenue_2013_annual = annual_data['revenue'][-10:]
-                                        Pretax_income_annual  = annual_data['pretax_income'][-10:]
-                                        eps_basic_annual = annual_data['eps_basic'][-10:]
-                                        shares_basic_annual = annual_data['shares_basic'][-10:]
-                                        eps_diluted_annual  = annual_data['eps_diluted'][-10:]
-                                        shares_diluted_annual  = annual_data['shares_diluted'][-10:]
-                                        Income_tax_annual  = annual_data['income_tax'][-10:]
-                                        net_income_annual  = annual_data['net_income'][-10:]
-                                        cogs_list_annual  = annual_data['cogs'][-10:]
-                                        gross_profit_annual = annual_data['gross_profit'][-10:]
-                                        SGA_Expense_annual  = annual_data['total_opex'][-10:]
-                                        Research_Dev_annual  = annual_data['rnd'][-10:]
-                                        interest_expense_list_annual  = annual_data['interest_expense'][-10:]
-                                        Ebita_annual = annual_data['ebitda'][-10:]
-                                        operating_income_list_annual = annual_data['operating_income'][-10:] 
+                                   try: 
+                                        if f'{ticker}_Pretax_income_annual_10' in st.session_state:
+                                             Pretax_income_annual_10_unpacked = st.session_state[f'{ticker}_Pretax_income_annual_10']
+                                             Income_tax_annual_10_unpacked = st.session_state[f'{ticker}_Income_tax_annual_10']
+                                             cogs_list_annual_10_unpacked = st.session_state[f'{ticker}_COGS_annual_10']
+                                             gross_profit_annual_10_unpacked = st.session_state[f'{ticker}_Gross_profit_annual_10']
+                                             SGA_Expense_annual_10_unpacked = st.session_state[f'{ticker}_SGA_Expense_annual_10']
+                                             Depreciation_Depletion_Amortisation_annual_10_unpacked = st.session_state[f'{ticker}_Depreciation_Depletion_Amortisation_annual_10']
+                                             Interest_Income_annual_10_unpacked = st.session_state[f'{ticker}_Interest_Income_annual_10']
+                                             Research_Dev_annual_10_unpacked = st.session_state[f'{ticker}_Research_Dev_annual_10']
+                                             interest_expense_list_annual_10_unpacked = st.session_state[f'{ticker}_Interest_Expense_annual_10']
+                                             Ebita_annual_10_unpacked = st.session_state[f'{ticker}_EBITDA_annual_10']
+                                             operating_income_list_annual_10_unpacked = st.session_state[f'{ticker}_Operating_Income_annual_10']
+                                        else:             
+                                             Pretax_income_annual_10_unpacked  = annual_data['pretax_income'][-10:]
+                                             Income_tax_annual_10_unpacked   = annual_data['income_tax'][-10:]
+                                             cogs_list_annual_10_unpacked  = annual_data['cogs'][-10:]
+                                             gross_profit_annual_10_unpacked  = annual_data['gross_profit'][-10:]
+                                             SGA_Expense_annual_10_unpacked   = annual_data['total_opex'][-10:]
+
+                                             try:
+                                                  Depreciation_Depletion_Amortisation_annual_10_unpacked  = annual_data['cfo_da'][-10:]
+                                                  Interest_Income_annual_10_unpacked = annual_data['interest_income'][-10:]
+                                             
+                                             except Exception as e:
+                                                  Depreciation_Depletion_Amortisation_annual_10_unpacked = [0] * 10
+                                                  Interest_Income_annual_10_unpacked = [0] * 10
 
 
-                                        revenue_2013_annual_df = financials_df(revenue_2013_annual, date_annual, "Revenue")
-                                        Pretax_income_annual_df = financials_df(Pretax_income_annual, date_annual, "Pretax Income")
-                                        eps_basic_annual_df = financials_df(eps_basic_annual, date_annual, "EPS Basic")
-                                        shares_basic_annual_df = financials_df(shares_basic_annual, date_annual, "Shares Basic")
-                                        eps_diluted_annual_df = financials_df(eps_diluted_annual, date_annual, "EPS Diluted")
-                                        shares_diluted_annual_df = financials_df(shares_diluted_annual, date_annual, "Shares Diluted")
-                                        Income_tax_annual_df = financials_df(Income_tax_annual, date_annual, "Income Tax Expense")
-                                        net_income_annual_df = financials_df(net_income_annual, date_annual, "Net Income")
-                                        cogs_list_annual_df = financials_df(cogs_list_annual, date_annual, "COGS")
-                                        gross_profit_annual_df = financials_df(gross_profit_annual, date_annual, "Gross Profit")
-                                        SGA_Expense_annual_df = financials_df(SGA_Expense_annual, date_annual, "SGA Expense")
-                                        Research_Dev_annual_df = financials_df(Research_Dev_annual, date_annual, "R&D Expense")
-                                        interest_expense_list_annual_df = financials_df(interest_expense_list_annual, date_annual, "Interest Expense")
-                                        Ebita_annual_df = financials_df(Ebita_annual, date_annual, "EBITDA")
-                                        operating_income_list_annual_df = financials_df(operating_income_list_annual, date_annual, "Operating Income")
+                                             Research_Dev_annual_10_unpacked   = annual_data['rnd'][-10:]
+                                             interest_expense_list_annual_10_unpacked   = annual_data['interest_expense'][-10:]
+                                             Ebita_annual_10_unpacked = annual_data['ebitda'][-10:]
+                                             operating_income_list_annual_10_unpacked  = annual_data['operating_income'][-10:] 
+
+                                                                                          # Store unpacked data in session state
+                                             st.session_state[f'{ticker}_Pretax_income_annual_10'] = Pretax_income_annual_10_unpacked
+                                             st.session_state[f'{ticker}_Income_tax_annual_10'] = Income_tax_annual_10_unpacked
+                                             st.session_state[f'{ticker}_COGS_annual_10'] = cogs_list_annual_10_unpacked
+                                             st.session_state[f'{ticker}_Gross_profit_annual_10'] = gross_profit_annual_10_unpacked
+                                             st.session_state[f'{ticker}_SGA_Expense_annual_10'] = SGA_Expense_annual_10_unpacked
+                                             st.session_state[f'{ticker}_Depreciation_Depletion_Amortisation_annual_10'] = Depreciation_Depletion_Amortisation_annual_10_unpacked
+                                             st.session_state[f'{ticker}_Interest_Income_annual_10'] = Interest_Income_annual_10_unpacked
+                                             st.session_state[f'{ticker}_Research_Dev_annual_10'] = Research_Dev_annual_10_unpacked
+                                             st.session_state[f'{ticker}_Interest_Expense_annual_10'] = interest_expense_list_annual_10_unpacked
+                                             st.session_state[f'{ticker}_EBITDA_annual_10'] = Ebita_annual_10_unpacked
+                                             st.session_state[f'{ticker}_Operating_Income_annual_10'] = operating_income_list_annual_10_unpacked
+
+
+
+                                        revenue_2013_annual_df = financials_df(Revenue_annual_10_unpacked, date_annual, "Revenue")
+                                        Pretax_income_annual_df = financials_df(Pretax_income_annual_10_unpacked, date_annual, "Pretax Income")
+                                        eps_basic_annual_df = financials_df(eps_basic_annual_10_unpacked, date_annual, "EPS Basic")
+                                        shares_basic_annual_df = financials_df(shares_basic_annual_10_unpacked, date_annual, "Shares Basic")
+                                        eps_diluted_annual_df = financials_df(eps_diluted_annual_10_unpacked, date_annual, "EPS Diluted")
+                                        shares_diluted_annual_df = financials_df(shares_diluted_annual_10_unpacked, date_annual, "Shares Diluted")
+                                        Income_tax_annual_df = financials_df(Income_tax_annual_10_unpacked, date_annual, "Income Tax Expense")
+                                        net_income_annual_df = financials_df(net_income_annual_10_unpacked, date_annual, "Net Income")
+                                        cogs_list_annual_df = financials_df(cogs_list_annual_10_unpacked, date_annual, "COGS")
+                                        gross_profit_annual_df = financials_df(gross_profit_annual_10_unpacked, date_annual, "Gross Profit")
+                                        SGA_Expense_annual_df = financials_df(SGA_Expense_annual_10_unpacked, date_annual, "SGA Expense")
+                                        Depreciation_Depletion_Amortisation_annual_df = financials_df(Depreciation_Depletion_Amortisation_annual_10_unpacked, date_annual, "Depreciation & Amortization")
+                                        Interest_Income_annual_df = financials_df(Interest_Income_annual_10_unpacked, date_annual, "Interest Income")
+                                        Research_Dev_annual_df = financials_df(Research_Dev_annual_10_unpacked, date_annual, "R&D Expense")
+                                        interest_expense_list_annual_df = financials_df(interest_expense_list_annual_10_unpacked, date_annual, "Interest Expense")
+                                        Ebita_annual_df = financials_df(Ebita_annual_10_unpacked, date_annual, "EBITDA")
+                                        operating_income_list_annual_df = financials_df(operating_income_list_annual_10_unpacked, date_annual, "Operating Income")
 
 
                                         merged_df = pd.concat([
                                         revenue_2013_annual_df,cogs_list_annual_df,gross_profit_annual_df, SGA_Expense_annual_df, Research_Dev_annual_df,
-                                        operating_income_list_annual_df,interest_expense_list_annual_df,Pretax_income_annual_df,Income_tax_annual_df,
+                                        Depreciation_Depletion_Amortisation_annual_df,
+                                        operating_income_list_annual_df,interest_expense_list_annual_df,
+                                        Interest_Income_annual_df,Pretax_income_annual_df,Income_tax_annual_df,
                                         net_income_annual_df ,eps_basic_annual_df, 
                                         shares_basic_annual_df,
                                         eps_diluted_annual_df, shares_diluted_annual_df,Ebita_annual_df
@@ -9469,47 +10097,73 @@ if selected == "Stock Analysis Tool":
 
                     with Quarterly:
                                                    
-                         try:               
-                              revenue_2013_quarterly = quarterly_data['revenue'][-10:] 
-                              Pretax_income_quarterly = quarterly_data['pretax_income'][-10:]
-                              eps_basic_quarterly= quarterly_data['eps_basic'][-10:]
-                              shares_basic_quarterly = quarterly_data['shares_basic'][-10:]
-                              eps_diluted_quarterly = quarterly_data['eps_diluted'][-10:]
-                              shares_diluted_quarterly = quarterly_data['shares_diluted'][-10:]
-                              Income_tax_quarterly = quarterly_data['income_tax'][-10:]
-                              net_income_quarterly = quarterly_data['net_income'][-10:]
-                              Total_interest_income_list_quarterly = quarterly_data['total_interest_income'][-10:]
-                              Total_interest_expense_list_quarterly = quarterly_data['total_interest_expense'][-10:]
-                              Net_interest_Income_quarterly = quarterly_data['net_interest_income'][-10:]
-                              Prov_Credit_losses_quarterly = quarterly_data['credit_losses_provision'][-10:]
-                              Netinterest_Prov_Credit_losses_quarterly = quarterly_data['net_interest_income_after_credit_losses_provision'][-10:]
-                              Total_Non_interest_expenses_quarterly = quarterly_data['total_noninterest_expense'][-10:]
-                              Total_Non_interest_revenue_quarterly = quarterly_data['total_noninterest_revenue'][-10:]
+                         try: 
 
-                              revenue_2013_quarterly_df = financials_df(revenue_2013_quarterly, date_quarter, "Revenue")
-                              Pretax_income_quarterly_df = financials_df(Pretax_income_quarterly, date_quarter, "Pretax Income")
-                              eps_basic_quarterly_df = financials_df(eps_basic_quarterly, date_quarter, "EPS Basic")
-                              shares_basic_quarterly_df = financials_df(shares_basic_quarterly, date_quarter, "Shares Basic")
-                              eps_diluted_quarterly_df = financials_df(eps_diluted_quarterly, date_quarter, "EPS Diluted")
-                              shares_diluted_quarterly_df = financials_df(shares_diluted_quarterly, date_quarter, "Shares Diluted")
-                              Income_tax_quarterly_df = financials_df(Income_tax_quarterly, date_quarter, "Income Tax Expense")
-                              net_income_quarterly_df = financials_df(net_income_quarterly, date_quarter, "Net Income")
-                              Total_interest_income_list_quarterly_df = financials_df(Total_interest_income_list_quarterly, date_quarter, "Total Interest Income")
-                              Total_interest_expense_list_quarterly_df = financials_df(Total_interest_expense_list_quarterly, date_quarter, "Total Interest Expense")
-                              Net_interest_Income_quarterly_df = financials_df(Net_interest_Income_quarterly, date_quarter, "Net Interest Income")
-                              Prov_Credit_losses_quarterly_df = financials_df(Prov_Credit_losses_quarterly, date_quarter, "Provision for Credit Losses")
-                              Netinterest_Prov_Credit_losses_quarterly_df = financials_df(Netinterest_Prov_Credit_losses_quarterly, date_quarter, "Net Interest Income After Credit Losses Provision")
-                              Total_Non_interest_expenses_quarterly_df = financials_df(Total_Non_interest_expenses_quarterly, date_quarter, "Total Non Interest Expenses")
-                              Total_Non_interest_revenue_quarterly_df = financials_df(Total_Non_interest_revenue_quarterly, date_quarter, "Total Non-Interest Revenue")
+                              if f'{ticker}_Pretax_income_quarterly_10' in st.session_state:
+                                   Pretax_income_quarterly_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarterly_10']
+                                   Income_tax_quarterly_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarterly_10']
+                                   net_income_quarterly_10_unpacked = st.session_state[f'{ticker}_net_income_quarterly_10']
+                                   Total_interest_income_list_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_interest_income_list_quarterly_10']
+                                   Total_interest_expense_list_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_interest_expense_list_quarterly_10']
+                                   Net_interest_Income_quarterly_10_unpacked = st.session_state[f'{ticker}_Net_interest_Income_quarterly_10']
+                                   Prov_Credit_losses_quarterly_10_unpacked = st.session_state[f'{ticker}_Prov_Credit_losses_quarterly_10']
+                                   Netinterest_Prov_Credit_losses_quarterly_10_unpacked = st.session_state[f'{ticker}_Netinterest_Prov_Credit_losses_quarterly_10']
+                                   Total_Non_interest_expenses_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_expenses_quarterly_10']
+                                   Total_Non_interest_revenue_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_revenue_quarterly_10']
+                                   Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
+                              else:
+               
+                                   Pretax_income_quarterly_10_unpacked  = quarterly_data['pretax_income'][-10:]
+                                   Income_tax_quarterly_10_unpacked  = quarterly_data['income_tax'][-10:]
+                                   net_income_quarterly_10_unpacked  = quarterly_data['net_income'][-10:]
+                                   Total_interest_income_list_quarterly_10_unpacked  = quarterly_data['total_interest_income'][-10:]
+                                   Total_interest_expense_list_quarterly_10_unpacked  = quarterly_data['total_interest_expense'][-10:]
+                                   Net_interest_Income_quarterly_10_unpacked  = quarterly_data['net_interest_income'][-10:]
+                                   Prov_Credit_losses_quarterly_10_unpacked = quarterly_data['credit_losses_provision'][-10:]
+                                   Netinterest_Prov_Credit_losses_quarterly_10_unpacked = quarterly_data['net_interest_income_after_credit_losses_provision'][-10:]
+                                   Total_Non_interest_expenses_quarterly_10_unpacked = quarterly_data['total_noninterest_expense'][-10:]
+                                   Total_Non_interest_revenue_quarterly_10_unpacked = quarterly_data['total_noninterest_revenue'][-10:]
+                                   Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
+
+                                       # Store unpacked data in session state
+                                   st.session_state[f'{ticker}_Pretax_income_quarterly_10'] = Pretax_income_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Income_tax_quarterly_10'] = Income_tax_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_net_income_quarterly_10'] = net_income_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Total_interest_income_list_quarterly_10'] = Total_interest_income_list_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Total_interest_expense_list_quarterly_10'] = Total_interest_expense_list_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Net_interest_Income_quarterly_10'] = Net_interest_Income_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Prov_Credit_losses_quarterly_10'] = Prov_Credit_losses_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Netinterest_Prov_Credit_losses_quarterly_10'] = Netinterest_Prov_Credit_losses_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Total_Non_interest_expenses_quarterly_10'] = Total_Non_interest_expenses_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Total_Non_interest_revenue_quarterly_10'] = Total_Non_interest_revenue_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
+
+                              revenue_10_quarterly_df = financials_df(Revenue_quarter_10_unpacked, date_quarter, "Revenue")
+                              Pretax_income_quarterly_df = financials_df(Pretax_income_quarterly_10_unpacked, date_quarter, "Pretax Income")
+                              eps_basic_quarterly_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
+                              shares_basic_quarterly_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
+                              eps_diluted_quarterly_df = financials_df(Eps_diluted_quarterly_10_unpacked,date_quarter, "EPS Diluted")
+                              shares_diluted_quarterly_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
+                              Income_tax_quarterly_df = financials_df(Income_tax_quarterly_10_unpacked, date_quarter, "Income Tax Expense")
+                              net_income_quarterly_df = financials_df(net_income_quarterly_10_unpacked, date_quarter, "Net Income")
+                              Total_interest_income_list_quarterly_df = financials_df(Total_interest_income_list_quarterly_10_unpacked, date_quarter, "Total Interest Income")
+                              Total_interest_expense_list_quarterly_df = financials_df(Total_interest_expense_list_quarterly_10_unpacked, date_quarter, "Total Interest Expense")
+                              Net_interest_Income_quarterly_df = financials_df(Net_interest_Income_quarterly_10_unpacked, date_quarter, "Net Interest Income")
+                              Prov_Credit_losses_quarterly_df = financials_df(Prov_Credit_losses_quarterly_10_unpacked, date_quarter, "Provision for Credit Losses")
+                              Netinterest_Prov_Credit_losses_quarterly_df = financials_df(Netinterest_Prov_Credit_losses_quarterly_10_unpacked, date_quarter, "Net Interest Income After Credit Losses Provision")
+                              Total_Non_interest_expenses_quarterly_df = financials_df(Total_Non_interest_expenses_quarterly_10_unpacked, date_quarter, "Total Non Interest Expenses")
+                              Total_Non_interest_revenue_quarterly_df = financials_df(Total_Non_interest_revenue_quarterly_10_unpacked, date_quarter, "Total Non-Interest Revenue")
+                              Ebita_quarter_10_unpacked_df = financials_df(Ebita_quarter_10_unpacked, date_quarter, "EBITDA")
+
 
                               
                               merged_df = pd.concat([Total_interest_income_list_quarterly_df,Total_interest_expense_list_quarterly_df,
                                                      Net_interest_Income_quarterly_df,Total_Non_interest_revenue_quarterly_df,
-                                                     Prov_Credit_losses_quarterly_df,revenue_2013_quarterly_df,
+                                                     Prov_Credit_losses_quarterly_df,revenue_10_quarterly_df,
                                                      Netinterest_Prov_Credit_losses_quarterly_df,Total_Non_interest_expenses_quarterly_df,
                                                      Pretax_income_quarterly_df,Income_tax_quarterly_df,net_income_quarterly_df,
                                                      eps_basic_quarterly_df,shares_basic_quarterly_df,
-                                                     eps_diluted_quarterly_df,shares_diluted_quarterly_df])    
+                                                     eps_diluted_quarterly_df,shares_diluted_quarterly_df,Ebita_quarter_10_unpacked_df])    
 
 
                               st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
@@ -9521,38 +10175,56 @@ if selected == "Stock Analysis Tool":
                                                   
                          except KeyError:
                               try:
-                                   Net_premiums_earned = quarterly_data['premiums_earned'][-10:] 
-                                   Net_investment_income = quarterly_data['net_investment_income'][-10:] 
-                                   Fees_and_other_income = quarterly_data['fees_and_other_income'][-10:] 
-                                   Interest_Expense_insurance = quarterly_data['interest_expense_insurance'][-10:] 
-                                   revenue_2013 = quarterly_data['revenue'][-10:]
-                                   Policy_benenfits_claim_quarter= quarterly_data['net_policyholder_claims_expense'][-10:]
-                                   Operating_income_quarter = quarterly_data['operating_income'][-10:]
-                                   Pretax_income = quarterly_data['pretax_income'][-10:]
-                                   net_income = quarterly_data['net_income'][-10:] 
-                                   eps_basic = quarterly_data['eps_basic'][-10:]
-                                   shares_basic = quarterly_data['shares_basic'][-10:]
-                                   eps_diluted = quarterly_data['eps_diluted'][-10:]
-                                   shares_diluted = quarterly_data['shares_diluted'][-10:]
-                                   Income_tax = quarterly_data['income_tax'][-10:]
-                                   Ebita_quarter = quarterly_data['ebitda'][-10:]
+                                   if f'{ticker}_Net_premiums_earned_quarter_10' in st.session_state:
+                                        Net_premiums_earned_quarter_10_unpacked = st.session_state[f'{ticker}_Net_premiums_earned_quarter_10']
+                                        Net_investment_income_quarter_10_unpacked = st.session_state[f'{ticker}_Net_investment_income_quarter_10']
+                                        Fees_and_other_income_quarter_10_unpacked = st.session_state[f'{ticker}_Fees_and_other_income_quarter_10']
+                                        Interest_Expense_insurance_quarter_10_unpacked = st.session_state[f'{ticker}_Interest_Expense_insurance_quarter_10']
+                                        Policy_benenfits_claim_quarter_quarter_10_unpacked = st.session_state[f'{ticker}_Policy_benenfits_claim_quarter_quarter_10']
+                                        Operating_income_quarter_quarter_10_unpacked = st.session_state[f'{ticker}_Operating_income_quarter_quarter_10']
+                                        Pretax_income_quarter_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarter_10']
+                                        Income_tax_quarter_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarter_10']
+                                        Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
+                                        
+                                   else:    # Unpack data from quarterly_data
+                                        Net_premiums_earned_quarter_10_unpacked = quarterly_data['premiums_earned'][-10:]
+                                        Net_investment_income_quarter_10_unpacked = quarterly_data['net_investment_income'][-10:]
+                                        Fees_and_other_income_quarter_10_unpacked = quarterly_data['fees_and_other_income'][-10:]
+                                        Interest_Expense_insurance_quarter_10_unpacked = quarterly_data['interest_expense_insurance'][-10:]
+                                        Policy_benenfits_claim_quarter_quarter_10_unpacked = quarterly_data['net_policyholder_claims_expense'][-10:]
+                                        Operating_income_quarter_quarter_10_unpacked = quarterly_data['operating_income'][-10:]
+                                        Pretax_income_quarter_10_unpacked = quarterly_data['pretax_income'][-10:]
+                                        Income_tax_quarter_10_unpacked = quarterly_data['income_tax'][-10:]
+                                        Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
 
 
-                                   Net_premiums_earned_df = financials_df(Net_premiums_earned, date_quarter, "Net Premiums Earned")
-                                   Net_investment_income_df = financials_df(Net_investment_income, date_quarter, "Net Investment Income")
-                                   Fees_and_other_income_df = financials_df(Fees_and_other_income, date_quarter, "Fees and Other Income")
-                                   Interest_Expense_insurance_df = financials_df(Interest_Expense_insurance, date_quarter, "Interest Expense")
-                                   revenue_2013_df = financials_df(revenue_2013, date_quarter, "Total Revenue")
-                                   Policy_benenfits_claim_quarter_df = financials_df(Policy_benenfits_claim_quarter, date_quarter, "Policy Benefits & Claims")
-                                   Operating_income_quarter_df = financials_df(Operating_income_quarter, date_quarter, "Operating Income")                    
-                                   Pretax_income_df = financials_df(Pretax_income, date_quarter, "Pretax Income")
-                                   net_income_df = financials_df(net_income, date_quarter, "Net Income")
-                                   eps_basic_df = financials_df(eps_basic, date_quarter, "EPS Basic")
-                                   shares_basic_df = financials_df(shares_basic, date_quarter, "Shares Basic")
-                                   eps_diluted_df = financials_df(eps_diluted, date_quarter, "EPS Diluted")
-                                   shares_diluted_df = financials_df(shares_diluted, date_quarter, "Shares Diluted")
-                                   Income_tax_df = financials_df(Income_tax, date_quarter, "Income Tax Expense")
-                                   Ebita_quarter_df = financials_df(Ebita_quarter, date_quarter, "EBITDA")
+                                                                                # Store unpacked data in session state
+                                        st.session_state[f'{ticker}_Net_premiums_earned_quarter_10'] = Net_premiums_earned_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Net_investment_income_quarter_10'] = Net_investment_income_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Fees_and_other_income_quarter_10'] = Fees_and_other_income_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Interest_Expense_insurance_quarter_10'] = Interest_Expense_insurance_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Policy_benenfits_claim_quarter_quarter_10'] = Policy_benenfits_claim_quarter_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Operating_income_quarter_quarter_10'] = Operating_income_quarter_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Pretax_income_quarter_10'] = Pretax_income_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Income_tax_quarter_10'] = Income_tax_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
+
+
+                                   Net_premiums_earned_df = financials_df(Net_premiums_earned_quarter_10_unpacked, date_quarter, "Net Premiums Earned")
+                                   Net_investment_income_df = financials_df(Net_investment_income_quarter_10_unpacked, date_quarter, "Net Investment Income")
+                                   Fees_and_other_income_df = financials_df(Fees_and_other_income_quarter_10_unpacked, date_quarter, "Fees and Other Income")
+                                   Interest_Expense_insurance_df = financials_df(Interest_Expense_insurance_quarter_10_unpacked, date_quarter, "Interest Expense")
+                                   revenue_2013_df = financials_df(Revenue_quarter_10_unpacked, date_quarter, "Total Revenue")
+                                   Policy_benenfits_claim_quarter_df = financials_df(Policy_benenfits_claim_quarter_quarter_10_unpacked, date_quarter, "Policy Benefits & Claims")
+                                   Operating_income_quarter_df = financials_df(Operating_income_quarter_quarter_10_unpacked, date_quarter, "Operating Income")                    
+                                   Pretax_income_df = financials_df(Pretax_income_quarter_10_unpacked, date_quarter, "Pretax Income")
+                                   net_income_df = financials_df(net_income_quarter_10_unpacked, date_quarter, "Net Income")
+                                   eps_basic_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
+                                   shares_basic_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
+                                   eps_diluted_df = financials_df(Eps_diluted_quarterly_10_unpacked, date_quarter, "EPS Diluted")
+                                   shares_diluted_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
+                                   Income_tax_df = financials_df(Income_tax_quarter_10_unpacked, date_quarter, "Income Tax Expense")
+                                   Ebita_quarter_10_unpacked_df = financials_df(Ebita_quarter_10_unpacked, date_quarter, "EBITDA")
 
 
 
@@ -9562,7 +10234,7 @@ if selected == "Stock Analysis Tool":
                                    Net_premiums_earned_df, Net_investment_income_df, Fees_and_other_income_df, revenue_2013_df, Policy_benenfits_claim_quarter_df,
                                    Operating_income_quarter_df,Interest_Expense_insurance_df,
                                    Pretax_income_df,Income_tax_df,net_income_df, eps_basic_df, shares_basic_df,
-                                   eps_diluted_df, shares_diluted_df,Ebita_quarter_df
+                                   eps_diluted_df, shares_diluted_df,Ebita_quarter_10_unpacked_df
                                    ])
 
                                    st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
@@ -9574,46 +10246,83 @@ if selected == "Stock Analysis Tool":
 
                                                                            
                                                       
-                                   try:               
-                                        revenue_2013_quarter = quarterly_data['revenue'][-10:] 
-                                        Pretax_income_quarter  = quarterly_data['pretax_income'][-10:]
-                                        eps_basic_quarter  = quarterly_data['eps_basic'][-10:]
-                                        shares_basic_quarter  = quarterly_data['shares_basic'][-10:]
-                                        eps_diluted_quarter  = quarterly_data['eps_diluted'][-10:]
-                                        shares_diluted_quarter  = quarterly_data['shares_diluted'][-10:]
-                                        Income_tax_quarter  = quarterly_data['income_tax'][-10:]
-                                        net_income_quarter  = quarterly_data['net_income'][-10:]
-                                        cogs_list_quarter  = quarterly_data['cogs'][-10:]
-                                        gross_profit_quarter  = quarterly_data['gross_profit'][-10:]
-                                        SGA_Expense_quarter  = quarterly_data['total_opex'][-10:]
-                                        Research_Dev_quarter  = quarterly_data['rnd'][-10:]
-                                        interest_expense_list_quarter  = quarterly_data['interest_expense'][-10:]
-                                        Ebita_quarter = quarterly_data['ebitda'][-10:]
-                                        operating_income_list_quarter = quarterly_data['operating_income'][-10:]  
+                                   try:    
+
+                                        if f'{ticker}_Pretax_income_quarter_10' in st.session_state:
+                                             Pretax_income_quarter_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarter_10']
+                                             Income_tax_quarter_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarter_10']
+                                             cogs_list_quarter_10_unpacked = st.session_state[f'{ticker}_cogs_list_quarter_10']
+                                             gross_profit_quarter_10_unpacked = st.session_state[f'{ticker}_gross_profit_quarter_10']
+                                             SGA_Expense_quarter_10_unpacked = st.session_state[f'{ticker}_SGA_Expense_quarter_10']
+                                             Depreciation_Depletion_Amortisation_quater_10_unpacked = st.session_state[f'{ticker}_Depreciation_Depletion_Amortisation_quater_10']
+                                             Interest_Income_quarter_10_unpacked = st.session_state[f'{ticker}_Interest_Income_quarter_10']
+                                             Research_Dev_quarter_10_unpacked = st.session_state[f'{ticker}_Research_Dev_quarter_10']
+                                             interest_expense_list_quarter_10_unpacked = st.session_state[f'{ticker}_interest_expense_list_quarter_10']
+                                             Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
+                                             operating_income_list_quarter_10_unpacked = st.session_state[f'{ticker}_operating_income_list_quarter_10']
+                                        else:
+    #           
+                                             Pretax_income_quarter_10_unpacked  = quarterly_data['pretax_income'][-10:]
+                                             Income_tax_quarter_10_unpacked  = quarterly_data['income_tax'][-10:]
+                                             cogs_list_quarter_10_unpacked  = quarterly_data['cogs'][-10:]
+                                             gross_profit_quarter_10_unpacked  = quarterly_data['gross_profit'][-10:]
+                                             SGA_Expense_quarter_10_unpacked  = quarterly_data['total_opex'][-10:]
+
+                                             try:
+                                                  Depreciation_Depletion_Amortisation_quater_10_unpacked = quarterly_data['cfo_da'][-10:]
+                                                  Interest_Income_quarter_10_unpacked = quarterly_data['interest_income'][-10:]
+                                             except Exception as e:
+                                                  Depreciation_Depletion_Amortisation_quater_10_unpacked= [0] * 10
+                                                  Interest_Income_quarter_10_unpacked= [0] * 10
 
 
-                                        revenue_2013_quarter_df = financials_df(revenue_2013_quarter, date_quarter, "Revenue")
-                                        Pretax_income_quarter_df = financials_df(Pretax_income_quarter, date_quarter, "Pretax Income")
-                                        eps_basic_quarter_df = financials_df(eps_basic_quarter, date_quarter, "EPS Basic")
-                                        shares_basic_quarter_df = financials_df(shares_basic_quarter, date_quarter, "Shares Basic")
-                                        eps_diluted_quarter_df = financials_df(eps_diluted_quarter, date_quarter, "EPS Diluted")
-                                        shares_diluted_quarter_df = financials_df(shares_diluted_quarter, date_quarter, "Shares Diluted")
-                                        Income_tax_quarter_df = financials_df(Income_tax_quarter, date_quarter, "Income Tax Expense")
-                                        net_income_quarter_df = financials_df(net_income_quarter, date_quarter, "Net Income")
-                                        cogs_list_quarter_df = financials_df(cogs_list_quarter, date_quarter, "COGS")
-                                        gross_profit_quarter_df = financials_df(gross_profit_quarter, date_quarter, "Gross Profit")
-                                        SGA_Expense_quarter_df = financials_df(SGA_Expense_quarter, date_quarter, "SGA Expense")
-                                        Research_Dev_quarter_df = financials_df(Research_Dev_quarter, date_quarter, "R&D Expense")
-                                        interest_expense_list_quarter_df = financials_df(interest_expense_list_quarter, date_quarter, "Interest Expense")
-                                        Ebita_quarter_df = financials_df(Ebita_quarter, date_quarter, "EBITDA")
-                                        operating_income_list_quarter_df = financials_df(operating_income_list_quarter, date_quarter, "Operating Income")
+                                             Research_Dev_quarter_10_unpacked  = quarterly_data['rnd'][-10:]
+                                             interest_expense_list_quarter_10_unpacked  = quarterly_data['interest_expense'][-10:]
+                                             Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
+                                             operating_income_list_quarter_10_unpacked = quarterly_data['operating_income'][-10:]  
+
+
+                                                                                          # Store unpacked data in session state
+                                             st.session_state[f'{ticker}_Pretax_income_quarter_10'] = Pretax_income_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_Income_tax_quarter_10'] = Income_tax_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_cogs_list_quarter_10'] = cogs_list_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_gross_profit_quarter_10'] = gross_profit_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_SGA_Expense_quarter_10'] = SGA_Expense_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_Depreciation_Depletion_Amortisation_quater_10'] = Depreciation_Depletion_Amortisation_quater_10_unpacked
+                                             st.session_state[f'{ticker}_Interest_Income_quarter_10'] = Interest_Income_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_Research_Dev_quarter_10'] = Research_Dev_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_interest_expense_list_quarter_10'] = interest_expense_list_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_operating_income_list_quarter_10'] = operating_income_list_quarter_10_unpacked
+
+
+                                        revenue_2013_quarter_df = financials_df(Revenue_quarter_10_unpacked, date_quarter, "Revenue")
+                                        Pretax_income_quarter_df = financials_df(Pretax_income_quarter_10_unpacked, date_quarter, "Pretax Income")
+                                        eps_basic_quarter_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
+                                        shares_basic_quarter_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
+                                        eps_diluted_quarter_df = financials_df(Eps_diluted_quarterly_10_unpacked, date_quarter, "EPS Diluted")
+                                        shares_diluted_quarter_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
+                                        Income_tax_quarter_df = financials_df(Income_tax_quarter_10_unpacked, date_quarter, "Income Tax Expense")
+                                        net_income_quarter_df = financials_df(net_income_quarter_10_unpacked, date_quarter, "Net Income")
+                                        cogs_list_quarter_df = financials_df(cogs_list_quarter_10_unpacked, date_quarter, "COGS")
+                                        gross_profit_quarter_df = financials_df(gross_profit_quarter_10_unpacked, date_quarter, "Gross Profit")
+                                        SGA_Expense_quarter_df = financials_df(SGA_Expense_quarter_10_unpacked, date_quarter, "SGA Expense")
+                                        Research_Dev_quarter_df = financials_df(Research_Dev_quarter_10_unpacked, date_quarter, "R&D Expense")
+                                        Depreciation_Depletion_Amortisation_quater_df = financials_df(Depreciation_Depletion_Amortisation_quater_10_unpacked, date_quarter, "Depreciation & Amortization")
+                                        Interest_Income_quarter_df = financials_df(Interest_Income_quarter_10_unpacked, date_quarter, "Interest Income")
+
+                                        interest_expense_list_quarter_df = financials_df(interest_expense_list_quarter_10_unpacked, date_quarter, "Interest Expense")
+                                        Ebita_quarter_10_unpacked_df = financials_df(Ebita_quarter_10_unpacked, date_quarter, "EBITDA")
+                                        operating_income_list_quarter_df = financials_df(operating_income_list_quarter_10_unpacked, date_quarter, "Operating Income")
 
                                         merged_df = pd.concat([
                                         revenue_2013_quarter_df, cogs_list_quarter_df,gross_profit_quarter_df, SGA_Expense_quarter_df, Research_Dev_quarter_df,
-                                        operating_income_list_quarter_df,interest_expense_list_quarter_df,Pretax_income_quarter_df, Income_tax_quarter_df,
+                                        Depreciation_Depletion_Amortisation_quater_df,operating_income_list_quarter_df,
+                                        interest_expense_list_quarter_df,Interest_Income_quarter_df,Pretax_income_quarter_df, 
+                                        Income_tax_quarter_df,
                                         net_income_quarter_df,eps_basic_quarter_df, shares_basic_quarter_df,
                                         eps_diluted_quarter_df, shares_diluted_quarter_df,
-                                        Ebita_quarter_df
+                                        Ebita_quarter_10_unpacked_df
                                         ])
 
                                         
@@ -9636,25 +10345,63 @@ if selected == "Stock Analysis Tool":
 
                                         
                          try:
-                              cash_und_cash_investments = annual_data['cash_and_equiv'][-10:]
-                              Total_investments_annual = annual_data['total_investments'][-10:]
-                              Gross_loans_annual = annual_data['loans_gross'][-10:]
-                              Loans_loss_annual = annual_data['allowance_for_loan_losses'][-10:]
-                              Net_Loan_annual = annual_data['loans_net'][-10:]
-                              Unearned_income_annual = annual_data['unearned_income'][-10:]
-                              Net_goodwill_annual = annual_data['goodwill'][-10:]
-                              Intangible_assets_annual = annual_data['intangible_assets'][-10:]
-                              Other_lt_assets_annual = annual_data['other_lt_assets'][-10:]
-                              Total_assets_annual = annual_data['total_assets'][-10:]
-                              Deposits_annual = annual_data['deposits_liability'][-10:]
-                              Short_term_debt_annual = annual_data['st_debt'][-10:]
-                              LongTerm_debt_annual = annual_data['lt_debt'][-10:]
-                              Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
-                              Retained_earnings_annual = annual_data['retained_earnings'][-10:]
-                              Total_liabilities_annual = annual_data['total_liabilities'][-10:]
-                              Total_Equity_annual = annual_data['total_equity'][-10:]
-                              
-                     
+
+                              if f'{ticker}_cash_and_cash_investments_annual' in st.session_state:
+                                   cash_und_cash_investments = st.session_state[f'{ticker}_cash_and_cash_investments_annual']
+                                   Total_investments_annual = st.session_state[f'{ticker}_Total_investments_annual']
+                                   Gross_loans_annual = st.session_state[f'{ticker}_Gross_loans_annual']
+                                   Loans_loss_annual = st.session_state[f'{ticker}_Loans_loss_annual']
+                                   Net_Loan_annual = st.session_state[f'{ticker}_Net_Loan_annual']
+                                   Unearned_income_annual = st.session_state[f'{ticker}_Unearned_income_annual']
+                                   Net_goodwill_annual = st.session_state[f'{ticker}_Net_goodwill_annual']
+                                   Intangible_assets_annual = st.session_state[f'{ticker}_Intangible_assets_annual']
+                                   Other_lt_assets_annual = st.session_state[f'{ticker}_Other_lt_assets_annual']
+                                   Total_assets_annual = st.session_state[f'{ticker}_Total_assets_annual']
+                                   Deposits_annual = st.session_state[f'{ticker}_Deposits_annual']
+                                   Short_term_debt_annual = st.session_state[f'{ticker}_Short_term_debt_annual']
+                                   LongTerm_debt_annual = st.session_state[f'{ticker}_LongTerm_debt_annual']
+                                   Other_longterm_liabilities_annual = st.session_state[f'{ticker}_Other_longterm_liabilities_annual']
+                                   Retained_earnings_annual = st.session_state[f'{ticker}_Retained_earnings_annual']
+                                   Total_liabilities_annual = st.session_state[f'{ticker}_Total_liabilities_annual']
+                                   Total_Equity_annual = st.session_state[f'{ticker}_Total_Equity_annual']
+                              else:
+                                   cash_und_cash_investments = annual_data['cash_and_equiv'][-10:]
+                                   Total_investments_annual = annual_data['total_investments'][-10:]
+                                   Gross_loans_annual = annual_data['loans_gross'][-10:]
+                                   Loans_loss_annual = annual_data['allowance_for_loan_losses'][-10:]
+                                   Net_Loan_annual = annual_data['loans_net'][-10:]
+                                   Unearned_income_annual = annual_data['unearned_income'][-10:]
+                                   Net_goodwill_annual = annual_data['goodwill'][-10:]
+                                   Intangible_assets_annual = annual_data['intangible_assets'][-10:]
+                                   Other_lt_assets_annual = annual_data['other_lt_assets'][-10:]
+                                   Total_assets_annual = annual_data['total_assets'][-10:]
+                                   Deposits_annual = annual_data['deposits_liability'][-10:]
+                                   Short_term_debt_annual = annual_data['st_debt'][-10:]
+                                   LongTerm_debt_annual = annual_data['lt_debt'][-10:]
+                                   Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
+                                   Retained_earnings_annual = annual_data['retained_earnings'][-10:]
+                                   Total_liabilities_annual = annual_data['total_liabilities'][-10:]
+                                   Total_Equity_annual = annual_data['total_equity'][-10:]
+                                   
+                                       # Store unpacked data in session state
+                                   st.session_state[f'{ticker}_cash_and_cash_investments_annual'] = cash_und_cash_investments
+                                   st.session_state[f'{ticker}_Total_investments_annual'] = Total_investments_annual
+                                   st.session_state[f'{ticker}_Gross_loans_annual'] = Gross_loans_annual
+                                   st.session_state[f'{ticker}_Loans_loss_annual'] = Loans_loss_annual
+                                   st.session_state[f'{ticker}_Net_Loan_annual'] = Net_Loan_annual
+                                   st.session_state[f'{ticker}_Unearned_income_annual'] = Unearned_income_annual
+                                   st.session_state[f'{ticker}_Net_goodwill_annual'] = Net_goodwill_annual
+                                   st.session_state[f'{ticker}_Intangible_assets_annual'] = Intangible_assets_annual
+                                   st.session_state[f'{ticker}_Other_lt_assets_annual'] = Other_lt_assets_annual
+                                   st.session_state[f'{ticker}_Total_assets_annual'] = Total_assets_annual
+                                   st.session_state[f'{ticker}_Deposits_annual'] = Deposits_annual
+                                   st.session_state[f'{ticker}_Short_term_debt_annual'] = Short_term_debt_annual
+                                   st.session_state[f'{ticker}_LongTerm_debt_annual'] = LongTerm_debt_annual
+                                   st.session_state[f'{ticker}_Other_longterm_liabilities_annual'] = Other_longterm_liabilities_annual
+                                   st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
+                                   st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
+                                   st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
+                                                       
 
 
 
@@ -9694,23 +10441,59 @@ if selected == "Stock Analysis Tool":
                               pass
                          except KeyError:
                               try:
+                                   if f'{ticker}_cash_and_cash_investments_annual' in st.session_state:
+                                        cash_und_cash_investments_annual = st.session_state[f'{ticker}_cash_and_cash_investments_annual']
+                                        st_investments_annual = st.session_state[f'{ticker}_st_investments_annual']
+                                        Inventories_annual = st.session_state[f'{ticker}_Inventories_annual']
+                                        Total_current_assets_annual = st.session_state[f'{ticker}_Total_current_assets_annual']
+                                        Income_Tax_payable_annual = st.session_state[f'{ticker}_Income_Tax_payable_annual']
+                                        Total_current_liabilities_annual = st.session_state[f'{ticker}_Total_current_liabilities_annual']
+                                        Intangible_assets_annual = st.session_state[f'{ticker}_Intangible_assets_annual']
+                                        Net_goodwill_annual = st.session_state[f'{ticker}_Net_goodwill_annual']
+                                        Other_lt_assets_annual = st.session_state[f'{ticker}_Other_lt_assets_annual']
+                                        Total_assets_annual = st.session_state[f'{ticker}_Total_assets_annual']
+                                        Short_term_debt_annual = st.session_state[f'{ticker}_Short_term_debt_annual']
+                                        LongTerm_debt_annual = st.session_state[f'{ticker}_LongTerm_debt_annual']
+                                        Other_longterm_liabilities_annual = st.session_state[f'{ticker}_Other_longterm_liabilities_annual']
+                                        Retained_earnings_annual = st.session_state[f'{ticker}_Retained_earnings_annual']
+                                        Total_liabilities_annual = st.session_state[f'{ticker}_Total_liabilities_annual']
+                                        Total_Equity_annual = st.session_state[f'{ticker}_Total_Equity_annual']
+                                   else:
 
-                                   cash_und_cash_investments_annual = annual_data['cash_and_equiv'][-10:]
-                                   st_investments_annual = annual_data['st_investments'][-10:]
-                                   Inventories_annual = annual_data['inventories'][-10:]
-                                   Total_current_assets_annual = annual_data['total_current_assets'][-10:]
-                                   Income_Tax_payable_annual = annual_data['tax_payable'][-10:]
-                                   Total_current_liabilities_annual = annual_data['total_current_liabilities'][-10:]
-                                   Intangible_assets_annual = annual_data['intangible_assets'][-10:]
-                                   Net_goodwill_annual = annual_data['goodwill'][-10:]
-                                   Other_lt_assets_annual =annual_data['other_lt_assets'][-10:]
-                                   Total_assets_annual = annual_data['total_assets'][-10:]
-                                   Short_term_debt_annual = annual_data['st_debt'][-10:]
-                                   LongTerm_debt_annual = annual_data['lt_debt'][-10:]
-                                   Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
-                                   Retained_earnings_annual = annual_data['retained_earnings'][-10:]
-                                   Total_liabilities_annual = annual_data['total_liabilities'][-10:]
-                                   Total_Equity_annual = annual_data['total_equity'][-10:]
+                                        cash_und_cash_investments_annual = annual_data['cash_and_equiv'][-10:]
+                                        st_investments_annual = annual_data['st_investments'][-10:]
+                                        Inventories_annual = annual_data['inventories'][-10:]
+                                        Total_current_assets_annual = annual_data['total_current_assets'][-10:]
+                                        Income_Tax_payable_annual = annual_data['tax_payable'][-10:]
+                                        Total_current_liabilities_annual = annual_data['total_current_liabilities'][-10:]
+                                        Intangible_assets_annual = annual_data['intangible_assets'][-10:]
+                                        Net_goodwill_annual = annual_data['goodwill'][-10:]
+                                        Other_lt_assets_annual =annual_data['other_lt_assets'][-10:]
+                                        Total_assets_annual = annual_data['total_assets'][-10:]
+                                        Short_term_debt_annual = annual_data['st_debt'][-10:]
+                                        LongTerm_debt_annual = annual_data['lt_debt'][-10:]
+                                        Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
+                                        Retained_earnings_annual = annual_data['retained_earnings'][-10:]
+                                        Total_liabilities_annual = annual_data['total_liabilities'][-10:]
+                                        Total_Equity_annual = annual_data['total_equity'][-10:]
+
+                                            # Store unpacked data in session state
+                                        st.session_state[f'{ticker}_cash_and_cash_investments_annual'] = cash_und_cash_investments_annual
+                                        st.session_state[f'{ticker}_st_investments_annual'] = st_investments_annual
+                                        st.session_state[f'{ticker}_Inventories_annual'] = Inventories_annual
+                                        st.session_state[f'{ticker}_Total_current_assets_annual'] = Total_current_assets_annual
+                                        st.session_state[f'{ticker}_Income_Tax_payable_annual'] = Income_Tax_payable_annual
+                                        st.session_state[f'{ticker}_Total_current_liabilities_annual'] = Total_current_liabilities_annual
+                                        st.session_state[f'{ticker}_Intangible_assets_annual'] = Intangible_assets_annual
+                                        st.session_state[f'{ticker}_Net_goodwill_annual'] = Net_goodwill_annual
+                                        st.session_state[f'{ticker}_Other_lt_assets_annual'] = Other_lt_assets_annual
+                                        st.session_state[f'{ticker}_Total_assets_annual'] = Total_assets_annual
+                                        st.session_state[f'{ticker}_Short_term_debt_annual'] = Short_term_debt_annual
+                                        st.session_state[f'{ticker}_LongTerm_debt_annual'] = LongTerm_debt_annual
+                                        st.session_state[f'{ticker}_Other_longterm_liabilities_annual'] = Other_longterm_liabilities_annual
+                                        st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
+                                        st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
+                                        st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
 
                                    index = range(len(date_annual))
                                    df = pd.DataFrame({'Period End Date': date_annual,
@@ -9763,21 +10546,53 @@ if selected == "Stock Analysis Tool":
 
                                    pass    
                                         #else:      
-                              except KeyError:    
+                              except KeyError:
 
-                                   Total_investments = annual_data['total_investments'][-10:]
-                                   cash_und_cash_investments = annual_data['cash_and_equiv'][-10:]
-                                   Intangible_assets_annual = annual_data['intangible_assets'][-10:]
-                                   Net_goodwill_annual = annual_data['goodwill'][-10:]
-                                   Other_longterm_assets_annual = annual_data['other_lt_assets'][-10:]
-                                   Total_assets_annual = annual_data['total_assets'][-10:]
-                                   Unearned_Premiums_annual = annual_data['unearned_premiums'][-10:]
-                                   Short_term_debt_annual = annual_data['st_debt'][-10:]
-                                   LongTerm_debt_annual = annual_data['lt_debt'][-10:]
-                                   Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
-                                   Total_liabilities_annual = annual_data['total_liabilities'][-10:]
-                                   Retained_earnings_annual =annual_data['retained_earnings'][-10:]
-                                   Total_Equity_annual = annual_data['total_equity'][-10:]
+
+                                   if f'{ticker}_Total_investments' in st.session_state:
+                                        Total_investments = st.session_state[f'{ticker}_Total_investments']
+                                        cash_und_cash_investments = st.session_state[f'{ticker}_cash_and_cash_investments']
+                                        Intangible_assets_annual = st.session_state[f'{ticker}_Intangible_assets_annual']
+                                        Net_goodwill_annual = st.session_state[f'{ticker}_Net_goodwill_annual']
+                                        Other_longterm_assets_annual = st.session_state[f'{ticker}_Other_longterm_assets_annual']
+                                        Total_assets_annual = st.session_state[f'{ticker}_Total_assets_annual']
+                                        Unearned_Premiums_annual = st.session_state[f'{ticker}_Unearned_Premiums_annual']
+                                        Short_term_debt_annual = st.session_state[f'{ticker}_Short_term_debt_annual']
+                                        LongTerm_debt_annual = st.session_state[f'{ticker}_LongTerm_debt_annual']
+                                        Other_longterm_liabilities_annual = st.session_state[f'{ticker}_Other_longterm_liabilities_annual']
+                                        Total_liabilities_annual = st.session_state[f'{ticker}_Total_liabilities_annual']
+                                        Retained_earnings_annual = st.session_state[f'{ticker}_Retained_earnings_annual']
+                                        Total_Equity_annual = st.session_state[f'{ticker}_Total_Equity_annual']
+                                   else:    
+
+                                        Total_investments = annual_data['total_investments'][-10:]
+                                        cash_und_cash_investments = annual_data['cash_and_equiv'][-10:]
+                                        Intangible_assets_annual = annual_data['intangible_assets'][-10:]
+                                        Net_goodwill_annual = annual_data['goodwill'][-10:]
+                                        Other_longterm_assets_annual = annual_data['other_lt_assets'][-10:]
+                                        Total_assets_annual = annual_data['total_assets'][-10:]
+                                        Unearned_Premiums_annual = annual_data['unearned_premiums'][-10:]
+                                        Short_term_debt_annual = annual_data['st_debt'][-10:]
+                                        LongTerm_debt_annual = annual_data['lt_debt'][-10:]
+                                        Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
+                                        Total_liabilities_annual = annual_data['total_liabilities'][-10:]
+                                        Retained_earnings_annual =annual_data['retained_earnings'][-10:]
+                                        Total_Equity_annual = annual_data['total_equity'][-10:]
+
+                                            # Store unpacked data in session state
+                                        st.session_state[f'{ticker}_Total_investments'] = Total_investments
+                                        st.session_state[f'{ticker}_cash_and_cash_investments'] = cash_und_cash_investments
+                                        st.session_state[f'{ticker}_Intangible_assets_annual'] = Intangible_assets_annual
+                                        st.session_state[f'{ticker}_Net_goodwill_annual'] = Net_goodwill_annual
+                                        st.session_state[f'{ticker}_Other_longterm_assets_annual'] = Other_longterm_assets_annual
+                                        st.session_state[f'{ticker}_Total_assets_annual'] = Total_assets_annual
+                                        st.session_state[f'{ticker}_Unearned_Premiums_annual'] = Unearned_Premiums_annual
+                                        st.session_state[f'{ticker}_Short_term_debt_annual'] = Short_term_debt_annual
+                                        st.session_state[f'{ticker}_LongTerm_debt_annual'] = LongTerm_debt_annual
+                                        st.session_state[f'{ticker}_Other_longterm_liabilities_annual'] = Other_longterm_liabilities_annual
+                                        st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
+                                        st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
+                                        st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
 
                                    Total_investments_annual_df = financials_df(Total_investments, date_annual, "Other Investments")
                                    cash_und_cash_investments_annual_df = financials_df(cash_und_cash_investments, date_annual, "Cash & Equivalents")
@@ -9812,40 +10627,65 @@ if selected == "Stock Analysis Tool":
                     with Quarterly:
 
                          try:
+
+                              if f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet' in st.session_state:
+                                   cash_and_equiv_quarterly_Balance_Sheet = st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet']
+                                   Total_investments_quarterly_Balance_Sheet = st.session_state[f'{ticker}_Total_investments_quarterly_Balance_Sheet']
+                                   Gross_loans_quarter = st.session_state[f'{ticker}_Gross_loans_quarter']
+                                   Loans_loss_quarter = st.session_state[f'{ticker}_Loans_loss_quarter']
+                                   Net_Loan_quarter = st.session_state[f'{ticker}_Net_Loan_quarter']
+                                   Unearned_income_quarter = st.session_state[f'{ticker}_Unearned_income_quarter']
+                                   Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
+                                   Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
+                                   Other_lt_assets_quarter = st.session_state[f'{ticker}_Other_lt_assets_quarter']
+                                   Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
+                                   Deposits_quarter = st.session_state[f'{ticker}_Deposits_quarter']
+                                   Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
+                                   LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
+                                   Other_longterm_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
+                                   Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
+                                   Total_liabilities_quarter = st.session_state[f'{ticker}_Total_liabilities_quarter']
+                                   Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
+                              else:
                                                    
-                              cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
-                              Total_investments_quarterly_Balance_Sheet = quarterly_data['total_investments'][-10:]
-                              Gross_loans_quarter = quarterly_data['loans_gross'][-10:]
-                              Loans_loss_quarter = quarterly_data['allowance_for_loan_losses'][-10:]
-                              Net_Loan_quarter = quarterly_data['loans_net'][-10:]
-                              Unearned_income_quarter = quarterly_data['unearned_income'][-10:]
-                              Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
-                              Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
-                              Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
-                              Total_assets_quarter = quarterly_data['total_assets'][-10:]
-                              Deposits_quarter = quarterly_data['deposits_liability'][-10:]
-                              Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
-                              LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
-                              Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
-                              Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
-                              Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
-                              Total_Equity_quarter = quarterly_data['total_equity'][-10:]
-                              
-                              
-                              
-                              
+                                   cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
+                                   Total_investments_quarterly_Balance_Sheet = quarterly_data['total_investments'][-10:]
+                                   Gross_loans_quarter = quarterly_data['loans_gross'][-10:]
+                                   Loans_loss_quarter = quarterly_data['allowance_for_loan_losses'][-10:]
+                                   Net_Loan_quarter = quarterly_data['loans_net'][-10:]
+                                   Unearned_income_quarter = quarterly_data['unearned_income'][-10:]
+                                   Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
+                                   Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
+                                   Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
+                                   Total_assets_quarter = quarterly_data['total_assets'][-10:]
+                                   Deposits_quarter = quarterly_data['deposits_liability'][-10:]
+                                   Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
+                                   LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
+                                   Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
+                                   Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
+                                   Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
+                                   Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
 
-
-
-
-                              
-                              
-                              
-
-                              
-                              
-                              
-
+                                   # Store unpacked data in session state
+                                   st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet'] = cash_and_equiv_quarterly_Balance_Sheet
+                                   st.session_state[f'{ticker}_Total_investments_quarterly_Balance_Sheet'] = Total_investments_quarterly_Balance_Sheet
+                                   st.session_state[f'{ticker}_Gross_loans_quarter'] = Gross_loans_quarter
+                                   st.session_state[f'{ticker}_Loans_loss_quarter'] = Loans_loss_quarter
+                                   st.session_state[f'{ticker}_Net_Loan_quarter'] = Net_Loan_quarter
+                                   st.session_state[f'{ticker}_Unearned_income_quarter'] = Unearned_income_quarter
+                                   st.session_state[f'{ticker}_Net_goodwill_quarter'] = Net_goodwill_quarter
+                                   st.session_state[f'{ticker}_Intangible_assets_quarter'] = Intangible_assets_quarter
+                                   st.session_state[f'{ticker}_Other_lt_assets_quarter'] = Other_lt_assets_quarter
+                                   st.session_state[f'{ticker}_Total_assets_quarter'] = Total_assets_quarter
+                                   st.session_state[f'{ticker}_Deposits_quarter'] = Deposits_quarter
+                                   st.session_state[f'{ticker}_Short_term_debt_quarter'] = Short_term_debt_quarter10_unpacked
+                                   st.session_state[f'{ticker}_LongTerm_debt_quarter'] = LongTerm_debt_quarter10_unpacked
+                                   st.session_state[f'{ticker}_Other_longterm_liabilities_quarter'] = Other_longterm_liabilities_quarter10_unpacked
+                                   st.session_state[f'{ticker}_Retained_earnings_quarter'] = Retained_earnings_quarter
+                                   st.session_state[f'{ticker}_Total_liabilities_quarter'] = Total_liabilities_quarter10_unpacked
+                                   st.session_state[f'{ticker}_Total_Equity_quarter'] = Total_Equity_quarter10_unpacked
+                                                            
+ 
 
                               cash_and_equiv_quarterly_Balance_Sheet_df = financials_df(cash_and_equiv_quarterly_Balance_Sheet, date_quarter, "Cash & Equivalents")
                               Total_investments_quarterly_Balance_Sheet_df = financials_df(Total_investments_quarterly_Balance_Sheet, date_quarter, "Total Investments")
@@ -9858,12 +10698,12 @@ if selected == "Stock Analysis Tool":
                               Other_lt_assets_quarter_df = financials_df(Other_lt_assets_quarter, date_quarter, "Other longterm Assets")
                               Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
                               Deposits_quarter_df = financials_df(Deposits_quarter, date_quarter, "Total Deposits")
-                              Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter, date_quarter, "Short-Term Debt")
-                              LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter, date_quarter, "Long-Term Debt")
-                              Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter, date_quarter, "Other Long-Term Liabilities")
+                              Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter10_unpacked, date_quarter, "Short-Term Debt")
+                              LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter10_unpacked, date_quarter, "Long-Term Debt")
+                              Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter10_unpacked, date_quarter, "Other Long-Term Liabilities")
                               Retained_earnings_quarter_df = financials_df(Retained_earnings_quarter, date_quarter, "Retained Earnings")
-                              Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter, date_quarter, "Total Liabilities")
-                              Total_Equity_quarter_df = financials_df(Total_Equity_quarter, date_quarter, "Total Equity")
+                              Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter10_unpacked, date_quarter, "Total Liabilities")
+                              Total_Equity_quarter_df = financials_df(Total_Equity_quarter10_unpacked, date_quarter, "Total Equity")
                              
                               
                          
@@ -9882,35 +10722,82 @@ if selected == "Stock Analysis Tool":
                          except KeyError:
                               try:
   
+                                   #date_quarterly_Balance_Sheet = quarterly_data['period_end_date'][-10:] 
+                                   if f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet' in st.session_state:
+                                        cash_and_equiv_quarterly_Balance_Sheet = st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet']
+                                        st_investments_quarterly_Balance_Sheet = st.session_state[f'{ticker}_st_investments_quarterly_Balance_Sheet']
+                                        Inventories_quarter = st.session_state[f'{ticker}_Inventories_quarter']
+                                        Total_current_assets_quarter = st.session_state[f'{ticker}_Total_current_assets_quarter']
+                                        Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
+                                        Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
+                                        Other_lt_assets_quarter = st.session_state[f'{ticker}_Other_lt_assets_quarter']
+                                        Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
+                                        Accounts_payable_quarter = st.session_state[f'{ticker}_Accounts_payable_quarter']
+                                        Current_accrued_liab_quarter = st.session_state[f'{ticker}_Current_accrued_liab_quarter']
+                                        Tax_payable_quarter = st.session_state[f'{ticker}_Tax_payable_quarter']
+                                        Other_current_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_current_liabilities_quarter']
+                                        Current_deferred_revenue_quarter = st.session_state[f'{ticker}_Current_deferred_revenue_quarter']
+                                        Total_current_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_current_liabilities_quarter']
+                                        Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
+                                        current_portion_of_lease_obligation = st.session_state[f'{ticker}_current_portion_of_lease_obligation']
+                                        capital_leases = st.session_state[f'{ticker}_capital_leases']
+                                        LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
+                                        Other_longterm_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
+                                        Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
+                                        Total_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_liabilities_quarter']
+                                        Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
+                                   else:
+
+                                        cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
+                                        st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
+                                        Inventories_quarter = quarterly_data['inventories'][-10:]
+                                        Total_current_assets_quarter = quarterly_data['total_current_assets'][-10:]
+                                        Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
+                                        Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
+                                        Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
+                                        Total_assets_quarter = quarterly_data['total_assets'][-10:]
+                                        st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
+                                        Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
+                                        Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
+                                        Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
+                                        Other_current_liabilities_quarter10_unpacked = quarterly_data['other_current_liabilities'][-10:]
+                                        Current_deferred_revenue_quarter = quarterly_data['current_deferred_revenue'][-10:]
+                                        Total_current_liabilities_quarter10_unpacked = quarterly_data['total_current_liabilities'][-10:] 
+                                        Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
+                                        current_portion_of_lease_obligation = quarterly_data['current_capital_leases'][-10:]
+                                        capital_leases = quarterly_data['noncurrent_capital_leases'][-10:]
+                                        LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
+                                        Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
+                                        Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
+                                        Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
+                                        Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
 
 
+                                        # Store unpacked data in session state
+                                        st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet'] = cash_and_equiv_quarterly_Balance_Sheet
+                                        st.session_state[f'{ticker}_st_investments_quarterly_Balance_Sheet'] = st_investments_quarterly_Balance_Sheet
+                                        st.session_state[f'{ticker}_Inventories_quarter'] = Inventories_quarter
+                                        st.session_state[f'{ticker}_Total_current_assets_quarter'] = Total_current_assets_quarter
+                                        st.session_state[f'{ticker}_Intangible_assets_quarter'] = Intangible_assets_quarter
+                                        st.session_state[f'{ticker}_Net_goodwill_quarter'] = Net_goodwill_quarter
+                                        st.session_state[f'{ticker}_Other_lt_assets_quarter'] = Other_lt_assets_quarter
+                                        st.session_state[f'{ticker}_Total_assets_quarter'] = Total_assets_quarter
+                                        st.session_state[f'{ticker}_Accounts_payable_quarter'] = Accounts_payable_quarter
+                                        st.session_state[f'{ticker}_Current_accrued_liab_quarter'] = Current_accrued_liab_quarter
+                                        st.session_state[f'{ticker}_Tax_payable_quarter'] = Tax_payable_quarter
+                                        st.session_state[f'{ticker}_Other_current_liabilities_quarter'] = Other_current_liabilities_quarter10_unpacked
 
-                                   date_quarterly_Balance_Sheet = quarterly_data['period_end_date'][-10:] 
 
-
-                                   cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
-                                   st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
-                                   Inventories_quarter = quarterly_data['inventories'][-10:]
-                                   Total_current_assets_quarter = quarterly_data['total_current_assets'][-10:]
-                                   Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
-                                   Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
-                                   Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
-                                   Total_assets_quarter = quarterly_data['total_assets'][-10:]
-                                   st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
-                                   Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
-                                   Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
-                                   Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
-                                   Other_current_liabilities_quarter = quarterly_data['other_current_liabilities'][-10:]
-                                   Current_deferred_revenue_quarter = quarterly_data['current_deferred_revenue'][-10:]
-                                   Total_current_liabilities_quarter = quarterly_data['total_current_liabilities'][-10:] 
-                                   Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
-                                   current_portion_of_lease_obligation = quarterly_data['current_capital_leases'][-10:]
-                                   capital_leases = quarterly_data['noncurrent_capital_leases'][-10:]
-                                   LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
-                                   Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
-                                   Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
-                                   Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
-                                   Total_Equity_quarter = quarterly_data['total_equity'][-10:]
+                                        st.session_state[f'{ticker}_Current_deferred_revenue_quarter'] = Current_deferred_revenue_quarter
+                                        st.session_state[f'{ticker}_Total_current_liabilities_quarter'] = Total_current_liabilities_quarter10_unpacked
+                                        st.session_state[f'{ticker}_Short_term_debt_quarter'] = Short_term_debt_quarter10_unpacked
+                                        st.session_state[f'{ticker}_current_portion_of_lease_obligation'] = current_portion_of_lease_obligation
+                                        st.session_state[f'{ticker}_capital_leases'] = capital_leases
+                                        st.session_state[f'{ticker}_LongTerm_debt_quarter'] = LongTerm_debt_quarter10_unpacked
+                                        st.session_state[f'{ticker}_Other_longterm_liabilities_quarter'] = Other_longterm_liabilities_quarter10_unpacked
+                                        st.session_state[f'{ticker}_Retained_earnings_quarter'] = Retained_earnings_quarter
+                                        st.session_state[f'{ticker}_Total_liabilities_quarter'] = Total_liabilities_quarter10_unpacked
+                                        st.session_state[f'{ticker}_Total_Equity_quarter'] = Total_Equity_quarter10_unpacked
                                                   #-----------------------------------------------------------
                                    index = range(len(date_list_quarter))
                                    df = pd.DataFrame({'Period End Date': date_list_quarter,
@@ -9943,17 +10830,17 @@ if selected == "Stock Analysis Tool":
                                    Accounts_payable_quarter_df = financials_df(Accounts_payable_quarter, date_quarter, "Accounts Payable")
                                    Current_accrued_liab_quarter_df = financials_df(Current_accrued_liab_quarter, date_quarter, "Current Accrued Liabilities")
                                    Tax_payable_quarter_df = financials_df(Tax_payable_quarter, date_quarter, "Income Tax Payable")
-                                   Other_current_liabilities_quarter_df = financials_df(Other_current_liabilities_quarter, date_quarter, "Other Current Liabilities")
+                                   Other_current_liabilities_quarter_df = financials_df(Other_current_liabilities_quarter10_unpacked, date_quarter, "Other Current Liabilities")
                                    Current_deferred_revenue_quarter_df = financials_df(Current_deferred_revenue_quarter, date_quarter, "Current Deferred Revenue")
-                                   Total_current_liabilities_quarter_df = financials_df(Total_current_liabilities_quarter, date_quarter, "Total Current Liabilities")
-                                   Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter, date_quarter, "Short-Term Debt")
+                                   Total_current_liabilities_quarter_df = financials_df(Total_current_liabilities_quarter10_unpacked, date_quarter, "Total Current Liabilities")
+                                   Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter10_unpacked, date_quarter, "Short-Term Debt")
                                    current_portion_of_lease_obligation_df = financials_df(current_portion_of_lease_obligation, date_quarter, "Current Portion of Lease Obligation")
                                    capital_leases_df = financials_df(capital_leases, date_quarter, "Capital Leases (Noncurrent)")
-                                   LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter, date_quarter, "Long-Term Debt")
+                                   LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter10_unpacked, date_quarter, "Long-Term Debt")
                                    Retained_earnings_quarter_df = financials_df(Retained_earnings_quarter, date_quarter, "Retained Earnings")
-                                   Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter, date_quarter, "Other Long-Term Liabilities")
-                                   Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter, date_quarter, "Total Liabilities")
-                                   Total_Equity_quarter_df = financials_df(Total_Equity_quarter, date_quarter, "Total Equity")
+                                   Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter10_unpacked, date_quarter, "Other Long-Term Liabilities")
+                                   Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter10_unpacked, date_quarter, "Total Liabilities")
+                                   Total_Equity_quarter_df = financials_df(Total_Equity_quarter10_unpacked, date_quarter, "Total Equity")
 
                                                        
                                    merged_df_quarter = pd.concat([total,Inventories_quarter_df,Total_current_assets_quarter_df,Net_goodwill_quarter_df,
@@ -9965,7 +10852,23 @@ if selected == "Stock Analysis Tool":
 
                                    pass
                               except KeyError:
-                                        
+
+                                   if f'{ticker}_Total_investments_quarterly' in st.session_state:
+                                        Total_investments = st.session_state[f'{ticker}_Total_investments_quarterly']
+                                        cash_and_equiv_quarterly = st.session_state[f'{ticker}_cash_and_equiv_quarterly']
+                                        Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
+                                        Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
+                                        Other_longterm_assets_quarter = st.session_state[f'{ticker}_Other_longterm_assets_quarter']
+                                        Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
+                                        Unearned_Premiums_quarter = st.session_state[f'{ticker}_Unearned_Premiums_quarter']
+                                        Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
+                                        LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
+                                        Other_longterm_liabilities_quarter = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
+                                        Total_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_liabilities_quarter']
+                                        Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
+                                        Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
+                                   else:
+                                                                           
                                         Total_investments = quarterly_data['total_investments'][-10:]
                                         cash_and_equiv_quarterly = quarterly_data['cash_and_equiv'][-10:]
                                         Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
@@ -9973,43 +10876,59 @@ if selected == "Stock Analysis Tool":
                                         Other_longterm_assets_quarter = quarterly_data['other_lt_assets'][-10:]
                                         Total_assets_quarter = quarterly_data['total_assets'][-10:]
                                         Unearned_Premiums_quarter  = quarterly_data['unearned_premiums'][-10:]
-                                        Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
-                                        LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
+                                        Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
+                                        LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
                                         Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
-                                        Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
-                                        Total_Equity_quarter = quarterly_data['total_equity'][-10:]
+                                        Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
+                                        Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
                                         Retained_earnings_quarter  =quarterly_data['retained_earnings'][-10:]
 
+
+                                                                                # Store unpacked data in session state
+                                        st.session_state[f'{ticker}_Total_investments_quarterly'] = Total_investments
+                                        st.session_state[f'{ticker}_cash_and_equiv_quarterly'] = cash_and_equiv_quarterly
+                                        st.session_state[f'{ticker}_Net_goodwill_quarter'] = Net_goodwill_quarter
+                                        st.session_state[f'{ticker}_Intangible_assets_quarter'] = Intangible_assets_quarter
+                                        st.session_state[f'{ticker}_Other_longterm_assets_quarter'] = Other_longterm_assets_quarter
+                                        st.session_state[f'{ticker}_Total_assets_quarter'] = Total_assets_quarter
+                                        st.session_state[f'{ticker}_Unearned_Premiums_quarter'] = Unearned_Premiums_quarter
+                                        st.session_state[f'{ticker}_Short_term_debt_quarter'] = Short_term_debt_quarter10_unpacked
+                                        st.session_state[f'{ticker}_LongTerm_debt_quarter'] = LongTerm_debt_quarter10_unpacked
+                                        st.session_state[f'{ticker}_Other_longterm_liabilities_quarter'] = Other_longterm_liabilities_quarter
+                                        st.session_state[f'{ticker}_Total_liabilities_quarter'] = Total_liabilities_quarter10_unpacked
+                                        st.session_state[f'{ticker}_Total_Equity_quarter'] = Total_Equity_quarter10_unpacked
+                                        st.session_state[f'{ticker}_Retained_earnings_quarter'] = Retained_earnings_quarter
+
                                         
                                         
                                         
                                         
 
-                                        Total_investments_quarter_df = financials_df(Total_investments, date_quarter, "Other Investments")
-                                        cash_and_equiv_quarterly_df = financials_df(cash_and_equiv_quarterly, date_quarter, "Cash & Equivalents")
-                                        Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
-                                        Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
-                                        Other_longterm_assets_quarter_df = financials_df(Other_longterm_assets_quarter , date_quarter, "Other Longterm Assets")
-                                        Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
-                                        Unearned_Premiums_quarter_df=financials_df(Unearned_Premiums_quarter , date_quarter, "Unearned Premiums")
-                                        Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter, date_quarter, "Short-Term Debt")
-                                        LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter, date_quarter, "Long-Term Debt")
-                                        Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter, date_quarter, "Other Long-Term Liabilities")
-                                        Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter, date_quarter, "Total Liabilities")
-                                        Retained_earnings_quarter_df=financials_df(Retained_earnings_quarter , date_quarter, "Retained Earnings")
-                                        Total_Equity_quarter_df = financials_df(Total_Equity_quarter, date_quarter, "Total Equity")
+                                   Total_investments_quarter_df = financials_df(Total_investments, date_quarter, "Other Investments")
+                                   cash_and_equiv_quarterly_df = financials_df(cash_and_equiv_quarterly, date_quarter, "Cash & Equivalents")
+                                   Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
+                                   Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
+                                   Other_longterm_assets_quarter_df = financials_df(Other_longterm_assets_quarter , date_quarter, "Other Longterm Assets")
+                                   Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
+                                   Unearned_Premiums_quarter_df=financials_df(Unearned_Premiums_quarter , date_quarter, "Unearned Premiums")
+                                   Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter10_unpacked, date_quarter, "Short-Term Debt")
+                                   LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter10_unpacked, date_quarter, "Long-Term Debt")
+                                   Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter, date_quarter, "Other Long-Term Liabilities")
+                                   Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter10_unpacked, date_quarter, "Total Liabilities")
+                                   Retained_earnings_quarter_df=financials_df(Retained_earnings_quarter , date_quarter, "Retained Earnings")
+                                   Total_Equity_quarter_df = financials_df(Total_Equity_quarter10_unpacked, date_quarter, "Total Equity")
 
 
-                         
-                                        merged_df_quarter = pd.concat([Total_investments_quarter_df,cash_and_equiv_quarterly_df,Net_goodwill_quarter_df,Intangible_assets_quarter_df,
-                                                                       Other_longterm_assets_quarter_df,Total_assets_quarter_df,
-                                                                       Unearned_Premiums_quarter_df,Short_term_debt_quarter_df,LongTerm_debt_quarter_df,
-                                                                       Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Retained_earnings_quarter_df,
-                                                                       Total_Equity_quarter_df])           
-                                        st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                    
+                                   merged_df_quarter = pd.concat([Total_investments_quarter_df,cash_and_equiv_quarterly_df,Net_goodwill_quarter_df,Intangible_assets_quarter_df,
+                                                                      Other_longterm_assets_quarter_df,Total_assets_quarter_df,
+                                                                      Unearned_Premiums_quarter_df,Short_term_debt_quarter_df,LongTerm_debt_quarter_df,
+                                                                      Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Retained_earnings_quarter_df,
+                                                                      Total_Equity_quarter_df])           
+                                   st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
-                                             
                                         
+                                   
 
                with Cash_Flow:
                     Annual,Quarterly = st.tabs(["Annual","Quarterly"])
@@ -10018,25 +10937,11 @@ if selected == "Stock Analysis Tool":
  
                     
                     with Annual:
-                         Changes_in_working_capital_annual = annual_data['cfo_change_in_working_capital'][-10:] 
-                         Capex_annual = annual_data['capex'][-10:] 
-                         
-                         Purchase_of_Investment_annual = annual_data['cfi_investment_purchases'][-10:]
-                         Sale_maturity_of_Investments_annual = annual_data['cfi_investment_sales'][-10:]
-                         Net_investing_CashFlow_annual = annual_data['cf_cfi'][-10:] 
-                         Insurance_Reduction_of_DebtNet_annual = annual_data['cff_debt_net'][-10:]
-
-                         
-                         Repurchase_of_common_Preferred_stock_annual = annual_data['cff_common_stock_repurchased'][-10:]
-                         Cash_Dividends_paid_Total_annual = annual_data['cff_dividend_paid'][-10:] 
-                         Net_Financing_cashFlow_annual = annual_data['cf_cff'][-10:]
-                         Net_change_in_cash_annual = annual_data['cf_net_change_in_cash'][-10:]
-                         Free_cash_flow_annual = annual_data['fcf'][-10:]
 
                          index = range(len(date_list_annual))
                          FFO = pd.DataFrame({'Period End Date': date_list_annual,
-                                                            'Operating Cash Flow': Net_Operating_CashFlow_annual,
-                                                            'Changes In Working Capital': Changes_in_working_capital_annual
+                                                            'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked,
+                                                            'Changes In Working Capital': Changes_in_working_capital_annual_10_unpacked
                                                             }, index=index)
                          df = pd.DataFrame(FFO)
 
@@ -10047,40 +10952,23 @@ if selected == "Stock Analysis Tool":
                          total = total[1:]  
 
                          total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x)>= 1e9 else "{:,.0f}M".format(x / 1e6))
-
-                         Changes_in_working_capital_annual_df = financials_df(Changes_in_working_capital_annual, date_annual, "Changes in Working Capital")
-                         Capex_annual_df = financials_df(Capex_annual, date_annual, "Capital Expenditure")
+                         Changes_in_working_capital_annual_df = financials_df(Changes_in_working_capital_annual_10_unpacked, date_annual, "Changes in Working Capital")
+                         Capex_annual_df = financials_df(Capex_annual_10_unpacked, date_annual, "Capital Expenditure")
+                         Purchase_of_Investment_annual_df = financials_df(Purchase_of_Investment_annual_10_unpacked, date_annual, "Purchase of Investments")
+                         Sale_maturity_of_Investments_annual_df = financials_df(Sale_maturity_of_Investments_annual_10_unpacked, date_annual, "Sale/Maturity of Investments")
+                         Net_investing_CashFlow_annual_df = financials_df(Net_investing_CashFlow_annual_10_unpacked, date_annual, "Net Investing Cash Flow")
+                         Insurance_Reduction_of_DebtNet_annual_df = financials_df(Insurance_Reduction_of_DebtNet_annual_10_unpacked, date_annual, "Issuance/Reduction of Net Debt")
+                         Debt_issued_annual_df = financials_df(Debt_issued_annual_10_unpacked, date_annual, "Longterm Debt Issued")
+                         Debt_repaid_annual_df = financials_df(Debt_repaid_annual_10_unpacked, date_annual, "Longterm Debt Repaid")
+                         Stock_issued_of_common_Preferred_stock_annual_df  = financials_df(Stock_issued_of_common_Preferred_stock_annual_10_unpacked, date_annual, "Common Stock Repurchased")
+                         Net_Assets_from_Acquisitions_annual_df = financials_df(Net_Assets_from_Acquisitions_annual_10_unpacked, date_annual, "Acquisitions, net")
+                         StockBased_Compansation_annual_df= financials_df(StockBased_Compansation_annual_10_unpacked, date_annual, "Stock Based Compensation ")                       
+                         Repurchase_of_common_Preferred_stock_annual_df = financials_df(Repurchase_of_common_Preferred_stock_annual_10_unpacked, date_annual, "Repurchase Comm. & Pref. Stks")
+                         Cash_Dividends_paid_Total_annual_df = financials_df(Cash_Dividends_paid_Total_annual_10_unpacked, date_annual, "Cash Dividends Paid")
+                         Net_Financing_cashFlow_annual_df = financials_df(Net_Financing_cashFlow_annual_10_unpacked, date_annual, "Net Financing Cash Flow")
+                         Net_change_in_cash_annual_df = financials_df(Net_change_in_cash_annual_10_unpacked, date_annual, "Net Change in Cash")
                          
-                         Purchase_of_Investment_annual_df = financials_df(Purchase_of_Investment_annual, date_annual, "Purchase of Investments")
-                         Sale_maturity_of_Investments_annual_df = financials_df(Sale_maturity_of_Investments_annual, date_annual, "Sale/Maturity of Investments")
-                         Net_investing_CashFlow_annual_df = financials_df(Net_investing_CashFlow_annual, date_annual, "Net Investing Cash Flow")
-                         Insurance_Reduction_of_DebtNet_annual_df = financials_df(Insurance_Reduction_of_DebtNet_annual, date_annual, "Issuance/Reduction of Net Debt")
-                         try:
-                              Debt_issued_annual = annual_data['cff_debt_issued'][-10:]
-                              Debt_repaid_annual = annual_data['cff_debt_repaid'][-10:]
-                              Stock_issued_of_common_Preferred_stock_annual = annual_data['cff_common_stock_issued'][-10:]
-                              Net_Assets_from_Acquisitions_annual = annual_data['cfi_acquisitions'][-10:]
-                              StockBased_Compansation_annual = annual_data['cfo_stock_comp'][-10:] 
-
-
-
-                         except Exception as e:
-                              Debt_issued_annual  = [0] * 10
-                              Debt_repaid_annual = [0] * 10
-                              Stock_issued_of_common_Preferred_stock_annual = [0] * 10
-                              Net_Assets_from_Acquisitions_annual = [0] * 10
-                              StockBased_Compansation_annual = [0] * 10
-
-                         Net_Assets_from_Acquisitions_annual_df = financials_df(Net_Assets_from_Acquisitions_annual, date_annual, "Acquisitions, net")
-                         Debt_issued_annual_df = financials_df(Debt_issued_annual, date_annual, "Longterm Debt Issued")
-                         Debt_repaid_annual_df = financials_df(Debt_repaid_annual, date_annual, "Longterm Debt Repaid")
-                         Stock_issued_of_common_Preferred_stock_annual_df  = financials_df(Stock_issued_of_common_Preferred_stock_annual, date_annual, "Common Stock Repurchased")
-                         Repurchase_of_common_Preferred_stock_annual_df = financials_df(Repurchase_of_common_Preferred_stock_annual, date_annual, "Repurchase Comm. & Pref. Stks")
-                         Cash_Dividends_paid_Total_annual_df = financials_df(Cash_Dividends_paid_Total_annual, date_annual, "Cash Dividends Paid")
-                         Net_Financing_cashFlow_annual_df = financials_df(Net_Financing_cashFlow_annual, date_annual, "Net Financing Cash Flow")
-                         Net_change_in_cash_annual_df = financials_df(Net_change_in_cash_annual, date_annual, "Net Change in Cash")
-                         StockBased_Compansation_annual_df= financials_df(StockBased_Compansation_annual, date_annual, "Stock Based Compensation ")
-                         Free_cash_flow_annual_df = financials_df(Free_cash_flow_annual, date_annual, "Free Cash Flow")
+                         Free_cash_flow_annual_df = financials_df(FCF_annual_ten_unpacked, date_annual, "Free Cash Flow")
 
 
 
@@ -10100,43 +10988,12 @@ if selected == "Stock Analysis Tool":
 
 
                          with Quarterly:
-                              
-                              Net_Operating_CashFlow_quarter = quarterly_data['cf_cfo'][-10:] 
-                              changes_in_working_capital_quarter = quarterly_data['cfo_change_in_working_capital'][-10:] 
-                              Capex_quarter = quarterly_data['capex'][-10:] 
-                               
-                              Purchase_of_Investment_quarter = quarterly_data['cfi_investment_purchases'][-10:]
-                              Sale_maturity_of_Investments_quarter = quarterly_data['cfi_investment_sales'][-10:]
-                              Net_investing_CashFlow_quarter = quarterly_data['cf_cfi'][-10:] 
-                              Cash_Dividends_paid_Total_quarter = quarterly_data['cff_dividend_paid'][-10:] 
-                              Insurance_Reduction_of_DebtNet_quarter = quarterly_data['cff_debt_net'][-10:]
-                           
-                              
-                              Repurchase_of_common_Preferred_stock_quarter = quarterly_data['cff_common_stock_repurchased'][-10:]
-                              Net_Financing_cashFlow_quarter = quarterly_data['cf_cff'][-10:]
-                              Net_change_in_cash_quarter = quarterly_data['cf_net_change_in_cash'][-10:]
-                              Free_cash_flow_quarter = quarterly_data['fcf'][-10:]
-                              try:
-                                   Debt_issued_quarter = quarterly_data['cff_debt_issued'][-10:]
-                                   Debt_repaid_quarter = quarterly_data['cff_debt_repaid'][-10:]
-                                   Stock_issued_of_common_Preferred_stock_quarter = quarterly_data['cff_common_stock_issued'][-10:]
-                                   Net_Assets_from_Acquisitions_quarter = quarterly_data['cfi_acquisitions'][-10:]
-                                   StockBased_Compansation_quarter = quarterly_data['cfo_stock_comp'][-10:] 
-                    
-                              except Exception as e:
-                                   
-                                   Debt_issued_quarter  = [0] * 10
-                                   Debt_repaid_quarter = [0] * 10
-                                   Stock_issued_of_common_Preferred_stock_quarter = [0] * 10
-                                   Net_Assets_from_Acquisitions_quarter = [0] * 10
-                                   StockBased_Compansation_quarter = [0] * 10
-
 
                          
                               index = range(len(date_quarter))
                               FFO = pd.DataFrame({'Period End Date': date_quarter,
-                                                            'Operating Cash Flow': Net_Operating_CashFlow_quarter,
-                                                            'Changes In Working Capital': changes_in_working_capital_quarter
+                                                            'Operating Cash Flow': Net_Operating_CashFlow_quarter_10_unpacked ,
+                                                            'Changes In Working Capital': changes_in_working_capital_quarter_10_unpacked 
                                                             }, index=index)
                                    # Convert JSON data to a DataFrame
                               df = pd.DataFrame(FFO)
@@ -10151,26 +11008,26 @@ if selected == "Stock Analysis Tool":
                               total_quarter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
 
 
-                              Net_Operating_CashFlow_quarter_df = financials_df(Net_Operating_CashFlow_quarter, date_quarter, "Net Operating Cash Flow")
-                              changes_in_working_capital_quarter_df = financials_df(changes_in_working_capital_quarter, date_quarter, "Changes in Working Capital")
-                              Capex_quarter_df = financials_df(Capex_quarter, date_quarter, "Capital Expenditure")
+                              Net_Operating_CashFlow_quarter_df = financials_df(Net_Operating_CashFlow_quarter_10_unpacked , date_quarter, "Net Operating Cash Flow")
+                              changes_in_working_capital_quarter_df = financials_df(changes_in_working_capital_quarter_10_unpacked , date_quarter, "Changes in Working Capital")
+                              Capex_quarter_df = financials_df(Capex_quarter_10_unpacked , date_quarter, "Capital Expenditure")
                               
-                              Purchase_of_Investment_quarter_df = financials_df(Purchase_of_Investment_quarter, date_quarter, "Purchase of Investments")
-                              Sale_maturity_of_Investments_quarter_df = financials_df(Sale_maturity_of_Investments_quarter, date_quarter, "Sale/Maturity of Investments")
-                              Net_investing_CashFlow_quarter_df = financials_df(Net_investing_CashFlow_quarter, date_quarter, "Net Investing Cash Flow")
-                              Cash_Dividends_paid_Total_quarter_df = financials_df(Cash_Dividends_paid_Total_quarter, date_quarter, "Cash Dividends Paid")
+                              Purchase_of_Investment_quarter_df = financials_df(Purchase_of_Investment_quarter_10_unpacked , date_quarter, "Purchase of Investments")
+                              Sale_maturity_of_Investments_quarter_df = financials_df(Sale_maturity_of_Investments_quarter_10_unpacked , date_quarter, "Sale/Maturity of Investments")
+                              Net_investing_CashFlow_quarter_df = financials_df(Net_investing_CashFlow_quarter_10_unpacked , date_quarter, "Net Investing Cash Flow")
+                              Cash_Dividends_paid_Total_quarter_df = financials_df(Cash_Dividends_paid_Total_quarter_10_unpacked , date_quarter, "Cash Dividends Paid")
                               
-                              Net_Assets_from_Acquisitions_quarter_df = financials_df(Net_Assets_from_Acquisitions_quarter, date_quarter, "Acquisitions, net")
-                              Debt_issued_quarter_df = financials_df(Debt_issued_quarter, date_quarter, "Longterm Debt Issued")
-                              Debt_repaid_quarter_df = financials_df(Debt_repaid_quarter, date_quarter, "Longterm Debt Repaid")
-                              Stock_issued_of_common_Preferred_stock_quarter_df  = financials_df(Stock_issued_of_common_Preferred_stock_quarter, date_quarter, "Common Stock Repurchased")
-                              StockBased_Compansation_quarter_df= financials_df(StockBased_Compansation_quarter, date_quarter, "Stock Based Compensation ")
+                              Net_Assets_from_Acquisitions_quarter_df = financials_df(Net_Assets_from_Acquisitions_quarter_10_unpacked , date_quarter, "Acquisitions, net")
+                              Debt_issued_quarter_df = financials_df(Debt_issued_quarter_10_unpacked , date_quarter, "Longterm Debt Issued")
+                              Debt_repaid_quarter_df = financials_df(Debt_repaid_quarter_10_unpacked , date_quarter, "Longterm Debt Repaid")
+                              Stock_issued_of_common_Preferred_stock_quarter_df  = financials_df(Stock_issued_of_common_Preferred_stock_quarter_10_unpacked , date_quarter, "Common Stock Repurchased")
+                              StockBased_Compansation_quarter_df= financials_df(StockBased_Compansation_quarter_10_unpacked , date_quarter, "Stock Based Compensation ")
 
-                              Insurance_Reduction_of_DebtNet_quarter_df = financials_df(Insurance_Reduction_of_DebtNet_quarter, date_quarter, "Issuance/Reduction of Net Debt")
-                              Repurchase_of_common_Preferred_stock_quarter_df = financials_df(Repurchase_of_common_Preferred_stock_quarter, date_quarter, "Repurchase Comm. & Pref. Stks")
-                              Net_Financing_cashFlow_quarter_df = financials_df(Net_Financing_cashFlow_quarter, date_quarter, "Net Financing Cash Flow")
-                              Net_change_in_cash_quarter_df = financials_df(Net_change_in_cash_quarter, date_quarter, "Net Change in Cash")
-                              Free_cash_flow_quarter_df = financials_df(Free_cash_flow_quarter, date_quarter, "Free Cash Flow")
+                              Insurance_Reduction_of_DebtNet_quarter_df = financials_df(Insurance_Reduction_of_DebtNet_quarter_10_unpacked , date_quarter, "Issuance/Reduction of Net Debt")
+                              Repurchase_of_common_Preferred_stock_quarter_df = financials_df(Repurchase_of_common_Preferred_stock_quarter_10_unpacked , date_quarter, "Repurchase Comm. & Pref. Stks")
+                              Net_Financing_cashFlow_quarter_df = financials_df(Net_Financing_cashFlow_quarter_10_unpacked , date_quarter, "Net Financing Cash Flow")
+                              Net_change_in_cash_quarter_df = financials_df(Net_change_in_cash_quarter_10_unpacked , date_quarter, "Net Change in Cash")
+                              Free_cash_flow_quarter_df = financials_df(FCF_quarter_10_unpacked , date_quarter, "Free Cash Flow")
 
 
                               merged_df = pd.concat([total_quarter,Capex_quarter_df,Net_Assets_from_Acquisitions_quarter_df,
@@ -10202,94 +11059,10 @@ if selected == "Stock Analysis Tool":
      with st.container():
           use_container_width=True
           with Pillar_Analysis: 
-               #st.markdown("### Pillar Analysis", unsafe_allow_html=True)
 
-               revenue_annual_funf = annual_data['revenue'][-5:] 
-               ROIC_annual = annual_data['roic'][-10:]
-
-               #ROIC_annual_funf =annual_data['roic'][-5:]
-               #Average_ROIC_funf = round(((sum(ROIC_annual_funf) / len(ROIC_annual_funf)))*100, 2)
-               #Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
-               Free_cash_flow_annual_funf = annual_data['fcf'][-5:] 
-               Total_assets_annual_one = annual_data['total_assets'][1:]
-               Total_Equity_annual_one = annual_data['total_equity'][-1:]
-               net_income_annual_funf = annual_data['net_income'][-5:] 
-               #shares_basic_annual_funf = annual_data['shares_basic'][-5:]
-               try:
-                    debt_equity_annual_one =quarterly_data['debt_to_equity'][-1:]
-                    debt_Assets_annual =annual_data['debt_to_assets'][-10:]
-               
-                    
-                   
-               
-                    
-                    LongTerm_debt_annual_one =annual_data['lt_debt'][-1:]
-                    Short_term_debt_annual_one =annual_data['st_debt'][-1:]
-                    Total_assets_annual_one = annual_data['total_assets'][-1:]
-                    interest_expense_yr =annual_data['interest_expense'][-1:]
-
-               except KeyError:
-                    debt_equity_annual_one = pd.Series()
-                    debt_Assets_annual = pd.Series()
-               
-                    interest_expense_yr=pd.Series()
-               
-
-               
-               Cash_Dividends_paid_Total_annual_one = annual_data['cff_dividend_paid'][-1:] 
-               Average_Cash_Dividends_paid_Total_annual_one = round(((sum(Cash_Dividends_paid_Total_annual_one) / len(Cash_Dividends_paid_Total_annual_one)))/1000000000, 2)
-
-               Cash_Dividends_paid_Total_annual_five = annual_data['cff_dividend_paid'][-5:] 
-               Average_Cash_Dividends_paid_Total_annual_five = round(((sum(Cash_Dividends_paid_Total_annual_five) / len(Cash_Dividends_paid_Total_annual_five)))/1000000000, 2)
-
-               ROE_annual_five = annual_data['roe'][-5:] 
-               Average_ROE_annual_five = round(((sum(ROE_annual_five) / len(ROE_annual_five)))*100,2)
-
-               eps_basic_annual_five = annual_data['eps_basic'][-5:] 
-               Average_eps_basic_annual_five = round(((sum(eps_basic_annual_five) / len(eps_basic_annual_five))),2)
-
-               Total_Equity_quarter = quarterly_data['total_equity'][-1:]
-               Total_Equity_quarter_average = round(((sum(Total_Equity_quarter) / len(Total_Equity_quarter))),3)
-               
-
-
-
-
-               Average_Free_cash_flow_annual_one = ((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000
-               Average_Free_cash_flow_annual_one_one =Average_Free_cash_flow_annual_one
-
-     
-               #average_revenue_annual = round((sum(revenue_annual_funf) / len(revenue_annual_funf)) / 1000000000, 2)
-               average_fcf_Annual_funf = ((sum(Free_cash_flow_annual_funf) / len(Free_cash_flow_annual_funf)) / 1000000000)
-               Average_netIncome_annual = round((sum(net_income_annual_funf) / len(net_income_annual_funf)) / 1000000000, 2)
-          
-               Average_total_equity_annual = round((sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000, 2)
-
-               
-               
-               Average_total_assets_one = round(((sum(Total_assets_annual_one) / len(Total_assets_annual_one))), 2)
-               
-
-     
-
-               shares_basic_quarter = quarterly_data['shares_basic'][-1:]
-               #DEBT_Equity = round(, 2)
-               
-               #Marketcap = current_price * shares_basic_quarter[0]/1000000000
-
-
-               #st.write("Average_netIncome_annual",Average_netIncome_annual)
-               
-
-               #try:
-                    #one_FCF_annual_payout = round(abs(Average_Cash_Dividends_paid_Total_annual_one/Average_Free_cash_flow_annual_one)*100,2)
 
                if fcf_ttm == 0: 
 
-                         #Average_Free_cash_flow_annual_one = 1
-                         #Average_Free_cash_flow_annual_one = round(((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one))), 2)
-                         #Average_Cash_Dividends_paid_Total_annual_one = round(((sum(Cash_Dividends_paid_Total_annual_one) / len(Cash_Dividends_paid_Total_annual_one))), 2)
-                         #Average_Cash_Dividends_paid_Total_annual_one = Average_Cash_Dividends_paid_Total_annual_one * 1000000000
 
                          fcf_ttm = 0
 
@@ -10306,16 +11079,14 @@ if selected == "Stock Analysis Tool":
                               
                               one_FCF_annual_payout=0.00
 
-               #except ZeroDivisionError:
-                         #print("Index error occurred.")  # Handle the specific exception here
-
+                    
                     
                     
           #--------------------------------------------------------------------------------------------------------------------------------
                try:
-                    revenue_annual_funf_Growth =(revenue_annual_funf[-1]-revenue_annual_funf[-5])/abs(revenue_annual_funf[-5])*100
+                    revenue_annual_funf_Growth =(Revenue_annual_5_unpacked[-1]-Revenue_annual_5_unpacked[-5])/abs(Revenue_annual_5_unpacked[-5])*100
 
-                    if revenue_annual_funf[0] ==0:
+                    if Revenue_annual_5_unpacked[0] ==0:
                          revenue_annual_funf_Growth=0
 
                except (IndexError, ZeroDivisionError):
@@ -10324,21 +11095,19 @@ if selected == "Stock Analysis Tool":
           #-----------------------------------------------------------------------------------------------------------------------------
 
                try:
-                    FCF_funf_growth = ((Free_cash_flow_annual_funf[-1]-Free_cash_flow_annual_funf[-5])/abs(Free_cash_flow_annual_funf[-5]))*100
+                    FCF_funf_growth = ((FCF_annual_ten_unpacked[-1]-FCF_annual_ten_unpacked[-5])/abs(FCF_annual_ten_unpacked[-5]))*100
 
-                    if Free_cash_flow_annual_funf[0] ==0:
+                    if FCF_annual_ten_unpacked[0] ==0:
                          FCF_funf_growth=0
                except (IndexError, ZeroDivisionError): 
                     FCF_funf_growth=0                                 
           #----------------------------------------------------------------------------------------------------------------
 
                try:
-                    #for value in shares_basic_annual_funf:
-                    #    print(value(int[4]))
-                    Shares_outstanding_funf_growth = ((shares_basic_annual_funf[-1]-shares_basic_annual_funf[-5])/abs(shares_basic_annual_funf[-5]))*100
-               # st.write(shares_basic_annual_funf[-5])
-                    #st.write(shares_basic_annual_funf[-1])
-                    if shares_basic_annual_funf[0] ==0:
+
+                    Shares_outstanding_funf_growth = ((shares_basic_annual_funf_unpacked[-1]-shares_basic_annual_funf_unpacked[-5])/abs(shares_basic_annual_funf_unpacked[-5]))*100
+
+                    if shares_basic_annual_funf_unpacked[0] ==0:
                          
                          Shares_outstanding_funf_growth=0
 
@@ -10348,9 +11117,9 @@ if selected == "Stock Analysis Tool":
           #------------------------------------------------------------------------------------------------------------------
 
                try:
-                    netincome_annual_funf_growth_ = ((net_income_annual_funf[-1] - net_income_annual_funf[-5])/abs(net_income_annual_funf[-5]))*100
+                    netincome_annual_funf_growth_ = ((net_income_annual_funf_unpacked[-1] - net_income_annual_funf_unpacked[-5])/abs(net_income_annual_funf_unpacked[-5]))*100
 
-                    if net_income_annual_funf[0] ==0:
+                    if net_income_annual_funf_unpacked[0] ==0:
                          netincome_annual_funf_growth =0
                except Exception as e:  
 
@@ -10360,9 +11129,6 @@ if selected == "Stock Analysis Tool":
 
           
           #...........................................................................................................
-               #Netincome_annual_funf_Growth =round(((net_income_annual_funf[4]-net_income_annual_funf[0])/net_income_annual_funf[0])*100,2) 
-
-               #Total_debt_assets= Average_debt_assets_one * Average_Total_assets_annual_one  
 
 
                Total_liabilities_quarter = quarterly_data['total_liabilities'][-1:]
@@ -10370,20 +11136,16 @@ if selected == "Stock Analysis Tool":
 
                if   Total_Debt_from_all_calc != 0:
                     try:
-                         Schuldentillgung = round(1 / (average_fcf_Annual_funf / Total_Debt_from_all_calc), 2)
+                         Schuldentillgung = round(1 / (rounded_fcf_Annual_five / Total_Debt_from_all_calc), 2)
                          Schuldentillgung = abs(Schuldentillgung)
                     except Exception as e:
                          Schuldentillgung =0
-
-                    #print("Schuldentillgung",Schuldentillgung)
-                    #print("average_fcf_Annual_funf",average_fcf_Annual_funf)
-                    #print("Total_Debt_from_all_calc",Total_Debt_from_all_calc)
 
 
                elif Total_Debt_from_all_calc != 0:
                     if Average_Total_liabilities_quarter != 0: 
                          Total_debt_= Average_Total_liabilities_quarter/1000000000
-                         Schuldentillgung=round(1/(average_fcf_Annual_funf/Total_debt_),2)
+                         Schuldentillgung=round(1/(rounded_fcf_Annual_five/Total_debt_),2)
                          Schuldentillgung = abs(Schuldentillgung)
 
                     
@@ -10392,21 +11154,22 @@ if selected == "Stock Analysis Tool":
                          Total_liabilities_annual = annual_data['total_liabilities'][-1:]
                          Total_liabilities_annual = sum(Total_liabilities_annual)/len(Total_liabilities_annual)
                          Total_debt_= Total_liabilities_annual/1000000000
-                         Schuldentillgung=round(1/(average_fcf_Annual_funf/Total_debt_),2)
+                         Schuldentillgung=round(1/(rounded_fcf_Annual_five/Total_debt_),2)
 
                          Schuldentillgung = abs(Schuldentillgung)
                     except Exception as e:
                          Schuldentillgung = 0
                #Schuldentillgung=round(1/(average_fcf_Annual_funf/Total_debt),1)
+               #print("Total_Debt_from_all_calc",Total_Debt_from_all_calc)
+               #print("rounded_fcf_Annual_five",rounded_fcf_Annual_five)
                
-               
-               if KGV > 23:
+               if float(KGV) > 23.00:
                          pe = "🔴"  # Red X for KCV greater than 23
-               elif KGV < 0:
+               elif float(KGV) < 0.00:
                          pe = "🔴"  # Red X for KCV smaller than 0
                else:
-                         pe = "✅"  # Green checkmark for KGV greater than or equal to 23
-
+                         pe = "✅"  # Green checkmark for KGV greater than or equal to 23      
+               
                
                if float(KCV) > 23.00:
                          pcf = "🔴"  # Red X for KCV greater than 23
@@ -10484,7 +11247,7 @@ if selected == "Stock Analysis Tool":
                     schuld= "✅"  # Gree
 
  #################################################      
-               @st.cache_data(show_spinner=False)
+               #@st.cache_data(show_spinner=False)
                def display_metrics():
                     st.markdown("""
                     <style>
@@ -10659,10 +11422,16 @@ if selected == "Stock Analysis Tool":
                               Average_10years_treasury_rate = 4.25
 
 
-                         Pepetual_growth_rate = 0.025
-                         Growth_rate = 8.30
+                         #Pepetual_growth_rate = 0.025
+                         #Growth_rate = 8.30
 
                          WACC = 8.00
+                         # Store variables in st.session_state for efficiency
+                         #if "WACC" not in st.session_state:
+                          #    st.session_state["WACC"] = 8.00
+
+                         if "Pepetual_growth_rate" not in st.session_state:
+                              st.session_state["Pepetual_growth_rate"] = 0.025
 
 
                          col1, col2,col3,col4,col5 = st.columns(5)
@@ -10707,7 +11476,12 @@ if selected == "Stock Analysis Tool":
                          WACC = float(col5.text_input("WACC (%):", value=f"{WACC:.2f}").replace(',', '.'))
                          #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
 
+                         #FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)).replace(',', '.'))
+
+                           
+                         #st.session_state["WACC"] = float(col5.text_input("WACC (%):", value=f"{st.session_state['WACC']:.2f}").replace(',', '.'))
                          FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)).replace(',', '.'))
+
                     
                     #------------------------------------------------------------------------------------------------------------------------
                          col9, col8,col34,col10= st.columns(4)
@@ -10717,6 +11491,8 @@ if selected == "Stock Analysis Tool":
                          col8.write('')
                          col34.write('')
                          Growth_rate2 = float(col10.text_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2ex").replace(',', '.'))
+                       
+# Growth rates and margin of safety input
 
                     
                     #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
@@ -10729,40 +11505,55 @@ if selected == "Stock Analysis Tool":
                          col34.write('')
                          Margin_of_safety3 = float(colc.text_input("2.Margin of Safety (%):", value=9.00).replace(',', '.'))
                     #-------------------------------------------------------------------------------------------------------------------------------------------
-                         #print("last FCF:",Average_Free_cash_flow_annual_one_one)
+                         #print("last FCF:",average_fcf_Annual_one)
 
 
-                         Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
-                         Average_Free_cash_flow_annual_one = ((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000
-                         Average_Free_cash_flow_annual_one_one =Average_Free_cash_flow_annual_one
+                         #Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
+                         #Average_Free_cash_flow_annual_one = ((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000
+                         #Average_Free_cash_flow_annual_one_one =Average_Free_cash_flow_annual_one
 
-                         if Average_Free_cash_flow_annual_one_one < 0:
-                              Average_Free_cash_flow_annual_one_one = average_fcf_Annual_funf
-                         
+                         #average_fcf_Annual_DCF1 = ((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000
+                         if average_fcf_Annual_one <= 0.00:
+
+                              average_fcf_Annual_DCF1 = rounded_fcf_Annual_five/1000000000
+                              average_fcf_Annual_DCF2 = rounded_fcf_Annual_five/1000000000
+                              print("last 5 years FCF:",rounded_fcf_Annual_five/1000000000)
+                         else:
+
+                              average_fcf_Annual_DCF1=average_fcf_Annual_one
+                              average_fcf_Annual_DCF2=average_fcf_Annual_one
+                              print("last FCF:",average_fcf_Annual_one)
+
+
                          discounted_values = [] 
                     
                          for i in range(FCF_discount_in_years):
-                              discounted_value = Average_Free_cash_flow_annual_one_one * (1 + (Growth_rate1/100))
-                              Average_Free_cash_flow_annual_one_one = discounted_value
+                              discounted_value = average_fcf_Annual_DCF1 * (1 + (Growth_rate1/100))
+                              average_fcf_Annual_DCF1 = discounted_value
                               #discounted_values.append(discounted_value)  # Add the discounted value to the list
                               discounted_values.append(round(discounted_value, 2)) 
+                              #print(discounted_values.append(round(discounted_value, 2)) )
                          #discounted_values[4]*
                          sum_discounted_values = sum(discounted_values) 
 
                          #Terminal_Value = discounted_values[4]*(1+Pepetual_growth_rate)/(WACC/100-Pepetual_growth_rate)
                          for i, value in enumerate(discounted_values):
                               if i == len(discounted_values) - 1:
-                                   Terminal_Value = value * (1 + Pepetual_growth_rate) / ((WACC/100) - Pepetual_growth_rate)
+                                   #Terminal_Value = value * (1 + Pepetual_growth_rate) / ((WACC/100) - Pepetual_growth_rate)
+                                   Terminal_Value = value * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
+                                   #discounted_values[-1] = round(Terminal_Value + value, 2)
+
                                    Sum_terminal_fcf = Terminal_Value + discounted_values[i]
                                   
 
                     
                          discounted_values[-1] = round(Sum_terminal_fcf,2)
                          
-                         npv_result = npv(WACC/100,discounted_values)   
+                         npv_result = npv(WACC/100, discounted_values)
                          rounded_npv_result = round(npv_result, 2)  
-                         #st.write(Total_Debt_from_all_calc)
-                         Equity_value = rounded_npv_result+Total_cash_last_years-Total_Debt_from_all_calc
+                         print("Total_Debt_from_all_calc",(Total_Debt_from_all_calc/1000000000))
+                         print("Total_cash_last_years",Total_cash_last_years)
+                         Equity_value = rounded_npv_result+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
                          Intrinsic_value =Equity_value/Average_shares_basic_annual_one
                          #st.write(npv_result)
 
@@ -10775,28 +11566,28 @@ if selected == "Stock Analysis Tool":
 
                     #----------------------------------------------------------2:Growth rate Estimate------------------------------------------------------------------------
                         
-                         
-                         if float(Average_Free_cash_flow_annual_one) < 0:
-                              Average_Free_cash_flow_annual_one = average_fcf_Annual_funf
+                        
+                         # if average_fcf_Annual_DCF2 < 0:
+                         #      average_fcf_Annual_DCF2 = rounded_fcf_Annual_five/ 1000000000
                     
                          discounted_values2 = [] 
                          # Create an empty list to store discounted values
                          for j in range(FCF_discount_in_years):
-                              discounted_value2 = Average_Free_cash_flow_annual_one * (1 + (Growth_rate2/100))
-                              Average_Free_cash_flow_annual_one = discounted_value2
+                              discounted_value2 = average_fcf_Annual_DCF2 * (1 + (Growth_rate2/100))
+                              average_fcf_Annual_DCF2 = discounted_value2
                               discounted_values2.append(round(discounted_value2,2))  # Add the discounted value to the list
                               #print(discounted_value2)
                          #Terminal_Value2 = discounted_values2[4]*(1+Pepetual_growth_rate)/(WACC/100-Pepetual_growth_rate)
 
-                         sum_discounted_values2 = sum(discounted_values2)
+                         #sum_discounted_values2 = sum(discounted_values2)
 
-                         for i, value2 in enumerate(discounted_values2):
-                              if i == len(discounted_values2) - 1:
-                                   Terminal_Value2 = value2 * (1 + Pepetual_growth_rate) / ((WACC/100) - Pepetual_growth_rate)
+                         for j, value2 in enumerate(discounted_values2):
+                              if j == len(discounted_values2) - 1:
+                                   Terminal_Value2 = value2 * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
                                    Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[i]
 
                     
-                         discounted_values2[-1] = Sum_terminal_fcf2
+                         discounted_values2[-1] = round(Terminal_Value2+value2,2)
 
                          #Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[4]
 
@@ -10804,7 +11595,7 @@ if selected == "Stock Analysis Tool":
                          npv_result2 = npv(WACC/100,discounted_values2)   
                          rounded_npv_result2 = round(npv_result2, 2)  
 
-                         Equity_value2 = rounded_npv_result2+Total_cash_last_years-Total_Debt_from_all_calc
+                         Equity_value2 = rounded_npv_result2+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
                          Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
                          #st.write(npv_result)
 
@@ -10822,23 +11613,24 @@ if selected == "Stock Analysis Tool":
                     
                          #------------------------------------------Graham 1.Estimate--------------------------------------------------------------
 
-                         EPS_last = annual_data['eps_basic'][-1:]
-                         EPS_last_average  = ((sum(EPS_last) / len(EPS_last))) 
-                         EPS_last_average_one=EPS_last_average
+                         
+                         
 
                          if EPS_last_average < 0:
-                              EPS_last_average = Average_eps_basic_annual_five
+                              EPS_last_average_graham = Average_eps_basic_annual_five
+                              EPS_last_average_graham2 =Average_eps_basic_annual_five
+                         else:
+                              EPS_last_average_graham =EPS_last_average
+                              EPS_last_average_graham2 =EPS_last_average
 
-                         graham_valuation = (EPS_last_average * (7+1.5*Growth_rate1)*4.4)/(Average_10years_treasury_rate)
+                         graham_valuation = (EPS_last_average_graham * (7+1.5*Growth_rate1)*4.4)/(Average_10years_treasury_rate)
                          
                          Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
                               #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
                          # Display the result
                     # .   ...........................................Graham 2.Estimate.........................................   
-
-                         if EPS_last_average_one < 0:
-                              EPS_last_average_one = Average_eps_basic_annual_five
-                         graham_valuation2 = (EPS_last_average_one * (7+1.5*Growth_rate2)*4.4)/(Average_10years_treasury_rate)
+                    
+                         graham_valuation2 = (EPS_last_average_graham2 * (7+1.5*Growth_rate2)*4.4)/(Average_10years_treasury_rate)
                     
                          Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
                               #print(f"{graham_valuation2} USD is approximately {Euro_equivalent_graham_valuation2:.2f} EUR")
@@ -11513,10 +12305,12 @@ if selected == "Stock Analysis Tool":
                     with st.form(key='growth_rate_form4'):
                     
                          # .......................................DDM............................................
-                         Dividend_annual = annual_data['dividends'][-4:]     
-                         Dividend_per_share_quarter = quarterly_data['dividends'][-14:]  
-                         Dividend_growth_quarter = quarterly_data['dividends_per_share_growth'][-14:]
-                         Dividend_current_dividend_growth_ttm=Dividend_current_dividend*4
+                         #Dividend_annual = annual_data['dividends'][-4:]     
+                         
+
+                         #Dividend_per_share_quarter = quarterly_data['dividends'][-14:]  
+                         #Dividend_growth_quarter = quarterly_data['dividends_per_share_growth'][-14:]
+                         #Dividend_current_dividend_growth_ttm=Dividend_current_dividend*4
 
 
                          cola, colb, colc, cold,col2 = st.columns(5)
@@ -11526,27 +12320,27 @@ if selected == "Stock Analysis Tool":
                          percentage_increase_3_4 = 0
                          percentage_increase_4_5 = 0
 
-                         for i in range(len(Dividend_per_share_quarter)):
+                         for i in range(len(Dividend_per_share_quarter14_unpacked)):
                               if i == 0:
-                                   Dividend_quarter1 = Dividend_per_share_quarter[i]
+                                   Dividend_quarter1 = Dividend_per_share_quarter14_unpacked[i]
                                    Dividend11 = cola.text_input("quarterly", value=round(Dividend_quarter1,3),key="unique_keydiv1")
                               elif i == 12 - 8:
-                                   Dividend_quarter2 = Dividend_per_share_quarter[i]
+                                   Dividend_quarter2 = Dividend_per_share_quarter14_unpacked[i]
                                    Dividend12 = colb.text_input("quarterly", value=Dividend_quarter2,key="unique_keydv2")
                                    if Dividend_quarter1 != 0:
                                         percentage_increase_1_2 = ((Dividend_quarter2 - Dividend_quarter1) / Dividend_quarter1) * 100
                               elif i == 12-4:
-                                   Dividend_quarter3 = Dividend_per_share_quarter[i] 
+                                   Dividend_quarter3 = Dividend_per_share_quarter14_unpacked[i] 
                                    Dividend13 = colc.text_input("quarterly", value=Dividend_quarter3,key="unique_keydv3")
                                    if Dividend_quarter2 != 0:
                                         percentage_increase_2_3 = ((Dividend_quarter3 - Dividend_quarter2) / Dividend_quarter2) * 100
                               elif i == 12:
-                                   Dividend_quarter4 = Dividend_per_share_quarter[i] 
+                                   Dividend_quarter4 = Dividend_per_share_quarter14_unpacked[i] 
                                    Dividend14 = cold.text_input("quarterly", value=Dividend_quarter4,key="unique_keydv4")
                                    if Dividend_quarter3 != 0:
                                         percentage_increase_3_4 = ((Dividend_quarter4 - Dividend_quarter3) / Dividend_quarter3) * 100
                               elif i == 13:
-                                   Dividend_quarter5 = Dividend_per_share_quarter[i] 
+                                   Dividend_quarter5 = Dividend_per_share_quarter14_unpacked[i] 
                                    Dividend15 = float(col2.text_input("current Dividend", value=Dividend_quarter5,key="unique_keydv5"))
                                    if Dividend_quarter4 != 0:
                                         percentage_increase_4_5 = ((Dividend_quarter5 - Dividend_quarter4) / Dividend_quarter4) * 100
@@ -11667,57 +12461,7 @@ if selected == "Stock Analysis Tool":
 
      # 
                display_growth_rate_formdiv()
-     # 
-     # 
-     # 
-     # 
-     # 
-     # 
-     # 
-     # 
-     # 
-     # 
-     #                   
-                                        
-               # else:     
-                    #     st.write("")
-                         
-
-                                   
-
-                         #print("graham_valuation:", graham_valuation_formated)
-                         #print("graham_valuation:", Euro_equivalent_graham_valuation)   
-                         #print("graham_valuation2:", Euro_equivalent_graham_valuation2)
-                         #print("average_fcf_Annual_funf:",average_fcf_Annual_one)
-                         #print("DCF2:",Euro_equivalent2)
-                         #print("average_valuation both high in Euro:", average_sum2)
-                         #print("average_valuation both low in Euro:", average_sum1)
-                         #print("average_valuation both low & high in Euro:", average_Middle_multiple_value)
-                         #print("Average_Middle_DCF",Average_Middle_DCF)
-                         # print("average_sum1:", average_sum1)
-                         #print("average_sum2:", average_sum2)
-                         #print("Average_both_multiples_sum:", Average_both_multiples_sum)
-                         #convert_value = Intrinsic_value
-                         #print("discounted to 5 yrs",sum_discounted_values)
-
-                         #print("WACC in %:",WACC_prozent)
-                    
-                         #print(Marketcap)
-                         #print("New value ",discounted_values[4])
-                         #print("New value2 ",discounted_values2[4])
-                         #print("npv-result:",rounded_npv_result)
-                         #print("npv-result2:",rounded_npv_result2)
-                         #print("2027 + terminal value",Sum_terminal_fcf)
-                         #print("2027 + terminal value2",Sum_terminal_fcf2)
-                         #print("Equity:",Equity_value)
-                         #print("Equity2:",Equity_value2)
-                         #print("intinsic_USD:",Intrinsic_value)
-                         #print("intinsic_Euro:",Euro_equivalent)
-                         #print("intinsic_USD2:",Intrinsic_value2)
-                         #print("intinsic_Euro2:",Euro_equivalent2)
-                         #print("Market cap:",Marketcap)  
-                         #print("shares Outstanding:",Average_shares_basic_annual_one)
-                         #st.write("Total_cash_last_years",Average_eps_basic_annual_five)
+    
      with st.container(): 
           use_container_width=True             
           with Key_ratios:
@@ -11727,105 +12471,62 @@ if selected == "Stock Analysis Tool":
                     #    Annual,Quarterly = st.tabs(["Annual","Quarterly"])
                          
                with Annual:
-                         #FCF_Margin = annual_data['fcf_margin'][-10:]
-                         debt_equity_annual =annual_data['debt_to_equity'][-10:]
-                         Price_to_tangible_book = annual_data['price_to_tangible_book'][-10:]
-                         EBITDA_growth = annual_data['ebitda_growth'][-10:]
-                         Price_to_book = annual_data['price_to_book'][-10:]
-                         #Price_to_book = annual_data['price_to_book'][-10:]
-                         #Dividend_per_share = annual_data['dividends'][-10:]
-                         fcf_per_share_annual = annual_data['fcf_per_share'][-10:]
-                         revenue_per_share_annual = annual_data['revenue_per_share'][-10:]
-                         ROE_annual = annual_data['roe'][-10:]
-                         Payout_ratio_annual = annual_data['payout_ratio'][-10:]
-                         #Revenue_growth = annual_data['revenue_growth'][-10:]
-                         NetIncome_growth = annual_data['net_income_growth'][-10:]
-                         FCF_growth = annual_data['fcf_growth'][-10:]
-                         Book_Value_growth = annual_data['book_value'][-10:]
-                         Price_to_sales = annual_data['price_to_sales'][-10:]
-                         Price_to_earnings=annual_data['price_to_earnings'][-10:]
-                         shares_diluted_annual_growth=annual_data['shares_diluted_growth'][-10:]
-                         Dividend_per_share_growth = annual_data['dividends_per_share_growth'][-10:]
 
-                         
-                         
-                         try:
-                              
-                              Operating_Margin = annual_data['operating_margin'][-10:]
-                              gross_margin = annual_data['gross_margin'][-10:]
-                              
-                              
-                              #Cash_Dividends_paid_Total_annual = annual_data['cff_dividend_paid'][-10:]
-                              #Shares_basic_annual = annual_data['shares_basic'][-10:]
-                                   
-                         except Exception as e:  
-                              Operating_Margin =0 
-                              gross_margin  =0 
-
-
-
-                         #eps_diluted_ttm = Financial_data['ttm']['debt_to_equity']
-                         #st.write("debt_to_equity",eps_diluted_ttm)
-                         
-
-                         # Calculate DPS
-                         #DPS = Cash_Dividends_paid_Total_annual / Shares_basic_annual
-
-                         # Create a DataFrame for the total calculations
                          Period_end_dates = annual_data['period_end_date'][-10:]
                          index = range(len(Period_end_dates))
                          
                          total = pd.DataFrame({
                          'Period End Date': Period_end_dates,
-                         'Revenue growth': Revenue_growth,
-                         'Net Income growth': NetIncome_growth,
-                         'FCF growth': FCF_growth,
+                         'Revenue growth': Revenue_growth_10_unpacked,
+                         'Net Income growth': NetIncome_growth_annual_10_unpacked,
+                         'FCF growth': fcf_growth_annual_10_unpacked ,
                          'EPS growth':EPS_growth,
-                         'FCF Margin':FCF_Margin,
-                         'Shares diluted':shares_diluted_annual_growth,
-                         'Operating Margin':Operating_Margin,
-                         'Gross Margin':gross_margin, 
-                         'Debt/Equity':debt_equity_annual,
-                         'Book Value': Book_Value_growth,
-                         'Price to Sales': Price_to_sales,
-                         'Price to Tangible Book': Price_to_tangible_book,
-                         'EBITDA growth': EBITDA_growth,
-                         'Price to Book': Price_to_book,
-                         'PE ratio':Price_to_earnings,
-                         'Dividend per share':Dividend_per_share,
-                         'Dividend per share growth ':Dividend_per_share_growth,
-                         'FCF per share':fcf_per_share_annual,
-                         'Revenue per share':revenue_per_share_annual,
-                         'Payout ratio': Payout_ratio_annual,
-                         'ROIC':ROIC_annual,
-                         'ROE':ROE_annual
+                         'FCF Margin':FCF_Margin_annual_10unpacked,
+                         'Shares diluted':shares_diluted_annual_growth_10_unpacked,
+                         'Operating Margin':operating_margin_annual10_unpacked,
+                         'Gross Margin':gross_margin_annual10_unpacked, 
+                         'Debt/Equity':debt_equity_annual_10_unpacked,
+                         'Book Value': Book_Value_growth_annual_10_unpacked,
+                         'Price to Sales': Price_to_sales_annual_10_unpacked,
+                         'Price to Tangible Book': Price_to_tangible_book_annual_10_unpacked,
+                         'EBITDA growth': EBITDA_growth_annual_10_unpacked,
+                         'Price to Book': Price_to_book_10_annual_unpacked,
+                         'PE ratio':Price_to_earnings_annual_10_unpacked,
+                         'Dividend per share':Dividend_per_share_annual10_unpacked,
+                         'Dividend per share growth ':Dividends_per_share_growth_annual10_unpacked,
+                         'FCF per share':fcf_per_share_annual_10_unpacked,
+                         'Revenue per share':revenue_per_share_annual_10_unpacked,
+                         'Payout ratio': Payout_ratio_annual_10_unpacked,
+                         'ROIC':ROIC_annual_10_unpacked,
+                         'ROE':ROE_annual_10_unpacked
                          
                          }, index=index)
 
                          # Create a DataFrame for the metrics
                          metrics = [
-                         ('Revenue growth', Revenue_growth),
-                         ('Net Income growth', NetIncome_growth),
-                         ('FCF growth', FCF_growth),
+         
+                         ('Revenue growth', Revenue_growth_10_unpacked),
+                         ('Net Income growth', NetIncome_growth_annual_10_unpacked),
+                         ('FCF growth', fcf_growth_annual_10_unpacked ),
                          ('EPS growth',EPS_growth),
-                         ('FCF Margin',FCF_Margin), 
-                         ('Shares diluted',shares_diluted_annual_growth),
-                         ('Operating Margin',Operating_Margin),
-                         ('Gross Margin',gross_margin), 
-                         ('Book Value', Book_Value_growth),
-                         ('Debt/Equity',debt_equity_annual),
-                         ('Price to Sales', Price_to_sales),
-                         ('Price to Tangible Book', Price_to_tangible_book),
-                         ('EBITDA growth', EBITDA_growth),
-                         ('Price to Book', Price_to_book),
-                         ('PE ratio',Price_to_earnings ),
-                         ('Dividend per share',Dividend_per_share),
-                         ('Dividend per share growth',Dividend_per_share_growth),
-                         ('FCF per share',fcf_per_share_annual),
-                         ('Revenue per share',revenue_per_share_annual),
-                         ('Payout ratio', Payout_ratio_annual),
-                         ('ROIC',ROIC_annual ),
-                         ('ROE',ROE_annual)
+                         ('FCF Margin',FCF_Margin_annual_10unpacked), 
+                         ('Shares diluted',shares_diluted_annual_growth_10_unpacked),
+                         ('Operating Margin',operating_margin_annual10_unpacked),
+                         ('Gross Margin',gross_margin_annual10_unpacked), 
+                         ('Book Value', Book_Value_growth_annual_10_unpacked),
+                         ('Debt/Equity',debt_equity_annual_10_unpacked),
+                         ('Price to Sales', Price_to_sales_annual_10_unpacked),
+                         ('Price to Tangible Book', Price_to_tangible_book_annual_10_unpacked),
+                         ('EBITDA growth', EBITDA_growth_annual_10_unpacked),
+                         ('Price to Book', Price_to_book_10_annual_unpacked),
+                         ('PE ratio',Price_to_earnings_annual_10_unpacked ),
+                         ('Dividend per share',Dividend_per_share_annual10_unpacked),
+                         ('Dividend per share growth',Dividends_per_share_growth_annual10_unpacked),
+                         ('FCF per share',fcf_per_share_annual_10_unpacked),
+                         ('Revenue per share',revenue_per_share_annual_10_unpacked),
+                         ('Payout ratio', Payout_ratio_annual_10_unpacked),
+                         ('ROIC',ROIC_annual_10_unpacked ),
+                         ('ROE',ROE_annual_10_unpacked)
                          
                     
                          ]
@@ -11843,116 +12544,76 @@ if selected == "Stock Analysis Tool":
                               elif metric_name == 'Dividend per share':
                                    formatted_data = ["${:.2f}".format(data ) for data in metric_data]
                               else:
+                                   #formatted_data = ["{:.2f}".format(data) for data in metric_data]
                                    formatted_data = ["{:.2f}".format(data) for data in metric_data]
+
                               merged_data[metric_name] = formatted_data
 
                          merged_df_key_ratio = pd.DataFrame(merged_data, index=Period_end_dates).transpose()
 
                          st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
-                         #st.dataframe(merged_df_key_ratio.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                         #st.markdown('</div>', unsafe_allow_html=True)
 
                          with Quarter:
-                                             FCF_Margin_quarter = quarterly_data['fcf_margin'][-10:]
-                                             debt_equity_quarter =quarterly_data['debt_to_equity'][-10:]
-                                             Price_to_tangible_book_quarter = quarterly_data['price_to_tangible_book'][-10:]
-                                             EBITDA_growth_quarter = quarterly_data['ebitda_growth'][-10:]
-                                             Price_to_book_quarter = quarterly_data['price_to_book'][-10:]
-                                             #Price_to_book_quarter = quarterly_data['price_to_book'][-10:]
-                                             Dividend_per_share_quarter = quarterly_data['dividends'][-10:]
-                                             fcf_per_share_quarter = quarterly_data['fcf_per_share'][-10:]
-                                             revenue_per_share_quarter = quarterly_data['revenue_per_share'][-10:]
-                                             ROE_quarter = quarterly_data['roe'][-10:]
-                                             Payout_ratio_quarter = quarterly_data['payout_ratio'][-10:]
-                                             Revenue_growth_quarter = quarterly_data['revenue_growth'][-10:]
-                                             NetIncome_growth_quarter = quarterly_data['net_income_growth'][-10:]
-                                             FCF_growth_quarter = quarterly_data['fcf_growth'][-10:]
-                                             Book_Value_growth_quarter = quarterly_data['book_value'][-10:]
-                                             Price_to_sales_quarter = quarterly_data['price_to_sales'][-10:]
-                                             Price_to_earnings_quarter=quarterly_data['price_to_earnings'][-10:]
-                                             EPS_growth_quarter=quarterly_data['eps_diluted_growth'][-10:]
-                                             ROIC_quarter=quarterly_data['roic'][-10:]
-                                             shares_diluted_quarter_growth=quarterly_data['shares_diluted_growth'][-10:]
-                                             Dividend_per_share_growth_quarter = quarterly_data['dividends_per_share_growth'][-10:]
-                    
-                                             try:
+                                          
                                                   
-                                                  Operating_Margin_quarter = quarterly_data['operating_margin'][-10:]
-                                                  gross_margin_quarter = quarterly_data['gross_margin'][-10:]
-                                                  
-                                                  
-                                                  #Cash_Dividends_paid_Total_annual = annual_data['cff_dividend_paid'][-10:]
-                                                  #Shares_basic_annual = annual_data['shares_basic'][-10:]
-                                                       
-                                             except Exception as e:  
-                                                  Operating_Margin_quarter =0 
-                                                  gross_margin_quarter  =0 
 
-
-
-                                             #eps_diluted_ttm = Financial_data['ttm']['debt_to_equity']
-                                             #st.write("debt_to_equity",eps_diluted_ttm)
-                                             
-
-                                             # Calculate DPS
-                                             #DPS = Cash_Dividends_paid_Total_annual / Shares_basic_annual
-
-                                             # Create a DataFrame for the total calculations
                                              Period_end_dates_quarter = quarterly_data['period_end_date'][-10:]
                                              index = range(len(Period_end_dates_quarter))
                                              
                                              total = pd.DataFrame({
                                              'Period End Date': Period_end_dates_quarter,
-                                             'Revenue growth': Revenue_growth_quarter,
-                                             'Net Income growth': NetIncome_growth_quarter,
-                                             'FCF growth': FCF_growth_quarter,
-                                             'EPS growth':EPS_growth_quarter,
-                                             'FCF Margin':FCF_Margin_quarter,
-                                             'Shares diluted':shares_diluted_quarter_growth,
-                                             'Operating Margin':Operating_Margin_quarter,
-                                             'Gross Margin':gross_margin_quarter, 
-                                             'Debt/Equity':debt_equity_quarter,
-                                             'Book Value': Book_Value_growth_quarter,
-                                             'Price to Sales': Price_to_sales_quarter,
-                                             'Price to Tangible Book': Price_to_tangible_book_quarter,
-                                             'EBITDA growth': EBITDA_growth_quarter,
-                                             'Price to Book': Price_to_book_quarter,
-                                             'PE ratio':Price_to_earnings_quarter,
-                                             'Dividend per share':Dividend_per_share_quarter,
-                                             'FCF per share':fcf_per_share_quarter,
-                                             'Revenue per share':revenue_per_share_quarter, 
-                                             'Payout ratio': Payout_ratio_quarter,
-                                             'ROIC':ROIC_quarter,
-                                             'ROE':ROE_quarter
+                                             'Revenue growth': Revenue_growth_10quarter_unpacked,
+                                             'Net Income growth': NetIncome_growth_quarter_10_unpacked,
+                                             'FCF growth': FCF_growth_quarter_10_unpacked,
+                                             'EPS growth':EPS_growth_quarter_10_unpacked,
+                                             'FCF Margin':FCF_Margin_quarter_10_unpacked,
+                                             'Shares diluted':shares_diluted_quarter_growth_10_unpacked,
+                                             'Operating Margin':operating_margin_quater10_unpacked,
+                                             'Gross Margin':gross_margin_quarter10_unpacked, 
+                                             'Debt/Equity':debt_equity_quarter_10_unpacked,
+                                             'Book Value': Book_Value_growth_quarter_10_unpacked,
+                                             'Price to Sales': Price_to_sales_quarter_10_unpacked,
+                                             'Price to Tangible Book': Price_TBV_quarter10_unpacked,
+                                             'EBITDA growth': EBITDA_growth_quarter_10_unpacked,
+                                             'Price to Book': Price_to_book_quarter_10_unpacked,
+                                             'PE ratio':Price_to_earnings_quarter_10_unpacked,
+                                             'Dividend per share':Dividend_per_share_quarter_10_unpacked,
+                                             'Dividend per share growth':Dividend_per_share_growth_quarter_10_unpacked,
+                                             'FCF per share':fcf_per_share_quarter_10_unpacked,
+                                             'Revenue per share':revenue_per_share_quarter_10_unpacked, 
+                                             'Payout ratio': Payout_ratio_quarter_10_unpacked,
+                                             'ROIC':ROIC_quarter_10_unpacked,
+                                             'ROE':ROE_quarter_10_unpacked
                                              }, index=index)
 
                                              # Create a DataFrame for the metrics
                                              metrics = [
-                                             ('Revenue growth ', Revenue_growth_quarter),
-                                             ('Net Income growth', NetIncome_growth_quarter),
-                                             ('FCF growth', FCF_growth_quarter),
-                                             ('EPS growth',EPS_growth_quarter),
-                                             ('FCF Margin',FCF_Margin_quarter), 
-                                             ('Shares diluted',shares_diluted_quarter_growth),
-                                             ('Operating Margin',Operating_Margin_quarter),
-                                             ('Gross Margin',gross_margin_quarter), 
-                                             ('Book Value', Book_Value_growth_quarter),
-                                             ('Debt/Equity',debt_equity_quarter),
-                                             ('Price to Sales', Price_to_sales_quarter),
-                                             ('Price to Tangible Book', Price_to_tangible_book_quarter),
-                                             ('EBITDA growth', EBITDA_growth_quarter),
-                                             ('Price to Book', Price_to_book_quarter),
-                                             ('PE ratio',Price_to_earnings_quarter ),
-                                             ('Dividend per share',Dividend_per_share_quarter),
-                                             ('Dividend per share growth',Dividend_per_share_growth_quarter),
-                                             ('FCF per share',fcf_per_share_quarter),
-                                             ('Revenue per share',revenue_per_share_quarter), 
-                                             ('Payout ratio', Payout_ratio_quarter),
-                                             ('ROIC',ROIC_quarter),
-                                             ('ROE',ROE_quarter)
+                                             ('Revenue growth ', Revenue_growth_10quarter_unpacked),
+                                             ('Net Income growth', NetIncome_growth_quarter_10_unpacked),
+                                             ('FCF growth', FCF_growth_quarter_10_unpacked),
+                                             ('EPS growth',EPS_growth_quarter_10_unpacked),
+                                             ('FCF Margin',FCF_Margin_quarter_10_unpacked), 
+                                             ('Shares diluted',shares_diluted_quarter_growth_10_unpacked),
+                                             ('Operating Margin',operating_margin_quater10_unpacked),
+                                             ('Gross Margin',gross_margin_quarter10_unpacked), 
+                                             ('Book Value', Book_Value_growth_quarter_10_unpacked),
+                                             ('Debt/Equity',debt_equity_quarter_10_unpacked),
+                                             ('Price to Sales', Price_to_sales_quarter_10_unpacked),
+                                             ('Price to Tangible Book', Price_TBV_quarter10_unpacked),
+                                             ('EBITDA growth', EBITDA_growth_quarter_10_unpacked),
+                                             ('Price to Book', Price_to_book_quarter_10_unpacked),
+                                             ('PE ratio',Price_to_earnings_quarter_10_unpacked ),
+                                             ('Dividend per share',Dividend_per_share_quarter_10_unpacked),
+                                             ('Dividend per share growth',Dividend_per_share_growth_quarter_10_unpacked),
+                                             ('FCF per share',fcf_per_share_quarter_10_unpacked),
+                                             ('Revenue per share',revenue_per_share_quarter_10_unpacked), 
+                                             ('Payout ratio', Payout_ratio_quarter_10_unpacked),
+                                             ('ROIC',ROIC_quarter_10_unpacked),
+                                             ('ROE',ROE_quarter_10_unpacked)
                                         
                                              ]
+                                            
 
                                              merged_data = {}
                                              for metric_name, metric_data in metrics:
@@ -11968,6 +12629,7 @@ if selected == "Stock Analysis Tool":
                                                        formatted_data = ["${:.2f}".format(data ) for data in metric_data]
                                                   else:
                                                        formatted_data = ["{:.2f}".format(data) for data in metric_data]
+
                                                   merged_data[metric_name] = formatted_data
 
                                              merged_df_key_ratio = pd.DataFrame(merged_data, index=Period_end_dates_quarter).transpose()
@@ -11977,10 +12639,6 @@ if selected == "Stock Analysis Tool":
                                              
 
 
-                                             #st.dataframe(merged_df_key_ratio.style.set_table_attributes('class="scroll-table"'),use_container_width=True)
-                                             #st.markdown('</div>', unsafe_allow_html=True)
-
-
 
      with st.container():
           use_container_width=True
@@ -11988,12 +12646,10 @@ if selected == "Stock Analysis Tool":
                     Annual, Quarter = st.tabs(["Annual", "Quarterly"])
                     with Annual:
                          
-                         date_annual_20yrs = annual_data['period_end_date'][-21:] 
+                         #date_annual_20yrs = annual_data['period_end_date'][-21:] 
                          #date_annual = annual_data['period_end_date'][-10:] 
-                         
-                         revenue_2003= annual_data['revenue'][-21:]                    
-                         #revenue_2003 = [round(value, 2) for value in revenue_2003]
-                         revenue_2003 = ["{:.2f}".format(value/1e9) for value in revenue_2003]
+             #revenue_2003 = [round(value, 2) for value in revenue_2003]
+                         revenue_annual21 = ["{:.2f}".format(value/1e9) for value in revenue_annual21_unpacked]
 
                          #revenue_2003 = [(value) for value in annual_data['revenue'][-21:]]
 
@@ -12003,7 +12659,7 @@ if selected == "Stock Analysis Tool":
                          data = pd.DataFrame({
                          'Date': date_annual_20yrs,
                          #'Free Cash Flow': Free_cash_flow_annual_2003,
-                         'Revenue in Billion USD':revenue_2003,
+                         'Revenue in Billion USD':revenue_annual21,
                          })
 
                          fig1 = px.bar(data, x='Date', y='Revenue in Billion USD',
@@ -12014,9 +12670,9 @@ if selected == "Stock Analysis Tool":
                          #fig1.update_layout(title_x=0.05)     
 
                          
-                         revenue_growth_2003= annual_data['revenue_growth'][-21:]                    
+                                             
                          #revenue_2003 = [round(value, 2) for value in revenue_2003]
-                         revenue_growth_2003 = ["{:.2f} %".format(value*100) for value in revenue_growth_2003]
+                         revenue_growth_annual21 = ["{:.2f} %".format(value*100) for value in revenue_growth_annual21_unpacked]
 
 
 
@@ -12024,7 +12680,7 @@ if selected == "Stock Analysis Tool":
                          data = pd.DataFrame({
                          'Date': date_annual_20yrs,
                          #'Free Cash Flow': Free_cash_flow_annual_2003,
-                         'Revenue Growth':revenue_growth_2003,
+                         'Revenue Growth':revenue_growth_annual21,
                          })
 
                          # Create a Streamlit app
@@ -12064,39 +12720,65 @@ if selected == "Stock Analysis Tool":
 
                #-------------------------------------------------------------------------------------------------
                
-                         
-                         eps_diluted_annual_2003=annual_data['eps_diluted'][-21:]
-                         eps_diluted_annual_2003 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_2003]
+
+                         TTM =eps_diluted_ttm
+                         EPS_2025= float(Earnings_next_yr_in_value)
+                         eps_diluted_annual_10 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_10_unpacked]
 
                          data = pd.DataFrame({
-                         'Date': date_annual_20yrs,
-                         'EPS': eps_diluted_annual_2003,
+                         'Date': date_annual+ ['TTM', '2025'],
+                         'EPS': eps_diluted_annual_10 + [f"$ {TTM:.2f}", f"$ {EPS_2025:.2f}"]
                          })
 
                          # Create a Streamlit app
-                         #st.title('Free Cash Flow and Revenue Data')
+                         data['EPS_float'] = data['EPS'].str.replace('$', '').astype(float)
 
                          # Create a Plotly Express bar chart with side-by-side bars
                          
                          fig1 = px.bar(data, x='Date', y='EPS',
                                    text='EPS',  # Display the value on top of each bar
-                                   labels={'value': 'Amount($)'},  # Include the percentage sign in the label
+                                   labels={'value': 'EPS ($)'},  # Include the percentage sign in the label
                                    #title= f"10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(TTM): $ {eps_diluted_ttm}  Next YR: $ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})"
                                    ) 
-                    
+
+                         # Customize the chart
+                         fig1.update_traces(textposition='outside')
+                         fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+
+                         # Color the bars
+                         colors = ['blue'] * len(date_annual) + ['red', 'green']
+                         fig1.update_traces(marker_color=colors)
+
+                         # Update layout for better readability
+                         fig1.update_layout(
+                         xaxis_title="Date",
+                         yaxis_title="EPS ($)",
+                         legend_title="EPS Type",
+                         font=dict(size=12),
+                         yaxis_range=[0, data['EPS_float'].max() * 1.1],
+                         xaxis_type='category'  # Ensure 'TTM' and '2025' are treated as categories
+                         )
 
 
+
+                         # Update layout for better readability
+                         fig1.update_layout(
+                         xaxis_title="Date",
+                         yaxis_title="EPS ($)",
+                         legend_title="EPS Type",
+                         font=dict(size=12),
+                         yaxis_range=[0, max(data['EPS_float'].max(), TTM, EPS_2025) * 1.1]
+                         )
 
                          # Display the chart using Streamlit
                          
                          #fig1.update_layout(title_x=0.05)
 
-                         shares_diluted_2003=annual_data['shares_diluted'][-21:]
-                         shares_diluted_2003 = ["{:.3f}".format(value/1e9) for value in shares_diluted_2003]
+                         shares_diluted_annual21 = ["{:.3f}".format(value/1e9) for value in shares_diluted_annual21_unpacked]
 
                          data = pd.DataFrame({
                          'Date': date_annual_20yrs,
-                         'Shares Outstanding in Billion USD': shares_diluted_2003,
+                         'Shares Outstanding in Billion USD': shares_diluted_annual21,
                          })
 
                          # Create a Streamlit app
@@ -12131,9 +12813,11 @@ if selected == "Stock Analysis Tool":
                          #Free_cash_flow_annual_2003 = [round(value, 2) for value in Free_cash_flow_annual_2003]
                               
                          #dividendPaidInTheLast21Years = abs(annual_data['cff_dividend_paid'][-21:])
-                         dividendPaidInTheLast21Years = [abs(value) for value in annual_data['cff_dividend_paid'][-21:]]
+
                          
-                         Free_cash_flow_annual_2003 = annual_data['fcf'][-21:]
+                         
+
+                         #Free_cash_flow_annual_2003 = annual_data['fcf'][-21:]
 
                #.................................5  Dividend CAGR............................................
                               #dividendPaidInTheLast21Years = [abs(value) for value in annual_data['cff_dividend_paid'][-21:]]
@@ -12150,8 +12834,8 @@ if selected == "Stock Analysis Tool":
           
 
                          try:
-                              value_at_index_6 = dividendPaidInTheLast21Years[-6]
-                              value_at_index_last  = dividendPaidInTheLast21Years[-1]
+                              value_at_index_6 = dividendPaidInTheLast21Years_unpacked[-6]
+                              value_at_index_last  = dividendPaidInTheLast21Years_unpacked[-1]
                          except Exception as e:
                               value_at_index_6 = 0
                               value_at_index_last = 0
@@ -12180,7 +12864,7 @@ if selected == "Stock Analysis Tool":
      #.................................10  Dividend CAGR............................................                    
 
                          try:
-                              value_at_index_11  = dividendPaidInTheLast21Years[-11]
+                              value_at_index_11  = dividendPaidInTheLast21Years_unpacked[-11]
                               #st.write(value_at_index_10)
                               #st.write(value_at_index_20)
                               #value_at_index_20 = dividendPaidInTheLast21Years[20]
@@ -12245,8 +12929,8 @@ if selected == "Stock Analysis Tool":
                          #Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
                          data = pd.DataFrame({
                          'Date': date_annual_20yrs,
-                         'Dividends': dividendPaidInTheLast21Years,
-                         'Free Cash Flow': Free_cash_flow_annual_2003,
+                         'Dividends': dividendPaidInTheLast21Years_unpacked,
+                         'Free Cash Flow': Free_cash_flow_annual_21_unpacked,
                          })
                          fig = go.Figure()
 
@@ -12314,9 +12998,9 @@ if selected == "Stock Analysis Tool":
      
 
                #-------------------------------------------------------------------------------------------------
-     
-                         Dividend_per_share = annual_data['dividends'][-10:]
-                         Dividend_per_share = ["${:.2f}".format(value * 1) for value in Dividend_per_share]
+                       
+
+                         Dividend_per_share = ["${:.2f}".format(value * 1) for value in Dividend_per_share_annual10_unpacked]
                          
                               #Price_to_earnings=annual_data['price_to_earnings'][-10:]
                          data = pd.DataFrame({
@@ -12335,16 +13019,16 @@ if selected == "Stock Analysis Tool":
                                         #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
                                         )
 
-                         #fig1.update_layout(title_x=0.05)
+
                
                     # Extract the last 21 years of dividends per share growth data
-                         Dividends_per_share_growth_annual_2003 = annual_data['dividends_per_share_growth'][-10:]
-                         Dividends_per_share_growth_annual_2003 = ["{:.2f}%".format(value * 100) for value in Dividends_per_share_growth_annual_2003]
+                         
+                         Dividends_per_share_growth_annual_10 = ["{:.2f}%".format(value * 100) for value in Dividends_per_share_growth_annual10_unpacked]
 
                          # Create a DataFrame
                          data = pd.DataFrame({
                          'Date': date_annual,
-                         'Dividend per Share growth': Dividends_per_share_growth_annual_2003,
+                         'Dividend per Share growth': Dividends_per_share_growth_annual_10,
                          })
 
 
@@ -12374,11 +13058,9 @@ if selected == "Stock Analysis Tool":
 
 
                               #------------------------------------------------------------------------------------------------------------
-                              
-                         ROE_annual_10years = annual_data['roe'][-10:]
-                         ROIC_annual_10years = annual_data['roic'][-10:]
+
                          try:
-                              ROIC_annual_10years = ["{:.2f}%".format(ROIC_annual_10years * 100) for ROIC_annual_10years in ROIC_annual_10years]
+                              ROIC_annual_10years = ["{:.2f}%".format(ROE_annual_10_unpacked * 100) for ROE_annual_10_unpacked in ROE_annual_10_unpacked]
                          except Exception as e:
                               ROIC_annual_10years = 0.0
 
@@ -12403,7 +13085,7 @@ if selected == "Stock Analysis Tool":
 
 
                          try:
-                              ROE_annual_10years = ["{:.2f}%".format(ROE_annual_10years * 100) for ROE_annual_10years in ROE_annual_10years]
+                              ROE_annual_10years = ["{:.2f}%".format(ROE_annual_10_unpacked * 100) for ROE_annual_10_unpacked in ROE_annual_10_unpacked]
                          except Exception as e:
                               ROE_annual_10years = 0.0
                               
@@ -12447,10 +13129,11 @@ if selected == "Stock Analysis Tool":
                                    """, unsafe_allow_html=True)
                               st.plotly_chart(fig2,use_container_width=True,config=config)
      #-------------------------------------------------------------------------------------------------
-                         try:
-                              gross_margin = ["{:.2f}%".format(gross_margin * 100) for gross_margin in gross_margin]
-                         except Exception as e:
-                              gross_margin = 0.0
+
+    
+                         
+                         gross_margin_annual10 = ["{:.2f}%".format(gross_margin_annual10_unpacked * 100) for gross_margin_annual10_unpacked in gross_margin_annual10_unpacked]
+                        
 
 
                         # title_text = (
@@ -12459,7 +13142,7 @@ if selected == "Stock Analysis Tool":
                     
                          data = pd.DataFrame({
                          'Date': date_annual,
-                         'Gross Margin': gross_margin,
+                         'Gross Margin': gross_margin_annual10,
                          })
 
                          # Create a Streamlit app
@@ -12477,14 +13160,13 @@ if selected == "Stock Analysis Tool":
 
                          #fig1.update_layout(title_x=0.05)
 
-                         try:
-                              Operating_Margin = ["{:.2f}%".format(Operating_Margin * 100) for Operating_Margin in Operating_Margin]
-                         except Exception as e:
-                              Operating_Margin = 0.0
+                         
+                         Operating_Margin_10_annual = ["{:.2f}%".format(operating_margin_annual10_unpacked * 100) for operating_margin_annual10_unpacked in operating_margin_annual10_unpacked]
+                         
                               
                          data = pd.DataFrame({
                          'Date': date_annual,
-                         'Operating Margin': Operating_Margin,
+                         'Operating Margin': Operating_Margin_10_annual,
                          })
 
 
@@ -12512,7 +13194,7 @@ if selected == "Stock Analysis Tool":
                          with col1:
                               st.write(f"""
                               <b>5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}</b>
-                              <b> Current Gross Margin: {rounded_gross_margin}</b><br>
+                              <b> Current Gross Margin: {average_gross_margin_quater1}</b><br>
                               <span style='font-family: Calibri; font-style: italic;'>
                               Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) vom Umsatz übrig bleibt.
                               </span>
@@ -12520,10 +13202,11 @@ if selected == "Stock Analysis Tool":
 
                               st.plotly_chart(fig1,use_container_width=True,config=config)      
 
+
                          with col2:
                               st.write(f"""
-                              <b>5 YR Operating Margin Y/Y: {rounded_operating_margin_five}</b>
-                              <b> Current Operating Margin: {rounded_operating_margin}</b><br>
+                              <b>5 YR Operating Margin Y/Y: {five_yrs_average_operating_margin}</b>
+                              <b> Current Operating Margin: {average_operating_margin1_quarter}</b><br>
                               <span style='font-family: Calibri; font-style: italic;'>
                               Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) 
                               und der Betriebskosten (wie Material-, Produktions-, Verwaltungs- und 
@@ -12535,13 +13218,13 @@ if selected == "Stock Analysis Tool":
 
      #------------------------------------------------------------  
                          try:
-                              Net_income_margin_10_ = ["{:.2f}%".format(Net_income_margin_10_ * 100) for Net_income_margin_10_ in Net_income_margin_10_]
+                              Net_income_margin_annual10_ = ["{:.2f}%".format(Net_income_margin_10_unpacked * 100) for Net_income_margin_10_unpacked in Net_income_margin_10_unpacked]
                          except Exception as e:
-                              Net_income_margin_10_ = 0.0
+                              Net_income_margin_annual10_ = 0.0
                               
                          data = pd.DataFrame({
                          'Date': date_annual,
-                         'Net Profit Margin': Net_income_margin_10_,
+                         'Net Profit Margin': Net_income_margin_annual10_,
                          })
 
                          # Create a Streamlit app
@@ -12561,13 +13244,13 @@ if selected == "Stock Analysis Tool":
                          #fig1.update_layout(title_x=0.05)
 
                          try:
-                              FCF_Margin = ["{:.2f}%".format(FCF_Margin * 100) for FCF_Margin in FCF_Margin]
+                              FCF_Margin_annual10 = ["{:.2f}%".format(FCF_Margin_annual_10unpacked * 100) for FCF_Margin_annual_10unpacked in FCF_Margin_annual_10unpacked]
                          except Exception as e:
-                              FCF_Margin = 0.0
+                              FCF_Margin_annual10 = 0.0
                               
                          data = pd.DataFrame({
                          'Date': date_annual,
-                         'FCF Margin': FCF_Margin,
+                         'FCF Margin': FCF_Margin_annual10,
                          })
 
                          # Create a Streamlit app
@@ -12611,7 +13294,7 @@ if selected == "Stock Analysis Tool":
      
      #........  ...................................................................................................................               
                               #Price_to_earnings=annual_data['price_to_earnings'][-10:]
-                         Price_to_earnings = ["{:.2f}".format(value) for value in Price_to_earnings]
+                         Price_to_earnings = ["{:.2f}".format(value) for value in Price_to_earnings_annual_10_unpacked]
                          #Price_to_earnings = "{:.2f}".format((Price_to_earnings))
                          data = pd.DataFrame({
                          'Date': date_annual,
@@ -12651,20 +13334,18 @@ if selected == "Stock Analysis Tool":
 
                          # Display the chart using Streamlit
                          #st.plotly_chart(fig21,use_container_width=True,config=config)
-
+  
 
                                                             #Marketcap_in_Billion 
-                         market_cap_history=annual_data['market_cap'][-21:]  
-                         date_annual_20yrs = annual_data['period_end_date'][-21:] 
 
                          #market_cap_history = np.append(market_cap_history, 45.78)
                          #date_annual_20yrs = np.append(date_annual_20yrs, 2023)
 
-                         market_cap_history = ["{:.2f}".format(value) for value in market_cap_history]
+                         Price_to_fcf_history = ["{:.2f}".format(value) for value in price_to_fcf_annual21_unpacked]
                          #Price_to_earnings = "{:.2f}".format((Price_to_earnings))
                          data = pd.DataFrame({
                          'Date': date_annual_20yrs,
-                         'Market Cap': market_cap_history,
+                         'Price/FCF': price_to_fcf_annual21_unpacked,
                          })
 
                          # Create a Streamlit app
@@ -12673,15 +13354,32 @@ if selected == "Stock Analysis Tool":
                          # Create a Plotly Express bar chart with side-by-side bars
                          
                                                                                                                                   
-                         fig22 = px.bar(data, x='Date', y='Market Cap',
+                         fig22 = px.bar(data, x='Date', y='Price/FCF',
                                    labels={'value': 'ratio'},
                                    #title=f'Market Cap:  Current Market Cap: {Marketcap_in_Billion}'
                                    )
-                                   #barmode='group')  # Use 'group' to display bars side by side
 
-                         #fig22.update_layout(title_x=0.05)
+                                                                                                                                  
+                         fig22.add_shape(
+                         type='line',
+                         x0=data['Date'].min(),  # Adjust this based on your data
+                         x1=data['Date'].max(),  # Adjust this based on your data
+                         y0=pfcf_ten,
+                         y1=pfcf_ten,
+                         line=dict(color='red', width=2, dash='dash'),
+                         yref='y',
+                         )
+                         
+                         fig22.add_annotation(
+                         text=f'',
+                         xref='paper',  # Set xref to 'paper' for center alignment
+                         yref='paper',  # Set yref to 'paper' for center alignment
+                         x=0.10,  # Adjust to center horizontally
+                         y=0.7,  # Adjust to center vertically
+                         showarrow=False,  # Remove the arrow
+                         font=dict(color='red'),  # Set font color to red
+                    )          
 
-                         # Display the chart using Streamlit
 
                          col2, col3 =st.columns(2)
                          with col2:
@@ -12692,29 +13390,29 @@ if selected == "Stock Analysis Tool":
 
                          with col3:
                               st.write(f"""
-                              <b>Market Cap:  Current Market Cap: {Marketcap_in_Billion}
+                              <b>5YR Price/FCF {pfcf_funf}:  Current Price/FCF: {pfcf_ttm}
                               """, unsafe_allow_html=True)
                               st.plotly_chart(fig22,use_container_width=True,config=config)
 
 
                          #-------------------------------------------------------------------------------------------------
 
-                         Price_to_tangible_book_quarter = quarterly_data['price_to_tangible_book'][-10:]
-                         TBVPS = quarterly_data['tangible_book_per_share'][-1:]
-                         PTBVPS=amount/TBVPS
-                         PTBVPS = sum(PTBVPS)/len(PTBVPS)
+                         
+                         TBVPS_quater1 =sum(TBVPS_quater1_unpacked)/len(TBVPS_quater1_unpacked)
+                         PTBVPS=amount/TBVPS_quater1
+                         #PTBVPS = PTBVPS)/len(PTBVPS)
                          #st.write("TBVPS",TBVPS)
                          #st.write("PTBVPS",PTBVPS)
                          data = pd.DataFrame({
                          'Date': date_annual,
-                         'Price to Tangible Book Value': Price_to_tangible_book,
+                         'Price to Tangible Book Value': Price_to_tangible_book_annual_10_unpacked,
                          })
 
-                         # Create a Streamlit app
-                         #st.title('Free Cash Flow and Revenue Data')
+                                              
+
 
                          # Create a Plotly Express bar chart with side-by-side bars
-                         Average_Price_to_tangible_book =round(sum(Price_to_tangible_book)/len(Price_to_tangible_book))
+                         Average_Price_to_tangible_book =round(sum(Price_to_tangible_book_annual_10_unpacked)/len(Price_to_tangible_book_annual_10_unpacked))
                          
                          fig11 = px.bar(data, x='Date', y='Price to Tangible Book Value',               
                                    labels={'value': 'Ratio'},
@@ -12745,21 +13443,22 @@ if selected == "Stock Analysis Tool":
                          #st.plotly_chart(fig11,use_container_width=True,config=config)
 
                          #-------------------------------------------------------------------------------------------------
-                         BVPS = quarterly_data['book_value_per_share'][-1:]
-                         PBVPS=amount/BVPS
-                         PBVPS=sum(PBVPS)/len(PBVPS)
+                        
+                         BVPS_quater1=sum(BVPS_quater1_unpacked)/len(BVPS_quater1_unpacked)
+                         PBVPS=amount/BVPS_quater1
+                         #PBVPS=sum(PBVPS)/len(PBVPS)
                          #st.write("BVPS",BVPS)
                          #st.write("PBVPS",PBVPS)
                          data = pd.DataFrame({
                          'Date': list(date_annual),
-                         'Price to Book Value': Price_to_book,
+                         'Price to Book Value': Price_to_book_10_annual_unpacked,
                          })
 
                          # Create a Streamlit app
                          #st.title('Free Cash Flow and Revenue Data')
 
                          # Create a Plotly Express bar chart with side-by-side bars
-                         average_price_to_book = round(sum(Price_to_book)/len(Price_to_book),2)
+                         average_price_to_book = round(sum(Price_to_book_10_annual_unpacked)/len(Price_to_book_10_annual_unpacked),2)
 
                          fig12 = px.bar(data, x='Date', y='Price to Book Value',
                                    labels={'value': 'Ratio'},
@@ -12989,22 +13688,43 @@ if selected == "Stock Analysis Tool":
      with st.container():
           use_container_width=True
           with news:
-               try:
-                    news = stock_info.news[:10]  # Get the top ten news articles
-
-                    # Display the news headlines and links
-                    for i, item in enumerate(news, 1):
-                         headline = item['title']
-                         link = item['link']
-                         st.write(f"Headline: {headline}")
-                         st.write(f"{link}")
+               def fetch_stock_news(stock_info):
+     
+                    try:
+                         news = stock_info.news[:10]
+                         return news  # Get the top ten news articles
+                    except Exception as e:
+                         st.error(f"No news available for this stock: {e}")
+                         return None
+              
+               def display_news(stock_info):
+                    ticker = stock_info.ticker  # Assuming stock_info is from yf.Ticker(ticker)
+                    if f'{ticker}_news' not in st.session_state:
+                         # Fetch news and store it in session state
+                         st.session_state[f'{ticker}_news'] = fetch_stock_news(stock_info)
                     
+                    news = st.session_state[f'{ticker}_news']
+                    
+                    if news:
+                         with st.container():
+                              use_container_width = True  # Set to true if you want to use the full width
+                              for i, item in enumerate(news, 1):
+                                   headline = item['title']
+                                   link = item['link']
+                                   st.write(f"Headline {i}: {headline}")
+                                   st.write(f"[Read more]({link})")
+                    else:
+                         st.error("No news available for this stock.")
 
-               except Exception as e:    
-               
-                    st.error("No news available for this stock:")
-               yf.pdr_override()  # Clear the cached data
+               # Example usage
+               #ticker = "AAPL"  # Replace with the desired ticker symbol
+               stock_info = yf.Ticker(ticker)
 
+               # Display the news
+               display_news(stock_info)
+
+               # Clear the cache using yf.pdr_override if needed
+               yf.pdr_override()
 
                # current_capital_leases = quarterly_data['current_capital_leases'][-2:]
                # lt_debt = quarterly_data['lt_debt'][-2:]
@@ -13022,151 +13742,6 @@ if selected == "Stock Analysis Tool":
                # print("current_deferred_tax_liability",current_deferred_tax_liability)
                # print("tax_payable",tax_payable)
                # print("accounts_payable",accounts_payable)
-
-
-
-
-               try:
-                    Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
-               except KeyError:
-                    Accounts_payable_quarter = [0] * 10
-
-               try:
-                    Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
-               except KeyError:
-                    Current_accrued_liab_quarter = [0] * 10
-
-               try:
-                    Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
-               except KeyError:
-                    Tax_payable_quarter = [0] * 10
-
-               try:
-                    Other_current_liabilities_quarter = quarterly_data['other_current_liabilities'][-10:]
-               except KeyError:
-                    Other_current_liabilities_quarter = [0] * 10
-
-               try:
-                    Current_deferred_revenue_quarter = quarterly_data['current_deferred_revenue'][-10:]
-               except KeyError:
-                    Current_deferred_revenue_quarter = [0] * 10
-
-               try:
-                    Total_current_liabilities_quarter = quarterly_data['total_current_liabilities'][-10:]
-               except KeyError:
-                    Total_current_liabilities_quarter = [0] * 10
-
-               try:
-                    Short_term_debt_quarter = quarterly_data['st_debt'][-10:]
-               except KeyError:
-                    Short_term_debt_quarter = [0] * 10
-
-               try:
-                    current_portion_of_lease_obligation = quarterly_data['current_capital_leases'][-10:]
-               except KeyError:
-                    current_portion_of_lease_obligation = [0] * 10
-
-               try:
-                    capital_leases = quarterly_data['noncurrent_capital_leases'][-10:]
-               except KeyError:
-                    capital_leases = [0] * 10
-
-               try:
-                    LongTerm_debt_quarter = quarterly_data['lt_debt'][-10:]
-               except KeyError:
-                    LongTerm_debt_quarter = [0] * 10
-
-               try:
-                    Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
-               except KeyError:
-                    Other_longterm_liabilities_quarter = [0] * 10
-
-               try:
-                    Total_liabilities_quarter = quarterly_data['total_liabilities'][-10:]
-               except KeyError:
-                    Total_liabilities_quarter = [0] * 10
-
-               try:
-                    Total_Equity_quarter = quarterly_data['total_equity'][-10:]
-               except KeyError:
-                    Total_Equity_quarter = [0] * 10
-
-               try:
-                    st_investments_annual = quarterly_data['st_investments'][-1:]
-               except KeyError:
-                    st_investments_annual = [0]
-
-                    
-               st_investments_annual = round((sum(st_investments_annual) / len(st_investments_annual)) / 1000000000, 3)
-
-               try:
-                    gross_margin = quarterly_data['gross_margin'][-1:]
-               except KeyError:
-                    gross_margin = [0]
-
-               average_gross_margin = round((sum(gross_margin) / len(gross_margin)) * 100, 2)
-               rounded_gross_margin = "{:.2f}%".format(average_gross_margin)
-
-               try:
-                    five_yrs_average_gross_margin = annual_data['gross_margin'][-5:]
-               except KeyError:
-                    five_yrs_average_gross_margin = [0] * 5
-
-               five_yrs_average_gross_margin = round((sum(five_yrs_average_gross_margin) / len(five_yrs_average_gross_margin)) * 100, 2)
-               five_yrs_average_gross_margin = "{:.2f}%".format(five_yrs_average_gross_margin)
-
-               try:
-                    operating_margin = annual_data['operating_margin'][-1:]
-               except KeyError:
-                    operating_margin = [0]
-
-               average_operating_margin = round((sum(operating_margin) / len(operating_margin)) * 100, 2)
-               rounded_operating_margin = "{:.2f}%".format(average_operating_margin)
-
-               try:
-                    operating_margin_five = annual_data['operating_margin'][-5:]
-               except KeyError:
-                    operating_margin_five = [0] * 5
-
-               average_operating_margin_five = round((sum(operating_margin_five) / len(operating_margin_five)) * 100, 2)
-               rounded_operating_margin_five = "{:.2f}%".format(average_operating_margin_five)
-
-               # Total_cash_last_years is commented out due to missing cash_equiv_quarter
-               # Total_cash_last_years = round((st_investments_annual + cash_equiv_quarter), 3)
-
-               index = range(len(date_quarter))
-               df = pd.DataFrame({
-               'period_end_date': date_quarter,
-               'accounts_payable': Accounts_payable_quarter,
-               'current_accrued_liabilities': Current_accrued_liab_quarter,
-               'tax_payable': Tax_payable_quarter,
-               'other_current_liabilities': Other_current_liabilities_quarter,
-               'current_deferred_revenue': Current_deferred_revenue_quarter,
-               'total_current_liabilities': Total_current_liabilities_quarter,
-               'noncurrent_capital_leases': capital_leases,
-               'lt_debt': LongTerm_debt_quarter
-               }, index=index)
-
-               df['Total Difference'] = df['total_current_liabilities'] - \
-                                        (df['accounts_payable'] + df['current_accrued_liabilities'] + df['tax_payable'] +
-                                        df['other_current_liabilities'] + df['current_deferred_revenue'])
-
-               df['Total add'] = df['noncurrent_capital_leases'] + df['lt_debt']
-
-               df['Total Debt'] = df['Total Difference'] + df['Total add']
-
-               total = df.T
-               total.columns = total.iloc[0]  # Use the first row as column names
-               total = total[1:]
-               total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
-
-               total_debt_column = df['Total Debt']
-               last_value_total_debt = total_debt_column.iloc[-1]
-
-               Total_Debt_from_all_calc = last_value_total_debt / 1000000000
-
-               print("Total_Debt_from_all_calc",Total_Debt_from_all_calc)
-                              
 
 
               
@@ -13300,7 +13875,7 @@ if selected == "Stock Analysis Tool":
                #print(f"Beta of {ticker}: {Average_stock_market_beta}")                
                #print("5 years FCF Average:",average_fcf_Annual_funf)
                #print("sum_discounted_values",discounted_values)
-               #print("total debt in prozent:",Total_debt_prozent)
+               #print("Total_Debt:",Total_Debt_from_all_calc)
                #print("Marketcap_in_prozent:",Marketcap_in_prozent )
                #print("Cost_of_debt_after_Tax:", Cost_of_debt_after_Tax)
                #print("cost of Equity",Cost_of_equity)
