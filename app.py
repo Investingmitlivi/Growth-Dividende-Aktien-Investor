@@ -19,6 +19,8 @@ import firebase_admin
 import os
 from typing import List, Dict, Union
 
+
+
 #import math
 #import textwrap
 #import sklearn
@@ -56,6 +58,7 @@ from streamlit_option_menu import option_menu
 #from callbacks import supports_callbacks
 from dotenv import load_dotenv
 from typing import Dict,Any
+
 
     
 def configure():
@@ -7304,7 +7307,7 @@ if selected == "Stock Analysis Tool":
 
      ######################################################################################################
 
-     @st.cache_data(show_spinner=False)
+     #@st.cache_data(show_spinner=False)
      def get_current_price(ticker):
           stock_info = yf.Ticker(ticker)
           quote = Quote(ticker)
@@ -8842,7 +8845,7 @@ if selected == "Stock Analysis Tool":
 ###################################################################################################
 
                def unpack_and_store_quarterly_data(quarterly_data, annual_data, Financial_data):
-                    if f'{ticker}_Accounts_payable_quarter10' in st.session_state:
+                    if f'{ticker}_Ebita_ttm' in st.session_state:
                          return (
                               st.session_state[f'{ticker}_Accounts_payable_quarter10'],
                               st.session_state[f'{ticker}_Current_accrued_liab_quarter10'],
@@ -9001,25 +9004,25 @@ if selected == "Stock Analysis Tool":
                          Other_longterm_liabilities_quarter10_unpacked = [0]*10
                          Total_liabilities_quarter10_unpacked = [0]*10
                          Total_Equity_quarter10_unpacked = [0]*10
-                         Total_Equity_quarter1_unpacked = [0]*1
-                         Total_Equity_annual1_unpacked = [0]*1
-                         st_investments_quarter1_unpacked = [0]*1
+                         Total_Equity_quarter1_unpacked = [0]
+                         Total_Equity_annual1_unpacked = [0]
+                         st_investments_quarter1_unpacked = [0]
                          gross_margin_annual5_unpacked = [0]*5
                          gross_margin_annual10_unpacked = [0]*10
-                         operating_margin_quater1_unpacked = [0]*1
+                         operating_margin_quater1_unpacked = [0]
                          operating_margin_quater10_unpacked = [0]*10
-                         operating_margin_annual1_unpacked = [0]*1
+                         operating_margin_annual1_unpacked = [0]
                          operating_margin_annual5_unpacked = [0]*5
                          operating_margin_annual10_unpacked = [0]*10
-                         Ebita_ttm = [0]*1
-                         debt_Assets_annual1_unpacked = [0]*1
-                         debt_equity_annual1_unpacked = [0]*1
+                         Ebita_ttm = [0]
+                         debt_Assets_annual1_unpacked = [0]
+                         debt_equity_annual1_unpacked = [0]
                          debt_Assets_annual10_unpacked = [0]*10
-                         LongTerm_debt_annual1_unpacked = [0]*1
-                         Short_term_debt_annual1_unpacked = [0]*1
-                         Total_assets_annual1_unpacked = [0]*1
-                         Cash_Dividends_paid_Total_annual1_unpacked = [0]*1
-                         cash_equiv_quarter1_unpacked = [0]*1
+                         LongTerm_debt_annual1_unpacked = [0]
+                         Short_term_debt_annual1_unpacked = [0]
+                         Total_assets_annual1_unpacked = [0]
+                         Cash_Dividends_paid_Total_annual1_unpacked = [0]
+                         cash_equiv_quarter1_unpacked = [0]
 
                          return (
                               Accounts_payable_quarter10_unpacked,
@@ -9336,6 +9339,9 @@ if selected == "Stock Analysis Tool":
                cash_equiv_quarter1 = ((sum(cash_equiv_quarter1_unpacked) / len(cash_equiv_quarter1_unpacked)) / 1000000000)
                Total_cash_last_years = (st_investments_quarter1+cash_equiv_quarter1)
 
+               print("st_investments_quarter1_unpacked",st_investments_quarter1_unpacked)
+               print("cash_equiv_quarter1_unpacked",cash_equiv_quarter1_unpacked)
+
 
                
                try:
@@ -9407,7 +9413,9 @@ if selected == "Stock Analysis Tool":
                     # Store the result in session state
                     st.session_state[f'{ticker}_Total_Debt'] = last_value_total_debt
 
-                    return last_value_total_debt
+                    Total_Debt_from_all_calc =last_value_total_debt
+
+                    return Total_Debt_from_all_calc
 
                # Call the function to calculate total debt and store it in session state
                Total_Debt_from_all_calc = calculate_total_debt(
@@ -9416,7 +9424,7 @@ if selected == "Stock Analysis Tool":
                Current_deferred_revenue_quarter10_unpacked, Total_current_liabilities_quarter10_unpacked, 
                capital_leases_quarter10_unpacked, LongTerm_debt_quarter10_unpacked
                )
-
+               print("1. total debt",Total_Debt_from_all_calc)
 #####################################################################################################
 
                # try:
@@ -9475,14 +9483,14 @@ if selected == "Stock Analysis Tool":
 
                     try:
                          # Calculate Enterprise value
-                         Enterprise_value = (Marketcap) + Total_Debt_from_all_calc / 1000000000 - Total_cash_last_years
+                         Enterprise_value = ((Marketcap) + (Total_Debt_from_all_calc/1000000000) - Total_cash_last_years)
                          Enterprise_value_in_Billion = "{:.2f}T".format(Enterprise_value / 1000) if abs(Enterprise_value) >= 1000 else "{:,.2f}B".format(Enterprise_value)
                          Debt_to_EBITDA = "{:.2f}".format((Total_Debt_from_all_calc / 1000000000) / Ebita_ttm)
                     except Exception as e:
                          Enterprise_value = "N/A"
                          Enterprise_value_in_Billion = "N/A"
                          Debt_to_EBITDA = "{:.2f}".format(0.00)
-
+                    #print("enterprice",((Marketcap) + (Total_Debt_from_all_calc / 1000000000) - Total_cash_last_years))
                     # Scaling revenue and dividend values
                     revenue_ttm *= 1000000000
                     if revenue_ttm != 0.00 or Dividend_ttm > 0:
@@ -9845,7 +9853,7 @@ if selected == "Stock Analysis Tool":
 
 #################################################################################
 
-     @st.cache_data(show_spinner=False)
+     #@st.cache_data(show_spinner=False)
      def financials_df(data_list, date_list, column_name):
 
           formatted_data = [
@@ -9887,6 +9895,18 @@ if selected == "Stock Analysis Tool":
                                    Total_Non_interest_expenses_annual_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_expenses_annual_10']
                                    Total_Non_interest_revenue_annual_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_revenue_annual_10']
                                    Ebita_annual_10_unpacked = st.session_state[f'{ticker}_Ebita_annual_10']
+                                        ################################ Quarter###############################
+                                   Total_interest_income_list_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_interest_income_list_quarterly_10']
+                                   Pretax_income_quarterly_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarterly_10']
+                                   Income_tax_quarterly_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarterly_10']
+                                   net_income_quarterly_10_unpacked = st.session_state[f'{ticker}_net_income_quarterly_10']
+                                   Total_interest_expense_list_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_interest_expense_list_quarterly_10']
+                                   Net_interest_Income_quarterly_10_unpacked = st.session_state[f'{ticker}_Net_interest_Income_quarterly_10']
+                                   Prov_Credit_losses_quarterly_10_unpacked = st.session_state[f'{ticker}_Prov_Credit_losses_quarterly_10']
+                                   Netinterest_Prov_Credit_losses_quarterly_10_unpacked = st.session_state[f'{ticker}_Netinterest_Prov_Credit_losses_quarterly_10']
+                                   Total_Non_interest_expenses_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_expenses_quarterly_10']
+                                   Total_Non_interest_revenue_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_revenue_quarterly_10']
+                                   Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
                               else:
                               
                                    Pretax_income_annual_10_unpacked = annual_data['pretax_income'][-10:]
@@ -9900,6 +9920,22 @@ if selected == "Stock Analysis Tool":
                                    Total_Non_interest_revenue_annual_10_unpacked  = annual_data['total_noninterest_revenue'][-10:]
                                    Ebita_annual_10_unpacked = annual_data['ebitda'][-10:]
 
+                                             ################################ Quarter###############################
+
+                                   Pretax_income_quarterly_10_unpacked  = quarterly_data['pretax_income'][-10:]
+                                   Income_tax_quarterly_10_unpacked  = quarterly_data['income_tax'][-10:]
+                                   net_income_quarterly_10_unpacked  = quarterly_data['net_income'][-10:]
+                                   Total_interest_income_list_quarterly_10_unpacked  = quarterly_data['total_interest_income'][-10:]
+                                   Total_interest_expense_list_quarterly_10_unpacked  = quarterly_data['total_interest_expense'][-10:]
+                                   Net_interest_Income_quarterly_10_unpacked  = quarterly_data['net_interest_income'][-10:]
+                                   Prov_Credit_losses_quarterly_10_unpacked = quarterly_data['credit_losses_provision'][-10:]
+                                   Netinterest_Prov_Credit_losses_quarterly_10_unpacked = quarterly_data['net_interest_income_after_credit_losses_provision'][-10:]
+                                   Total_Non_interest_expenses_quarterly_10_unpacked = quarterly_data['total_noninterest_expense'][-10:]
+                                   Total_Non_interest_revenue_quarterly_10_unpacked = quarterly_data['total_noninterest_revenue'][-10:]
+                                   Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
+
+
+
                                    # Store unpacked data in session state
                                    st.session_state[f'{ticker}_Pretax_income_annual_10'] = Pretax_income_annual_10_unpacked
                                    st.session_state[f'{ticker}_Income_tax_annual_10'] = Income_tax_annual_10_unpacked
@@ -9911,6 +9947,23 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_Total_Non_interest_expenses_annual_10'] = Total_Non_interest_expenses_annual_10_unpacked
                                    st.session_state[f'{ticker}_Total_Non_interest_revenue_annual_10'] = Total_Non_interest_revenue_annual_10_unpacked
                                    st.session_state[f'{ticker}_Ebita_annual_10'] = Ebita_annual_10_unpacked
+
+
+                                             ################################ Quarter###############################
+
+                                        # Store unpacked data in session state
+                                   st.session_state[f'{ticker}_Pretax_income_quarterly_10'] = Pretax_income_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Income_tax_quarterly_10'] = Income_tax_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_net_income_quarterly_10'] = net_income_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Total_interest_income_list_quarterly_10'] = Total_interest_income_list_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Total_interest_expense_list_quarterly_10'] = Total_interest_expense_list_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Net_interest_Income_quarterly_10'] = Net_interest_Income_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Prov_Credit_losses_quarterly_10'] = Prov_Credit_losses_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Netinterest_Prov_Credit_losses_quarterly_10'] = Netinterest_Prov_Credit_losses_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Total_Non_interest_expenses_quarterly_10'] = Total_Non_interest_expenses_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Total_Non_interest_revenue_quarterly_10'] = Total_Non_interest_revenue_quarterly_10_unpacked
+                                   st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
+
 
                                         # Store unpacked data in session state
                           
@@ -9932,16 +9985,46 @@ if selected == "Stock Analysis Tool":
                               Total_Non_interest_revenue_annual_df = financials_df(Total_Non_interest_revenue_annual_10_unpacked, date_annual, "Total Non-Interest Revenue")
                               Ebita_annual_df = financials_df(Ebita_annual_10_unpacked, date_annual, "EBITDA")
 
-                              merged_df = pd.concat([
-                              Total_interest_income_list_annual_df,Total_interest_expense_list_annual_df,Net_interest_Income_annual_df,
-                              Total_Non_interest_revenue_annual_df,Prov_Credit_losses_annual_df,revenue_2013_annual_df,
-                              Netinterest_Prov_Credit_losses_annual_df, Total_Non_interest_expenses_annual_df,
-                              Pretax_income_annual_df,Income_tax_annual_df,net_income_annual_df,eps_basic_annual_df, shares_basic_annual_df,
-                              eps_diluted_annual_df, shares_diluted_annual_df,Ebita_annual_df
+                                             ################################ Quarter###############################
+
+                              revenue_10_quarterly_df = financials_df(Revenue_quarter_10_unpacked, date_quarter, "Revenue")
+                              Pretax_income_quarterly_df = financials_df(Pretax_income_quarterly_10_unpacked, date_quarter, "Pretax Income")
+                              eps_basic_quarterly_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
+                              shares_basic_quarterly_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
+                              eps_diluted_quarterly_df = financials_df(Eps_diluted_quarterly_10_unpacked,date_quarter, "EPS Diluted")
+                              shares_diluted_quarterly_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
+                              Income_tax_quarterly_df = financials_df(Income_tax_quarterly_10_unpacked, date_quarter, "Income Tax Expense")
+                              net_income_quarterly_df = financials_df(net_income_quarterly_10_unpacked, date_quarter, "Net Income")
+                              Total_interest_income_list_quarterly_df = financials_df(Total_interest_income_list_quarterly_10_unpacked, date_quarter, "Total Interest Income")
+                              Total_interest_expense_list_quarterly_df = financials_df(Total_interest_expense_list_quarterly_10_unpacked, date_quarter, "Total Interest Expense")
+                              Net_interest_Income_quarterly_df = financials_df(Net_interest_Income_quarterly_10_unpacked, date_quarter, "Net Interest Income")
+                              Prov_Credit_losses_quarterly_df = financials_df(Prov_Credit_losses_quarterly_10_unpacked, date_quarter, "Provision for Credit Losses")
+                              Netinterest_Prov_Credit_losses_quarterly_df = financials_df(Netinterest_Prov_Credit_losses_quarterly_10_unpacked, date_quarter, "Net Interest Income After Credit Losses Provision")
+                              Total_Non_interest_expenses_quarterly_df = financials_df(Total_Non_interest_expenses_quarterly_10_unpacked, date_quarter, "Total Non Interest Expenses")
+                              Total_Non_interest_revenue_quarterly_df = financials_df(Total_Non_interest_revenue_quarterly_10_unpacked, date_quarter, "Total Non-Interest Revenue")
+                              Ebita_quarter_10_unpacked_df = financials_df(Ebita_quarter_10_unpacked, date_quarter, "EBITDA")
+
+                              merged_df_annual = pd.concat([
+                                                  Total_interest_income_list_annual_df,Total_interest_expense_list_annual_df,Net_interest_Income_annual_df,
+                                                  Total_Non_interest_revenue_annual_df,Prov_Credit_losses_annual_df,revenue_2013_annual_df,
+                                                  Netinterest_Prov_Credit_losses_annual_df, Total_Non_interest_expenses_annual_df,
+                                                  Pretax_income_annual_df,Income_tax_annual_df,net_income_annual_df,eps_basic_annual_df, shares_basic_annual_df,
+                                                  eps_diluted_annual_df, shares_diluted_annual_df,Ebita_annual_df
                               
                               ])
+                                             ################################ Quarter###############################
 
-                              st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                                          
+                              merged_df_quarter = pd.concat([Total_interest_income_list_quarterly_df,Total_interest_expense_list_quarterly_df,
+                                                    Net_interest_Income_quarterly_df,Total_Non_interest_revenue_quarterly_df,
+                                                    Prov_Credit_losses_quarterly_df,revenue_10_quarterly_df,
+                                                    Netinterest_Prov_Credit_losses_quarterly_df,Total_Non_interest_expenses_quarterly_df,
+                                                    Pretax_income_quarterly_df,Income_tax_quarterly_df,net_income_quarterly_df,
+                                                    eps_basic_quarterly_df,shares_basic_quarterly_df,
+                                                    eps_diluted_quarterly_df,shares_diluted_quarterly_df,Ebita_quarter_10_unpacked_df])   
+
+
+                              st.table(merged_df_annual.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
                                         
                               pass
                                    
@@ -9959,15 +10042,29 @@ if selected == "Stock Analysis Tool":
                                         Income_tax_annual_10_unpacked = st.session_state[f'{ticker}_Income_tax_annual_10']
                                         Ebita_annual_10_unpacked = st.session_state[f'{ticker}_Ebita_annual_10']
 
-                                        Net_premiums_earned_annual_10_unpacked = st.session_state[f'{ticker}_Net_premiums_earned_annual_10']
-                                        Net_investment_income_annual_10_unpacked = st.session_state[f'{ticker}_Net_investment_income_annual_10']
-                                        Fees_and_other_income_annual_10_unpacked = st.session_state[f'{ticker}_Fees_and_other_income_annual_10']
-                                        Interest_Expense_insurance_annual_10_unpacked = st.session_state[f'{ticker}_Interest_Expense_insurance_annual_10']
-                                        Policy_benefits_claim_annual_10_unpacked = st.session_state[f'{ticker}_Policy_benefits_claim_annual_10']
-                                        Operating_income_annual_10_unpacked = st.session_state[f'{ticker}_Operating_income_annual_10']
-                                        Pretax_income_annual_10_unpacked = st.session_state[f'{ticker}_Pretax_income_annual_10']
-                                        Income_tax_annual_10_unpacked = st.session_state[f'{ticker}_Income_tax_annual_10']
-                                        Ebita_annual_10_unpacked = st.session_state[f'{ticker}_Ebita_annual_10']
+                                        # Net_premiums_earned_annual_10_unpacked = st.session_state[f'{ticker}_Net_premiums_earned_annual_10']
+                                        # Net_investment_income_annual_10_unpacked = st.session_state[f'{ticker}_Net_investment_income_annual_10']
+                                        # Fees_and_other_income_annual_10_unpacked = st.session_state[f'{ticker}_Fees_and_other_income_annual_10']
+                                        # Interest_Expense_insurance_annual_10_unpacked = st.session_state[f'{ticker}_Interest_Expense_insurance_annual_10']
+                                        # Policy_benefits_claim_annual_10_unpacked = st.session_state[f'{ticker}_Policy_benefits_claim_annual_10']
+                                        # Operating_income_annual_10_unpacked = st.session_state[f'{ticker}_Operating_income_annual_10']
+                                        # Pretax_income_annual_10_unpacked = st.session_state[f'{ticker}_Pretax_income_annual_10']
+                                        # Income_tax_annual_10_unpacked = st.session_state[f'{ticker}_Income_tax_annual_10']
+                                        # Ebita_annual_10_unpacked = st.session_state[f'{ticker}_Ebita_annual_10']
+
+                                             ################################ Quarter###############################
+
+
+                                        Net_premiums_earned_quarter_10_unpacked = st.session_state[f'{ticker}_Net_premiums_earned_quarter_10']
+                                        Net_investment_income_quarter_10_unpacked = st.session_state[f'{ticker}_Net_investment_income_quarter_10']
+                                        Fees_and_other_income_quarter_10_unpacked = st.session_state[f'{ticker}_Fees_and_other_income_quarter_10']
+                                        Interest_Expense_insurance_quarter_10_unpacked = st.session_state[f'{ticker}_Interest_Expense_insurance_quarter_10']
+                                        Policy_benenfits_claim_quarter_quarter_10_unpacked = st.session_state[f'{ticker}_Policy_benenfits_claim_quarter_quarter_10']
+                                        Operating_income_quarter_quarter_10_unpacked = st.session_state[f'{ticker}_Operating_income_quarter_quarter_10']
+                                        Pretax_income_quarter_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarter_10']
+                                        Income_tax_quarter_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarter_10']
+                                        Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
+
                                    else:
                                              # Unpack data from annual_data
                                         Net_premiums_earned_annual_10_unpacked = annual_data['premiums_earned'][-10:]
@@ -9980,6 +10077,19 @@ if selected == "Stock Analysis Tool":
                                         Income_tax_annual_10_unpacked = annual_data['income_tax'][-10:]
                                         Ebita_annual_10_unpacked = annual_data['ebitda'][-10:]
 
+                                             ################################ Quarter###############################
+
+                                        Net_premiums_earned_quarter_10_unpacked = quarterly_data['premiums_earned'][-10:]
+                                        Net_investment_income_quarter_10_unpacked = quarterly_data['net_investment_income'][-10:]
+                                        Fees_and_other_income_quarter_10_unpacked = quarterly_data['fees_and_other_income'][-10:]
+                                        Interest_Expense_insurance_quarter_10_unpacked = quarterly_data['interest_expense_insurance'][-10:]
+                                        Policy_benenfits_claim_quarter_quarter_10_unpacked = quarterly_data['net_policyholder_claims_expense'][-10:]
+                                        Operating_income_quarter_quarter_10_unpacked = quarterly_data['operating_income'][-10:]
+                                        Pretax_income_quarter_10_unpacked = quarterly_data['pretax_income'][-10:]
+                                        Income_tax_quarter_10_unpacked = quarterly_data['income_tax'][-10:]
+                                        Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
+
+
                                         # Store unpacked data in session state
                                         st.session_state[f'{ticker}_Net_premiums_earned_annual_10'] = Net_premiums_earned_annual_10_unpacked
                                         st.session_state[f'{ticker}_Net_investment_income_annual_10'] = Net_investment_income_annual_10_unpacked
@@ -9990,6 +10100,19 @@ if selected == "Stock Analysis Tool":
                                         st.session_state[f'{ticker}_Pretax_income_annual_10'] = Pretax_income_annual_10_unpacked
                                         st.session_state[f'{ticker}_Income_tax_annual_10'] = Income_tax_annual_10_unpacked
                                         st.session_state[f'{ticker}_Ebita_annual_10'] = Ebita_annual_10_unpacked
+
+                                                  ################################ Quarter###############################
+                                                                                                                                 # Store unpacked data in session state
+                                        st.session_state[f'{ticker}_Net_premiums_earned_quarter_10'] = Net_premiums_earned_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Net_investment_income_quarter_10'] = Net_investment_income_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Fees_and_other_income_quarter_10'] = Fees_and_other_income_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Interest_Expense_insurance_quarter_10'] = Interest_Expense_insurance_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Policy_benenfits_claim_quarter_quarter_10'] = Policy_benenfits_claim_quarter_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Operating_income_quarter_quarter_10'] = Operating_income_quarter_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Pretax_income_quarter_10'] = Pretax_income_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Income_tax_quarter_10'] = Income_tax_quarter_10_unpacked
+                                        st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
+
 
 
                                    # Net_premiums_earned_annual_10_unpacked = annual_data['premiums_earned'][-10:] 
@@ -10020,13 +10143,39 @@ if selected == "Stock Analysis Tool":
                                    Income_tax_annual_df = financials_df(Income_tax_annual_10_unpacked, date_annual, "Income Tax Expense")
                                    Ebita_annual_df = financials_df(Ebita_annual_10_unpacked, date_annual, "EBITDA")
 
+                                                  ################################ Quarter###############################
 
-               
+
+                                   Net_premiums_earned_quarter_df = financials_df(Net_premiums_earned_quarter_10_unpacked, date_quarter, "Net Premiums Earned")
+                                   Net_investment_income_quarter_df = financials_df(Net_investment_income_quarter_10_unpacked, date_quarter, "Net Investment Income")
+                                   Fees_and_other_income_quarter_df = financials_df(Fees_and_other_income_quarter_10_unpacked, date_quarter, "Fees and Other Income")
+                                   Interest_Expense_insurance_quarter_df = financials_df(Interest_Expense_insurance_quarter_10_unpacked, date_quarter, "Interest Expense")
+                                   revenue_2013_quarter_df = financials_df(Revenue_quarter_10_unpacked, date_quarter, "Total Revenue")
+                                   Policy_benenfits_claim_quarter_df = financials_df(Policy_benenfits_claim_quarter_quarter_10_unpacked, date_quarter, "Policy Benefits & Claims")
+                                   Operating_income_quarter_df = financials_df(Operating_income_quarter_quarter_10_unpacked, date_quarter, "Operating Income")                   
+                                   Pretax_income_quarter_df = financials_df(Pretax_income_quarter_10_unpacked, date_quarter, "Pretax Income")
+                                   net_income_quarter_df = financials_df(net_income_quarter_10_unpacked, date_quarter, "Net Income")
+                                   eps_basic_quarter_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
+                                   shares_basic_quarter_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
+                                   eps_diluted_quarter_df = financials_df(Eps_diluted_quarterly_10_unpacked, date_quarter, "EPS Diluted")
+                                   shares_diluted_quarter_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
+                                   Income_tax_quarter_df = financials_df(Income_tax_quarter_10_unpacked, date_quarter, "Income Tax Expense")
+                                   Ebita_quarter_10_unpacked_df = financials_df(Ebita_quarter_10_unpacked, date_quarter, "EBITDA")
+
+                                                  ################################ Quarter###############################
+
                                    merged_df = pd.concat([Net_premiums_earned_df,Net_investment_income_df,Fees_and_other_income_df,revenue_2013_df,
                                                        Policy_benenfits_claim_annual_df,Operating_income_annual_df,Interest_Expense_insurance_df,Pretax_income_annual_df,
                                                        Income_tax_annual_df,net_income_annual_df,
                                                        eps_basic_annual_df,shares_basic_annual_df,eps_diluted_annual_df,shares_diluted_annual_df,Ebita_annual_df]) 
-          
+                                   
+                                   merged_df_quarter= pd.concat([
+                                                  Net_premiums_earned_quarter_df, Net_investment_income_quarter_df, Fees_and_other_income_quarter_df, revenue_2013_quarter_df, Policy_benenfits_claim_quarter_df,
+                                                  Operating_income_quarter_df,Interest_Expense_insurance_quarter_df,
+                                                  Pretax_income_quarter_df,Income_tax_quarter_df,net_income_quarter_df, eps_basic_quarter_df, shares_basic_quarter_df,
+                                                  eps_diluted_quarter_df, shares_diluted_quarter_df,Ebita_quarter_10_unpacked_df
+                                                  ])
+
                                    st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
                                    pass
@@ -10047,26 +10196,64 @@ if selected == "Stock Analysis Tool":
                                              interest_expense_list_annual_10_unpacked = st.session_state[f'{ticker}_Interest_Expense_annual_10']
                                              Ebita_annual_10_unpacked = st.session_state[f'{ticker}_EBITDA_annual_10']
                                              operating_income_list_annual_10_unpacked = st.session_state[f'{ticker}_Operating_Income_annual_10']
+
+                                             ################################ Quarter###############################
+                                             Pretax_income_quarter_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarter_10']
+                                             Income_tax_quarter_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarter_10']
+                                             cogs_list_quarter_10_unpacked = st.session_state[f'{ticker}_cogs_list_quarter_10']
+                                             gross_profit_quarter_10_unpacked = st.session_state[f'{ticker}_gross_profit_quarter_10']
+                                             SGA_Expense_quarter_10_unpacked = st.session_state[f'{ticker}_SGA_Expense_quarter_10']
+                                             Depreciation_Depletion_Amortisation_quater_10_unpacked = st.session_state[f'{ticker}_Depreciation_Depletion_Amortisation_quater_10']
+                                             Interest_Income_quarter_10_unpacked = st.session_state[f'{ticker}_Interest_Income_quarter_10']
+                                             Research_Dev_quarter_10_unpacked = st.session_state[f'{ticker}_Research_Dev_quarter_10']
+                                             interest_expense_list_quarter_10_unpacked = st.session_state[f'{ticker}_interest_expense_list_quarter_10']
+                                             Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
+                                             operating_income_list_quarter_10_unpacked = st.session_state[f'{ticker}_operating_income_list_quarter_10']
+
                                         else:             
                                              Pretax_income_annual_10_unpacked  = annual_data['pretax_income'][-10:]
                                              Income_tax_annual_10_unpacked   = annual_data['income_tax'][-10:]
                                              cogs_list_annual_10_unpacked  = annual_data['cogs'][-10:]
                                              gross_profit_annual_10_unpacked  = annual_data['gross_profit'][-10:]
                                              SGA_Expense_annual_10_unpacked   = annual_data['total_opex'][-10:]
+                                             ################################ Quarter###############################
+
+                                             Pretax_income_quarter_10_unpacked  = quarterly_data['pretax_income'][-10:]
+                                             Income_tax_quarter_10_unpacked  = quarterly_data['income_tax'][-10:]
+                                             cogs_list_quarter_10_unpacked  = quarterly_data['cogs'][-10:]
+                                             gross_profit_quarter_10_unpacked  = quarterly_data['gross_profit'][-10:]
+                                             SGA_Expense_quarter_10_unpacked  = quarterly_data['total_opex'][-10:]
+
 
                                              try:
                                                   Depreciation_Depletion_Amortisation_annual_10_unpacked  = annual_data['cfo_da'][-10:]
                                                   Interest_Income_annual_10_unpacked = annual_data['interest_income'][-10:]
+
+                                                            ################################ Quarter###############################
+                                                  Depreciation_Depletion_Amortisation_quater_10_unpacked = quarterly_data['cfo_da'][-10:]
+                                                  Interest_Income_quarter_10_unpacked = quarterly_data['interest_income'][-10:]
+
                                              
                                              except Exception as e:
                                                   Depreciation_Depletion_Amortisation_annual_10_unpacked = [0] * 10
                                                   Interest_Income_annual_10_unpacked = [0] * 10
+                                                            ################################ Quarter###############################
+
+                                                  Depreciation_Depletion_Amortisation_quater_10_unpacked= [0] * 10
+                                                  Interest_Income_quarter_10_unpacked= [0] * 10
 
 
                                              Research_Dev_annual_10_unpacked   = annual_data['rnd'][-10:]
                                              interest_expense_list_annual_10_unpacked   = annual_data['interest_expense'][-10:]
                                              Ebita_annual_10_unpacked = annual_data['ebitda'][-10:]
                                              operating_income_list_annual_10_unpacked  = annual_data['operating_income'][-10:] 
+                                                            ################################ Quarter###############################
+
+                                             Research_Dev_quarter_10_unpacked  = quarterly_data['rnd'][-10:]
+                                             interest_expense_list_quarter_10_unpacked  = quarterly_data['interest_expense'][-10:]
+                                             Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
+                                             operating_income_list_quarter_10_unpacked = quarterly_data['operating_income'][-10:] 
+
 
                                                                                           # Store unpacked data in session state
                                              st.session_state[f'{ticker}_Pretax_income_annual_10'] = Pretax_income_annual_10_unpacked
@@ -10080,6 +10267,22 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_Interest_Expense_annual_10'] = interest_expense_list_annual_10_unpacked
                                              st.session_state[f'{ticker}_EBITDA_annual_10'] = Ebita_annual_10_unpacked
                                              st.session_state[f'{ticker}_Operating_Income_annual_10'] = operating_income_list_annual_10_unpacked
+
+                                                            ################################ Quarter###############################
+
+                                                                                         # Store unpacked data in session state
+                                             st.session_state[f'{ticker}_Pretax_income_quarter_10'] = Pretax_income_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_Income_tax_quarter_10'] = Income_tax_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_cogs_list_quarter_10'] = cogs_list_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_gross_profit_quarter_10'] = gross_profit_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_SGA_Expense_quarter_10'] = SGA_Expense_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_Depreciation_Depletion_Amortisation_quater_10'] = Depreciation_Depletion_Amortisation_quater_10_unpacked
+                                             st.session_state[f'{ticker}_Interest_Income_quarter_10'] = Interest_Income_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_Research_Dev_quarter_10'] = Research_Dev_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_interest_expense_list_quarter_10'] = interest_expense_list_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
+                                             st.session_state[f'{ticker}_operating_income_list_quarter_10'] = operating_income_list_quarter_10_unpacked
+
 
 
 
@@ -10100,226 +10303,7 @@ if selected == "Stock Analysis Tool":
                                         interest_expense_list_annual_df = financials_df(interest_expense_list_annual_10_unpacked, date_annual, "Interest Expense")
                                         Ebita_annual_df = financials_df(Ebita_annual_10_unpacked, date_annual, "EBITDA")
                                         operating_income_list_annual_df = financials_df(operating_income_list_annual_10_unpacked, date_annual, "Operating Income")
-
-
-                                        merged_df = pd.concat([
-                                        revenue_2013_annual_df,cogs_list_annual_df,gross_profit_annual_df, SGA_Expense_annual_df, Research_Dev_annual_df,
-                                        Depreciation_Depletion_Amortisation_annual_df,
-                                        operating_income_list_annual_df,interest_expense_list_annual_df,
-                                        Interest_Income_annual_df,Pretax_income_annual_df,Income_tax_annual_df,
-                                        net_income_annual_df ,eps_basic_annual_df, 
-                                        shares_basic_annual_df,
-                                        eps_diluted_annual_df, shares_diluted_annual_df,Ebita_annual_df
-                                        ])
-                                        
-
-                                        st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                        pass
-                                   except KeyError:
-                                        st.write("") 
-                                        pass      
-
-                    with Quarterly:
-                                                   
-                         try: 
-
-                              if f'{ticker}_Pretax_income_quarterly_10' in st.session_state:
-                                   Pretax_income_quarterly_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarterly_10']
-                                   Income_tax_quarterly_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarterly_10']
-                                   net_income_quarterly_10_unpacked = st.session_state[f'{ticker}_net_income_quarterly_10']
-                                   Total_interest_income_list_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_interest_income_list_quarterly_10']
-                                   Total_interest_expense_list_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_interest_expense_list_quarterly_10']
-                                   Net_interest_Income_quarterly_10_unpacked = st.session_state[f'{ticker}_Net_interest_Income_quarterly_10']
-                                   Prov_Credit_losses_quarterly_10_unpacked = st.session_state[f'{ticker}_Prov_Credit_losses_quarterly_10']
-                                   Netinterest_Prov_Credit_losses_quarterly_10_unpacked = st.session_state[f'{ticker}_Netinterest_Prov_Credit_losses_quarterly_10']
-                                   Total_Non_interest_expenses_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_expenses_quarterly_10']
-                                   Total_Non_interest_revenue_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_revenue_quarterly_10']
-                                   Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
-                              else:
-               
-                                   Pretax_income_quarterly_10_unpacked  = quarterly_data['pretax_income'][-10:]
-                                   Income_tax_quarterly_10_unpacked  = quarterly_data['income_tax'][-10:]
-                                   net_income_quarterly_10_unpacked  = quarterly_data['net_income'][-10:]
-                                   Total_interest_income_list_quarterly_10_unpacked  = quarterly_data['total_interest_income'][-10:]
-                                   Total_interest_expense_list_quarterly_10_unpacked  = quarterly_data['total_interest_expense'][-10:]
-                                   Net_interest_Income_quarterly_10_unpacked  = quarterly_data['net_interest_income'][-10:]
-                                   Prov_Credit_losses_quarterly_10_unpacked = quarterly_data['credit_losses_provision'][-10:]
-                                   Netinterest_Prov_Credit_losses_quarterly_10_unpacked = quarterly_data['net_interest_income_after_credit_losses_provision'][-10:]
-                                   Total_Non_interest_expenses_quarterly_10_unpacked = quarterly_data['total_noninterest_expense'][-10:]
-                                   Total_Non_interest_revenue_quarterly_10_unpacked = quarterly_data['total_noninterest_revenue'][-10:]
-                                   Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
-
-                                       # Store unpacked data in session state
-                                   st.session_state[f'{ticker}_Pretax_income_quarterly_10'] = Pretax_income_quarterly_10_unpacked
-                                   st.session_state[f'{ticker}_Income_tax_quarterly_10'] = Income_tax_quarterly_10_unpacked
-                                   st.session_state[f'{ticker}_net_income_quarterly_10'] = net_income_quarterly_10_unpacked
-                                   st.session_state[f'{ticker}_Total_interest_income_list_quarterly_10'] = Total_interest_income_list_quarterly_10_unpacked
-                                   st.session_state[f'{ticker}_Total_interest_expense_list_quarterly_10'] = Total_interest_expense_list_quarterly_10_unpacked
-                                   st.session_state[f'{ticker}_Net_interest_Income_quarterly_10'] = Net_interest_Income_quarterly_10_unpacked
-                                   st.session_state[f'{ticker}_Prov_Credit_losses_quarterly_10'] = Prov_Credit_losses_quarterly_10_unpacked
-                                   st.session_state[f'{ticker}_Netinterest_Prov_Credit_losses_quarterly_10'] = Netinterest_Prov_Credit_losses_quarterly_10_unpacked
-                                   st.session_state[f'{ticker}_Total_Non_interest_expenses_quarterly_10'] = Total_Non_interest_expenses_quarterly_10_unpacked
-                                   st.session_state[f'{ticker}_Total_Non_interest_revenue_quarterly_10'] = Total_Non_interest_revenue_quarterly_10_unpacked
-                                   st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
-
-                              revenue_10_quarterly_df = financials_df(Revenue_quarter_10_unpacked, date_quarter, "Revenue")
-                              Pretax_income_quarterly_df = financials_df(Pretax_income_quarterly_10_unpacked, date_quarter, "Pretax Income")
-                              eps_basic_quarterly_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
-                              shares_basic_quarterly_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
-                              eps_diluted_quarterly_df = financials_df(Eps_diluted_quarterly_10_unpacked,date_quarter, "EPS Diluted")
-                              shares_diluted_quarterly_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
-                              Income_tax_quarterly_df = financials_df(Income_tax_quarterly_10_unpacked, date_quarter, "Income Tax Expense")
-                              net_income_quarterly_df = financials_df(net_income_quarterly_10_unpacked, date_quarter, "Net Income")
-                              Total_interest_income_list_quarterly_df = financials_df(Total_interest_income_list_quarterly_10_unpacked, date_quarter, "Total Interest Income")
-                              Total_interest_expense_list_quarterly_df = financials_df(Total_interest_expense_list_quarterly_10_unpacked, date_quarter, "Total Interest Expense")
-                              Net_interest_Income_quarterly_df = financials_df(Net_interest_Income_quarterly_10_unpacked, date_quarter, "Net Interest Income")
-                              Prov_Credit_losses_quarterly_df = financials_df(Prov_Credit_losses_quarterly_10_unpacked, date_quarter, "Provision for Credit Losses")
-                              Netinterest_Prov_Credit_losses_quarterly_df = financials_df(Netinterest_Prov_Credit_losses_quarterly_10_unpacked, date_quarter, "Net Interest Income After Credit Losses Provision")
-                              Total_Non_interest_expenses_quarterly_df = financials_df(Total_Non_interest_expenses_quarterly_10_unpacked, date_quarter, "Total Non Interest Expenses")
-                              Total_Non_interest_revenue_quarterly_df = financials_df(Total_Non_interest_revenue_quarterly_10_unpacked, date_quarter, "Total Non-Interest Revenue")
-                              Ebita_quarter_10_unpacked_df = financials_df(Ebita_quarter_10_unpacked, date_quarter, "EBITDA")
-
-
-                              
-                              merged_df = pd.concat([Total_interest_income_list_quarterly_df,Total_interest_expense_list_quarterly_df,
-                                                     Net_interest_Income_quarterly_df,Total_Non_interest_revenue_quarterly_df,
-                                                     Prov_Credit_losses_quarterly_df,revenue_10_quarterly_df,
-                                                     Netinterest_Prov_Credit_losses_quarterly_df,Total_Non_interest_expenses_quarterly_df,
-                                                     Pretax_income_quarterly_df,Income_tax_quarterly_df,net_income_quarterly_df,
-                                                     eps_basic_quarterly_df,shares_basic_quarterly_df,
-                                                     eps_diluted_quarterly_df,shares_diluted_quarterly_df,Ebita_quarter_10_unpacked_df])    
-
-
-                              st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-                              
-                                        
-                                                                   
-                              pass
-                                                       
-                                                  
-                         except KeyError:
-                              try:
-                                   if f'{ticker}_Net_premiums_earned_quarter_10' in st.session_state:
-                                        Net_premiums_earned_quarter_10_unpacked = st.session_state[f'{ticker}_Net_premiums_earned_quarter_10']
-                                        Net_investment_income_quarter_10_unpacked = st.session_state[f'{ticker}_Net_investment_income_quarter_10']
-                                        Fees_and_other_income_quarter_10_unpacked = st.session_state[f'{ticker}_Fees_and_other_income_quarter_10']
-                                        Interest_Expense_insurance_quarter_10_unpacked = st.session_state[f'{ticker}_Interest_Expense_insurance_quarter_10']
-                                        Policy_benenfits_claim_quarter_quarter_10_unpacked = st.session_state[f'{ticker}_Policy_benenfits_claim_quarter_quarter_10']
-                                        Operating_income_quarter_quarter_10_unpacked = st.session_state[f'{ticker}_Operating_income_quarter_quarter_10']
-                                        Pretax_income_quarter_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarter_10']
-                                        Income_tax_quarter_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarter_10']
-                                        Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
-                                        
-                                   else:    # Unpack data from quarterly_data
-                                        Net_premiums_earned_quarter_10_unpacked = quarterly_data['premiums_earned'][-10:]
-                                        Net_investment_income_quarter_10_unpacked = quarterly_data['net_investment_income'][-10:]
-                                        Fees_and_other_income_quarter_10_unpacked = quarterly_data['fees_and_other_income'][-10:]
-                                        Interest_Expense_insurance_quarter_10_unpacked = quarterly_data['interest_expense_insurance'][-10:]
-                                        Policy_benenfits_claim_quarter_quarter_10_unpacked = quarterly_data['net_policyholder_claims_expense'][-10:]
-                                        Operating_income_quarter_quarter_10_unpacked = quarterly_data['operating_income'][-10:]
-                                        Pretax_income_quarter_10_unpacked = quarterly_data['pretax_income'][-10:]
-                                        Income_tax_quarter_10_unpacked = quarterly_data['income_tax'][-10:]
-                                        Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
-
-
-                                                                                # Store unpacked data in session state
-                                        st.session_state[f'{ticker}_Net_premiums_earned_quarter_10'] = Net_premiums_earned_quarter_10_unpacked
-                                        st.session_state[f'{ticker}_Net_investment_income_quarter_10'] = Net_investment_income_quarter_10_unpacked
-                                        st.session_state[f'{ticker}_Fees_and_other_income_quarter_10'] = Fees_and_other_income_quarter_10_unpacked
-                                        st.session_state[f'{ticker}_Interest_Expense_insurance_quarter_10'] = Interest_Expense_insurance_quarter_10_unpacked
-                                        st.session_state[f'{ticker}_Policy_benenfits_claim_quarter_quarter_10'] = Policy_benenfits_claim_quarter_quarter_10_unpacked
-                                        st.session_state[f'{ticker}_Operating_income_quarter_quarter_10'] = Operating_income_quarter_quarter_10_unpacked
-                                        st.session_state[f'{ticker}_Pretax_income_quarter_10'] = Pretax_income_quarter_10_unpacked
-                                        st.session_state[f'{ticker}_Income_tax_quarter_10'] = Income_tax_quarter_10_unpacked
-                                        st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
-
-
-                                   Net_premiums_earned_df = financials_df(Net_premiums_earned_quarter_10_unpacked, date_quarter, "Net Premiums Earned")
-                                   Net_investment_income_df = financials_df(Net_investment_income_quarter_10_unpacked, date_quarter, "Net Investment Income")
-                                   Fees_and_other_income_df = financials_df(Fees_and_other_income_quarter_10_unpacked, date_quarter, "Fees and Other Income")
-                                   Interest_Expense_insurance_df = financials_df(Interest_Expense_insurance_quarter_10_unpacked, date_quarter, "Interest Expense")
-                                   revenue_2013_df = financials_df(Revenue_quarter_10_unpacked, date_quarter, "Total Revenue")
-                                   Policy_benenfits_claim_quarter_df = financials_df(Policy_benenfits_claim_quarter_quarter_10_unpacked, date_quarter, "Policy Benefits & Claims")
-                                   Operating_income_quarter_df = financials_df(Operating_income_quarter_quarter_10_unpacked, date_quarter, "Operating Income")                    
-                                   Pretax_income_df = financials_df(Pretax_income_quarter_10_unpacked, date_quarter, "Pretax Income")
-                                   net_income_df = financials_df(net_income_quarter_10_unpacked, date_quarter, "Net Income")
-                                   eps_basic_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
-                                   shares_basic_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
-                                   eps_diluted_df = financials_df(Eps_diluted_quarterly_10_unpacked, date_quarter, "EPS Diluted")
-                                   shares_diluted_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
-                                   Income_tax_df = financials_df(Income_tax_quarter_10_unpacked, date_quarter, "Income Tax Expense")
-                                   Ebita_quarter_10_unpacked_df = financials_df(Ebita_quarter_10_unpacked, date_quarter, "EBITDA")
-
-
-
-                                   
-               
-                                   merged_df= pd.concat([
-                                   Net_premiums_earned_df, Net_investment_income_df, Fees_and_other_income_df, revenue_2013_df, Policy_benenfits_claim_quarter_df,
-                                   Operating_income_quarter_df,Interest_Expense_insurance_df,
-                                   Pretax_income_df,Income_tax_df,net_income_df, eps_basic_df, shares_basic_df,
-                                   eps_diluted_df, shares_diluted_df,Ebita_quarter_10_unpacked_df
-                                   ])
-
-                                   st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                   pass 
-
-                              except KeyError:
-
-
-                                                                           
-                                                      
-                                   try:    
-
-                                        if f'{ticker}_Pretax_income_quarter_10' in st.session_state:
-                                             Pretax_income_quarter_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarter_10']
-                                             Income_tax_quarter_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarter_10']
-                                             cogs_list_quarter_10_unpacked = st.session_state[f'{ticker}_cogs_list_quarter_10']
-                                             gross_profit_quarter_10_unpacked = st.session_state[f'{ticker}_gross_profit_quarter_10']
-                                             SGA_Expense_quarter_10_unpacked = st.session_state[f'{ticker}_SGA_Expense_quarter_10']
-                                             Depreciation_Depletion_Amortisation_quater_10_unpacked = st.session_state[f'{ticker}_Depreciation_Depletion_Amortisation_quater_10']
-                                             Interest_Income_quarter_10_unpacked = st.session_state[f'{ticker}_Interest_Income_quarter_10']
-                                             Research_Dev_quarter_10_unpacked = st.session_state[f'{ticker}_Research_Dev_quarter_10']
-                                             interest_expense_list_quarter_10_unpacked = st.session_state[f'{ticker}_interest_expense_list_quarter_10']
-                                             Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
-                                             operating_income_list_quarter_10_unpacked = st.session_state[f'{ticker}_operating_income_list_quarter_10']
-                                        else:
-    #           
-                                             Pretax_income_quarter_10_unpacked  = quarterly_data['pretax_income'][-10:]
-                                             Income_tax_quarter_10_unpacked  = quarterly_data['income_tax'][-10:]
-                                             cogs_list_quarter_10_unpacked  = quarterly_data['cogs'][-10:]
-                                             gross_profit_quarter_10_unpacked  = quarterly_data['gross_profit'][-10:]
-                                             SGA_Expense_quarter_10_unpacked  = quarterly_data['total_opex'][-10:]
-
-                                             try:
-                                                  Depreciation_Depletion_Amortisation_quater_10_unpacked = quarterly_data['cfo_da'][-10:]
-                                                  Interest_Income_quarter_10_unpacked = quarterly_data['interest_income'][-10:]
-                                             except Exception as e:
-                                                  Depreciation_Depletion_Amortisation_quater_10_unpacked= [0] * 10
-                                                  Interest_Income_quarter_10_unpacked= [0] * 10
-
-
-                                             Research_Dev_quarter_10_unpacked  = quarterly_data['rnd'][-10:]
-                                             interest_expense_list_quarter_10_unpacked  = quarterly_data['interest_expense'][-10:]
-                                             Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
-                                             operating_income_list_quarter_10_unpacked = quarterly_data['operating_income'][-10:]  
-
-
-                                                                                          # Store unpacked data in session state
-                                             st.session_state[f'{ticker}_Pretax_income_quarter_10'] = Pretax_income_quarter_10_unpacked
-                                             st.session_state[f'{ticker}_Income_tax_quarter_10'] = Income_tax_quarter_10_unpacked
-                                             st.session_state[f'{ticker}_cogs_list_quarter_10'] = cogs_list_quarter_10_unpacked
-                                             st.session_state[f'{ticker}_gross_profit_quarter_10'] = gross_profit_quarter_10_unpacked
-                                             st.session_state[f'{ticker}_SGA_Expense_quarter_10'] = SGA_Expense_quarter_10_unpacked
-                                             st.session_state[f'{ticker}_Depreciation_Depletion_Amortisation_quater_10'] = Depreciation_Depletion_Amortisation_quater_10_unpacked
-                                             st.session_state[f'{ticker}_Interest_Income_quarter_10'] = Interest_Income_quarter_10_unpacked
-                                             st.session_state[f'{ticker}_Research_Dev_quarter_10'] = Research_Dev_quarter_10_unpacked
-                                             st.session_state[f'{ticker}_interest_expense_list_quarter_10'] = interest_expense_list_quarter_10_unpacked
-                                             st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
-                                             st.session_state[f'{ticker}_operating_income_list_quarter_10'] = operating_income_list_quarter_10_unpacked
-
+                                                            ################################ Quarter###############################
 
                                         revenue_2013_quarter_df = financials_df(Revenue_quarter_10_unpacked, date_quarter, "Revenue")
                                         Pretax_income_quarter_df = financials_df(Pretax_income_quarter_10_unpacked, date_quarter, "Pretax Income")
@@ -10335,30 +10319,282 @@ if selected == "Stock Analysis Tool":
                                         Research_Dev_quarter_df = financials_df(Research_Dev_quarter_10_unpacked, date_quarter, "R&D Expense")
                                         Depreciation_Depletion_Amortisation_quater_df = financials_df(Depreciation_Depletion_Amortisation_quater_10_unpacked, date_quarter, "Depreciation & Amortization")
                                         Interest_Income_quarter_df = financials_df(Interest_Income_quarter_10_unpacked, date_quarter, "Interest Income")
-
                                         interest_expense_list_quarter_df = financials_df(interest_expense_list_quarter_10_unpacked, date_quarter, "Interest Expense")
                                         Ebita_quarter_10_unpacked_df = financials_df(Ebita_quarter_10_unpacked, date_quarter, "EBITDA")
                                         operating_income_list_quarter_df = financials_df(operating_income_list_quarter_10_unpacked, date_quarter, "Operating Income")
 
                                         merged_df = pd.concat([
+                                        revenue_2013_annual_df,cogs_list_annual_df,gross_profit_annual_df, SGA_Expense_annual_df, Research_Dev_annual_df,
+                                        Depreciation_Depletion_Amortisation_annual_df,
+                                        operating_income_list_annual_df,interest_expense_list_annual_df,
+                                        Interest_Income_annual_df,Pretax_income_annual_df,Income_tax_annual_df,
+                                        net_income_annual_df ,eps_basic_annual_df, 
+                                        shares_basic_annual_df,
+                                        eps_diluted_annual_df, shares_diluted_annual_df,Ebita_annual_df
+                                        ])
+                                        
+                                                            ################################ Quarter###############################
+
+
+                                        merged_df_quarter = pd.concat([
                                         revenue_2013_quarter_df, cogs_list_quarter_df,gross_profit_quarter_df, SGA_Expense_quarter_df, Research_Dev_quarter_df,
                                         Depreciation_Depletion_Amortisation_quater_df,operating_income_list_quarter_df,
-                                        interest_expense_list_quarter_df,Interest_Income_quarter_df,Pretax_income_quarter_df, 
+                                        interest_expense_list_quarter_df,Interest_Income_quarter_df,Pretax_income_quarter_df,
                                         Income_tax_quarter_df,
                                         net_income_quarter_df,eps_basic_quarter_df, shares_basic_quarter_df,
                                         eps_diluted_quarter_df, shares_diluted_quarter_df,
                                         Ebita_quarter_10_unpacked_df
                                         ])
 
-                                        
+
                                         st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
-                                        pass                                 
+                                        pass
+                                   except KeyError:
+                                        st.write("") 
+                                        pass      
 
-                                   except KeyError:   
+                    with Quarterly:
+                         st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
-                                        st.write("")
-                                        pass  
+                                                   
+                         #try: 
+
+                              # if f'{ticker}_Pretax_income_quarterly_10' in st.session_state:
+                              #      Pretax_income_quarterly_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarterly_10']
+                              #      Income_tax_quarterly_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarterly_10']
+                              #      net_income_quarterly_10_unpacked = st.session_state[f'{ticker}_net_income_quarterly_10']
+                              #      Total_interest_income_list_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_interest_income_list_quarterly_10']
+                              #      Total_interest_expense_list_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_interest_expense_list_quarterly_10']
+                              #      Net_interest_Income_quarterly_10_unpacked = st.session_state[f'{ticker}_Net_interest_Income_quarterly_10']
+                              #      Prov_Credit_losses_quarterly_10_unpacked = st.session_state[f'{ticker}_Prov_Credit_losses_quarterly_10']
+                              #      Netinterest_Prov_Credit_losses_quarterly_10_unpacked = st.session_state[f'{ticker}_Netinterest_Prov_Credit_losses_quarterly_10']
+                              #      Total_Non_interest_expenses_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_expenses_quarterly_10']
+                              #      Total_Non_interest_revenue_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_revenue_quarterly_10']
+                              #      Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
+                              # else:
+               
+                              #      Pretax_income_quarterly_10_unpacked  = quarterly_data['pretax_income'][-10:]
+                              #      Income_tax_quarterly_10_unpacked  = quarterly_data['income_tax'][-10:]
+                              #      net_income_quarterly_10_unpacked  = quarterly_data['net_income'][-10:]
+                              #      Total_interest_income_list_quarterly_10_unpacked  = quarterly_data['total_interest_income'][-10:]
+                              #      Total_interest_expense_list_quarterly_10_unpacked  = quarterly_data['total_interest_expense'][-10:]
+                              #      Net_interest_Income_quarterly_10_unpacked  = quarterly_data['net_interest_income'][-10:]
+                              #      Prov_Credit_losses_quarterly_10_unpacked = quarterly_data['credit_losses_provision'][-10:]
+                              #      Netinterest_Prov_Credit_losses_quarterly_10_unpacked = quarterly_data['net_interest_income_after_credit_losses_provision'][-10:]
+                              #      Total_Non_interest_expenses_quarterly_10_unpacked = quarterly_data['total_noninterest_expense'][-10:]
+                              #      Total_Non_interest_revenue_quarterly_10_unpacked = quarterly_data['total_noninterest_revenue'][-10:]
+                              #      Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
+
+                              #          # Store unpacked data in session state
+                              #      st.session_state[f'{ticker}_Pretax_income_quarterly_10'] = Pretax_income_quarterly_10_unpacked
+                              #      st.session_state[f'{ticker}_Income_tax_quarterly_10'] = Income_tax_quarterly_10_unpacked
+                              #      st.session_state[f'{ticker}_net_income_quarterly_10'] = net_income_quarterly_10_unpacked
+                              #      st.session_state[f'{ticker}_Total_interest_income_list_quarterly_10'] = Total_interest_income_list_quarterly_10_unpacked
+                              #      st.session_state[f'{ticker}_Total_interest_expense_list_quarterly_10'] = Total_interest_expense_list_quarterly_10_unpacked
+                              #      st.session_state[f'{ticker}_Net_interest_Income_quarterly_10'] = Net_interest_Income_quarterly_10_unpacked
+                              #      st.session_state[f'{ticker}_Prov_Credit_losses_quarterly_10'] = Prov_Credit_losses_quarterly_10_unpacked
+                              #      st.session_state[f'{ticker}_Netinterest_Prov_Credit_losses_quarterly_10'] = Netinterest_Prov_Credit_losses_quarterly_10_unpacked
+                              #      st.session_state[f'{ticker}_Total_Non_interest_expenses_quarterly_10'] = Total_Non_interest_expenses_quarterly_10_unpacked
+                              #      st.session_state[f'{ticker}_Total_Non_interest_revenue_quarterly_10'] = Total_Non_interest_revenue_quarterly_10_unpacked
+                              #      st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
+
+                              # revenue_10_quarterly_df = financials_df(Revenue_quarter_10_unpacked, date_quarter, "Revenue")
+                              # Pretax_income_quarterly_df = financials_df(Pretax_income_quarterly_10_unpacked, date_quarter, "Pretax Income")
+                              # eps_basic_quarterly_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
+                              # shares_basic_quarterly_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
+                              # eps_diluted_quarterly_df = financials_df(Eps_diluted_quarterly_10_unpacked,date_quarter, "EPS Diluted")
+                              # shares_diluted_quarterly_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
+                              # Income_tax_quarterly_df = financials_df(Income_tax_quarterly_10_unpacked, date_quarter, "Income Tax Expense")
+                              # net_income_quarterly_df = financials_df(net_income_quarterly_10_unpacked, date_quarter, "Net Income")
+                              # Total_interest_income_list_quarterly_df = financials_df(Total_interest_income_list_quarterly_10_unpacked, date_quarter, "Total Interest Income")
+                              # Total_interest_expense_list_quarterly_df = financials_df(Total_interest_expense_list_quarterly_10_unpacked, date_quarter, "Total Interest Expense")
+                              # Net_interest_Income_quarterly_df = financials_df(Net_interest_Income_quarterly_10_unpacked, date_quarter, "Net Interest Income")
+                              # Prov_Credit_losses_quarterly_df = financials_df(Prov_Credit_losses_quarterly_10_unpacked, date_quarter, "Provision for Credit Losses")
+                              # Netinterest_Prov_Credit_losses_quarterly_df = financials_df(Netinterest_Prov_Credit_losses_quarterly_10_unpacked, date_quarter, "Net Interest Income After Credit Losses Provision")
+                              # Total_Non_interest_expenses_quarterly_df = financials_df(Total_Non_interest_expenses_quarterly_10_unpacked, date_quarter, "Total Non Interest Expenses")
+                              # Total_Non_interest_revenue_quarterly_df = financials_df(Total_Non_interest_revenue_quarterly_10_unpacked, date_quarter, "Total Non-Interest Revenue")
+                              # Ebita_quarter_10_unpacked_df = financials_df(Ebita_quarter_10_unpacked, date_quarter, "EBITDA")
+
+
+                              
+                              # merged_df = pd.concat([Total_interest_income_list_quarterly_df,Total_interest_expense_list_quarterly_df,
+                              #                        Net_interest_Income_quarterly_df,Total_Non_interest_revenue_quarterly_df,
+                              #                        Prov_Credit_losses_quarterly_df,revenue_10_quarterly_df,
+                              #                        Netinterest_Prov_Credit_losses_quarterly_df,Total_Non_interest_expenses_quarterly_df,
+                              #                        Pretax_income_quarterly_df,Income_tax_quarterly_df,net_income_quarterly_df,
+                              #                        eps_basic_quarterly_df,shares_basic_quarterly_df,
+                              #                        eps_diluted_quarterly_df,shares_diluted_quarterly_df,Ebita_quarter_10_unpacked_df])    
+
+
+                              #st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                             
+                              
+                                        
+                                                                   
+                              #pass
+                                                       
+                                                  
+                         #except KeyError:
+                             # try:
+                                   # if f'{ticker}_Net_premiums_earned_quarter_10' in st.session_state:
+                                   #      Net_premiums_earned_quarter_10_unpacked = st.session_state[f'{ticker}_Net_premiums_earned_quarter_10']
+                                   #      Net_investment_income_quarter_10_unpacked = st.session_state[f'{ticker}_Net_investment_income_quarter_10']
+                                   #      Fees_and_other_income_quarter_10_unpacked = st.session_state[f'{ticker}_Fees_and_other_income_quarter_10']
+                                   #      Interest_Expense_insurance_quarter_10_unpacked = st.session_state[f'{ticker}_Interest_Expense_insurance_quarter_10']
+                                   #      Policy_benenfits_claim_quarter_quarter_10_unpacked = st.session_state[f'{ticker}_Policy_benenfits_claim_quarter_quarter_10']
+                                   #      Operating_income_quarter_quarter_10_unpacked = st.session_state[f'{ticker}_Operating_income_quarter_quarter_10']
+                                   #      Pretax_income_quarter_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarter_10']
+                                   #      Income_tax_quarter_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarter_10']
+                                   #      Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
+                                        
+                                   # else:    # Unpack data from quarterly_data
+                                   #      Net_premiums_earned_quarter_10_unpacked = quarterly_data['premiums_earned'][-10:]
+                                   #      Net_investment_income_quarter_10_unpacked = quarterly_data['net_investment_income'][-10:]
+                                   #      Fees_and_other_income_quarter_10_unpacked = quarterly_data['fees_and_other_income'][-10:]
+                                   #      Interest_Expense_insurance_quarter_10_unpacked = quarterly_data['interest_expense_insurance'][-10:]
+                                   #      Policy_benenfits_claim_quarter_quarter_10_unpacked = quarterly_data['net_policyholder_claims_expense'][-10:]
+                                   #      Operating_income_quarter_quarter_10_unpacked = quarterly_data['operating_income'][-10:]
+                                   #      Pretax_income_quarter_10_unpacked = quarterly_data['pretax_income'][-10:]
+                                   #      Income_tax_quarter_10_unpacked = quarterly_data['income_tax'][-10:]
+                                   #      Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
+
+
+                                   #                                              # Store unpacked data in session state
+                                   #      st.session_state[f'{ticker}_Net_premiums_earned_quarter_10'] = Net_premiums_earned_quarter_10_unpacked
+                                   #      st.session_state[f'{ticker}_Net_investment_income_quarter_10'] = Net_investment_income_quarter_10_unpacked
+                                   #      st.session_state[f'{ticker}_Fees_and_other_income_quarter_10'] = Fees_and_other_income_quarter_10_unpacked
+                                   #      st.session_state[f'{ticker}_Interest_Expense_insurance_quarter_10'] = Interest_Expense_insurance_quarter_10_unpacked
+                                   #      st.session_state[f'{ticker}_Policy_benenfits_claim_quarter_quarter_10'] = Policy_benenfits_claim_quarter_quarter_10_unpacked
+                                   #      st.session_state[f'{ticker}_Operating_income_quarter_quarter_10'] = Operating_income_quarter_quarter_10_unpacked
+                                   #      st.session_state[f'{ticker}_Pretax_income_quarter_10'] = Pretax_income_quarter_10_unpacked
+                                   #      st.session_state[f'{ticker}_Income_tax_quarter_10'] = Income_tax_quarter_10_unpacked
+                                   #      st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
+
+
+                                   # Net_premiums_earned_df = financials_df(Net_premiums_earned_quarter_10_unpacked, date_quarter, "Net Premiums Earned")
+                                   # Net_investment_income_df = financials_df(Net_investment_income_quarter_10_unpacked, date_quarter, "Net Investment Income")
+                                   # Fees_and_other_income_df = financials_df(Fees_and_other_income_quarter_10_unpacked, date_quarter, "Fees and Other Income")
+                                   # Interest_Expense_insurance_df = financials_df(Interest_Expense_insurance_quarter_10_unpacked, date_quarter, "Interest Expense")
+                                   # revenue_2013_df = financials_df(Revenue_quarter_10_unpacked, date_quarter, "Total Revenue")
+                                   # Policy_benenfits_claim_quarter_df = financials_df(Policy_benenfits_claim_quarter_quarter_10_unpacked, date_quarter, "Policy Benefits & Claims")
+                                   # Operating_income_quarter_df = financials_df(Operating_income_quarter_quarter_10_unpacked, date_quarter, "Operating Income")                    
+                                   # Pretax_income_df = financials_df(Pretax_income_quarter_10_unpacked, date_quarter, "Pretax Income")
+                                   # net_income_df = financials_df(net_income_quarter_10_unpacked, date_quarter, "Net Income")
+                                   # eps_basic_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
+                                   # shares_basic_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
+                                   # eps_diluted_df = financials_df(Eps_diluted_quarterly_10_unpacked, date_quarter, "EPS Diluted")
+                                   # shares_diluted_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
+                                   # Income_tax_df = financials_df(Income_tax_quarter_10_unpacked, date_quarter, "Income Tax Expense")
+                                   # Ebita_quarter_10_unpacked_df = financials_df(Ebita_quarter_10_unpacked, date_quarter, "EBITDA")
+
+
+
+                                   
+               
+                                   # merged_df= pd.concat([
+                                   # Net_premiums_earned_df, Net_investment_income_df, Fees_and_other_income_df, revenue_2013_df, Policy_benenfits_claim_quarter_df,
+                                   # Operating_income_quarter_df,Interest_Expense_insurance_df,
+                                   # Pretax_income_df,Income_tax_df,net_income_df, eps_basic_df, shares_basic_df,
+                                   # eps_diluted_df, shares_diluted_df,Ebita_quarter_10_unpacked_df
+                                   # ])
+
+                                   #st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                   #pass 
+
+                              #except KeyError:
+
+                                          
+                                                      
+                                   #try:    
+
+#                                         if f'{ticker}_Pretax_income_quarter_10' in st.session_state:
+#                                              Pretax_income_quarter_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarter_10']
+#                                              Income_tax_quarter_10_unpacked = st.session_state[f'{ticker}_Income_tax_quarter_10']
+#                                              cogs_list_quarter_10_unpacked = st.session_state[f'{ticker}_cogs_list_quarter_10']
+#                                              gross_profit_quarter_10_unpacked = st.session_state[f'{ticker}_gross_profit_quarter_10']
+#                                              SGA_Expense_quarter_10_unpacked = st.session_state[f'{ticker}_SGA_Expense_quarter_10']
+#                                              Depreciation_Depletion_Amortisation_quater_10_unpacked = st.session_state[f'{ticker}_Depreciation_Depletion_Amortisation_quater_10']
+#                                              Interest_Income_quarter_10_unpacked = st.session_state[f'{ticker}_Interest_Income_quarter_10']
+#                                              Research_Dev_quarter_10_unpacked = st.session_state[f'{ticker}_Research_Dev_quarter_10']
+#                                              interest_expense_list_quarter_10_unpacked = st.session_state[f'{ticker}_interest_expense_list_quarter_10']
+#                                              Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
+#                                              operating_income_list_quarter_10_unpacked = st.session_state[f'{ticker}_operating_income_list_quarter_10']
+#                                         else:
+#     #           
+#                                              Pretax_income_quarter_10_unpacked  = quarterly_data['pretax_income'][-10:]
+#                                              Income_tax_quarter_10_unpacked  = quarterly_data['income_tax'][-10:]
+#                                              cogs_list_quarter_10_unpacked  = quarterly_data['cogs'][-10:]
+#                                              gross_profit_quarter_10_unpacked  = quarterly_data['gross_profit'][-10:]
+#                                              SGA_Expense_quarter_10_unpacked  = quarterly_data['total_opex'][-10:]
+
+#                                              try:
+#                                                   Depreciation_Depletion_Amortisation_quater_10_unpacked = quarterly_data['cfo_da'][-10:]
+#                                                   Interest_Income_quarter_10_unpacked = quarterly_data['interest_income'][-10:]
+#                                              except Exception as e:
+#                                                   Depreciation_Depletion_Amortisation_quater_10_unpacked= [0] * 10
+#                                                   Interest_Income_quarter_10_unpacked= [0] * 10
+
+
+#                                              Research_Dev_quarter_10_unpacked  = quarterly_data['rnd'][-10:]
+#                                              interest_expense_list_quarter_10_unpacked  = quarterly_data['interest_expense'][-10:]
+#                                              Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
+#                                              operating_income_list_quarter_10_unpacked = quarterly_data['operating_income'][-10:]  
+
+
+#                                                                                           # Store unpacked data in session state
+#                                              st.session_state[f'{ticker}_Pretax_income_quarter_10'] = Pretax_income_quarter_10_unpacked
+#                                              st.session_state[f'{ticker}_Income_tax_quarter_10'] = Income_tax_quarter_10_unpacked
+#                                              st.session_state[f'{ticker}_cogs_list_quarter_10'] = cogs_list_quarter_10_unpacked
+#                                              st.session_state[f'{ticker}_gross_profit_quarter_10'] = gross_profit_quarter_10_unpacked
+#                                              st.session_state[f'{ticker}_SGA_Expense_quarter_10'] = SGA_Expense_quarter_10_unpacked
+#                                              st.session_state[f'{ticker}_Depreciation_Depletion_Amortisation_quater_10'] = Depreciation_Depletion_Amortisation_quater_10_unpacked
+#                                              st.session_state[f'{ticker}_Interest_Income_quarter_10'] = Interest_Income_quarter_10_unpacked
+#                                              st.session_state[f'{ticker}_Research_Dev_quarter_10'] = Research_Dev_quarter_10_unpacked
+#                                              st.session_state[f'{ticker}_interest_expense_list_quarter_10'] = interest_expense_list_quarter_10_unpacked
+#                                              st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
+#                                              st.session_state[f'{ticker}_operating_income_list_quarter_10'] = operating_income_list_quarter_10_unpacked
+
+
+#                                         revenue_2013_quarter_df = financials_df(Revenue_quarter_10_unpacked, date_quarter, "Revenue")
+#                                         Pretax_income_quarter_df = financials_df(Pretax_income_quarter_10_unpacked, date_quarter, "Pretax Income")
+#                                         eps_basic_quarter_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
+#                                         shares_basic_quarter_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
+#                                         eps_diluted_quarter_df = financials_df(Eps_diluted_quarterly_10_unpacked, date_quarter, "EPS Diluted")
+#                                         shares_diluted_quarter_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
+#                                         Income_tax_quarter_df = financials_df(Income_tax_quarter_10_unpacked, date_quarter, "Income Tax Expense")
+#                                         net_income_quarter_df = financials_df(net_income_quarter_10_unpacked, date_quarter, "Net Income")
+#                                         cogs_list_quarter_df = financials_df(cogs_list_quarter_10_unpacked, date_quarter, "COGS")
+#                                         gross_profit_quarter_df = financials_df(gross_profit_quarter_10_unpacked, date_quarter, "Gross Profit")
+#                                         SGA_Expense_quarter_df = financials_df(SGA_Expense_quarter_10_unpacked, date_quarter, "SGA Expense")
+#                                         Research_Dev_quarter_df = financials_df(Research_Dev_quarter_10_unpacked, date_quarter, "R&D Expense")
+#                                         Depreciation_Depletion_Amortisation_quater_df = financials_df(Depreciation_Depletion_Amortisation_quater_10_unpacked, date_quarter, "Depreciation & Amortization")
+#                                         Interest_Income_quarter_df = financials_df(Interest_Income_quarter_10_unpacked, date_quarter, "Interest Income")
+
+#                                         interest_expense_list_quarter_df = financials_df(interest_expense_list_quarter_10_unpacked, date_quarter, "Interest Expense")
+#                                         Ebita_quarter_10_unpacked_df = financials_df(Ebita_quarter_10_unpacked, date_quarter, "EBITDA")
+#                                         operating_income_list_quarter_df = financials_df(operating_income_list_quarter_10_unpacked, date_quarter, "Operating Income")
+
+#                                         merged_df = pd.concat([
+#                                         revenue_2013_quarter_df, cogs_list_quarter_df,gross_profit_quarter_df, SGA_Expense_quarter_df, Research_Dev_quarter_df,
+#                                         Depreciation_Depletion_Amortisation_quater_df,operating_income_list_quarter_df,
+#                                         interest_expense_list_quarter_df,Interest_Income_quarter_df,Pretax_income_quarter_df, 
+#                                         Income_tax_quarter_df,
+#                                         net_income_quarter_df,eps_basic_quarter_df, shares_basic_quarter_df,
+#                                         eps_diluted_quarter_df, shares_diluted_quarter_df,
+#                                         Ebita_quarter_10_unpacked_df
+#                                         ])
+
+                                        
+                                        #st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                        #pass                                 
+
+                                   #except KeyError:   
+
+                                        #st.write("")
+                                        #pass  
 
                with Balance_Sheet:
                     Annual,Quarterly = st.tabs(["Annual","Quarterly"])
@@ -10389,6 +10625,26 @@ if selected == "Stock Analysis Tool":
                                    Retained_earnings_annual = st.session_state[f'{ticker}_Retained_earnings_annual']
                                    Total_liabilities_annual = st.session_state[f'{ticker}_Total_liabilities_annual']
                                    Total_Equity_annual = st.session_state[f'{ticker}_Total_Equity_annual']
+
+                                   ################################ Quarter###############################
+                                   cash_and_equiv_quarterly_Balance_Sheet = st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet']
+                                   Total_investments_quarterly_Balance_Sheet = st.session_state[f'{ticker}_Total_investments_quarterly_Balance_Sheet']
+                                   Gross_loans_quarter = st.session_state[f'{ticker}_Gross_loans_quarter']
+                                   Loans_loss_quarter = st.session_state[f'{ticker}_Loans_loss_quarter']
+                                   Net_Loan_quarter = st.session_state[f'{ticker}_Net_Loan_quarter']
+                                   Unearned_income_quarter = st.session_state[f'{ticker}_Unearned_income_quarter']
+                                   Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
+                                   Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
+                                   Other_lt_assets_quarter = st.session_state[f'{ticker}_Other_lt_assets_quarter']
+                                   Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
+                                   Deposits_quarter = st.session_state[f'{ticker}_Deposits_quarter']
+                                   Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
+                                   LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
+                                   Other_longterm_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
+                                   Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
+                                   Total_liabilities_quarter = st.session_state[f'{ticker}_Total_liabilities_quarter']
+                                   Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
+
                               else:
                                    cash_und_cash_investments = annual_data['cash_and_equiv'][-10:]
                                    Total_investments_annual = annual_data['total_investments'][-10:]
@@ -10407,6 +10663,26 @@ if selected == "Stock Analysis Tool":
                                    Retained_earnings_annual = annual_data['retained_earnings'][-10:]
                                    Total_liabilities_annual = annual_data['total_liabilities'][-10:]
                                    Total_Equity_annual = annual_data['total_equity'][-10:]
+                                   ################################ Quarter###############################
+
+                                   cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
+                                   Total_investments_quarterly_Balance_Sheet = quarterly_data['total_investments'][-10:]
+                                   Gross_loans_quarter = quarterly_data['loans_gross'][-10:]
+                                   Loans_loss_quarter = quarterly_data['allowance_for_loan_losses'][-10:]
+                                   Net_Loan_quarter = quarterly_data['loans_net'][-10:]
+                                   Unearned_income_quarter = quarterly_data['unearned_income'][-10:]
+                                   Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
+                                   Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
+                                   Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
+                                   Total_assets_quarter = quarterly_data['total_assets'][-10:]
+                                   Deposits_quarter = quarterly_data['deposits_liability'][-10:]
+                                   Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
+                                   LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
+                                   Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
+                                   Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
+                                   Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
+                                   Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
+
                                    
                                        # Store unpacked data in session state
                                    st.session_state[f'{ticker}_cash_and_cash_investments_annual'] = cash_und_cash_investments
@@ -10426,7 +10702,28 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
                                    st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
                                    st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
-                                                       
+
+                                   ################################ Quarter###############################
+                                                                                    
+                                   # Store unpacked data in session state
+                                   st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet'] = cash_and_equiv_quarterly_Balance_Sheet
+                                   st.session_state[f'{ticker}_Total_investments_quarterly_Balance_Sheet'] = Total_investments_quarterly_Balance_Sheet
+                                   st.session_state[f'{ticker}_Gross_loans_quarter'] = Gross_loans_quarter
+                                   st.session_state[f'{ticker}_Loans_loss_quarter'] = Loans_loss_quarter
+                                   st.session_state[f'{ticker}_Net_Loan_quarter'] = Net_Loan_quarter
+                                   st.session_state[f'{ticker}_Unearned_income_quarter'] = Unearned_income_quarter
+                                   st.session_state[f'{ticker}_Net_goodwill_quarter'] = Net_goodwill_quarter
+                                   st.session_state[f'{ticker}_Intangible_assets_quarter'] = Intangible_assets_quarter
+                                   st.session_state[f'{ticker}_Other_lt_assets_quarter'] = Other_lt_assets_quarter
+                                   st.session_state[f'{ticker}_Total_assets_quarter'] = Total_assets_quarter
+                                   st.session_state[f'{ticker}_Deposits_quarter'] = Deposits_quarter
+                                   st.session_state[f'{ticker}_Short_term_debt_quarter'] = Short_term_debt_quarter10_unpacked
+                                   st.session_state[f'{ticker}_LongTerm_debt_quarter'] = LongTerm_debt_quarter10_unpacked
+                                   st.session_state[f'{ticker}_Other_longterm_liabilities_quarter'] = Other_longterm_liabilities_quarter10_unpacked
+                                   st.session_state[f'{ticker}_Retained_earnings_quarter'] = Retained_earnings_quarter
+                                   st.session_state[f'{ticker}_Total_liabilities_quarter'] = Total_liabilities_quarter10_unpacked
+                                   st.session_state[f'{ticker}_Total_Equity_quarter'] = Total_Equity_quarter10_unpacked
+                                                            
 
 
 
@@ -10447,9 +10744,26 @@ if selected == "Stock Analysis Tool":
                               Retained_earnings_annual_df = financials_df(Retained_earnings_annual, date_annual, "Retained Earnings")
                               Total_liabilities_annual_df = financials_df(Total_liabilities_annual, date_annual, "Total Liabilities")
                               Total_Equity_annual_df = financials_df(Total_Equity_annual, date_annual, "Total Equity")
-                              
 
+                              ################################ Quarter###############################
 
+                              cash_and_equiv_quarterly_Balance_Sheet_df = financials_df(cash_and_equiv_quarterly_Balance_Sheet, date_quarter, "Cash & Equivalents")
+                              Total_investments_quarterly_Balance_Sheet_df = financials_df(Total_investments_quarterly_Balance_Sheet, date_quarter, "Total Investments")
+                              Gross_loans_quarter_df = financials_df(Gross_loans_quarter, date_quarter, "Gross Loans")
+                              Loans_loss_quarter_df = financials_df(Loans_loss_quarter, date_quarter, "Allowance for Loan Losses")
+                              Net_Loan_quarter_df = financials_df(Net_Loan_quarter, date_quarter, "Net Loans")
+                              Unearned_income_quarter_df = financials_df(Unearned_income_quarter, date_quarter, "Unearned Income")
+                              Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
+                              Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
+                              Other_lt_assets_quarter_df = financials_df(Other_lt_assets_quarter, date_quarter, "Other longterm Assets")
+                              Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
+                              Deposits_quarter_df = financials_df(Deposits_quarter, date_quarter, "Total Deposits")
+                              Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter10_unpacked, date_quarter, "Short-Term Debt")
+                              LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter10_unpacked, date_quarter, "Long-Term Debt")
+                              Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter10_unpacked, date_quarter, "Other Long-Term Liabilities")
+                              Retained_earnings_quarter_df = financials_df(Retained_earnings_quarter, date_quarter, "Retained Earnings")
+                              Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter10_unpacked, date_quarter, "Total Liabilities")
+                              Total_Equity_quarter_df = financials_df(Total_Equity_quarter10_unpacked, date_quarter, "Total Equity")
 
 
                               merged_df = pd.concat([cash_und_cash_investments_df,Total_investments_annual_df,Gross_loans_annual_df,
@@ -10461,6 +10775,16 @@ if selected == "Stock Analysis Tool":
                                                      Total_liabilities_annual_df,Total_Equity_annual_df
                                                      ])           
                                         
+                                        ################################ Quarter###############################
+
+                              merged_df_quarter = pd.concat([cash_and_equiv_quarterly_Balance_Sheet_df,Total_investments_quarterly_Balance_Sheet_df,
+                                                            Gross_loans_quarter_df,Loans_loss_quarter_df,Net_Loan_quarter_df,Unearned_income_quarter_df,
+                                                            Net_goodwill_quarter_df,Intangible_assets_quarter_df,
+                                                            Other_lt_assets_quarter_df,Total_assets_quarter_df,Deposits_quarter_df,
+                                                            Short_term_debt_quarter_df,LongTerm_debt_quarter_df,
+                                                            Other_longterm_liabilities_quarter_df,
+                                                            Retained_earnings_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])          
+
                               st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
                               pass
@@ -10483,6 +10807,30 @@ if selected == "Stock Analysis Tool":
                                         Retained_earnings_annual = st.session_state[f'{ticker}_Retained_earnings_annual']
                                         Total_liabilities_annual = st.session_state[f'{ticker}_Total_liabilities_annual']
                                         Total_Equity_annual = st.session_state[f'{ticker}_Total_Equity_annual']
+                                        ################################ Quarter###############################
+                                        cash_and_equiv_quarterly_Balance_Sheet = st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet']
+                                        st_investments_quarterly_Balance_Sheet = st.session_state[f'{ticker}_st_investments_quarterly_Balance_Sheet']
+                                        Inventories_quarter = st.session_state[f'{ticker}_Inventories_quarter']
+                                        Total_current_assets_quarter = st.session_state[f'{ticker}_Total_current_assets_quarter']
+                                        Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
+                                        Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
+                                        Other_lt_assets_quarter = st.session_state[f'{ticker}_Other_lt_assets_quarter']
+                                        Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
+                                        Accounts_payable_quarter = st.session_state[f'{ticker}_Accounts_payable_quarter']
+                                        Current_accrued_liab_quarter = st.session_state[f'{ticker}_Current_accrued_liab_quarter']
+                                        Tax_payable_quarter = st.session_state[f'{ticker}_Tax_payable_quarter']
+                                        Other_current_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_current_liabilities_quarter']
+                                        Current_deferred_revenue_quarter = st.session_state[f'{ticker}_Current_deferred_revenue_quarter']
+                                        Total_current_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_current_liabilities_quarter']
+                                        Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
+                                        current_portion_of_lease_obligation_quarter  = st.session_state[f'{ticker}_current_portion_of_lease_obligation']
+                                        capital_leases_quarter  = st.session_state[f'{ticker}_capital_leases']
+                                        LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
+                                        Other_longterm_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
+                                        Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
+                                        Total_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_liabilities_quarter']
+                                        Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
+
                                    else:
 
                                         cash_und_cash_investments_annual = annual_data['cash_and_equiv'][-10:]
@@ -10501,6 +10849,30 @@ if selected == "Stock Analysis Tool":
                                         Retained_earnings_annual = annual_data['retained_earnings'][-10:]
                                         Total_liabilities_annual = annual_data['total_liabilities'][-10:]
                                         Total_Equity_annual = annual_data['total_equity'][-10:]
+                                         ################################ Quarter###############################
+                                        cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
+                                        st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
+                                        Inventories_quarter = quarterly_data['inventories'][-10:]
+                                        Total_current_assets_quarter = quarterly_data['total_current_assets'][-10:]
+                                        Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
+                                        Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
+                                        Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
+                                        Total_assets_quarter = quarterly_data['total_assets'][-10:]
+                                       # st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
+                                        Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
+                                        Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
+                                        Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
+                                        Other_current_liabilities_quarter10_unpacked = quarterly_data['other_current_liabilities'][-10:]
+                                        Current_deferred_revenue_quarter = quarterly_data['current_deferred_revenue'][-10:]
+                                        Total_current_liabilities_quarter10_unpacked = quarterly_data['total_current_liabilities'][-10:]
+                                        Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
+                                        current_portion_of_lease_obligation_quarter  = quarterly_data['current_capital_leases'][-10:]
+                                        capital_leases_quarter  = quarterly_data['noncurrent_capital_leases'][-10:]
+                                        LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
+                                        Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
+                                        Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
+                                        Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
+                                        Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
 
                                             # Store unpacked data in session state
                                         st.session_state[f'{ticker}_cash_and_cash_investments_annual'] = cash_und_cash_investments_annual
@@ -10519,6 +10891,33 @@ if selected == "Stock Analysis Tool":
                                         st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
                                         st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
                                         st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
+                                         ################################ Quarter###############################
+
+                                        # Store unpacked data in session state
+                                        st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet'] = cash_and_equiv_quarterly_Balance_Sheet
+                                        st.session_state[f'{ticker}_st_investments_quarterly_Balance_Sheet'] = st_investments_quarterly_Balance_Sheet
+                                        st.session_state[f'{ticker}_Inventories_quarter'] = Inventories_quarter
+                                        st.session_state[f'{ticker}_Total_current_assets_quarter'] = Total_current_assets_quarter
+                                        st.session_state[f'{ticker}_Intangible_assets_quarter'] = Intangible_assets_quarter
+                                        st.session_state[f'{ticker}_Net_goodwill_quarter'] = Net_goodwill_quarter
+                                        st.session_state[f'{ticker}_Other_lt_assets_quarter'] = Other_lt_assets_quarter
+                                        st.session_state[f'{ticker}_Total_assets_quarter'] = Total_assets_quarter
+                                        st.session_state[f'{ticker}_Accounts_payable_quarter'] = Accounts_payable_quarter
+                                        st.session_state[f'{ticker}_Current_accrued_liab_quarter'] = Current_accrued_liab_quarter
+                                        st.session_state[f'{ticker}_Tax_payable_quarter'] = Tax_payable_quarter
+                                        st.session_state[f'{ticker}_Other_current_liabilities_quarter'] = Other_current_liabilities_quarter10_unpacked
+
+                                        st.session_state[f'{ticker}_Current_deferred_revenue_quarter'] = Current_deferred_revenue_quarter
+                                        st.session_state[f'{ticker}_Total_current_liabilities_quarter'] = Total_current_liabilities_quarter10_unpacked
+                                        st.session_state[f'{ticker}_Short_term_debt_quarter'] = Short_term_debt_quarter10_unpacked
+                                        st.session_state[f'{ticker}_current_portion_of_lease_obligation'] = current_portion_of_lease_obligation_quarter 
+                                        st.session_state[f'{ticker}_capital_leases'] = capital_leases_quarter 
+                                        st.session_state[f'{ticker}_LongTerm_debt_quarter'] = LongTerm_debt_quarter10_unpacked
+                                        st.session_state[f'{ticker}_Other_longterm_liabilities_quarter'] = Other_longterm_liabilities_quarter10_unpacked
+                                        st.session_state[f'{ticker}_Retained_earnings_quarter'] = Retained_earnings_quarter
+                                        st.session_state[f'{ticker}_Total_liabilities_quarter'] = Total_liabilities_quarter10_unpacked
+                                        st.session_state[f'{ticker}_Total_Equity_quarter'] = Total_Equity_quarter10_unpacked
+
 
                                    index = range(len(date_annual))
                                    df = pd.DataFrame({'Period End Date': date_annual,
@@ -10536,6 +10935,35 @@ if selected == "Stock Analysis Tool":
                                    total = total[1:]  # Remove the first row
 
                                    total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
+
+                                    ################################ Quarter###############################
+
+
+
+                                   index = range(len(date_list_quarter))
+                                   df = pd.DataFrame({'Period End Date': date_list_quarter,
+                                                       'Cash and Equivalents': cash_and_equiv_quarterly_Balance_Sheet,
+                                                       'Short term Investments': st_investments_quarterly_Balance_Sheet
+                                                            }, index=index)
+
+
+
+
+                                   if 'Short term Investments' in df.columns:
+                                        df['Total Cash'] = df['Cash and Equivalents'] + df['Short term Investments']
+                                   else:
+                                        df['Total Cash'] = df['Cash and Equivalents']
+                                                       
+                                   total = df.T
+                                                       
+
+
+                                   total.columns = total.iloc[0]  # Use the first row as column names
+                                   total = total[1:]  # Remove the first row
+
+
+                                   total_quarter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
+
 
  
                                                   
@@ -10556,6 +10984,30 @@ if selected == "Stock Analysis Tool":
                                    Total_liabilities_annual_df = financials_df(Total_liabilities_annual, date_annual, "Total Liabilities")
                                    Total_Equity_annual_df = financials_df(Total_Equity_annual, date_annual, "Total Equity")
 
+                                   ################################ Quarter###############################
+
+                                   cash_and_equiv_quarterly_Balance_Sheet_df = financials_df(cash_and_equiv_quarterly_Balance_Sheet, date_quarter, "Cash & Equivalents")
+                                   st_investments_quarterly_Balance_Sheet_df = financials_df(st_investments_quarterly_Balance_Sheet, date_quarter, "Short-Term Investments")
+                                   Inventories_quarter_df = financials_df(Inventories_quarter, date_quarter, "Inventories")
+                                   Total_current_assets_quarter_df = financials_df(Total_current_assets_quarter, date_quarter, "Total Current Assets")
+                                   Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
+                                   Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
+                                   Other_lt_assets_quarter_df = financials_df(Other_lt_assets_quarter, date_quarter, "Other longterm Assets")
+                                   Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
+                                   Accounts_payable_quarter_df = financials_df(Accounts_payable_quarter, date_quarter, "Accounts Payable")
+                                   Current_accrued_liab_quarter_df = financials_df(Current_accrued_liab_quarter, date_quarter, "Current Accrued Liabilities")
+                                   Tax_payable_quarter_df = financials_df(Tax_payable_quarter, date_quarter, "Income Tax Payable")
+                                   Other_current_liabilities_quarter_df = financials_df(Other_current_liabilities_quarter10_unpacked, date_quarter, "Other Current Liabilities")
+                                   Current_deferred_revenue_quarter_df = financials_df(Current_deferred_revenue_quarter, date_quarter, "Current Deferred Revenue")
+                                   Total_current_liabilities_quarter_df = financials_df(Total_current_liabilities_quarter10_unpacked, date_quarter, "Total Current Liabilities")
+                                   Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter10_unpacked, date_quarter, "Short-Term Debt")
+                                   current_portion_of_lease_obligation_quarter_df = financials_df(current_portion_of_lease_obligation_quarter , date_quarter, "Current Portion of Lease Obligation")
+                                   capital_leases_quarter_df = financials_df(capital_leases_quarter , date_quarter, "Capital Leases (Noncurrent)")
+                                   LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter10_unpacked, date_quarter, "Long-Term Debt")
+                                   Retained_earnings_quarter_df = financials_df(Retained_earnings_quarter, date_quarter, "Retained Earnings")
+                                   Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter10_unpacked, date_quarter, "Other Long-Term Liabilities")
+                                   Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter10_unpacked, date_quarter, "Total Liabilities")
+                                   Total_Equity_quarter_df = financials_df(Total_Equity_quarter10_unpacked, date_quarter, "Total Equity")
 
 
      
@@ -10564,7 +11016,13 @@ if selected == "Stock Analysis Tool":
                                                          Short_term_debt_annual_df,Total_current_liabilities_annual_df,LongTerm_debt_annual_df,
                                                          Other_longterm_liabilities_annual_df,Retained_earnings_annual_df,Total_liabilities_annual_df,Total_Equity_annual_df])           
 
-                                                  
+                                   ################################ Quarter###############################
+                                   merged_df_quarter = pd.concat([total_quarter
+                                                                 ,Inventories_quarter_df,Total_current_assets_quarter_df,Net_goodwill_quarter_df,
+                                                                 Intangible_assets_quarter_df,
+                                                                 Other_lt_assets_quarter_df,Total_assets_quarter_df,Short_term_debt_quarter_df,
+                                                                 Total_current_liabilities_quarter_df,LongTerm_debt_quarter_df,Other_longterm_liabilities_quarter_df,
+                                                                 Retained_earnings_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df]) 
 
 
                                    st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
@@ -10588,6 +11046,21 @@ if selected == "Stock Analysis Tool":
                                         Total_liabilities_annual = st.session_state[f'{ticker}_Total_liabilities_annual']
                                         Retained_earnings_annual = st.session_state[f'{ticker}_Retained_earnings_annual']
                                         Total_Equity_annual = st.session_state[f'{ticker}_Total_Equity_annual']
+                                        ################################ Quarter###############################
+                                        Total_investments_quarter  = st.session_state[f'{ticker}_Total_investments_quarterly']
+                                        cash_and_equiv_quarterly = st.session_state[f'{ticker}_cash_and_equiv_quarterly']
+                                        Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
+                                        Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
+                                        Other_longterm_assets_quarter = st.session_state[f'{ticker}_Other_longterm_assets_quarter']
+                                        Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
+                                        Unearned_Premiums_quarter = st.session_state[f'{ticker}_Unearned_Premiums_quarter']
+                                        Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
+                                        LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
+                                        Other_longterm_liabilities_quarter = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
+                                        Total_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_liabilities_quarter']
+                                        Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
+                                        Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
+
                                    else:    
 
                                         Total_investments = annual_data['total_investments'][-10:]
@@ -10604,297 +11077,9 @@ if selected == "Stock Analysis Tool":
                                         Retained_earnings_annual =annual_data['retained_earnings'][-10:]
                                         Total_Equity_annual = annual_data['total_equity'][-10:]
 
-                                            # Store unpacked data in session state
-                                        st.session_state[f'{ticker}_Total_investments'] = Total_investments
-                                        st.session_state[f'{ticker}_cash_and_cash_investments'] = cash_und_cash_investments
-                                        st.session_state[f'{ticker}_Intangible_assets_annual'] = Intangible_assets_annual
-                                        st.session_state[f'{ticker}_Net_goodwill_annual'] = Net_goodwill_annual
-                                        st.session_state[f'{ticker}_Other_longterm_assets_annual'] = Other_longterm_assets_annual
-                                        st.session_state[f'{ticker}_Total_assets_annual'] = Total_assets_annual
-                                        st.session_state[f'{ticker}_Unearned_Premiums_annual'] = Unearned_Premiums_annual
-                                        st.session_state[f'{ticker}_Short_term_debt_annual'] = Short_term_debt_annual
-                                        st.session_state[f'{ticker}_LongTerm_debt_annual'] = LongTerm_debt_annual
-                                        st.session_state[f'{ticker}_Other_longterm_liabilities_annual'] = Other_longterm_liabilities_annual
-                                        st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
-                                        st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
-                                        st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
+                                        ################################ Quarter###############################
 
-                                   Total_investments_annual_df = financials_df(Total_investments, date_annual, "Other Investments")
-                                   cash_und_cash_investments_annual_df = financials_df(cash_und_cash_investments, date_annual, "Cash & Equivalents")
-                                   Intangible_assets_annual_df = financials_df(Intangible_assets_annual, date_annual, "Intangible Assets")
-                                   Net_goodwill_annual_df = financials_df(Net_goodwill_annual, date_annual, "Net Goodwill")
-                                   Other_longterm_assets_annual_df = financials_df(Other_longterm_assets_annual, date_annual, "Other Longterm Assets")
-                                   Total_assets_annual_df = financials_df(Total_assets_annual, date_annual, "Total Assets")
-                                   Unearned_Premiums_annual_df=financials_df(Unearned_Premiums_annual, date_annual, "Unearned Premiums")
-                                   Retained_earnings_annual_df=financials_df(Retained_earnings_annual, date_annual, "Retained Earnings")
-                                   Short_term_debt_annual_df = financials_df(Short_term_debt_annual, date_annual, "Short-Term Debt")
-                                   LongTerm_debt_annual_df = financials_df(LongTerm_debt_annual, date_annual, "Long-Term Debt")
-                                   Other_longterm_liabilities_annual_df = financials_df(Other_longterm_liabilities_annual, date_annual, "Other Long-Term Liabilities")
-                                   Total_liabilities_annual_df = financials_df(Total_liabilities_annual, date_annual, "Total Liabilities")
-                                   Total_Equity_annual_df = financials_df(Total_Equity_annual, date_annual, "Total Equity")
-
-                                                       
-
-                                   merged_df = pd.concat([Total_investments_annual_df,cash_und_cash_investments_annual_df,Net_goodwill_annual_df,
-                                                          Intangible_assets_annual_df,Other_longterm_assets_annual_df,
-                                                          Total_assets_annual_df,Unearned_Premiums_annual_df,Short_term_debt_annual_df,
-                                                          LongTerm_debt_annual_df,Other_longterm_liabilities_annual_df,
-                                                          Total_liabilities_annual_df,Retained_earnings_annual_df,Total_Equity_annual_df
-                                                          ])           
-                                                                                     
-                                                                                     
-                                                  
-                                   st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-
-
-
-                    with Quarterly:
-
-                         try:
-
-                              if f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet' in st.session_state:
-                                   cash_and_equiv_quarterly_Balance_Sheet = st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet']
-                                   Total_investments_quarterly_Balance_Sheet = st.session_state[f'{ticker}_Total_investments_quarterly_Balance_Sheet']
-                                   Gross_loans_quarter = st.session_state[f'{ticker}_Gross_loans_quarter']
-                                   Loans_loss_quarter = st.session_state[f'{ticker}_Loans_loss_quarter']
-                                   Net_Loan_quarter = st.session_state[f'{ticker}_Net_Loan_quarter']
-                                   Unearned_income_quarter = st.session_state[f'{ticker}_Unearned_income_quarter']
-                                   Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
-                                   Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
-                                   Other_lt_assets_quarter = st.session_state[f'{ticker}_Other_lt_assets_quarter']
-                                   Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
-                                   Deposits_quarter = st.session_state[f'{ticker}_Deposits_quarter']
-                                   Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
-                                   LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
-                                   Other_longterm_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
-                                   Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
-                                   Total_liabilities_quarter = st.session_state[f'{ticker}_Total_liabilities_quarter']
-                                   Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
-                              else:
-                                                   
-                                   cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
-                                   Total_investments_quarterly_Balance_Sheet = quarterly_data['total_investments'][-10:]
-                                   Gross_loans_quarter = quarterly_data['loans_gross'][-10:]
-                                   Loans_loss_quarter = quarterly_data['allowance_for_loan_losses'][-10:]
-                                   Net_Loan_quarter = quarterly_data['loans_net'][-10:]
-                                   Unearned_income_quarter = quarterly_data['unearned_income'][-10:]
-                                   Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
-                                   Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
-                                   Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
-                                   Total_assets_quarter = quarterly_data['total_assets'][-10:]
-                                   Deposits_quarter = quarterly_data['deposits_liability'][-10:]
-                                   Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
-                                   LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
-                                   Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
-                                   Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
-                                   Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
-                                   Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
-
-                                   # Store unpacked data in session state
-                                   st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet'] = cash_and_equiv_quarterly_Balance_Sheet
-                                   st.session_state[f'{ticker}_Total_investments_quarterly_Balance_Sheet'] = Total_investments_quarterly_Balance_Sheet
-                                   st.session_state[f'{ticker}_Gross_loans_quarter'] = Gross_loans_quarter
-                                   st.session_state[f'{ticker}_Loans_loss_quarter'] = Loans_loss_quarter
-                                   st.session_state[f'{ticker}_Net_Loan_quarter'] = Net_Loan_quarter
-                                   st.session_state[f'{ticker}_Unearned_income_quarter'] = Unearned_income_quarter
-                                   st.session_state[f'{ticker}_Net_goodwill_quarter'] = Net_goodwill_quarter
-                                   st.session_state[f'{ticker}_Intangible_assets_quarter'] = Intangible_assets_quarter
-                                   st.session_state[f'{ticker}_Other_lt_assets_quarter'] = Other_lt_assets_quarter
-                                   st.session_state[f'{ticker}_Total_assets_quarter'] = Total_assets_quarter
-                                   st.session_state[f'{ticker}_Deposits_quarter'] = Deposits_quarter
-                                   st.session_state[f'{ticker}_Short_term_debt_quarter'] = Short_term_debt_quarter10_unpacked
-                                   st.session_state[f'{ticker}_LongTerm_debt_quarter'] = LongTerm_debt_quarter10_unpacked
-                                   st.session_state[f'{ticker}_Other_longterm_liabilities_quarter'] = Other_longterm_liabilities_quarter10_unpacked
-                                   st.session_state[f'{ticker}_Retained_earnings_quarter'] = Retained_earnings_quarter
-                                   st.session_state[f'{ticker}_Total_liabilities_quarter'] = Total_liabilities_quarter10_unpacked
-                                   st.session_state[f'{ticker}_Total_Equity_quarter'] = Total_Equity_quarter10_unpacked
-                                                            
- 
-
-                              cash_and_equiv_quarterly_Balance_Sheet_df = financials_df(cash_and_equiv_quarterly_Balance_Sheet, date_quarter, "Cash & Equivalents")
-                              Total_investments_quarterly_Balance_Sheet_df = financials_df(Total_investments_quarterly_Balance_Sheet, date_quarter, "Total Investments")
-                              Gross_loans_quarter_df = financials_df(Gross_loans_quarter, date_quarter, "Gross Loans")
-                              Loans_loss_quarter_df = financials_df(Loans_loss_quarter, date_quarter, "Allowance for Loan Losses")
-                              Net_Loan_quarter_df = financials_df(Net_Loan_quarter, date_quarter, "Net Loans")
-                              Unearned_income_quarter_df = financials_df(Unearned_income_quarter, date_quarter, "Unearned Income")
-                              Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
-                              Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
-                              Other_lt_assets_quarter_df = financials_df(Other_lt_assets_quarter, date_quarter, "Other longterm Assets")
-                              Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
-                              Deposits_quarter_df = financials_df(Deposits_quarter, date_quarter, "Total Deposits")
-                              Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter10_unpacked, date_quarter, "Short-Term Debt")
-                              LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter10_unpacked, date_quarter, "Long-Term Debt")
-                              Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter10_unpacked, date_quarter, "Other Long-Term Liabilities")
-                              Retained_earnings_quarter_df = financials_df(Retained_earnings_quarter, date_quarter, "Retained Earnings")
-                              Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter10_unpacked, date_quarter, "Total Liabilities")
-                              Total_Equity_quarter_df = financials_df(Total_Equity_quarter10_unpacked, date_quarter, "Total Equity")
-                             
-                              
-                         
-
-
-                              merged_df_quarter = pd.concat([cash_and_equiv_quarterly_Balance_Sheet_df,Total_investments_quarterly_Balance_Sheet_df,
-                                                             Gross_loans_quarter_df,Loans_loss_quarter_df,Net_Loan_quarter_df,Unearned_income_quarter_df,
-                                                             Net_goodwill_quarter_df,Intangible_assets_quarter_df,
-                                                             Other_lt_assets_quarter_df,Total_assets_quarter_df,Deposits_quarter_df,
-                                                             Short_term_debt_quarter_df,LongTerm_debt_quarter_df,
-                                                             Other_longterm_liabilities_quarter_df,
-                                                             Retained_earnings_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])           
-                              st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-                              pass
-                                             
-                         except KeyError:
-                              try:
-  
-                                   #date_quarterly_Balance_Sheet = quarterly_data['period_end_date'][-10:] 
-                                   if f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet' in st.session_state:
-                                        cash_and_equiv_quarterly_Balance_Sheet = st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet']
-                                        st_investments_quarterly_Balance_Sheet = st.session_state[f'{ticker}_st_investments_quarterly_Balance_Sheet']
-                                        Inventories_quarter = st.session_state[f'{ticker}_Inventories_quarter']
-                                        Total_current_assets_quarter = st.session_state[f'{ticker}_Total_current_assets_quarter']
-                                        Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
-                                        Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
-                                        Other_lt_assets_quarter = st.session_state[f'{ticker}_Other_lt_assets_quarter']
-                                        Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
-                                        Accounts_payable_quarter = st.session_state[f'{ticker}_Accounts_payable_quarter']
-                                        Current_accrued_liab_quarter = st.session_state[f'{ticker}_Current_accrued_liab_quarter']
-                                        Tax_payable_quarter = st.session_state[f'{ticker}_Tax_payable_quarter']
-                                        Other_current_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_current_liabilities_quarter']
-                                        Current_deferred_revenue_quarter = st.session_state[f'{ticker}_Current_deferred_revenue_quarter']
-                                        Total_current_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_current_liabilities_quarter']
-                                        Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
-                                        current_portion_of_lease_obligation = st.session_state[f'{ticker}_current_portion_of_lease_obligation']
-                                        capital_leases = st.session_state[f'{ticker}_capital_leases']
-                                        LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
-                                        Other_longterm_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
-                                        Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
-                                        Total_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_liabilities_quarter']
-                                        Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
-                                   else:
-
-                                        cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
-                                        st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
-                                        Inventories_quarter = quarterly_data['inventories'][-10:]
-                                        Total_current_assets_quarter = quarterly_data['total_current_assets'][-10:]
-                                        Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
-                                        Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
-                                        Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
-                                        Total_assets_quarter = quarterly_data['total_assets'][-10:]
-                                        st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
-                                        Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
-                                        Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
-                                        Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
-                                        Other_current_liabilities_quarter10_unpacked = quarterly_data['other_current_liabilities'][-10:]
-                                        Current_deferred_revenue_quarter = quarterly_data['current_deferred_revenue'][-10:]
-                                        Total_current_liabilities_quarter10_unpacked = quarterly_data['total_current_liabilities'][-10:] 
-                                        Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
-                                        current_portion_of_lease_obligation = quarterly_data['current_capital_leases'][-10:]
-                                        capital_leases = quarterly_data['noncurrent_capital_leases'][-10:]
-                                        LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
-                                        Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
-                                        Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
-                                        Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
-                                        Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
-
-
-                                        # Store unpacked data in session state
-                                        st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet'] = cash_and_equiv_quarterly_Balance_Sheet
-                                        st.session_state[f'{ticker}_st_investments_quarterly_Balance_Sheet'] = st_investments_quarterly_Balance_Sheet
-                                        st.session_state[f'{ticker}_Inventories_quarter'] = Inventories_quarter
-                                        st.session_state[f'{ticker}_Total_current_assets_quarter'] = Total_current_assets_quarter
-                                        st.session_state[f'{ticker}_Intangible_assets_quarter'] = Intangible_assets_quarter
-                                        st.session_state[f'{ticker}_Net_goodwill_quarter'] = Net_goodwill_quarter
-                                        st.session_state[f'{ticker}_Other_lt_assets_quarter'] = Other_lt_assets_quarter
-                                        st.session_state[f'{ticker}_Total_assets_quarter'] = Total_assets_quarter
-                                        st.session_state[f'{ticker}_Accounts_payable_quarter'] = Accounts_payable_quarter
-                                        st.session_state[f'{ticker}_Current_accrued_liab_quarter'] = Current_accrued_liab_quarter
-                                        st.session_state[f'{ticker}_Tax_payable_quarter'] = Tax_payable_quarter
-                                        st.session_state[f'{ticker}_Other_current_liabilities_quarter'] = Other_current_liabilities_quarter10_unpacked
-
-
-                                        st.session_state[f'{ticker}_Current_deferred_revenue_quarter'] = Current_deferred_revenue_quarter
-                                        st.session_state[f'{ticker}_Total_current_liabilities_quarter'] = Total_current_liabilities_quarter10_unpacked
-                                        st.session_state[f'{ticker}_Short_term_debt_quarter'] = Short_term_debt_quarter10_unpacked
-                                        st.session_state[f'{ticker}_current_portion_of_lease_obligation'] = current_portion_of_lease_obligation
-                                        st.session_state[f'{ticker}_capital_leases'] = capital_leases
-                                        st.session_state[f'{ticker}_LongTerm_debt_quarter'] = LongTerm_debt_quarter10_unpacked
-                                        st.session_state[f'{ticker}_Other_longterm_liabilities_quarter'] = Other_longterm_liabilities_quarter10_unpacked
-                                        st.session_state[f'{ticker}_Retained_earnings_quarter'] = Retained_earnings_quarter
-                                        st.session_state[f'{ticker}_Total_liabilities_quarter'] = Total_liabilities_quarter10_unpacked
-                                        st.session_state[f'{ticker}_Total_Equity_quarter'] = Total_Equity_quarter10_unpacked
-                                                  #-----------------------------------------------------------
-                                   index = range(len(date_list_quarter))
-                                   df = pd.DataFrame({'Period End Date': date_list_quarter,
-                                                       'Cash and Equivalents': cash_and_equiv_quarterly_Balance_Sheet,
-                                                       'Short term Investments': st_investments_quarterly_Balance_Sheet
-                                                        }, index=index)
-
-
-                                   if 'Short term Investments' in df.columns:
-                                        df['Total Cash'] = df['Cash and Equivalents'] + df['Short term Investments']
-                                   else:
-                                        df['Total Cash'] = df['Cash and Equivalents']
-                                                       
-                                   total = df.T
-                                                       
-
-                                   total.columns = total.iloc[0]  # Use the first row as column names
-                                   total = total[1:]  # Remove the first row
-
-                                   total = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
-
-                                   cash_and_equiv_quarterly_Balance_Sheet_df = financials_df(cash_and_equiv_quarterly_Balance_Sheet, date_quarter, "Cash & Equivalents")
-                                   st_investments_quarterly_Balance_Sheet_df = financials_df(st_investments_quarterly_Balance_Sheet, date_quarter, "Short-Term Investments")
-                                   Inventories_quarter_df = financials_df(Inventories_quarter, date_quarter, "Inventories")
-                                   Total_current_assets_quarter_df = financials_df(Total_current_assets_quarter, date_quarter, "Total Current Assets")
-                                   Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
-                                   Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
-                                   Other_lt_assets_quarter_df = financials_df(Other_lt_assets_quarter, date_quarter, "Other longterm Assets")
-                                   Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
-                                   Accounts_payable_quarter_df = financials_df(Accounts_payable_quarter, date_quarter, "Accounts Payable")
-                                   Current_accrued_liab_quarter_df = financials_df(Current_accrued_liab_quarter, date_quarter, "Current Accrued Liabilities")
-                                   Tax_payable_quarter_df = financials_df(Tax_payable_quarter, date_quarter, "Income Tax Payable")
-                                   Other_current_liabilities_quarter_df = financials_df(Other_current_liabilities_quarter10_unpacked, date_quarter, "Other Current Liabilities")
-                                   Current_deferred_revenue_quarter_df = financials_df(Current_deferred_revenue_quarter, date_quarter, "Current Deferred Revenue")
-                                   Total_current_liabilities_quarter_df = financials_df(Total_current_liabilities_quarter10_unpacked, date_quarter, "Total Current Liabilities")
-                                   Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter10_unpacked, date_quarter, "Short-Term Debt")
-                                   current_portion_of_lease_obligation_df = financials_df(current_portion_of_lease_obligation, date_quarter, "Current Portion of Lease Obligation")
-                                   capital_leases_df = financials_df(capital_leases, date_quarter, "Capital Leases (Noncurrent)")
-                                   LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter10_unpacked, date_quarter, "Long-Term Debt")
-                                   Retained_earnings_quarter_df = financials_df(Retained_earnings_quarter, date_quarter, "Retained Earnings")
-                                   Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter10_unpacked, date_quarter, "Other Long-Term Liabilities")
-                                   Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter10_unpacked, date_quarter, "Total Liabilities")
-                                   Total_Equity_quarter_df = financials_df(Total_Equity_quarter10_unpacked, date_quarter, "Total Equity")
-
-                                                       
-                                   merged_df_quarter = pd.concat([total,Inventories_quarter_df,Total_current_assets_quarter_df,Net_goodwill_quarter_df,
-                                                                  Intangible_assets_quarter_df,
-                                                                  Other_lt_assets_quarter_df,Total_assets_quarter_df,Short_term_debt_quarter_df,
-                                                                  Total_current_liabilities_quarter_df,LongTerm_debt_quarter_df,Other_longterm_liabilities_quarter_df,
-                                                                  Retained_earnings_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])        
-                                   st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                   pass
-                              except KeyError:
-
-                                   if f'{ticker}_Total_investments_quarterly' in st.session_state:
-                                        Total_investments = st.session_state[f'{ticker}_Total_investments_quarterly']
-                                        cash_and_equiv_quarterly = st.session_state[f'{ticker}_cash_and_equiv_quarterly']
-                                        Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
-                                        Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
-                                        Other_longterm_assets_quarter = st.session_state[f'{ticker}_Other_longterm_assets_quarter']
-                                        Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
-                                        Unearned_Premiums_quarter = st.session_state[f'{ticker}_Unearned_Premiums_quarter']
-                                        Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
-                                        LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
-                                        Other_longterm_liabilities_quarter = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
-                                        Total_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_liabilities_quarter']
-                                        Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
-                                        Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
-                                   else:
-                                                                           
-                                        Total_investments = quarterly_data['total_investments'][-10:]
+                                        Total_investments_quarter  = quarterly_data['total_investments'][-10:]
                                         cash_and_equiv_quarterly = quarterly_data['cash_and_equiv'][-10:]
                                         Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
                                         Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
@@ -10909,8 +11094,23 @@ if selected == "Stock Analysis Tool":
                                         Retained_earnings_quarter  =quarterly_data['retained_earnings'][-10:]
 
 
-                                                                                # Store unpacked data in session state
-                                        st.session_state[f'{ticker}_Total_investments_quarterly'] = Total_investments
+                                            # Store unpacked data in session state
+                                        st.session_state[f'{ticker}_Total_investments'] = Total_investments
+                                        st.session_state[f'{ticker}_cash_and_cash_investments'] = cash_und_cash_investments
+                                        st.session_state[f'{ticker}_Intangible_assets_annual'] = Intangible_assets_annual
+                                        st.session_state[f'{ticker}_Net_goodwill_annual'] = Net_goodwill_annual
+                                        st.session_state[f'{ticker}_Other_longterm_assets_annual'] = Other_longterm_assets_annual
+                                        st.session_state[f'{ticker}_Total_assets_annual'] = Total_assets_annual
+                                        st.session_state[f'{ticker}_Unearned_Premiums_annual'] = Unearned_Premiums_annual
+                                        st.session_state[f'{ticker}_Short_term_debt_annual'] = Short_term_debt_annual
+                                        st.session_state[f'{ticker}_LongTerm_debt_annual'] = LongTerm_debt_annual
+                                        st.session_state[f'{ticker}_Other_longterm_liabilities_annual'] = Other_longterm_liabilities_annual
+                                        st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
+                                        st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
+                                        st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
+                                        ################################ Quarter###############################
+
+                                        st.session_state[f'{ticker}_Total_investments_quarterly'] = Total_investments_quarter 
                                         st.session_state[f'{ticker}_cash_and_equiv_quarterly'] = cash_and_equiv_quarterly
                                         st.session_state[f'{ticker}_Net_goodwill_quarter'] = Net_goodwill_quarter
                                         st.session_state[f'{ticker}_Intangible_assets_quarter'] = Intangible_assets_quarter
@@ -10924,12 +11124,23 @@ if selected == "Stock Analysis Tool":
                                         st.session_state[f'{ticker}_Total_Equity_quarter'] = Total_Equity_quarter10_unpacked
                                         st.session_state[f'{ticker}_Retained_earnings_quarter'] = Retained_earnings_quarter
 
-                                        
-                                        
-                                        
-                                        
 
-                                   Total_investments_quarter_df = financials_df(Total_investments, date_quarter, "Other Investments")
+
+                                   Total_investments_annual_df = financials_df(Total_investments, date_annual, "Other Investments")
+                                   cash_und_cash_investments_annual_df = financials_df(cash_und_cash_investments, date_annual, "Cash & Equivalents")
+                                   Intangible_assets_annual_df = financials_df(Intangible_assets_annual, date_annual, "Intangible Assets")
+                                   Net_goodwill_annual_df = financials_df(Net_goodwill_annual, date_annual, "Net Goodwill")
+                                   Other_longterm_assets_annual_df = financials_df(Other_longterm_assets_annual, date_annual, "Other Longterm Assets")
+                                   Total_assets_annual_df = financials_df(Total_assets_annual, date_annual, "Total Assets")
+                                   Unearned_Premiums_annual_df=financials_df(Unearned_Premiums_annual, date_annual, "Unearned Premiums")
+                                   Retained_earnings_annual_df=financials_df(Retained_earnings_annual, date_annual, "Retained Earnings")
+                                   Short_term_debt_annual_df = financials_df(Short_term_debt_annual, date_annual, "Short-Term Debt")
+                                   LongTerm_debt_annual_df = financials_df(LongTerm_debt_annual, date_annual, "Long-Term Debt")
+                                   Other_longterm_liabilities_annual_df = financials_df(Other_longterm_liabilities_annual, date_annual, "Other Long-Term Liabilities")
+                                   Total_liabilities_annual_df = financials_df(Total_liabilities_annual, date_annual, "Total Liabilities")
+                                   Total_Equity_annual_df = financials_df(Total_Equity_annual, date_annual, "Total Equity")
+                                   ################################ Quarter###############################
+                                   Total_investments_quarter_df = financials_df(Total_investments_quarter , date_quarter, "Other Investments")
                                    cash_and_equiv_quarterly_df = financials_df(cash_and_equiv_quarterly, date_quarter, "Cash & Equivalents")
                                    Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
                                    Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
@@ -10943,14 +11154,334 @@ if selected == "Stock Analysis Tool":
                                    Retained_earnings_quarter_df=financials_df(Retained_earnings_quarter , date_quarter, "Retained Earnings")
                                    Total_Equity_quarter_df = financials_df(Total_Equity_quarter10_unpacked, date_quarter, "Total Equity")
 
+                                                            
+
+                                   merged_df = pd.concat([Total_investments_annual_df,cash_und_cash_investments_annual_df,Net_goodwill_annual_df,
+                                                          Intangible_assets_annual_df,Other_longterm_assets_annual_df,
+                                                          Total_assets_annual_df,Unearned_Premiums_annual_df,Short_term_debt_annual_df,
+                                                          LongTerm_debt_annual_df,Other_longterm_liabilities_annual_df,
+                                                          Total_liabilities_annual_df,Retained_earnings_annual_df,Total_Equity_annual_df
+                                                          ])           
+                                                                                     
+                                   ################################ Quarter###############################  
+                                   merged_df_quarter = pd.concat([Total_investments_quarter_df,cash_and_equiv_quarterly_df,Net_goodwill_quarter_df,Intangible_assets_quarter_df,
+                                                                     Other_longterm_assets_quarter_df,Total_assets_quarter_df,
+                                                                     Unearned_Premiums_quarter_df,Short_term_debt_quarter_df,LongTerm_debt_quarter_df,
+                                                                     Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Retained_earnings_quarter_df,
+                                                                     Total_Equity_quarter_df]) 
+                          
+                                                  
+                                   st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+
+
+
+                    with Quarterly:
+                         st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+
+                         #try:
+
+                              # if f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet' in st.session_state:
+                              #      cash_and_equiv_quarterly_Balance_Sheet = st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet']
+                              #      Total_investments_quarterly_Balance_Sheet = st.session_state[f'{ticker}_Total_investments_quarterly_Balance_Sheet']
+                              #      Gross_loans_quarter = st.session_state[f'{ticker}_Gross_loans_quarter']
+                              #      Loans_loss_quarter = st.session_state[f'{ticker}_Loans_loss_quarter']
+                              #      Net_Loan_quarter = st.session_state[f'{ticker}_Net_Loan_quarter']
+                              #      Unearned_income_quarter = st.session_state[f'{ticker}_Unearned_income_quarter']
+                              #      Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
+                              #      Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
+                              #      Other_lt_assets_quarter = st.session_state[f'{ticker}_Other_lt_assets_quarter']
+                              #      Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
+                              #      Deposits_quarter = st.session_state[f'{ticker}_Deposits_quarter']
+                              #      Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
+                              #      LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
+                              #      Other_longterm_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
+                              #      Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
+                              #      Total_liabilities_quarter = st.session_state[f'{ticker}_Total_liabilities_quarter']
+                              #      Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
+                              # else:
+                                                   
+                              #      cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
+                              #      Total_investments_quarterly_Balance_Sheet = quarterly_data['total_investments'][-10:]
+                              #      Gross_loans_quarter = quarterly_data['loans_gross'][-10:]
+                              #      Loans_loss_quarter = quarterly_data['allowance_for_loan_losses'][-10:]
+                              #      Net_Loan_quarter = quarterly_data['loans_net'][-10:]
+                              #      Unearned_income_quarter = quarterly_data['unearned_income'][-10:]
+                              #      Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
+                              #      Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
+                              #      Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
+                              #      Total_assets_quarter = quarterly_data['total_assets'][-10:]
+                              #      Deposits_quarter = quarterly_data['deposits_liability'][-10:]
+                              #      Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
+                              #      LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
+                              #      Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
+                              #      Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
+                              #      Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
+                              #      Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
+
+                              #      # Store unpacked data in session state
+                              #      st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet'] = cash_and_equiv_quarterly_Balance_Sheet
+                              #      st.session_state[f'{ticker}_Total_investments_quarterly_Balance_Sheet'] = Total_investments_quarterly_Balance_Sheet
+                              #      st.session_state[f'{ticker}_Gross_loans_quarter'] = Gross_loans_quarter
+                              #      st.session_state[f'{ticker}_Loans_loss_quarter'] = Loans_loss_quarter
+                              #      st.session_state[f'{ticker}_Net_Loan_quarter'] = Net_Loan_quarter
+                              #      st.session_state[f'{ticker}_Unearned_income_quarter'] = Unearned_income_quarter
+                              #      st.session_state[f'{ticker}_Net_goodwill_quarter'] = Net_goodwill_quarter
+                              #      st.session_state[f'{ticker}_Intangible_assets_quarter'] = Intangible_assets_quarter
+                              #      st.session_state[f'{ticker}_Other_lt_assets_quarter'] = Other_lt_assets_quarter
+                              #      st.session_state[f'{ticker}_Total_assets_quarter'] = Total_assets_quarter
+                              #      st.session_state[f'{ticker}_Deposits_quarter'] = Deposits_quarter
+                              #      st.session_state[f'{ticker}_Short_term_debt_quarter'] = Short_term_debt_quarter10_unpacked
+                              #      st.session_state[f'{ticker}_LongTerm_debt_quarter'] = LongTerm_debt_quarter10_unpacked
+                              #      st.session_state[f'{ticker}_Other_longterm_liabilities_quarter'] = Other_longterm_liabilities_quarter10_unpacked
+                              #      st.session_state[f'{ticker}_Retained_earnings_quarter'] = Retained_earnings_quarter
+                              #      st.session_state[f'{ticker}_Total_liabilities_quarter'] = Total_liabilities_quarter10_unpacked
+                              #      st.session_state[f'{ticker}_Total_Equity_quarter'] = Total_Equity_quarter10_unpacked
+                                                            
+ 
+
+                              # cash_and_equiv_quarterly_Balance_Sheet_df = financials_df(cash_and_equiv_quarterly_Balance_Sheet, date_quarter, "Cash & Equivalents")
+                              # Total_investments_quarterly_Balance_Sheet_df = financials_df(Total_investments_quarterly_Balance_Sheet, date_quarter, "Total Investments")
+                              # Gross_loans_quarter_df = financials_df(Gross_loans_quarter, date_quarter, "Gross Loans")
+                              # Loans_loss_quarter_df = financials_df(Loans_loss_quarter, date_quarter, "Allowance for Loan Losses")
+                              # Net_Loan_quarter_df = financials_df(Net_Loan_quarter, date_quarter, "Net Loans")
+                              # Unearned_income_quarter_df = financials_df(Unearned_income_quarter, date_quarter, "Unearned Income")
+                              # Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
+                              # Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
+                              # Other_lt_assets_quarter_df = financials_df(Other_lt_assets_quarter, date_quarter, "Other longterm Assets")
+                              # Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
+                              # Deposits_quarter_df = financials_df(Deposits_quarter, date_quarter, "Total Deposits")
+                              # Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter10_unpacked, date_quarter, "Short-Term Debt")
+                              # LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter10_unpacked, date_quarter, "Long-Term Debt")
+                              # Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter10_unpacked, date_quarter, "Other Long-Term Liabilities")
+                              # Retained_earnings_quarter_df = financials_df(Retained_earnings_quarter, date_quarter, "Retained Earnings")
+                              # Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter10_unpacked, date_quarter, "Total Liabilities")
+                              # Total_Equity_quarter_df = financials_df(Total_Equity_quarter10_unpacked, date_quarter, "Total Equity")
+                             
+                              
+                         
+
+
+                              # merged_df_quarter = pd.concat([cash_and_equiv_quarterly_Balance_Sheet_df,Total_investments_quarterly_Balance_Sheet_df,
+                              #                                Gross_loans_quarter_df,Loans_loss_quarter_df,Net_Loan_quarter_df,Unearned_income_quarter_df,
+                              #                                Net_goodwill_quarter_df,Intangible_assets_quarter_df,
+                              #                                Other_lt_assets_quarter_df,Total_assets_quarter_df,Deposits_quarter_df,
+                              #                                Short_term_debt_quarter_df,LongTerm_debt_quarter_df,
+                              #                                Other_longterm_liabilities_quarter_df,
+                              #                                Retained_earnings_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])           
+                             # st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                             # pass
+                                             
+                         #except KeyError:
+                              #try:
+  
+                                   # #date_quarterly_Balance_Sheet = quarterly_data['period_end_date'][-10:] 
+                                   # if f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet' in st.session_state:
+                                   #      cash_and_equiv_quarterly_Balance_Sheet = st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet']
+                                   #      st_investments_quarterly_Balance_Sheet = st.session_state[f'{ticker}_st_investments_quarterly_Balance_Sheet']
+                                   #      Inventories_quarter = st.session_state[f'{ticker}_Inventories_quarter']
+                                   #      Total_current_assets_quarter = st.session_state[f'{ticker}_Total_current_assets_quarter']
+                                   #      Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
+                                   #      Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
+                                   #      Other_lt_assets_quarter = st.session_state[f'{ticker}_Other_lt_assets_quarter']
+                                   #      Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
+                                   #      Accounts_payable_quarter = st.session_state[f'{ticker}_Accounts_payable_quarter']
+                                   #      Current_accrued_liab_quarter = st.session_state[f'{ticker}_Current_accrued_liab_quarter']
+                                   #      Tax_payable_quarter = st.session_state[f'{ticker}_Tax_payable_quarter']
+                                   #      Other_current_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_current_liabilities_quarter']
+                                   #      Current_deferred_revenue_quarter = st.session_state[f'{ticker}_Current_deferred_revenue_quarter']
+                                   #      Total_current_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_current_liabilities_quarter']
+                                   #      Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
+                                   #      current_portion_of_lease_obligation = st.session_state[f'{ticker}_current_portion_of_lease_obligation']
+                                   #      capital_leases = st.session_state[f'{ticker}_capital_leases']
+                                   #      LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
+                                   #      Other_longterm_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
+                                   #      Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
+                                   #      Total_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_liabilities_quarter']
+                                   #      Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
+                                   # else:
+
+                                   #      cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
+                                   #      st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
+                                   #      Inventories_quarter = quarterly_data['inventories'][-10:]
+                                   #      Total_current_assets_quarter = quarterly_data['total_current_assets'][-10:]
+                                   #      Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
+                                   #      Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
+                                   #      Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
+                                   #      Total_assets_quarter = quarterly_data['total_assets'][-10:]
+                                   #      st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
+                                   #      Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
+                                   #      Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
+                                   #      Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
+                                   #      Other_current_liabilities_quarter10_unpacked = quarterly_data['other_current_liabilities'][-10:]
+                                   #      Current_deferred_revenue_quarter = quarterly_data['current_deferred_revenue'][-10:]
+                                   #      Total_current_liabilities_quarter10_unpacked = quarterly_data['total_current_liabilities'][-10:] 
+                                   #      Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
+                                   #      current_portion_of_lease_obligation = quarterly_data['current_capital_leases'][-10:]
+                                   #      capital_leases = quarterly_data['noncurrent_capital_leases'][-10:]
+                                   #      LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
+                                   #      Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
+                                   #      Retained_earnings_quarter = quarterly_data['retained_earnings'][-10:]
+                                   #      Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
+                                   #      Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
+
+
+                                   #      # Store unpacked data in session state
+                                   #      st.session_state[f'{ticker}_cash_and_equiv_quarterly_Balance_Sheet'] = cash_and_equiv_quarterly_Balance_Sheet
+                                   #      st.session_state[f'{ticker}_st_investments_quarterly_Balance_Sheet'] = st_investments_quarterly_Balance_Sheet
+                                   #      st.session_state[f'{ticker}_Inventories_quarter'] = Inventories_quarter
+                                   #      st.session_state[f'{ticker}_Total_current_assets_quarter'] = Total_current_assets_quarter
+                                   #      st.session_state[f'{ticker}_Intangible_assets_quarter'] = Intangible_assets_quarter
+                                   #      st.session_state[f'{ticker}_Net_goodwill_quarter'] = Net_goodwill_quarter
+                                   #      st.session_state[f'{ticker}_Other_lt_assets_quarter'] = Other_lt_assets_quarter
+                                   #      st.session_state[f'{ticker}_Total_assets_quarter'] = Total_assets_quarter
+                                   #      st.session_state[f'{ticker}_Accounts_payable_quarter'] = Accounts_payable_quarter
+                                   #      st.session_state[f'{ticker}_Current_accrued_liab_quarter'] = Current_accrued_liab_quarter
+                                   #      st.session_state[f'{ticker}_Tax_payable_quarter'] = Tax_payable_quarter
+                                   #      st.session_state[f'{ticker}_Other_current_liabilities_quarter'] = Other_current_liabilities_quarter10_unpacked
+
+
+                                   #      st.session_state[f'{ticker}_Current_deferred_revenue_quarter'] = Current_deferred_revenue_quarter
+                                   #      st.session_state[f'{ticker}_Total_current_liabilities_quarter'] = Total_current_liabilities_quarter10_unpacked
+                                   #      st.session_state[f'{ticker}_Short_term_debt_quarter'] = Short_term_debt_quarter10_unpacked
+                                   #      st.session_state[f'{ticker}_current_portion_of_lease_obligation'] = current_portion_of_lease_obligation
+                                   #      st.session_state[f'{ticker}_capital_leases'] = capital_leases
+                                   #      st.session_state[f'{ticker}_LongTerm_debt_quarter'] = LongTerm_debt_quarter10_unpacked
+                                   #      st.session_state[f'{ticker}_Other_longterm_liabilities_quarter'] = Other_longterm_liabilities_quarter10_unpacked
+                                   #      st.session_state[f'{ticker}_Retained_earnings_quarter'] = Retained_earnings_quarter
+                                   #      st.session_state[f'{ticker}_Total_liabilities_quarter'] = Total_liabilities_quarter10_unpacked
+                                   #      st.session_state[f'{ticker}_Total_Equity_quarter'] = Total_Equity_quarter10_unpacked
+                                   #                #-----------------------------------------------------------
+                                   # index = range(len(date_list_quarter))
+                                   # df = pd.DataFrame({'Period End Date': date_list_quarter,
+                                   #                     'Cash and Equivalents': cash_and_equiv_quarterly_Balance_Sheet,
+                                   #                     'Short term Investments': st_investments_quarterly_Balance_Sheet
+                                   #                      }, index=index)
+
+
+                                   # if 'Short term Investments' in df.columns:
+                                   #      df['Total Cash'] = df['Cash and Equivalents'] + df['Short term Investments']
+                                   # else:
+                                   #      df['Total Cash'] = df['Cash and Equivalents']
+                                                       
+                                   # total = df.T
+                                                       
+
+                                   # total.columns = total.iloc[0]  # Use the first row as column names
+                                   # total = total[1:]  # Remove the first row
+
+                                   # total = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
+
+                                   # cash_and_equiv_quarterly_Balance_Sheet_df = financials_df(cash_and_equiv_quarterly_Balance_Sheet, date_quarter, "Cash & Equivalents")
+                                   # st_investments_quarterly_Balance_Sheet_df = financials_df(st_investments_quarterly_Balance_Sheet, date_quarter, "Short-Term Investments")
+                                   # Inventories_quarter_df = financials_df(Inventories_quarter, date_quarter, "Inventories")
+                                   # Total_current_assets_quarter_df = financials_df(Total_current_assets_quarter, date_quarter, "Total Current Assets")
+                                   # Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
+                                   # Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
+                                   # Other_lt_assets_quarter_df = financials_df(Other_lt_assets_quarter, date_quarter, "Other longterm Assets")
+                                   # Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
+                                   # Accounts_payable_quarter_df = financials_df(Accounts_payable_quarter, date_quarter, "Accounts Payable")
+                                   # Current_accrued_liab_quarter_df = financials_df(Current_accrued_liab_quarter, date_quarter, "Current Accrued Liabilities")
+                                   # Tax_payable_quarter_df = financials_df(Tax_payable_quarter, date_quarter, "Income Tax Payable")
+                                   # Other_current_liabilities_quarter_df = financials_df(Other_current_liabilities_quarter10_unpacked, date_quarter, "Other Current Liabilities")
+                                   # Current_deferred_revenue_quarter_df = financials_df(Current_deferred_revenue_quarter, date_quarter, "Current Deferred Revenue")
+                                   # Total_current_liabilities_quarter_df = financials_df(Total_current_liabilities_quarter10_unpacked, date_quarter, "Total Current Liabilities")
+                                   # Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter10_unpacked, date_quarter, "Short-Term Debt")
+                                   # current_portion_of_lease_obligation_df = financials_df(current_portion_of_lease_obligation, date_quarter, "Current Portion of Lease Obligation")
+                                   # capital_leases_df = financials_df(capital_leases, date_quarter, "Capital Leases (Noncurrent)")
+                                   # LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter10_unpacked, date_quarter, "Long-Term Debt")
+                                   # Retained_earnings_quarter_df = financials_df(Retained_earnings_quarter, date_quarter, "Retained Earnings")
+                                   # Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter10_unpacked, date_quarter, "Other Long-Term Liabilities")
+                                   # Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter10_unpacked, date_quarter, "Total Liabilities")
+                                   # Total_Equity_quarter_df = financials_df(Total_Equity_quarter10_unpacked, date_quarter, "Total Equity")
+
+                                                       
+                                   # merged_df_quarter = pd.concat([total,Inventories_quarter_df,Total_current_assets_quarter_df,Net_goodwill_quarter_df,
+                                   #                                Intangible_assets_quarter_df,
+                                   #                                Other_lt_assets_quarter_df,Total_assets_quarter_df,Short_term_debt_quarter_df,
+                                   #                                Total_current_liabilities_quarter_df,LongTerm_debt_quarter_df,Other_longterm_liabilities_quarter_df,
+                                   #                                Retained_earnings_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])
+                                   #         
+                                   #st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+
+                                   #pass
+                              #except KeyError:
+
+                                   # if f'{ticker}_Total_investments_quarterly' in st.session_state:
+                                   #      Total_investments = st.session_state[f'{ticker}_Total_investments_quarterly']
+                                   #      cash_and_equiv_quarterly = st.session_state[f'{ticker}_cash_and_equiv_quarterly']
+                                   #      Net_goodwill_quarter = st.session_state[f'{ticker}_Net_goodwill_quarter']
+                                   #      Intangible_assets_quarter = st.session_state[f'{ticker}_Intangible_assets_quarter']
+                                   #      Other_longterm_assets_quarter = st.session_state[f'{ticker}_Other_longterm_assets_quarter']
+                                   #      Total_assets_quarter = st.session_state[f'{ticker}_Total_assets_quarter']
+                                   #      Unearned_Premiums_quarter = st.session_state[f'{ticker}_Unearned_Premiums_quarter']
+                                   #      Short_term_debt_quarter10_unpacked = st.session_state[f'{ticker}_Short_term_debt_quarter']
+                                   #      LongTerm_debt_quarter10_unpacked = st.session_state[f'{ticker}_LongTerm_debt_quarter']
+                                   #      Other_longterm_liabilities_quarter = st.session_state[f'{ticker}_Other_longterm_liabilities_quarter']
+                                   #      Total_liabilities_quarter10_unpacked = st.session_state[f'{ticker}_Total_liabilities_quarter']
+                                   #      Total_Equity_quarter10_unpacked = st.session_state[f'{ticker}_Total_Equity_quarter']
+                                   #      Retained_earnings_quarter = st.session_state[f'{ticker}_Retained_earnings_quarter']
+                                   # else:
+                                                                           
+                                   #      Total_investments = quarterly_data['total_investments'][-10:]
+                                   #      cash_and_equiv_quarterly = quarterly_data['cash_and_equiv'][-10:]
+                                   #      Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
+                                   #      Intangible_assets_quarter= quarterly_data['intangible_assets'][-10:]
+                                   #      Other_longterm_assets_quarter = quarterly_data['other_lt_assets'][-10:]
+                                   #      Total_assets_quarter = quarterly_data['total_assets'][-10:]
+                                   #      Unearned_Premiums_quarter  = quarterly_data['unearned_premiums'][-10:]
+                                   #      Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
+                                   #      LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
+                                   #      Other_longterm_liabilities_quarter = quarterly_data['other_lt_liabilities'][-10:]
+                                   #      Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
+                                   #      Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
+                                   #      Retained_earnings_quarter  =quarterly_data['retained_earnings'][-10:]
+
+
+                                   #                                              # Store unpacked data in session state
+                                   #      st.session_state[f'{ticker}_Total_investments_quarterly'] = Total_investments
+                                   #      st.session_state[f'{ticker}_cash_and_equiv_quarterly'] = cash_and_equiv_quarterly
+                                   #      st.session_state[f'{ticker}_Net_goodwill_quarter'] = Net_goodwill_quarter
+                                   #      st.session_state[f'{ticker}_Intangible_assets_quarter'] = Intangible_assets_quarter
+                                   #      st.session_state[f'{ticker}_Other_longterm_assets_quarter'] = Other_longterm_assets_quarter
+                                   #      st.session_state[f'{ticker}_Total_assets_quarter'] = Total_assets_quarter
+                                   #      st.session_state[f'{ticker}_Unearned_Premiums_quarter'] = Unearned_Premiums_quarter
+                                   #      st.session_state[f'{ticker}_Short_term_debt_quarter'] = Short_term_debt_quarter10_unpacked
+                                   #      st.session_state[f'{ticker}_LongTerm_debt_quarter'] = LongTerm_debt_quarter10_unpacked
+                                   #      st.session_state[f'{ticker}_Other_longterm_liabilities_quarter'] = Other_longterm_liabilities_quarter
+                                   #      st.session_state[f'{ticker}_Total_liabilities_quarter'] = Total_liabilities_quarter10_unpacked
+                                   #      st.session_state[f'{ticker}_Total_Equity_quarter'] = Total_Equity_quarter10_unpacked
+                                   #      st.session_state[f'{ticker}_Retained_earnings_quarter'] = Retained_earnings_quarter
+
+                                        
+                                        
+                                        
+                                        
+
+                                   # Total_investments_quarter_df = financials_df(Total_investments, date_quarter, "Other Investments")
+                                   # cash_and_equiv_quarterly_df = financials_df(cash_and_equiv_quarterly, date_quarter, "Cash & Equivalents")
+                                   # Net_goodwill_quarter_df = financials_df(Net_goodwill_quarter, date_quarter, "Net Goodwill")
+                                   # Intangible_assets_quarter_df = financials_df(Intangible_assets_quarter, date_quarter, "Intangible Assets")
+                                   # Other_longterm_assets_quarter_df = financials_df(Other_longterm_assets_quarter , date_quarter, "Other Longterm Assets")
+                                   # Total_assets_quarter_df = financials_df(Total_assets_quarter, date_quarter, "Total Assets")
+                                   # Unearned_Premiums_quarter_df=financials_df(Unearned_Premiums_quarter , date_quarter, "Unearned Premiums")
+                                   # Short_term_debt_quarter_df = financials_df(Short_term_debt_quarter10_unpacked, date_quarter, "Short-Term Debt")
+                                   # LongTerm_debt_quarter_df = financials_df(LongTerm_debt_quarter10_unpacked, date_quarter, "Long-Term Debt")
+                                   # Other_longterm_liabilities_quarter_df = financials_df(Other_longterm_liabilities_quarter, date_quarter, "Other Long-Term Liabilities")
+                                   # Total_liabilities_quarter_df = financials_df(Total_liabilities_quarter10_unpacked, date_quarter, "Total Liabilities")
+                                   # Retained_earnings_quarter_df=financials_df(Retained_earnings_quarter , date_quarter, "Retained Earnings")
+                                   # Total_Equity_quarter_df = financials_df(Total_Equity_quarter10_unpacked, date_quarter, "Total Equity")
+
 
                     
-                                   merged_df_quarter = pd.concat([Total_investments_quarter_df,cash_and_equiv_quarterly_df,Net_goodwill_quarter_df,Intangible_assets_quarter_df,
-                                                                      Other_longterm_assets_quarter_df,Total_assets_quarter_df,
-                                                                      Unearned_Premiums_quarter_df,Short_term_debt_quarter_df,LongTerm_debt_quarter_df,
-                                                                      Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Retained_earnings_quarter_df,
-                                                                      Total_Equity_quarter_df])           
-                                   st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                   # merged_df_quarter = pd.concat([Total_investments_quarter_df,cash_and_equiv_quarterly_df,Net_goodwill_quarter_df,Intangible_assets_quarter_df,
+                                   #                                    Other_longterm_assets_quarter_df,Total_assets_quarter_df,
+                                   #                                    Unearned_Premiums_quarter_df,Short_term_debt_quarter_df,LongTerm_debt_quarter_df,
+                                   #                                    Other_longterm_liabilities_quarter_df,Total_liabilities_quarter_df,Retained_earnings_quarter_df,
+                                   #                                    Total_Equity_quarter_df])  
+                                   #          
+                                   #st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
                                         
                                    
@@ -11272,7 +11803,7 @@ if selected == "Stock Analysis Tool":
                     schuld= "✅"  # Gree
 
  #################################################      
-               @st.cache_data(show_spinner=False)
+               #@st.cache_data(show_spinner=False)
                def display_metrics():
                     st.markdown("""
                     <style>
@@ -13748,9 +14279,7 @@ if selected == "Stock Analysis Tool":
                # Display the news
                display_news(stock_info)
 
-               # Clear the cache using yf.pdr_override if needed
-               yf.pdr_override()
-
+             
                # current_capital_leases = quarterly_data['current_capital_leases'][-2:]
                # lt_debt = quarterly_data['lt_debt'][-2:]
                # noncurrent_capital_leases = quarterly_data['noncurrent_capital_leases'][-2:]
@@ -13990,6 +14519,31 @@ def display_disclaimer():
      st.write(disclaimer)
      st.markdown(custom_css, unsafe_allow_html=True)
 
+
+
+
+if selected == "Contacts":
+     with st.container():
+          def login_callback():
+               credentials = get_user_credentials( 
+                    client_id = st.secrets.client_id,
+                    client_secret = st.secrets.client_secret,
+                    scopes = [
+                         "openid",
+                         "https://www.googleapis.com/auth/userinfo.email",
+                         "https://www.googleapis.com/auth/userinfo.profile	",
+                         "https://www.googleapis.com/auth/calendar.events.readonly",
+                    ],
+               )
+               st.session_state.credentials = credentials
+
+          st.button(
+               "🔑 Login with Google",
+               type='primary',
+               on_click=login_callback,
+          )     
+
+
 # Call the function to display the disclaimer
 display_disclaimer()
 
@@ -13997,3 +14551,4 @@ display_disclaimer()
 current_year = datetime.now().year
  
 st.markdown(f'&copy; {2023} - {current_year} Stock Valuation. All rights reserved', unsafe_allow_html=True)
+
