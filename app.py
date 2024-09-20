@@ -8843,26 +8843,15 @@ if selected == "Stock Analysis Tool":
 
 
 ###################################################################################################
-
                def unpack_and_store_quarterly_data(quarterly_data, annual_data, Financial_data):
                     if f'{ticker}_Ebita_ttm' in st.session_state:
                          return (
-                              st.session_state[f'{ticker}_Accounts_payable_quarter10'],
-                              st.session_state[f'{ticker}_Current_accrued_liab_quarter10'],
-                              st.session_state[f'{ticker}_Tax_payable_quarter10'],
-                              st.session_state[f'{ticker}_Other_current_liabilities_quarter10'],
-                              st.session_state[f'{ticker}_Current_deferred_revenue_quarter10'],
-                              st.session_state[f'{ticker}_Total_current_liabilities_quarter10'],
                               st.session_state[f'{ticker}_Short_term_debt_quarter10'],
-                              st.session_state[f'{ticker}_current_portion_of_lease_obligation_quarter10'],
-                              st.session_state[f'{ticker}_capital_leases_quarter10'],
-                              st.session_state[f'{ticker}_LongTerm_debt_quarter10'],
                               st.session_state[f'{ticker}_Other_longterm_liabilities_quarter10'],
                               st.session_state[f'{ticker}_Total_liabilities_quarter10'],
                               st.session_state[f'{ticker}_Total_Equity_quarter10'],
                               st.session_state[f'{ticker}_Total_Equity_quarter1'],
                               st.session_state[f'{ticker}_Total_Equity_annual1'],
-                              st.session_state[f'{ticker}_st_investments_quarter1'],
                               st.session_state[f'{ticker}_gross_margin_annual5'],
                               st.session_state[f'{ticker}_gross_margin_annual10'],
                               st.session_state[f'{ticker}_operating_margin_quater1'],
@@ -8878,205 +8867,266 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_Short_term_debt_annual1'],
                               st.session_state[f'{ticker}_Total_assets_annual1'],
                               st.session_state[f'{ticker}_Cash_Dividends_paid_Total_annual1'],
-                              st.session_state[f'{ticker}_cash_equiv_quarter1']
+                              st.session_state[f'{ticker}_cash_equiv_quarter1'],
+                              st.session_state[f'{ticker}_Other_current_liabilities_quarter10'],
+                              st.session_state[f'{ticker}_LongTerm_debt_quarter10'],
+                              st.session_state[f'{ticker}_Accounts_payable_quarter10'],
+                              st.session_state[f'{ticker}_Current_accrued_liab_quarter10'],
+                              st.session_state[f'{ticker}_Tax_payable_quarter10'],
+                              st.session_state[f'{ticker}_Current_deferred_revenue_quarter10'],
+                              st.session_state[f'{ticker}_Total_current_liabilities_quarter10'],
+                              st.session_state[f'{ticker}_capital_leases_quarter10'],
+                              st.session_state[f'{ticker}_LongTerm_debt_quarter10'],
+                              st.session_state[f'{ticker}_current_portion_of_lease_obligation_quarter10'],
+                              st.session_state[f'{ticker}_st_investments_quarter1']
                          )
+                    try:
+                         Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
+                    except KeyError:
+                         Short_term_debt_quarter10_unpacked = [0] * 10
+
+                    try:
+                         Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
+                    except KeyError:
+                         Other_longterm_liabilities_quarter10_unpacked = [0] * 10
+
+                    try:
+                         Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
+                    except KeyError:
+                         Total_liabilities_quarter10_unpacked = [0] * 10
+
+                    try:
+                         Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
+                    except KeyError:
+                         Total_Equity_quarter10_unpacked = [0] * 10
+
+                    try:
+                         Total_Equity_quarter1_unpacked = quarterly_data['total_equity'][-1:]
+                    except KeyError:
+                         Total_Equity_quarter1_unpacked = [0]*1
+
+                    try:
+                         Total_Equity_annual1_unpacked = annual_data['total_equity'][-1:]
+                    except KeyError:
+                         Total_Equity_annual1_unpacked = [0]*1
+
+                    try:
+                         gross_margin_annual5_unpacked = annual_data['gross_margin'][-5:]
+                    except KeyError:
+                         gross_margin_annual5_unpacked = [0] * 5
+
+                    try:
+                         gross_margin_annual10_unpacked = annual_data['gross_margin'][-10:]
+                    except KeyError:
+                         gross_margin_annual10_unpacked = [0] * 10
+
+                    try:
+                         operating_margin_quater1_unpacked = quarterly_data['operating_margin'][-1:]
+                    except KeyError:
+                         operating_margin_quater1_unpacked = [0]*1
+
+                    try:
+                         operating_margin_quater10_unpacked = quarterly_data['operating_margin'][-10:]
+                    except KeyError:
+                         operating_margin_quater10_unpacked = [0] * 10
+
+                    try:
+                         operating_margin_annual1_unpacked = annual_data['operating_margin'][-1:]
+                    except KeyError:
+                         operating_margin_annual1_unpacked = [0]*1
+
+                    try:
+                         operating_margin_annual5_unpacked = annual_data['operating_margin'][-5:]
+                    except KeyError:
+                         operating_margin_annual5_unpacked = [0] * 5
+
+                    try:
+                         operating_margin_annual10_unpacked = annual_data['operating_margin'][-10:]
+                    except KeyError:
+                         operating_margin_annual10_unpacked = [0] * 10
+
+                    try:
+                         Ebita_ttm = Financial_data['ttm']['ebitda'] / 1_000_000_000
+                    except KeyError:
+                         Ebita_ttm = 0
+
+                    try:
+                         debt_Assets_annual1_unpacked = annual_data['debt_to_assets'][-1:]
+                    except KeyError:
+                         debt_Assets_annual1_unpacked = [0]*1
+
+                    try:
+                         debt_equity_annual1_unpacked = quarterly_data['debt_to_equity'][-1:]
+                    except KeyError:
+                         debt_equity_annual1_unpacked = [0]*1
+
+                    try:
+                         debt_Assets_annual10_unpacked = annual_data['debt_to_assets'][-10:]
+                    except KeyError:
+                         debt_Assets_annual10_unpacked = [0] * 10
+
+                    try:
+                         LongTerm_debt_annual1_unpacked = annual_data['lt_debt'][-1:]
+                    except KeyError:
+                         LongTerm_debt_annual1_unpacked = [0]*1
+
+                    try:
+                         Short_term_debt_annual1_unpacked = quarterly_data['st_debt'][-1:]
+                    except KeyError:
+                         Short_term_debt_annual1_unpacked = [0]*1
+
+                    try:
+                         Total_assets_annual1_unpacked = annual_data['total_assets'][-1:]
+                    except KeyError:
+                         Total_assets_annual1_unpacked = [0]*1
+
+                    try:
+                         Cash_Dividends_paid_Total_annual1_unpacked = annual_data['cff_dividend_paid'][-1:]
+                    except KeyError:
+                         Cash_Dividends_paid_Total_annual1_unpacked = [0]*1
+
+                    try:
+                         cash_equiv_quarter1_unpacked = quarterly_data['cash_and_equiv'][-1:]
+                    except KeyError:
+                         cash_equiv_quarter1_unpacked = [0]*1
+
+                    try:
+                         Other_current_liabilities_quarter10_unpacked = quarterly_data['other_current_liabilities'][-10:]
+                    except KeyError:
+                         Other_current_liabilities_quarter10_unpacked = [0] * 10
+
+                    try:
+                         LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
+                    except KeyError:
+                         LongTerm_debt_quarter10_unpacked = [0] * 10
 
                     try:
                          Accounts_payable_quarter10_unpacked = quarterly_data['accounts_payable'][-10:]
+                    except KeyError:
+                         Accounts_payable_quarter10_unpacked = [0] * 10
+
+                    try:
                          Current_accrued_liab_quarter10_unpacked = quarterly_data['current_accrued_liabilities'][-10:]
+                    except KeyError:
+                         Current_accrued_liab_quarter10_unpacked = [0] * 10
+
+                    try:
                          Tax_payable_quarter10_unpacked = quarterly_data['tax_payable'][-10:]
-                         Other_current_liabilities_quarter10_unpacked = quarterly_data['other_current_liabilities'][-10:]
+                    except KeyError:
+                         Tax_payable_quarter10_unpacked = [0] * 10
+
+                    try:
                          Current_deferred_revenue_quarter10_unpacked = quarterly_data['current_deferred_revenue'][-10:]
+                    except KeyError:
+                         Current_deferred_revenue_quarter10_unpacked = [0] * 10
+
+                    try:
                          Total_current_liabilities_quarter10_unpacked = quarterly_data['total_current_liabilities'][-10:]
-                         Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
-                         current_portion_of_lease_obligation_quarter10_unpacked = quarterly_data['current_capital_leases'][-10:]
+                    except KeyError:
+                         Total_current_liabilities_quarter10_unpacked = [0] * 10
+
+                    try:
                          capital_leases_quarter10_unpacked = quarterly_data['noncurrent_capital_leases'][-10:]
+                    except KeyError:
+                         capital_leases_quarter10_unpacked = [0] * 10
+
+                    try:
                          LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
-                         Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
-                         Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
-                         Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
-                         Total_Equity_quarter1_unpacked = quarterly_data['total_equity'][-1:]
-                         Total_Equity_annual1_unpacked = annual_data['total_equity'][-1:]
+                    except KeyError:
+                         LongTerm_debt_quarter10_unpacked = [0] * 10
+
+                    try:
+                         current_portion_of_lease_obligation_quarter10_unpacked = quarterly_data['current_capital_leases'][-10:]
+                    except KeyError:
+                         current_portion_of_lease_obligation_quarter10_unpacked = [0] * 10
+
+                    try:
                          st_investments_quarter1_unpacked = quarterly_data['st_investments'][-1:]
-
-                         gross_margin_annual5_unpacked = annual_data['gross_margin'][-5:]
-                         gross_margin_annual10_unpacked = annual_data['gross_margin'][-10:]
-
-                         operating_margin_quater1_unpacked = quarterly_data['operating_margin'][-1:]
-                         operating_margin_quater10_unpacked = quarterly_data['operating_margin'][-10:]
-
-                         operating_margin_annual1_unpacked = annual_data['operating_margin'][-1:]
-                         operating_margin_annual5_unpacked = annual_data['operating_margin'][-5:]
-                         operating_margin_annual10_unpacked = annual_data['operating_margin'][-10:]
-
-                         Ebita_ttm = Financial_data['ttm']['ebitda'] / 1000000000
-
-                         debt_Assets_annual1_unpacked = annual_data['debt_to_assets'][-1:]
-                         debt_equity_annual1_unpacked = quarterly_data['debt_to_equity'][-1:]
-                         debt_Assets_annual10_unpacked = annual_data['debt_to_assets'][-10:]
-                         LongTerm_debt_annual1_unpacked = annual_data['lt_debt'][-1:]
-                         Short_term_debt_annual1_unpacked = annual_data['st_debt'][-1:]
-                         Total_assets_annual1_unpacked = annual_data['total_assets'][-1:]
-                         Cash_Dividends_paid_Total_annual1_unpacked = annual_data['cff_dividend_paid'][-1:]
-                         cash_equiv_quarter1_unpacked = quarterly_data['cash_and_equiv'][-1:]
+                    except KeyError:
+                         st_investments_quarter1_unpacked = [0] * 1
 
 
-                         # Store the unpacked data in session state
-                         st.session_state[f'{ticker}_Accounts_payable_quarter10'] = Accounts_payable_quarter10_unpacked
-                         st.session_state[f'{ticker}_Current_accrued_liab_quarter10'] = Current_accrued_liab_quarter10_unpacked
-                         st.session_state[f'{ticker}_Tax_payable_quarter10'] = Tax_payable_quarter10_unpacked
-                         st.session_state[f'{ticker}_Other_current_liabilities_quarter10'] = Other_current_liabilities_quarter10_unpacked
-                         st.session_state[f'{ticker}_Current_deferred_revenue_quarter10'] = Current_deferred_revenue_quarter10_unpacked
-                         st.session_state[f'{ticker}_Total_current_liabilities_quarter10'] = Total_current_liabilities_quarter10_unpacked
-                         st.session_state[f'{ticker}_Short_term_debt_quarter10'] = Short_term_debt_quarter10_unpacked
-                         st.session_state[f'{ticker}_current_portion_of_lease_obligation_quarter10'] = current_portion_of_lease_obligation_quarter10_unpacked
-                         st.session_state[f'{ticker}_capital_leases_quarter10'] = capital_leases_quarter10_unpacked
-                         st.session_state[f'{ticker}_LongTerm_debt_quarter10'] = LongTerm_debt_quarter10_unpacked
-                         st.session_state[f'{ticker}_Other_longterm_liabilities_quarter10'] = Other_longterm_liabilities_quarter10_unpacked
-                         st.session_state[f'{ticker}_Total_liabilities_quarter10'] = Total_liabilities_quarter10_unpacked
-                         st.session_state[f'{ticker}_Total_Equity_quarter10'] = Total_Equity_quarter10_unpacked
-                         st.session_state[f'{ticker}_Total_Equity_quarter1'] = Total_Equity_quarter1_unpacked
-                         st.session_state[f'{ticker}_Total_Equity_annual1'] = Total_Equity_annual1_unpacked
-                         st.session_state[f'{ticker}_st_investments_quarter1'] = st_investments_quarter1_unpacked
-                         st.session_state[f'{ticker}_gross_margin_annual5'] = gross_margin_annual5_unpacked
-                         st.session_state[f'{ticker}_gross_margin_annual10'] = gross_margin_annual10_unpacked
-                         st.session_state[f'{ticker}_operating_margin_quater1'] = operating_margin_quater1_unpacked
-                         st.session_state[f'{ticker}_operating_margin_quater10'] = operating_margin_quater10_unpacked
-                         st.session_state[f'{ticker}_operating_margin_annual1'] = operating_margin_annual1_unpacked
-                         st.session_state[f'{ticker}_operating_margin_annual5'] = operating_margin_annual5_unpacked
-                         st.session_state[f'{ticker}_operating_margin_annual10'] = operating_margin_annual10_unpacked
-                         st.session_state[f'{ticker}_Ebita_ttm'] = Ebita_ttm
-                         st.session_state[f'{ticker}_debt_Assets_annual1'] = debt_Assets_annual1_unpacked
-                         st.session_state[f'{ticker}_debt_equity_annual1'] = debt_equity_annual1_unpacked
-                         st.session_state[f'{ticker}_debt_Assets_annual10'] = debt_Assets_annual10_unpacked
-                         st.session_state[f'{ticker}_LongTerm_debt_annual1'] = LongTerm_debt_annual1_unpacked
-                         st.session_state[f'{ticker}_Short_term_debt_annual1'] = Short_term_debt_annual1_unpacked
-                         st.session_state[f'{ticker}_Total_assets_annual1'] = Total_assets_annual1_unpacked
-                         st.session_state[f'{ticker}_Cash_Dividends_paid_Total_annual1'] = Cash_Dividends_paid_Total_annual1_unpacked
-                         st.session_state[f'{ticker}_cash_equiv_quarter1'] = cash_equiv_quarter1_unpacked
+                    # Store values in session state
+                    st.session_state[f'{ticker}_Short_term_debt_quarter10'] = Short_term_debt_quarter10_unpacked
+                    st.session_state[f'{ticker}_Other_longterm_liabilities_quarter10'] = Other_longterm_liabilities_quarter10_unpacked
+                    st.session_state[f'{ticker}_Total_liabilities_quarter10'] = Total_liabilities_quarter10_unpacked
+                    st.session_state[f'{ticker}_Total_Equity_quarter10'] = Total_Equity_quarter10_unpacked
+                    st.session_state[f'{ticker}_Total_Equity_quarter1'] = Total_Equity_quarter1_unpacked
+                    st.session_state[f'{ticker}_Total_Equity_annual1'] = Total_Equity_annual1_unpacked
+                    st.session_state[f'{ticker}_gross_margin_annual5'] = gross_margin_annual5_unpacked
+                    st.session_state[f'{ticker}_gross_margin_annual10'] = gross_margin_annual10_unpacked
+                    st.session_state[f'{ticker}_operating_margin_quater1'] = operating_margin_quater1_unpacked
+                    st.session_state[f'{ticker}_operating_margin_quater10'] = operating_margin_quater10_unpacked
+                    st.session_state[f'{ticker}_operating_margin_annual1'] = operating_margin_annual1_unpacked
+                    st.session_state[f'{ticker}_operating_margin_annual5'] = operating_margin_annual5_unpacked
+                    st.session_state[f'{ticker}_operating_margin_annual10'] = operating_margin_annual10_unpacked
+                    st.session_state[f'{ticker}_Ebita_ttm'] = Ebita_ttm
+                    st.session_state[f'{ticker}_debt_Assets_annual1'] = debt_Assets_annual1_unpacked
+                    st.session_state[f'{ticker}_debt_equity_annual1'] = debt_equity_annual1_unpacked
+                    st.session_state[f'{ticker}_debt_Assets_annual10'] = debt_Assets_annual10_unpacked
+                    st.session_state[f'{ticker}_LongTerm_debt_annual1'] = LongTerm_debt_annual1_unpacked
+                    st.session_state[f'{ticker}_Short_term_debt_annual1'] = Short_term_debt_annual1_unpacked
+                    st.session_state[f'{ticker}_Total_assets_annual1'] = Total_assets_annual1_unpacked
+                    st.session_state[f'{ticker}_Cash_Dividends_paid_Total_annual1'] = Cash_Dividends_paid_Total_annual1_unpacked
+                    st.session_state[f'{ticker}_cash_equiv_quarter1'] = cash_equiv_quarter1_unpacked
+                    st.session_state[f'{ticker}_Other_current_liabilities_quarter10'] = Other_current_liabilities_quarter10_unpacked
+                    st.session_state[f'{ticker}_LongTerm_debt_quarter10'] = LongTerm_debt_quarter10_unpacked
+                    st.session_state[f'{ticker}_Accounts_payable_quarter10'] = Accounts_payable_quarter10_unpacked
+                    st.session_state[f'{ticker}_Current_accrued_liab_quarter10'] = Current_accrued_liab_quarter10_unpacked
+                    st.session_state[f'{ticker}_Tax_payable_quarter10'] = Tax_payable_quarter10_unpacked
+                    st.session_state[f'{ticker}_Current_deferred_revenue_quarter10'] = Current_deferred_revenue_quarter10_unpacked
+                    st.session_state[f'{ticker}_Total_current_liabilities_quarter10'] = Total_current_liabilities_quarter10_unpacked
+                    st.session_state[f'{ticker}_capital_leases_quarter10'] = capital_leases_quarter10_unpacked
+                    st.session_state[f'{ticker}_LongTerm_debt_quarter10'] = LongTerm_debt_quarter10_unpacked
+                    st.session_state[f'{ticker}_current_portion_of_lease_obligation_quarter10'] = current_portion_of_lease_obligation_quarter10_unpacked
+                    st.session_state[f'{ticker}_st_investments_quarter1'] = st_investments_quarter1_unpacked
 
-                         return (
-                              Accounts_payable_quarter10_unpacked,
-                              Current_accrued_liab_quarter10_unpacked,
-                              Tax_payable_quarter10_unpacked,
-                              Other_current_liabilities_quarter10_unpacked,
-                              Current_deferred_revenue_quarter10_unpacked,
-                              Total_current_liabilities_quarter10_unpacked,
-                              Short_term_debt_quarter10_unpacked,
-                              current_portion_of_lease_obligation_quarter10_unpacked,
-                              capital_leases_quarter10_unpacked,
-                              LongTerm_debt_quarter10_unpacked,
-                              Other_longterm_liabilities_quarter10_unpacked,
-                              Total_liabilities_quarter10_unpacked,
-                              Total_Equity_quarter10_unpacked,
-                              Total_Equity_quarter1_unpacked,
-                              Total_Equity_annual1_unpacked,
-                              st_investments_quarter1_unpacked,
-                              gross_margin_annual5_unpacked,
-                              gross_margin_annual10_unpacked,
-                              operating_margin_quater1_unpacked,
-                              operating_margin_quater10_unpacked,
-                              operating_margin_annual1_unpacked,
-                              operating_margin_annual5_unpacked,
-                              operating_margin_annual10_unpacked,
-                              Ebita_ttm,
-                              debt_Assets_annual1_unpacked,
-                              debt_equity_annual1_unpacked,
-                              debt_Assets_annual10_unpacked,
-                              LongTerm_debt_annual1_unpacked,
-                              Short_term_debt_annual1_unpacked,
-                              Total_assets_annual1_unpacked,
-                              Cash_Dividends_paid_Total_annual1_unpacked,
-                              cash_equiv_quarter1_unpacked
-                         )
-                    
-                    except Exception as e:
-                         Accounts_payable_quarter10_unpacked = [0]*10
-                         Current_accrued_liab_quarter10_unpacked = [0]*10
-                         Tax_payable_quarter10_unpacked = [0]*10
-                         Other_current_liabilities_quarter10_unpacked = [0]*10
-                         Current_deferred_revenue_quarter10_unpacked = [0]*10
-                         Total_current_liabilities_quarter10_unpacked = [0]*10
-                         Short_term_debt_quarter10_unpacked = [0]*10
-                         current_portion_of_lease_obligation_quarter10_unpacked = [0]*10
-                         capital_leases_quarter10_unpacked = [0]*10
-                         LongTerm_debt_quarter10_unpacked = [0]*10
-                         Other_longterm_liabilities_quarter10_unpacked = [0]*10
-                         Total_liabilities_quarter10_unpacked = [0]*10
-                         Total_Equity_quarter10_unpacked = [0]*10
-                         Total_Equity_quarter1_unpacked = [0]
-                         Total_Equity_annual1_unpacked = [0]
-                         st_investments_quarter1_unpacked = [0]
-                         gross_margin_annual5_unpacked = [0]*5
-                         gross_margin_annual10_unpacked = [0]*10
-                         operating_margin_quater1_unpacked = [0]
-                         operating_margin_quater10_unpacked = [0]*10
-                         operating_margin_annual1_unpacked = [0]
-                         operating_margin_annual5_unpacked = [0]*5
-                         operating_margin_annual10_unpacked = [0]*10
-                         Ebita_ttm = [0]
-                         debt_Assets_annual1_unpacked = [0]
-                         debt_equity_annual1_unpacked = [0]
-                         debt_Assets_annual10_unpacked = [0]*10
-                         LongTerm_debt_annual1_unpacked = [0]
-                         Short_term_debt_annual1_unpacked = [0]
-                         Total_assets_annual1_unpacked = [0]
-                         Cash_Dividends_paid_Total_annual1_unpacked = [0]
-                         cash_equiv_quarter1_unpacked = [0]
 
-                         return (
-                              Accounts_payable_quarter10_unpacked,
-                              Current_accrued_liab_quarter10_unpacked,
-                              Tax_payable_quarter10_unpacked,
-                              Other_current_liabilities_quarter10_unpacked,
-                              Current_deferred_revenue_quarter10_unpacked,
-                              Total_current_liabilities_quarter10_unpacked,
-                              Short_term_debt_quarter10_unpacked,
-                              current_portion_of_lease_obligation_quarter10_unpacked,
-                              capital_leases_quarter10_unpacked,
-                              LongTerm_debt_quarter10_unpacked,
-                              Other_longterm_liabilities_quarter10_unpacked,
-                              Total_liabilities_quarter10_unpacked,
-                              Total_Equity_quarter10_unpacked,
-                              Total_Equity_quarter1_unpacked,
-                              Total_Equity_annual1_unpacked,
-                              st_investments_quarter1_unpacked,
-                              gross_margin_annual5_unpacked,
-                              gross_margin_annual10_unpacked,
-                              operating_margin_quater1_unpacked,
-                              operating_margin_quater10_unpacked,
-                              operating_margin_annual1_unpacked,
-                              operating_margin_annual5_unpacked,
-                              operating_margin_annual10_unpacked,
-                              Ebita_ttm,
-                              debt_Assets_annual1_unpacked,
-                              debt_equity_annual1_unpacked,
-                              debt_Assets_annual10_unpacked,
-                              LongTerm_debt_annual1_unpacked,
-                              Short_term_debt_annual1_unpacked,
-                              Total_assets_annual1_unpacked,
-                              Cash_Dividends_paid_Total_annual1_unpacked,
-                              cash_equiv_quarter1_unpacked
-                         )
+                    return (
+                         Short_term_debt_quarter10_unpacked,
+                         Other_longterm_liabilities_quarter10_unpacked,
+                         Total_liabilities_quarter10_unpacked,
+                         Total_Equity_quarter10_unpacked,
+                         Total_Equity_quarter1_unpacked,
+                         Total_Equity_annual1_unpacked,
+                         gross_margin_annual5_unpacked,
+                         gross_margin_annual10_unpacked,
+                         operating_margin_quater1_unpacked,
+                         operating_margin_quater10_unpacked,
+                         operating_margin_annual1_unpacked,
+                         operating_margin_annual5_unpacked,
+                         operating_margin_annual10_unpacked,
+                         Ebita_ttm,
+                         debt_Assets_annual1_unpacked,
+                         debt_equity_annual1_unpacked,
+                         debt_Assets_annual10_unpacked,
+                         LongTerm_debt_annual1_unpacked,
+                         Short_term_debt_annual1_unpacked,
+                         Total_assets_annual1_unpacked,
+                         Cash_Dividends_paid_Total_annual1_unpacked,
+                         cash_equiv_quarter1_unpacked,
+                         Other_current_liabilities_quarter10_unpacked,
+                         LongTerm_debt_quarter10_unpacked,
+                         Accounts_payable_quarter10_unpacked,
+                         Current_accrued_liab_quarter10_unpacked,
+                         Tax_payable_quarter10_unpacked,
+                         Current_deferred_revenue_quarter10_unpacked,
+                         Total_current_liabilities_quarter10_unpacked,
+                         capital_leases_quarter10_unpacked,
+                         current_portion_of_lease_obligation_quarter10_unpacked,
+                         st_investments_quarter1_unpacked,
+                    )
 
-               # Usage
+                         
+
                (
-               Accounts_payable_quarter10_unpacked,
-               Current_accrued_liab_quarter10_unpacked,
-               Tax_payable_quarter10_unpacked,
-               Other_current_liabilities_quarter10_unpacked,
-               Current_deferred_revenue_quarter10_unpacked,
-               Total_current_liabilities_quarter10_unpacked,
+
                Short_term_debt_quarter10_unpacked,
-               current_portion_of_lease_obligation_quarter10_unpacked,
-               capital_leases_quarter10_unpacked,
-               LongTerm_debt_quarter10_unpacked,
                Other_longterm_liabilities_quarter10_unpacked,
                Total_liabilities_quarter10_unpacked,
                Total_Equity_quarter10_unpacked,
                Total_Equity_quarter1_unpacked,
                Total_Equity_annual1_unpacked,
-               st_investments_quarter1_unpacked,
                gross_margin_annual5_unpacked,
                gross_margin_annual10_unpacked,
                operating_margin_quater1_unpacked,
@@ -9092,12 +9142,27 @@ if selected == "Stock Analysis Tool":
                Short_term_debt_annual1_unpacked,
                Total_assets_annual1_unpacked,
                Cash_Dividends_paid_Total_annual1_unpacked,
-               cash_equiv_quarter1_unpacked
-               ) = unpack_and_store_quarterly_data(quarterly_data, annual_data, Financial_data)
+               cash_equiv_quarter1_unpacked,
+               Other_current_liabilities_quarter10_unpacked,
+               LongTerm_debt_quarter10_unpacked,
+               Accounts_payable_quarter10_unpacked,
+               Current_accrued_liab_quarter10_unpacked,
+               Tax_payable_quarter10_unpacked,
+               Current_deferred_revenue_quarter10_unpacked,
+               Total_current_liabilities_quarter10_unpacked,
+               capital_leases_quarter10_unpacked,
+               current_portion_of_lease_obligation_quarter10_unpacked,
+               st_investments_quarter1_unpacked
 
+               ) = unpack_and_store_quarterly_data(quarterly_data, annual_data, Financial_data)
+               
 
                Average_debt_equity_annual1 = round(sum(debt_equity_annual1_unpacked) / len(debt_equity_annual1_unpacked), 2)
                Average_debt_assets_annual = round(sum(debt_Assets_annual1_unpacked) / len(debt_Assets_annual1_unpacked), 2)
+
+               cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
+
+               print("cash",cash_and_equiv_quarterly_Balance_Sheet)
 
 ###################################################################################################
 
@@ -9185,6 +9250,94 @@ if selected == "Stock Analysis Tool":
                (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, Average_debt_equity_one) = unpack_and_store_fundamental_data(quote, ticker)
 
 ###################################################################################################
+               def data_totalCashDebt(quarterly_data):
+                    if f'{ticker}_Accounts_payable_quarter10' in st.session_state:
+                         return (
+                              st.session_state[f'{ticker}_Accounts_payable_quarter10'],
+                              st.session_state[f'{ticker}_Current_accrued_liab_quarter10'],
+                              st.session_state[f'{ticker}_Tax_payable_quarter10'],
+                              
+                              st.session_state[f'{ticker}_Current_deferred_revenue_quarter10'],
+                              st.session_state[f'{ticker}_Total_current_liabilities_quarter10'],
+                              st.session_state[f'{ticker}_capital_leases_quarter10'],
+                              st.session_state[f'{ticker}_LongTerm_debt_quarter10'],
+                              st.session_state[f'{ticker}_current_portion_of_lease_obligation_quarter10'],
+                              st.session_state[f'{ticker}_st_investments_quarter1']
+                         )
+                    
+                    try:
+                         Accounts_payable_quarter10_unpacked = quarterly_data['accounts_payable'][-10:]
+                         Current_accrued_liab_quarter10_unpacked = quarterly_data['current_accrued_liabilities'][-10:]
+                         Tax_payable_quarter10_unpacked = quarterly_data['tax_payable'][-10:]
+                         
+                         Current_deferred_revenue_quarter10_unpacked = quarterly_data['current_deferred_revenue'][-10:]
+                         Total_current_liabilities_quarter10_unpacked = quarterly_data['total_current_liabilities'][-10:]
+                         capital_leases_quarter10_unpacked = quarterly_data['noncurrent_capital_leases'][-10:]
+                         LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
+                         current_portion_of_lease_obligation_quarter10_unpacked = quarterly_data['current_capital_leases'][-10:]
+                         st_investments_quarter1_unpacked = quarterly_data['st_investments'][-1:]
+
+                         # Store the unpacked data in session state
+                         st.session_state[f'{ticker}_Accounts_payable_quarter10'] = Accounts_payable_quarter10_unpacked
+                         st.session_state[f'{ticker}_Current_accrued_liab_quarter10'] = Current_accrued_liab_quarter10_unpacked
+                         st.session_state[f'{ticker}_Tax_payable_quarter10'] = Tax_payable_quarter10_unpacked
+                         
+                         st.session_state[f'{ticker}_Current_deferred_revenue_quarter10'] = Current_deferred_revenue_quarter10_unpacked
+                         st.session_state[f'{ticker}_Total_current_liabilities_quarter10'] = Total_current_liabilities_quarter10_unpacked
+                         st.session_state[f'{ticker}_current_portion_of_lease_obligation_quarter10'] = current_portion_of_lease_obligation_quarter10_unpacked
+                         st.session_state[f'{ticker}_capital_leases_quarter10'] = capital_leases_quarter10_unpacked
+                         st.session_state[f'{ticker}_LongTerm_debt_quarter10'] = LongTerm_debt_quarter10_unpacked
+                         st.session_state[f'{ticker}_st_investments_quarter1'] = st_investments_quarter1_unpacked
+
+                         return (
+                              Accounts_payable_quarter10_unpacked,
+                              Current_accrued_liab_quarter10_unpacked,
+                              Tax_payable_quarter10_unpacked,
+                              
+                              Current_deferred_revenue_quarter10_unpacked,
+                              Total_current_liabilities_quarter10_unpacked,
+                              current_portion_of_lease_obligation_quarter10_unpacked,
+                              capital_leases_quarter10_unpacked,
+                              LongTerm_debt_quarter10_unpacked,
+                              st_investments_quarter1_unpacked
+                         )
+
+                    except Exception as e:
+                         Accounts_payable_quarter10_unpacked = [0] * 10
+                         Current_accrued_liab_quarter10_unpacked = [0] * 10
+                         Tax_payable_quarter10_unpacked = [0] * 10
+                         
+                         Current_deferred_revenue_quarter10_unpacked = [0] * 10
+                         Total_current_liabilities_quarter10_unpacked = [0] * 10
+                         current_portion_of_lease_obligation_quarter10_unpacked = [0] * 10
+                         capital_leases_quarter10_unpacked = [0] * 10
+                         LongTerm_debt_quarter10_unpacked = [0] * 10
+                         st_investments_quarter1_unpacked = [0] * 1  # Fixed the assignment here
+
+                         return (
+                              Accounts_payable_quarter10_unpacked,
+                              Current_accrued_liab_quarter10_unpacked,
+                              Tax_payable_quarter10_unpacked,
+                              
+                              Current_deferred_revenue_quarter10_unpacked,
+                              Total_current_liabilities_quarter10_unpacked,
+                              current_portion_of_lease_obligation_quarter10_unpacked,
+                              capital_leases_quarter10_unpacked,
+                              LongTerm_debt_quarter10_unpacked,
+                              st_investments_quarter1_unpacked
+                         )
+
+               # Call the function and unpack results
+               (Accounts_payable_quarter10_unpacked,
+               Current_accrued_liab_quarter10_unpacked,
+               Tax_payable_quarter10_unpacked,
+               
+               Current_deferred_revenue_quarter10_unpacked,
+               Total_current_liabilities_quarter10_unpacked,
+               current_portion_of_lease_obligation_quarter10_unpacked,
+               capital_leases_quarter10_unpacked,
+               LongTerm_debt_quarter10_unpacked,
+               st_investments_quarter1_unpacked) = data_totalCashDebt(quarterly_data)
 
 
 
@@ -9198,8 +9351,8 @@ if selected == "Stock Analysis Tool":
                     Price_to_sales_last = "NA"
                     Net_margin_ttm="NA"
                
-               
-               
+
+     
 
           
 
@@ -9335,13 +9488,13 @@ if selected == "Stock Analysis Tool":
 
                five_yrs_average_operating_margin= "{:.2f}%".format((sum(operating_margin_annual5_unpacked) / len(operating_margin_annual5_unpacked)) * 100)
 
+               cash_und_cash_investments = quarterly_data['cash_and_equiv'][-1:]
+               print(cash_und_cash_investments)
                st_investments_quarter1 = ((sum(st_investments_quarter1_unpacked) / len(st_investments_quarter1_unpacked)) / 1000000000)
                cash_equiv_quarter1 = ((sum(cash_equiv_quarter1_unpacked) / len(cash_equiv_quarter1_unpacked)) / 1000000000)
                Total_cash_last_years = (st_investments_quarter1+cash_equiv_quarter1)
 
-               print("st_investments_quarter1_unpacked",st_investments_quarter1_unpacked)
-               print("cash_equiv_quarter1_unpacked",cash_equiv_quarter1_unpacked)
-
+             
 
                
                try:
@@ -9366,6 +9519,28 @@ if selected == "Stock Analysis Tool":
                except Exception as e: 
                     ROE_ttm  ="{:.2f}%".format(0.00)
                     fcf_yield_ttm ="{:.2f}%".format(0.00)
+
+
+               #Accounts_payable_quarter10_unpacked = quarterly_data['accounts_payable'][-10:]
+               #print(Accounts_payable_quarter10_unpacked)
+               #Current_accrued_liab_quarter10_unpacked = quarterly_data['current_accrued_liabilities'][-10:]
+               #print(Current_accrued_liab_quarter10_unpacked)
+               #Tax_payable_quarter10_unpacked = quarterly_data['tax_payable'][-10:]
+               #print(Tax_payable_quarter10_unpacked)
+               #Other_current_liabilities_quarter10_unpacked = quarterly_data['other_current_liabilities'][-10:]
+               #print(Other_current_liabilities_quarter10_unpacked)
+               #Current_deferred_revenue_quarter10_unpacked = quarterly_data['current_deferred_revenue'][-10:]
+               #print(Current_deferred_revenue_quarter10_unpacked)
+               #Total_current_liabilities_quarter10_unpacked = quarterly_data['total_current_liabilities'][-10:]
+               #print(Total_current_liabilities_quarter10_unpacked)
+               #capital_leases_quarter10_unpacked = quarterly_data['noncurrent_capital_leases'][-10:]
+               #print(capital_leases_quarter10_unpacked)
+               #
+               ##current_portion_of_lease_obligation_quarter10_unpacked = quarterly_data['current_capital_leases'][-10:]
+               #print(current_portion_of_lease_obligation_quarter10_unpacked)
+               #st_investments_quarter1_unpacked = quarterly_data['st_investments'][-1:]
+               #print(st_investments_quarter1_unpacked)
+
 
 #####################################################################################################
                def calculate_total_debt(ticker, date_quarter, 
@@ -9424,7 +9599,8 @@ if selected == "Stock Analysis Tool":
                Current_deferred_revenue_quarter10_unpacked, Total_current_liabilities_quarter10_unpacked, 
                capital_leases_quarter10_unpacked, LongTerm_debt_quarter10_unpacked
                )
-               print("1. total debt",Total_Debt_from_all_calc)
+               
+
 #####################################################################################################
 
                # try:
