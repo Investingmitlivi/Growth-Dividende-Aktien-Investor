@@ -1,4 +1,5 @@
 
+from google_auth_oauthlib import get_user_credentials
 import requests, json, time
 #import streamlit_authenticator as stauth
 #import pickle
@@ -18,6 +19,7 @@ import time
 import firebase_admin
 import os
 from typing import List, Dict, Union
+from google_auth_oauthlib.flow import Flow
 
 
 
@@ -14575,22 +14577,23 @@ def display_disclaimer():
      st.markdown("<u><h3 style='color:#FF4B4B;'>Disclaimer</h3></u>", unsafe_allow_html=True)
      st.write(disclaimer)
      st.markdown(custom_css, unsafe_allow_html=True)
-
-
-
-
+#####################################################################
 if selected == "Contacts":
      with st.container():
+
+          st.title(" Google OAuth")
           def login_callback():
-               credentials = get_user_credentials( 
-                    client_id = st.secrets.client_id,
-                    client_secret = st.secrets.client_secret,
+               credentials = get_user_credentials(
+                    client_id = st.secrets["client_id"],
+                    client_secret = st.secrets["client_secret"],
+
                     scopes = [
                          "openid",
                          "https://www.googleapis.com/auth/userinfo.email",
                          "https://www.googleapis.com/auth/userinfo.profile	",
                          "https://www.googleapis.com/auth/calendar.events.readonly",
                     ],
+                    minimum_port =9000, maximum_port =9001,
                )
                st.session_state.credentials = credentials
 
