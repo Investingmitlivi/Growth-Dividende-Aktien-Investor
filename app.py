@@ -9417,8 +9417,8 @@ if selected == "Stock Analysis Tool":
                                         Accounts_payable_quarter10_unpacked, Current_accrued_liab_quarter10_unpacked, 
                                         Tax_payable_quarter10_unpacked, Other_current_liabilities_quarter10_unpacked, 
                                         Current_deferred_revenue_quarter10_unpacked, Total_current_liabilities_quarter10_unpacked, 
-                                        capital_leases_quarter10_unpacked, LongTerm_debt_quarter10_unpacked):
-                         # Check if the result is already in session state
+                                        capital_leases_quarter10_unpacked, current_portion_of_lease_obligation_quarter10_unpacked, LongTerm_debt_quarter10_unpacked):
+                    # Check if the result is already in session state
                     if f'{ticker}_Total_Debt' in st.session_state:
                          return st.session_state[f'{ticker}_Total_Debt']
 
@@ -9433,6 +9433,7 @@ if selected == "Stock Analysis Tool":
                          'current_deferred_revenue': Current_deferred_revenue_quarter10_unpacked,
                          'total_current_liabilities': Total_current_liabilities_quarter10_unpacked,
                          'noncurrent_capital_leases': capital_leases_quarter10_unpacked,
+                        # 'current_capital_leases': current_portion_of_lease_obligation_quarter10_unpacked,
                          'lt_debt': LongTerm_debt_quarter10_unpacked
                     }, index=index)
 
@@ -9441,6 +9442,9 @@ if selected == "Stock Analysis Tool":
                          df['accounts_payable'] + df['current_accrued_liabilities'] + df['tax_payable'] +
                          df['other_current_liabilities'] + df['current_deferred_revenue']
                     )
+
+                    #df['Total add'] = df['noncurrent_capital_leases'] + df['current_capital_leases'] + df['lt_debt']
+                    #df['Total Debt'] = df['Total Difference'] + df['Total add']
 
                     df['Total add'] = df['noncurrent_capital_leases'] + df['lt_debt']
                     df['Total Debt'] = df['Total Difference'] + df['Total add']
@@ -9458,19 +9462,15 @@ if selected == "Stock Analysis Tool":
                     # Store the result in session state
                     st.session_state[f'{ticker}_Total_Debt'] = last_value_total_debt
 
-                    Total_Debt_from_all_calc =last_value_total_debt
-
-                    return Total_Debt_from_all_calc
+                    return last_value_total_debt
 
                # Call the function to calculate total debt and store it in session state
                Total_Debt_from_all_calc = calculate_total_debt(
                ticker, date_quarter, Accounts_payable_quarter10_unpacked, Current_accrued_liab_quarter10_unpacked, 
                Tax_payable_quarter10_unpacked, Other_current_liabilities_quarter10_unpacked, 
                Current_deferred_revenue_quarter10_unpacked, Total_current_liabilities_quarter10_unpacked, 
-               capital_leases_quarter10_unpacked, LongTerm_debt_quarter10_unpacked
+               capital_leases_quarter10_unpacked, current_portion_of_lease_obligation_quarter10_unpacked, LongTerm_debt_quarter10_unpacked
                )
-               
-
 #####################################################################################################
 
                # try:
@@ -12039,19 +12039,19 @@ if selected == "Stock Analysis Tool":
                          col1, col2,col3,col4,col5 = st.columns(5)
 
                          #col1.info(f"FCF 10 CAGR: {FCF_Cagr_10}%")
-                         col1.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF 10 CAGR:<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
+                         col1.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>FCF 10 CAGR:<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
                          
                          #col2.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
-                         col2.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF 5 CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
+                         col2.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>FCF 5 CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
                          
                          #col3.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
-                         col3.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS 10 CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
+                         col3.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>EPS 10 CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
 
                          #col4.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
-                         col4.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS 5 CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
+                         col4.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>EPS 5 CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
 
                          #col5.info(f"EPS next 5 YR (per annum): {Earnings_next_5_yrs}")
-                         col5.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
+                         col5.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
 
 
                     #to add space
@@ -12062,14 +12062,14 @@ if selected == "Stock Analysis Tool":
                          col1,col2,col3 = st.columns(3)
                     
                          with col1:
-                              st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+                              st.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
                               #col1.info(f"FCF Growth YOY: {Average_fcf_growth_ten}%")
                               
                          with col2:    
-                              st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
+                              st.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
                     
                          with col3:    
-                              st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
+                              st.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
                               #col3.info(f"3 YR FCF Growth YOY: {Average_fcf_growth_3years}")
 
                          st.write("")
@@ -12457,30 +12457,30 @@ if selected == "Stock Analysis Tool":
                          colx.write(f"Multiple of Earnings Valuation:")
                         
                          
-                         Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0.00,key="Growth_rate_revenue_LOW22").replace(',', '.'))
+                         Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0,key="Growth_rate_revenue_LOW22", placeholder="Enter % (e.g. 5)").replace(',', '.'))
 
-                         Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0.00,key="Growth_rate_revenue_middle22").replace(',', '.'))
-                         Growth_rate_revenue_high = float(colr11.text_input(" ", value=0.00,key="Growth_rate_revenue_high22").replace(',', '.'))
+                         Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0,key="Growth_rate_revenue_middle22").replace(',', '.'))
+                         Growth_rate_revenue_high = float(colr11.text_input(" ", value=0,key="Growth_rate_revenue_high22").replace(',', '.'))
                               
-                         Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0.00,key="Growth_rate_net_profit_LOW23").replace(',', '.'))
-                         Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0.00,key="Growth_rate__net_profit_middle23").replace(',', '.'))
-                         Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0.00,key="Growth_rate__net_profit_high23").replace(',', '.'))
+                         Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0,key="Growth_rate_net_profit_LOW23").replace(',', '.'))
+                         Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0,key="Growth_rate__net_profit_middle23").replace(',', '.'))
+                         Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0,key="Growth_rate__net_profit_high23").replace(',', '.'))
 
-                         Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_LOW24").replace(',', '.'))
-                         Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_middle24").replace(',', '.'))
-                         Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0.00,key="Growth_rate_fcf_margin_high24").replace(',', '.'))
+                         Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0,key="Growth_rate_fcf_margin_LOW24").replace(',', '.'))
+                         Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0,key="Growth_rate_fcf_margin_middle24").replace(',', '.'))
+                         Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0,key="Growth_rate_fcf_margin_high24").replace(',', '.'))
 
-                         Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0.00,key="Growth_rate_P_OCF_low22").replace(',', '.'))
-                         Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0.00,key="Growth_rate_P_OCF_middle22").replace(',', '0.0'))
-                         Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0.00,key="Growth_rate_P_OCF_high22").replace(',', '.'))
+                         Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0,key="Growth_rate_P_OCF_low22").replace(',', '.'))
+                         Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0,key="Growth_rate_P_OCF_middle22").replace(',', '0.0'))
+                         Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0,key="Growth_rate_P_OCF_high22").replace(',', '.'))
 
-                         Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0.00,key="Growth_rate_P_FCF_low22").replace(',', '.'))
-                         Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0.00,key="Growth_rate_P_FCF_middle22").replace(',', '.'))
-                         Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0.00,key="Growth_rate_P_FCF_high22"))
+                         Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0,key="Growth_rate_P_FCF_low22").replace(',', '.'))
+                         Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0,key="Growth_rate_P_FCF_middle22").replace(',', '.'))
+                         Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0,key="Growth_rate_P_FCF_high22"))
 
-                         Margin_of_safety_low = float(cola.text_input(" ", value=9.00,key="Margin_of_safety_low22").replace(',', '.'))
-                         Margin_of_safety_mid = float(colb.text_input(" ", value=9.00,key="Margin_of_safety_mid22").replace(',', '.'))
-                         Margin_of_safety_high = float(colc.text_input(" ", value=9.00,key="Margin_of_safety_high22").replace(',', '.'))
+                         Margin_of_safety_low = float(cola.text_input(" ", value=9,key="Margin_of_safety_low22").replace(',', '.'))
+                         Margin_of_safety_mid = float(colb.text_input(" ", value=9,key="Margin_of_safety_mid22").replace(',', '.'))
+                         Margin_of_safety_high = float(colc.text_input(" ", value=9,key="Margin_of_safety_high22").replace(',', '.'))
 
                          #except Exception as e:
                           #    st.error("Please use a dot instead of a comma for decimal values.")
@@ -13324,7 +13324,12 @@ if selected == "Stock Analysis Tool":
                
 
                          TTM =eps_diluted_ttm
-                         EPS_2025= float(Earnings_next_yr_in_value)
+                         try:
+                              EPS_2025= float(Earnings_next_yr_in_value)
+
+                         except Exception as e:
+                              EPS_2025 = 0  # or handle it in a way that suits your application
+
                          eps_diluted_annual_10 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_10_unpacked]
 
                          data = pd.DataFrame({
@@ -13348,7 +13353,7 @@ if selected == "Stock Analysis Tool":
                          fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
 
                          # Color the bars
-                         colors = ['blue'] * len(date_annual) + ['red', 'green']
+                         colors = ['blue'] * len(date_annual) + ['black', 'green']
                          fig1.update_traces(marker_color=colors)
 
                          # Update layout for better readability
