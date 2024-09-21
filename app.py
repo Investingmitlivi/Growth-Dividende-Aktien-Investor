@@ -348,7 +348,7 @@ ticker_symbol_name = {
           'AIBBU':'AIB Acquisition Corporation Unit',
           'AIC':'Arlington Asset Investment Corp ',
           'AIF':'Apollo Tactical Income Fund Inc. ',
-          'AIG':'American International Group Inc. New ',
+          'AIG':'American International Group Inc.',
           'AIH':'Aesthetic Medical International Holdings Group Ltd. ',
           'AIHS':'Senmiao Technology Limited ',
           'AIM':'AIM ImmunoTech Inc. ',
@@ -9184,10 +9184,7 @@ if selected == "Stock Analysis Tool":
                          Earnings_next_5_yrs = quote.fundamental_df.at[0, "EPS next 5Y"]
                          Average_debt_equity_one = quote.fundamental_df.at[0, "Debt/Eq"]
 
-                         try:
-                              checking_valid_debt_equity = float(Average_debt_equity_one) > 0.00
-                         except Exception as e:
-                              Average_debt_equity_one = Average_debt_equity_annual1
+            
 
                     except Exception as e:
                          forwardPE = "{:.2f}".format(00.00)
@@ -9204,7 +9201,12 @@ if selected == "Stock Analysis Tool":
                          Earnings_next_yr_in_prozent = "{:.2f}".format(0.00)
                          Earnings_next_yr_in_value = "{:.2f}".format(0.00)
                          Earnings_next_5_yrs = "{:.2f}".format(0.00)
+
                          Average_debt_equity_one = round((((sum(debt_equity_annual1_unpacked) / len(debt_equity_annual1_unpacked)))), 2)
+                         try:
+                              checking_valid_debt_equity = float(Average_debt_equity_one) > 0.00
+                         except Exception as e:
+                              Average_debt_equity_one = Average_debt_equity_one
 
                     # Store the data in session state
                     st.session_state[f'{ticker}_forwardPE'] = forwardPE
@@ -9223,10 +9225,14 @@ if selected == "Stock Analysis Tool":
                     st.session_state[f'{ticker}_Earnings_next_5_yrs'] = Earnings_next_5_yrs
                     st.session_state[f'{ticker}_Average_debt_equity_one'] = Average_debt_equity_one
 
-                    return (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, Average_debt_equity_one)
+                    return (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, 
+                            Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, 
+                            Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, 
+                            Earnings_next_5_yrs, Average_debt_equity_one)
 
                     # Usage
-               (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, Average_debt_equity_one) = unpack_and_store_fundamental_data(quote, ticker)
+               (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, Earnings_this_yr, 
+                Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, Average_debt_equity_one) = unpack_and_store_fundamental_data(quote, ticker)
 
 ###################################################################################################
 
