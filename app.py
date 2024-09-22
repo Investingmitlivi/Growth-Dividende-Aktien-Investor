@@ -1,5 +1,5 @@
 
-from google_auth_oauthlib import get_user_credentials
+from google_auth_oauthlib import get_user_credentials 
 import requests, json, time
 #import streamlit_authenticator as stauth
 #import pickle
@@ -19,7 +19,6 @@ import time
 import firebase_admin
 import os
 from typing import List, Dict, Union
-from google_auth_oauthlib.flow import Flow
 
 
 
@@ -7210,7 +7209,8 @@ if selected == "Stock Analysis Tool":
      fcf_per_share = Financial_data['ttm']['fcf_per_share']
      Dividend_ttm = Financial_data['ttm']['cff_dividend_paid'] 
      Dividend_current_dividend= Financial_data['ttm']['dividends'] 
-     fcf_ttm = Financial_data['ttm']['fcf']/1000000000           
+     fcf_ttm = Financial_data['ttm']['fcf']/1000000000 
+     ROE_TTM =Financial_data['ttm']['roe']/1000000000         
      netincome_ttm = Financial_data['ttm']['net_income']/1000000000
      revenue_ttm = Financial_data['ttm']['revenue']/1000000000
      shares_diluted_ttm = (Financial_data['ttm']['shares_diluted'])/1000000000
@@ -7237,7 +7237,7 @@ if selected == "Stock Analysis Tool":
      shares_basic_annual_funf_unpacked = annual_data['shares_basic'][-5:]
 
      Average_shares_basic_annual_one = round((sum(shares_basic_annual_one) / len(shares_basic_annual_one)) / 1000000000, 2)
-     EPS_growth = annual_data['eps_diluted_growth'][-10:]
+     #EPS_growth_annual_unpacked= annual_data['eps_diluted_growth'][-10:]
      Dividend_per_share = Financial_data['ttm']['dividends']
      #---------------------------pyfinanz-----------------------------------
                
@@ -7861,7 +7861,7 @@ if selected == "Stock Analysis Tool":
                     #eps_basic_annual_5_unpacked = annual_data['eps_basic'][-5:]
                     eps_basic_annual_5_unpacked = annual_data['eps_basic'][-5:] 
 
-                    EPS_growth_10yrs= annual_data['eps_diluted_growth'][-10:]
+                    EPS_growth_annual_10yrs_unpacked= annual_data['eps_diluted_growth'][-10:]
 
                     eps_basic_annual_10_unpacked = annual_data['eps_basic'][-10:]
 
@@ -7879,7 +7879,7 @@ if selected == "Stock Analysis Tool":
                     st.session_state[f'{ticker}_eps_growth_3yrs'] = EPS_growth_3years
                     st.session_state[f'{ticker}_eps_growth_5yrs'] = EPS_growth_5yrs
                     st.session_state[f'{ticker}_eps_basic_annual_5_unpacked'] = eps_basic_annual_5_unpacked
-                    st.session_state[f'{ticker}_eps_growth_10yrs'] = EPS_growth_10yrs
+                    st.session_state[f'{ticker}_eps_growth_10yrs'] = EPS_growth_annual_10yrs_unpacked
                     st.session_state[f'{ticker}_eps_basic_annual_10_unpacked'] = eps_basic_annual_10_unpacked
                     st.session_state[f'{ticker}_eps_diluted_annual_10_unpacked'] = eps_diluted_annual_10_unpacked
                     st.session_state[f'{ticker}_Eps_diluted_quarterly_10_unpacked'] = Eps_diluted_quarterly_10_unpacked
@@ -7887,16 +7887,16 @@ if selected == "Stock Analysis Tool":
                    
 
                     return (EPS_last_average, EPS_growth_3years, EPS_growth_5yrs, eps_basic_annual_5_unpacked,
-                            EPS_growth_10yrs,eps_basic_annual_10_unpacked,
+                            EPS_growth_annual_10yrs_unpacked,eps_basic_annual_10_unpacked,
                             eps_diluted_annual_10_unpacked,Eps_diluted_quarterly_10_unpacked,eps_basic_quarterly_10_unpacked)
 
 
-               (EPS_last_average, EPS_growth_3years,EPS_growth_5yrs,eps_basic_annual_5_unpacked,EPS_growth_10yrs, eps_basic_annual_10_unpacked,
+               (EPS_last_average, EPS_growth_3years,EPS_growth_5yrs,eps_basic_annual_5_unpacked,EPS_growth_annual_10yrs_unpacked, eps_basic_annual_10_unpacked,
                 eps_diluted_annual_10_unpacked,Eps_diluted_quarterly_10_unpacked,eps_basic_quarterly_10_unpacked
                    ) = calculate_eps_growth(annual_data,quarterly_data, ticker)
   ###################################################################################################             
 
-               EPS_growth_10yrs = (sum(EPS_growth_10yrs)/len(EPS_growth_10yrs)*100)
+               EPS_growth_10yrs = (sum(EPS_growth_annual_10yrs_unpacked)/len(EPS_growth_annual_10yrs_unpacked)*100)
                Average_eps_basic_annual_five = sum(eps_basic_annual_5_unpacked)/len(eps_basic_annual_5_unpacked) 
 
               
@@ -8109,7 +8109,7 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_revenue_growth_5years'],
                                    st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'],
                                    st.session_state[f'{ticker}_revenue_growth_10years'],
-
+                                   st.session_state[f'{ticker}_Net_interest_Income_annual_10'],
                                    st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked'],
                                    st.session_state[f'{ticker}_shares_basic_annual_10_unpacked'],
                                    st.session_state[f'{ticker}_shares_diluted_quarter_10_unpacked'],
@@ -8146,6 +8146,10 @@ if selected == "Stock Analysis Tool":
                     Revenue_growth_10years = annual_data['revenue_growth'][-10:]
                     Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
                     Revenue_growth_10years = (Revenue_growth_10years*100)
+                    try:
+                         Net_interest_Income_annual_10_unpacked = annual_data['net_interest_income'][-10:]
+                    except Exception as e:
+                         Net_interest_Income_annual_10_unpacked =[0]*10
 
                     shares_diluted_annual_10_unpacked =annual_data['shares_diluted'][-10:]
                     shares_basic_annual_10_unpacked=annual_data['shares_basic'][-10:]
@@ -8166,6 +8170,7 @@ if selected == "Stock Analysis Tool":
                     st.session_state[f'{ticker}_revenue_growth_5years'] = Revenue_growth_5years
                     st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'] = Revenue_growth_10quarter_unpacked
                     st.session_state[f'{ticker}_revenue_growth_10years'] = Revenue_growth_10years
+                    st.session_state[f'{ticker}_Net_interest_Income_annual_10'] =Net_interest_Income_annual_10_unpacked
 
                     st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked']=shares_diluted_annual_10_unpacked
                     st.session_state[f'{ticker}_shares_basic_annual_10_unpacked']=shares_basic_annual_10_unpacked
@@ -8182,6 +8187,7 @@ if selected == "Stock Analysis Tool":
                               Revenue_growth_5years,
                               Revenue_growth_10quarter_unpacked,
                               Revenue_growth_10years,shares_diluted_annual_10_unpacked,
+                              Net_interest_Income_annual_10_unpacked,
                               shares_basic_annual_10_unpacked,shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked
 )
 
@@ -8192,7 +8198,7 @@ if selected == "Stock Analysis Tool":
                Revenue_growth_10_unpacked,
                Revenue_growth_1year,
                Revenue_growth_3years,
-               Revenue_growth_5years,Revenue_growth_10quarter_unpacked,Revenue_growth_10years,
+               Revenue_growth_5years,Revenue_growth_10quarter_unpacked,Revenue_growth_10years,Net_interest_Income_annual_10_unpacked,
                shares_diluted_annual_10_unpacked,shares_basic_annual_10_unpacked,shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked
                ) = calculate_revenue_and_growth(annual_data,quarterly_data, ticker)
 
@@ -8244,7 +8250,8 @@ if selected == "Stock Analysis Tool":
                     if f'{ticker}_fcf_cagr_10' in st.session_state:
                          return (st.session_state[f'{ticker}_fcf_cagr_10'],
                                    st.session_state[f'{ticker}_eps_cagr_10'],
-                                   st.session_state[f'{ticker}_revenue_cagr_10'])
+                                   st.session_state[f'{ticker}_revenue_cagr_10'],
+                                   st.session_state[f'{ticker}_net_interest_income_cagr_10'])
 
 
                    
@@ -8261,14 +8268,24 @@ if selected == "Stock Analysis Tool":
                     Revenue_Cagr_10 = annual_data['revenue_cagr_10'][-1:]
                     Revenue_Cagr_10 = sum(Revenue_Cagr_10)/len(Revenue_Cagr_10)
                     Revenue_Cagr_10= round((Revenue_Cagr_10*100),2)
+                    try:
+                    
+                         Net_interest_Income_annual_Cagr_10 = annual_data['net_interest_income_cagr_10'][-1:]
+                         Net_interest_Income_annual_Cagr_10 = sum(Net_interest_Income_annual_Cagr_10)/len(Net_interest_Income_annual_Cagr_10)
+                         Net_interest_Income_annual_Cagr_10= round((Net_interest_Income_annual_Cagr_10*100),2)
+
+                    except Exception as e:
+
+                         Net_interest_Income_annual_Cagr_10 = "{:.2f}".format(0.00)
 
                     st.session_state[f'{ticker}_fcf_cagr_10'] = FCF_Cagr_10
                     st.session_state[f'{ticker}_eps_cagr_10'] = EPS_Cagr_10
                     st.session_state[f'{ticker}_revenue_cagr_10'] = Revenue_Cagr_10
+                    st.session_state[f'{ticker}_net_interest_income_cagr_10'] = Net_interest_Income_annual_Cagr_10
 
-                    return FCF_Cagr_10, EPS_Cagr_10, Revenue_Cagr_10
+                    return FCF_Cagr_10, EPS_Cagr_10, Revenue_Cagr_10,Net_interest_Income_annual_Cagr_10
 
-               FCF_Cagr_10, EPS_Cagr_10, Revenue_Cagr_10 = calculate_cagr_10_years(annual_data, ticker)
+               FCF_Cagr_10, EPS_Cagr_10, Revenue_Cagr_10,Net_interest_Income_annual_Cagr_10 = calculate_cagr_10_years(annual_data, ticker)
 
 ###################################################################################################
 
@@ -8678,6 +8695,53 @@ if selected == "Stock Analysis Tool":
    
                     
 ###################################################################################################
+               print("Net_interest_Income_annual_10_unpacked",Net_interest_Income_annual_10_unpacked)
+               def calculate_Net_interest_Income_CAGR_5(Net_interest_Income_annual_10_unpacked, ticker):
+                    # Check if the result is already in session state
+                    if f'{ticker}_Net_interest_Income_annual_Cagr_5' in st.session_state:
+                         return st.session_state[f'{ticker}_Net_interest_Income_annual_Cagr_5']
+
+                    try:
+                         # Get the value at index -6 (5 years ago) and the most recent value
+                         value_at_index_6 = Net_interest_Income_annual_10_unpacked[-6]
+                         value_at_index_last = Net_interest_Income_annual_10_unpacked[-1]
+                    except Exception as e:
+                         # If there's an error (e.g., insufficient data), set both to 0
+                         value_at_index_6 = 0
+                         value_at_index_last = 0
+
+                    try:
+                         if value_at_index_6 == 0  or all(x == 0 for x in Net_interest_Income_annual_10_unpacked):
+                              # If value at index -6 is 0, CAGR is 0
+                              Net_interest_Income_annual_Cagr_5 = "{:.2f}".format(0.00)
+                         else:
+                              try:
+                                   # Calculate CAGR
+                                   Net_interest_Income_annual_Cagr_5 = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
+                                   # Handle complex number case
+                                   if isinstance(Net_interest_Income_annual_Cagr_5, complex):
+                                        Net_interest_Income_annual_Cagr_5 = "{:.2f}".format(0.00)
+                                   else:
+                                        Net_interest_Income_annual_Cagr_5 = "{:.2f}".format(Net_interest_Income_annual_Cagr_5)
+                              except Exception as e:
+                                   Net_interest_Income_annual_Cagr_5 = "{:.2f}".format(0.00)
+                    except Exception as e:
+                         Net_interest_Income_annual_Cagr_5 = "{:.2f}".format(0.00)
+
+                    # Store the result in session state
+                    st.session_state[f'{ticker}_Net_interest_Income_annual_Cagr_5'] = Net_interest_Income_annual_Cagr_5
+
+                    return Net_interest_Income_annual_Cagr_5
+
+
+
+               Net_interest_Income_annual_Cagr_5 = calculate_Net_interest_Income_CAGR_5(Net_interest_Income_annual_10_unpacked, ticker)
+   
+                    
+
+
+###################################################################################################
+
 
                def unpack_data_Cashflow_statement(annual_data, quarterly_data, ticker):
                # Annual data unpacking (10 years)
@@ -9167,7 +9231,9 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_Earnings_next_5_yrs'],
                               st.session_state[f'{ticker}_Average_debt_equity_one']
                          )
-                    
+
+            
+                  
                     # Unpacking the data from quote.fundamental_df
                     try:
                          forwardPE = quote.fundamental_df.at[0, "Forward P/E"]
@@ -9407,11 +9473,11 @@ if selected == "Stock Analysis Tool":
                     Buyback_yield=0   
 
                Share_holder_yield="{:.2f}%".format(Dividend_per_share_yield_no_percentage+Buyback_yield)
-          
-
+               
+               
           
                try:
-                    ROE_ttm_ohne = (round_net_income_annual_one/Average_total_equity_annual)*100
+                    ROE_ttm_ohne = (ROE_TTM)
                     ROE_ttm="{:.2f}%".format(ROE_ttm_ohne)
                     fcf_yield_ttm = "{:.2f}%".format((fcf_per_share/amount)*100)
                except Exception as e: 
@@ -9672,8 +9738,8 @@ if selected == "Stock Analysis Tool":
                'Dividend Yield': [Dividend_per_share_yield],
                'Shareholder Yield': [Share_holder_yield],
                'Dividend Paid (TTM)': [Dividend_ttm], 
-               'Dividend/Share (TTM)': f"$ {Dividend_TTM}",
-               'Dividend Estimate': f"$ {Dividend_Est}",
+               'Dividend/Share (TTM)': f"{Dividend_TTM}",
+               'Dividend Estimate': f" {Dividend_Est}",
                'Dividend Ex-Date': [Dividend_Ex_Date],
                '5 YR Avg FCF': [average_FCF_annual_five_we], 
                'Free Cash Flow (TTM)': [fcf_ttm],
@@ -9684,7 +9750,8 @@ if selected == "Stock Analysis Tool":
                'Operating Margin': [average_operating_margin1_quarter],
                '5 YR Net Profit Margin': f"{five_yrs_Nettomarge}%",
                'Net Profit Margin': [Net_margin_ttm],
-               '5 YR FCF Margin':[FCF_Margin_5],
+               #'5 YR FCF Margin':[FCF_Margin_5],
+               '5 YR FCF Margin': f"{FCF_Margin_5}%",
                'FCF Margin': ' {:.2f}%'.format(FCF_Margin_1)
                }
 
@@ -9711,8 +9778,10 @@ if selected == "Stock Analysis Tool":
                'EPS Estimate next YR': f" {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
                'EPS Estimate 5 YR (per annum)': [Earnings_next_5_yrs],
                'EPS past 5 YR': f"{EPS_5_CAGR}% ",
-               'Revenue growth 10 YR': f"{Revenue_Cagr_10}%",
-               'Revenue growth 5 YR': f"{Revenue_5_CAGR}%",
+               'Revenue CAGR 10 YR': f"{Revenue_Cagr_10}%",
+               'Revenue CAGR 5 YR': f"{Revenue_5_CAGR}%",
+               'Net Interest Income CAGR 10 YR': f"{Net_interest_Income_annual_Cagr_10 }%",
+               'Net Interest Income CAGR 5 YR': f"{Net_interest_Income_annual_Cagr_5 }%",
                'RSI (14)': [RSI],
                '50 SMA': [Moving_50],
                '200 SMA': [Moving_200],
@@ -9805,7 +9874,7 @@ if selected == "Stock Analysis Tool":
           try:
                Total_interest_income_annual_10_unpacked = annual_data['total_interest_income'][-10:]
                Total_interest_expense_annual_10_unpacked = annual_data['total_interest_expense'][-10:]
-               Net_interest_Income_annual_10_unpacked = annual_data['net_interest_income'][-10:]
+               #Net_interest_Income_annual_10_unpacked = annual_data['net_interest_income'][-10:]
                Prov_Credit_losses_annual_10_unpacked = annual_data['credit_losses_provision'][-10:]
                Netinterest_Prov_Credit_losses_annual_10_unpacked = annual_data['net_interest_income_after_credit_losses_provision'][-10:]
                Total_Non_interest_expenses_annual_10_unpacked = annual_data['total_noninterest_expense'][-10:]
@@ -9967,7 +10036,7 @@ if selected == "Stock Analysis Tool":
                                    Income_tax_annual_10_unpacked  = annual_data['income_tax'][-10:]
                                    Total_interest_income_annual_10_unpacked = annual_data['total_interest_income'][-10:]
                                    Total_interest_expense_annual_10_unpacked = annual_data['total_interest_expense'][-10:]
-                                   Net_interest_Income_annual_10_unpacked  = annual_data['net_interest_income'][-10:]
+                                   #Net_interest_Income_annual_10_unpacked  = annual_data['net_interest_income'][-10:]
                                    Prov_Credit_losses_annual_10_unpacked  = annual_data['credit_losses_provision'][-10:]
                                    Netinterest_Prov_Credit_losses_annual_10_unpacked = annual_data['net_interest_income_after_credit_losses_provision'][-10:]
                                    Total_Non_interest_expenses_annual_10_unpacked  = annual_data['total_noninterest_expense'][-10:]
@@ -12047,19 +12116,19 @@ if selected == "Stock Analysis Tool":
                          col1, col2,col3,col4,col5 = st.columns(5)
 
                          #col1.info(f"FCF 10 CAGR: {FCF_Cagr_10}%")
-                         col1.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>FCF 10 CAGR:<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
+                         col1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 10 CAGR:<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
                          
                          #col2.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
-                         col2.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>FCF 5 CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
+                         col2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 5 CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
                          
                          #col3.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
-                         col3.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>EPS 10 CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
+                         col3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 10 CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
 
                          #col4.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
-                         col4.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>EPS 5 CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
+                         col4.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 5 CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
 
                          #col5.info(f"EPS next 5 YR (per annum): {Earnings_next_5_yrs}")
-                         col5.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
+                         col5.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
 
 
                     #to add space
@@ -12070,14 +12139,14 @@ if selected == "Stock Analysis Tool":
                          col1,col2,col3 = st.columns(3)
                     
                          with col1:
-                              st.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+                              st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
                               #col1.info(f"FCF Growth YOY: {Average_fcf_growth_ten}%")
                               
                          with col2:    
-                              st.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
+                              st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
                     
                          with col3:    
-                              st.write(f"<div style='background-color:dodgerblue; padding: 10px; border-radius: 5px; color:black;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
+                              st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
                               #col3.info(f"3 YR FCF Growth YOY: {Average_fcf_growth_3years}")
 
                          st.write("")
@@ -12421,32 +12490,32 @@ if selected == "Stock Analysis Tool":
                          
                          colr1,colr2,colr3,colr9,colr10,colr11 = st.columns(6)
 
-                         colr1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_growth_1year:.2f}%</div>", unsafe_allow_html=True)
-                         colr2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_5_CAGR}%</div>", unsafe_allow_html=True)
-                         colr3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_Cagr_10}%</div>", unsafe_allow_html=True)
+                         colr1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_growth_1year:.2f}%</div>", unsafe_allow_html=True)
+                         colr2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_5_CAGR}%</div>", unsafe_allow_html=True)
+                         colr3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Revenue Growth: <br> {Revenue_Cagr_10}%</div>", unsafe_allow_html=True)
 
                          coln1,coln2,coln3,coln9,coln10,coln11 = st.columns(6)
 
-                         coln1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_margin_ttm}</div>", unsafe_allow_html=True)
-                         coln2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {five_yrs_Nettomarge}%</div>", unsafe_allow_html=True)
-                         coln3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_income_margin_10}%</div>", unsafe_allow_html=True)
+                         coln1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_margin_ttm}</div>", unsafe_allow_html=True)
+                         coln2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {five_yrs_Nettomarge}%</div>", unsafe_allow_html=True)
+                         coln3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_income_margin_10}%</div>", unsafe_allow_html=True)
 
                          colf1,colf2,colf3,colf9,colf10,colf11 = st.columns(6)
 
-                         colf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_1:.2f}%</div>", unsafe_allow_html=True)
-                         colf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
-                         colf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_10}%</div>", unsafe_allow_html=True)      
+                         colf1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_1:.2f}%</div>", unsafe_allow_html=True)
+                         colf2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
+                         colf3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_10}%</div>", unsafe_allow_html=True)      
 
                          colcf1,colcf2,colcf3,colcf9,colcf10,colcf11 = st.columns(6)
 
-                         colcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_ttm}</div>", unsafe_allow_html=True)
-                         colcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_5}</div>", unsafe_allow_html=True)
-                         colcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_10}</div>", unsafe_allow_html=True)
+                         colcf1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_ttm}</div>", unsafe_allow_html=True)
+                         colcf2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_5}</div>", unsafe_allow_html=True)
+                         colcf3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_10}</div>", unsafe_allow_html=True)
 
                          colfcf1,colfcf2,colfcf3,colfcf9,colfcf10,colfcf11 = st.columns(6)
-                         colfcf1.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ttm}</div>", unsafe_allow_html=True)
-                         colfcf2.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_funf}</div>", unsafe_allow_html=True)
-                         colfcf3.write(f"<div style='background-color:#333333; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ten}</div>", unsafe_allow_html=True)
+                         colfcf1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ttm}</div>", unsafe_allow_html=True)
+                         colfcf2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_funf}</div>", unsafe_allow_html=True)
+                         colfcf3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Price/FCF: <br> {pfcf_ten}</div>", unsafe_allow_html=True)
 
                     
 
@@ -12458,7 +12527,7 @@ if selected == "Stock Analysis Tool":
                          col1.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True) 
 
                          #colx.write('')
-                         colx.write(f"<div style='background-color:#333333;padding: 10px; border-radius: 5px; color: white;'>Desired Rate of Return: <br><br>{''}</div>", unsafe_allow_html=True)
+                         colx.write(f"<div style='background-color:#4b71ff;padding: 10px; border-radius: 5px; color: white;'>Desired Rate of Return: <br><br>{''}</div>", unsafe_allow_html=True)
 
                          st.write("")
                          colx.write('')
@@ -13082,15 +13151,15 @@ if selected == "Stock Analysis Tool":
                          
                with Annual:
 
-                         Period_end_dates = annual_data['period_end_date'][-10:]
-                         index = range(len(Period_end_dates))
-                         
+                         Period_end_dates_annual = annual_data['period_end_date'][-10:]
+                         index = range(len(Period_end_dates_annual))
+
                          total = pd.DataFrame({
-                         'Period End Date': Period_end_dates,
+                         'Period End Date': Period_end_dates_annual,
                          'Revenue growth': Revenue_growth_10_unpacked,
                          'Net Income growth': NetIncome_growth_annual_10_unpacked,
                          'FCF growth': fcf_growth_annual_10_unpacked ,
-                         'EPS growth':EPS_growth,
+                         'EPS growth':EPS_growth_annual_10yrs_unpacked,
                          'FCF Margin':FCF_Margin_annual_10unpacked,
                          'Shares diluted':shares_diluted_annual_growth_10_unpacked,
                          'Operating Margin':operating_margin_annual10_unpacked,
@@ -13118,7 +13187,7 @@ if selected == "Stock Analysis Tool":
                          ('Revenue growth', Revenue_growth_10_unpacked),
                          ('Net Income growth', NetIncome_growth_annual_10_unpacked),
                          ('FCF growth', fcf_growth_annual_10_unpacked ),
-                         ('EPS growth',EPS_growth),
+                         ('EPS growth',EPS_growth_annual_10yrs_unpacked),
                          ('FCF Margin',FCF_Margin_annual_10unpacked), 
                          ('Shares diluted',shares_diluted_annual_growth_10_unpacked),
                          ('Operating Margin',operating_margin_annual10_unpacked),
@@ -13159,14 +13228,13 @@ if selected == "Stock Analysis Tool":
 
                               merged_data[metric_name] = formatted_data
 
-                         merged_df_key_ratio = pd.DataFrame(merged_data, index=Period_end_dates).transpose()
+                         merged_df_key_ratio = pd.DataFrame(merged_data, index=Period_end_dates_annual).transpose()
 
                          st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
 
 
                          with Quarter:
                                           
-                                                  
 
                                              Period_end_dates_quarter = quarterly_data['period_end_date'][-10:]
                                              index = range(len(Period_end_dates_quarter))
@@ -13329,20 +13397,23 @@ if selected == "Stock Analysis Tool":
                     
 
                #-------------------------------------------------------------------------------------------------
-               
+               # Get the current year and calculate next year
+                         current_year = datetime.now().year
+                         next_year = current_year + 1
 
                          TTM =eps_diluted_ttm
                          try:
-                              EPS_2025= float(Earnings_next_yr_in_value)
+                              EPS_next_year= float(Earnings_next_yr_in_value)
 
                          except Exception as e:
-                              EPS_2025 = 0  # or handle it in a way that suits your application
+                              EPS_next_year = 0  # or handle it in a way that suits your application
 
                          eps_diluted_annual_10 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_10_unpacked]
 
                          data = pd.DataFrame({
-                         'Date': date_annual+ ['TTM', '2025'],
-                         'EPS': eps_diluted_annual_10 + [f"$ {TTM:.2f}", f"$ {EPS_2025:.2f}"]
+                         #'Date': date_annual+ ['TTM', '2025'],
+                         'Date': date_annual + ['TTM', str(next_year)],
+                         'EPS': eps_diluted_annual_10 + [f"$ {TTM:.2f}", f"$ {EPS_next_year:.2f}"]
                          })
 
                          # Create a Streamlit app
@@ -13361,18 +13432,20 @@ if selected == "Stock Analysis Tool":
                          fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
 
                          # Color the bars
-                         colors = ['blue'] * len(date_annual) + ['black', 'green']
+                         #colors = ['blue'] * len(date_annual) + ['blue', 'grey']
+                         streamlit_blue = '#4b71ff'  # This is Streamlit's default blue color
+                         colors = [streamlit_blue] * len(date_annual) + [streamlit_blue, 'grey']
                          fig1.update_traces(marker_color=colors)
 
-                         # Update layout for better readability
-                         fig1.update_layout(
-                         xaxis_title="Date",
-                         yaxis_title="EPS ($)",
-                         legend_title="EPS Type",
-                         font=dict(size=12),
-                         yaxis_range=[0, data['EPS_float'].max() * 1.1],
-                         xaxis_type='category'  # Ensure 'TTM' and '2025' are treated as categories
-                         )
+                         # # Update layout for better readability
+                         # fig1.update_layout(
+                         # xaxis_title="Date",
+                         # yaxis_title="EPS ($)",
+                         # legend_title="EPS Type",
+                         # font=dict(size=12),
+                         # yaxis_range=[0, data['EPS_float'].max() * 1.1],
+                         # xaxis_type='category'  # Ensure 'TTM' and '2025' are treated as categories
+                         # )
 
 
 
@@ -13382,7 +13455,8 @@ if selected == "Stock Analysis Tool":
                          yaxis_title="EPS ($)",
                          legend_title="EPS Type",
                          font=dict(size=12),
-                         yaxis_range=[0, max(data['EPS_float'].max(), TTM, EPS_2025) * 1.1]
+                         yaxis_range=[0, max(data['EPS_float'].max(), TTM, EPS_next_year) * 1.1],
+                         xaxis_type='category' 
                          )
 
                          # Display the chart using Streamlit
@@ -14581,20 +14655,21 @@ def display_disclaimer():
 if selected == "Contacts":
      with st.container():
 
-          st.title(" Google OAuth")
+          #st.title(" Google OAuth")
           def login_callback():
                credentials = get_user_credentials(
-                    client_id = st.secrets["client_id"],
-                    client_secret = st.secrets["client_secret"],
+                    client_id = st.secrets.client_id,
+                    client_secret = st.secrets.client_secret,
 
                     scopes = [
                          "openid",
                          "https://www.googleapis.com/auth/userinfo.email",
                          "https://www.googleapis.com/auth/userinfo.profile	",
-                         "https://www.googleapis.com/auth/calendar.events.readonly",
                     ],
-                    minimum_port =9000, maximum_port =9001,
+                    minimum_port=8501, maximum_port=9001,
+                    
                )
+               
                st.session_state.credentials = credentials
 
           st.button(
