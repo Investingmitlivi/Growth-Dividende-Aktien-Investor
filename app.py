@@ -7152,11 +7152,14 @@ if selected == "Stock Analysis Tool":
      #def configure():
      load_dotenv()
 
-     api_key = os.getenv("api_key")
-     base_url = os.getenv("base_url")
-     header = {'x-qfs-api-key': api_key}
+     #api_key = os.getenv("api_key")
+     #base_url = os.getenv("base_url")
+     #header = {'x-qfs-api-key': api_key}
 
      #url = f"{base_url}{ticker}?api_key={api_key}"
+
+     api_key = "7bd83d28344a3e5d2c2103dd4ca746f133259764"
+     header = {'x-qfs-api-key': api_key}
      url = f"https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={api_key}"
 
      @st.cache_data
