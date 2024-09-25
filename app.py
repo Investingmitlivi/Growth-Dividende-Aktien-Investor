@@ -30,27 +30,13 @@ from typing import List, Dict, Union
 #import re
 #import finnhub
 
-
-
-#from sqlite3 import OperationalError
-#from requests.exceptions import HTTPError
 from datetime import datetime, timedelta, date
 #from PIL import Image,ImageDraw
 #from streamlit_lottie import st_lottie
 from numpy_financial import npv
-#from pathlib import Path
-#from googletrans import Translator, LANGUAGES
-#from translate import Translator
-#from transformers import pipeline
-#from forex_python.converter import CurrencyRates
-#from forex_python.converter import RatesNotAvailableError
-#from googlefinance import getQuotes
-#from pandas_market_calendars import get_calendar
-#from yahoo_fin import stock_info as si
-#from bs4 import BeautifulSoup
+
 from firebase_admin import credentials
-#from firebase_admin import firestore
-#from firebase_admin import auth
+
 from pandas_datareader import data
 #from finvizfinance.quote import finvizfinance
 from pyfinviz.quote import Quote
@@ -62,8 +48,7 @@ from typing import Dict,Any
 
 
     
-def configure():
-     load_dotenv()
+
 
 st.set_page_config(page_title="Stock Valuation", page_icon = "📚", layout="wide")
 
@@ -117,7 +102,8 @@ custom_css = """
                """
 
 
-cred = credentials.Certificate('investingmitlivi-firebase key.json')
+#cred = credentials.Certificate('investingmitlivi-firebase key.json')
+cred = credentials.Certificate('.streamlit/investingmitlivi-firebase key.json')
 try:
      firebase_admin.initialize_app(cred)
 
@@ -7161,24 +7147,20 @@ if selected == "Stock Analysis Tool":
      if selected_ticker:
           ticker = ticker_symbol_name.get(selected_ticker) 
           name, symbol = selected_ticker.split(' : ')
-     #st.write(f'Selected Ticker Name: {name}')
-     #............................... quickfs api .................
 
-     #api_key = os.getenv("SECRET_API_KEY")
-     api_key = "7bd83d28344a3e5d2c2103dd4ca746f133259764"
+     #............................... api key.................
+     #def configure():
+     load_dotenv()
+
+     api_key = os.getenv("api_key")
+     base_url = os.getenv("base_url")
      header = {'x-qfs-api-key': api_key}
 
-    
+     url = f"{base_url}{ticker}?api_key={api_key}"
 
-     url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={api_key}'
-     #url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={os.getenv('api_key')}'
-     #url = f'https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={os.getenv('api_key')}'
-     #usage_url = f'https://public-api.quickfs.net/v1/usage'
-    
-
-    # @st.cache_data
+     @st.cache_data
      def fetch_data_from_api(url, header):
-          load_dotenv()
+         
           response = requests.get(url, headers=header)
           
     
@@ -9305,7 +9287,7 @@ if selected == "Stock Analysis Tool":
 ###################################################################################################
 
 
-               #PE_historical = annual_data['price_to_earnings'][-10:] 
+
 
    
                if Revenue_ttm!=0 and average_revenue_annual_ttm !=0 :
@@ -9452,12 +9434,13 @@ if selected == "Stock Analysis Tool":
 
                five_yrs_average_operating_margin= "{:.2f}%".format((sum(operating_margin_annual5_unpacked) / len(operating_margin_annual5_unpacked)) * 100)
 
-               cash_und_cash_investments = quarterly_data['cash_and_equiv'][-1:]
-               print(cash_und_cash_investments)
+              
                st_investments_quarter1 = ((sum(st_investments_quarter1_unpacked) / len(st_investments_quarter1_unpacked)) / 1000000000)
                cash_equiv_quarter1 = ((sum(cash_equiv_quarter1_unpacked) / len(cash_equiv_quarter1_unpacked)) / 1000000000)
                Total_cash_last_years = (st_investments_quarter1+cash_equiv_quarter1)
 
+               print("Total_cash_last_years",Total_cash_last_years)
+              
              
 
                
@@ -9484,7 +9467,8 @@ if selected == "Stock Analysis Tool":
                     ROE_ttm  ="{:.2f}%".format(0.00)
                     fcf_yield_ttm ="{:.2f}%".format(0.00)
 
-
+#######################################################################################################################
+ 
 
 #####################################################################################################
                def calculate_total_debt(ticker, date_quarter, 
@@ -11842,88 +11826,117 @@ if selected == "Stock Analysis Tool":
                #print("Total_Debt_from_all_calc",Total_Debt_from_all_calc)
                #print("rounded_fcf_Annual_five",rounded_fcf_Annual_five)
                
-               if float(KGV) > 23.00:
-                         pe = "🔴"  # Red X for KCV greater than 23
-               elif float(KGV) < 0.00:
-                         pe = "🔴"  # Red X for KCV smaller than 0
-               else:
-                         pe = "✅"  # Green checkmark for KGV greater than or equal to 23      
+               try:
+                    if float(KGV) > 23.00:
+                              pe = "🔴"  # Red X for KCV greater than 23
+                    elif float(KGV) < 0.00:
+                              pe = "🔴"  # Red X for KCV smaller than 0
+                    else:
+                              pe = "✅"  # Green checkmark for KGV greater than or equal to 23      
+               except Exception as e:
+                    pe = "🔴" 
                
-               
-               if float(KCV) > 23.00:
-                         pcf = "🔴"  # Red X for KCV greater than 23
-               elif float(KCV) < 0.00:
-                         pcf = "🔴"  # Red X for KCV smaller than 0
-               else:
-                         pcf= "✅"  # Green checkmark for KGV greater than or equal to 23
+               try:
+                    if float(KCV) > 23.00:
+                              pcf = "🔴"  # Red X for KCV greater than 23
+                    elif float(KCV) < 0.00:
+                              pcf = "🔴"  # Red X for KCV smaller than 0
+                    else:
+                              pcf= "✅"  # Green checkmark for KGV greater than or equal to 23
                          
+               except Exception as e:
+                    pcf = "🔴" 
 
-               if float(five_ROE) < 14.00:
-                         roe = "🔴"  # Red X for KGV less than 23
-               
-               else:
-                         roe= "✅"  # Green checkmark for KGV greater than or equal to 23          
 
-               if float(five_yrs_Nettomarge) > 5:
-                         
-                    netmarge = "✅"  
-               else:
+               try:
+                    if float(five_ROE) < 14.00:
+                              roe = "🔴"  # Red X for KGV less than 23
+                    
+                    else:
+                              roe= "✅"  # Green checkmark for KGV greater than or equal to 23          
+
+                    if float(five_yrs_Nettomarge) > 5:
+                              
+                         netmarge = "✅"  
+                    else:
+                         netmarge = "🔴"    
+               except Exception as e:
                     netmarge = "🔴"    
 
+               try:
+                    if one_FCF_annual_payout > 60:
+                              payout = "🔴"  # Red X for KGV less than 23
 
-               if one_FCF_annual_payout > 60:
-                         payout = "🔴"  # Red X for KGV less than 23
+                    elif one_FCF_annual_payout < 0:
+                              payout = "🔴"  # Red X for KCV smaller than 0           
+                    else:
+                              payout= "✅"  # Green checkmark for KGV greater than or equal to 23
+               except Exception as e:
 
-               elif one_FCF_annual_payout < 0:
-                         payout = "🔴"  # Red X for KCV smaller than 0           
-               else:
-                         payout= "✅"  # Green checkmark for KGV greater than or equal to 23
+                    payout = "🔴" 
 
-               if netincome_annual_funf_growth_ < -1:
-                         netincome = "🔴"  # Red X for KGV less than 23
-               else:
-                         netincome= "✅"  # Green checkmark for KGV greater than or equal to 23
-
-
-               if revenue_annual_funf_Growth < -1:
-                         rev = "🔴"  # Red X for KGV less than 23
-               else:
-                         rev= "✅"  # Green checkmark for KGV greater than or equal to 23
+               try:
+                    if netincome_annual_funf_growth_ < -1:
+                              netincome = "🔴"  # Red X for KGV less than 23
+                    else:
+                              netincome= "✅"  # Green checkmark for KGV greater than or equal to 23
 
 
-               if FCF_funf_growth < -1:
-                         fcf = "🔴"  # Red X for KGV less than 23
-               else:
-                         fcf= "✅"  # Green checkmark for KGV greater than or equal to 23
+                    if revenue_annual_funf_Growth < -1:
+                              rev = "🔴"  # Red X for KGV less than 23
+                    else:
+                              rev= "✅"  # Green checkmark for KGV greater than or equal to 23
+               except Exception as e:
+                    rev = "🔴" 
+
+               try:
+                    if FCF_funf_growth < -1:
+                              fcf = "🔴"  # Red X for KGV less than 23
+                    else:
+                              fcf= "✅"  # Green checkmark for KGV greater than or equal to 23
 
 
-               if Shares_outstanding_funf_growth > 0:
-                         share = "🔴"  # Red X for KGV less than 23
-               else:
-                         share= "✅"  # Green checkmark for KGV greater than or equal to 23
+                    if Shares_outstanding_funf_growth > 0:
+                              share = "🔴"  # Red X for KGV less than 23
+                    else:
+                              share= "✅"  # Green checkmark for KGV greater than or equal to 23
+               except Exception as e:
 
-               if Average_ROIC_funf == 'NA' or float(Average_ROIC_funf[:-1]) < 9:
-                         roic = "🔴"  # Red X for 'NA' or less than 9
-               else:
-                         roic= "✅"  # Green checkmark for KGV greater than or equal to 23
+                    share = "🔴" 
+               try:
+                    if Average_ROIC_funf == 'NA' or float(Average_ROIC_funf[:-1]) < 9:
+                              roic = "🔴"  # Red X for 'NA' or less than 9
+                    else:
+                              roic= "✅"  # Green checkmark for KGV greater than or equal to 23
+               except Exception as e:
 
-               if float(Average_debt_equity_one) > 2:
+                    roic = "🔴" 
+
+               try:
+                    if float(Average_debt_equity_one) > 2.0:
+                              dt_equt = "🔴"  # Red X for KGV less than 23
+
+                    elif float(Average_debt_equity_one) < 0:
+                         
                          dt_equt = "🔴"  # Red X for KGV less than 23
 
-               elif float(Average_debt_equity_one) < 0:
-                    
-                    dt_equt = "🔴"  # Red X for KGV less than 23
+                    else:
+                              dt_equt= "✅"  # Gree
 
-               else:
-                         dt_equt= "✅"  # Gree
+               except Exception as e:
 
-               if Schuldentillgung > 5:
-                    schuld = "🔴"  # Red X for KGV less than 23
-               elif Schuldentillgung < 0:
-                    
-                    schuld = "🔴"  # Red X for KGV less than 23
-               else:
-                    schuld= "✅"  # Gree
+                    dt_equt= "🔴" 
+
+               try:
+                    if Schuldentillgung > 5:
+                         schuld = "🔴"  # Red X for KGV less than 23
+                    elif Schuldentillgung < 0:
+                         
+                         schuld = "🔴"  # Red X for KGV less than 23
+                    else:
+                         schuld= "✅"  # Gree
+               except Exception as e:
+                    schuld ="🔴" 
 
  #################################################      
                #@st.cache_data(show_spinner=False)
@@ -13150,8 +13163,8 @@ if selected == "Stock Analysis Tool":
                     #    Annual,Quarterly = st.tabs(["Annual","Quarterly"])
                          
                with Annual:
-
-                         Period_end_dates_annual = annual_data['period_end_date'][-10:]
+                         len_of_revenue = len(Revenue_annual_10_unpacked)
+                         Period_end_dates_annual = annual_data['period_end_date'][-len_of_revenue:]
                          index = range(len(Period_end_dates_annual))
 
                          total = pd.DataFrame({
@@ -13433,7 +13446,7 @@ if selected == "Stock Analysis Tool":
 
                          # Color the bars
                          #colors = ['blue'] * len(date_annual) + ['blue', 'grey']
-                         streamlit_blue = '#4b71ff'  # This is Streamlit's default blue color
+                         streamlit_blue = '#087AFF'  # This is Streamlit's default blue color
                          colors = [streamlit_blue] * len(date_annual) + [streamlit_blue, 'grey']
                          fig1.update_traces(marker_color=colors)
 
