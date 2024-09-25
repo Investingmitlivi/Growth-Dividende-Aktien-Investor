@@ -7154,6 +7154,11 @@ if selected == "Stock Analysis Tool":
 
      api_key = os.getenv("api_key")
      base_url = os.getenv("base_url")
+
+
+     if not api_key or not base_url:
+          st.error("API_KEY or BASE_URL not found in environment variables.")
+          st.stop()
      header = {'x-qfs-api-key': api_key}
 
      #url = f"{base_url}{ticker}?api_key={api_key}"
