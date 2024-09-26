@@ -2547,6 +2547,7 @@ ticker_symbol_name = {
           'FLR':'Fluor Corporation ',
           'FLS':'Flowserve Corporation ',
           'FLT':'FleetCor Technologies Inc. ',
+          'FLUT':'Flutter Entertainment plc',
           'FLUX':'Flux Power Holdings Inc. ',
           'FLWS':'1-800-FLOWERS.COM Inc. ',
           'FLXS':'Flexsteel Industries Inc. ',
@@ -8595,6 +8596,8 @@ if selected == "Stock Analysis Tool":
                     st.session_state[f'{ticker}_FCF_5_CAGR'] = FCF_5_CAGR
 
                     return FCF_5_CAGR
+               
+              
 
                     # Usage example:
                    
@@ -9764,7 +9767,7 @@ if selected == "Stock Analysis Tool":
                f'ATH ({format_date(st.session_state.all_time_high_date)})': f"$ {st.session_state.all_time_high_price:.2f}",
                f'52WK LOW ({format_date(st.session_state.fifty_two_week_low_date)})': f"$ {st.session_state.fifty_two_week_low:.2f}"
                }
-
+  
 
                data4 = {
                'EPS (TTM)': " {:.2f}".format(eps_diluted_ttm),
@@ -9774,6 +9777,8 @@ if selected == "Stock Analysis Tool":
                'EPS past 5 YR': f"{EPS_5_CAGR}% ",
                'Revenue CAGR 10 YR': f"{Revenue_Cagr_10}%",
                'Revenue CAGR 5 YR': f"{Revenue_5_CAGR}%",
+               'FCF CAGR 10 YR': f"{FCF_Cagr_10}%",
+               'FCF CAGR 5 YR': f"{FCF_5_CAGR}%",
                'Net Interest Income CAGR 10 YR': f"{Net_interest_Income_annual_Cagr_10 }%",
                'Net Interest Income CAGR 5 YR': f"{Net_interest_Income_annual_Cagr_5 }%",
                'RSI (14)': [RSI],
