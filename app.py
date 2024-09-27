@@ -1239,6 +1239,7 @@ ticker_symbol_name = {
           'BY':'Byline Bancorp Inc. ',
           'BYD':'Boyd Gaming Corporation ',
           'BYFC':'Broadway Financial Corporation ',
+          'BYLOF':'Big Yellow Group PLC',
           'BYM':'Blackrock Municipal Income Quality Trust  of Beneficial Interest',
           'BYN':'Banyan Acquisition Corporation  ',
           'BYND':'Beyond Meat Inc. ',
