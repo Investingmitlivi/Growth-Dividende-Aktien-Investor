@@ -226,7 +226,7 @@ streamlit-on-Hover-tabs==1.0.1
 streamlit-option-menu==0.3.13
 subprocess.run==0.0.8
 tenacity==8.5.0
-tensorboard==2.12.3
+tensorboard==2.13.0
 tensorboard-data-server==0.7.2
 tensorflow==2.13.1
 tensorflow-estimator==2.15.0
