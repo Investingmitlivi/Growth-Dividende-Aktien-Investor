@@ -7085,11 +7085,6 @@ if selected == "Home":
           )
           st.write("[Superinvestor Portfolios >](https://valuesider.com/)")
           st.write("[Superinvestor Portfolios 13F fillings >](https://dataroma.com/m/home.php)")
-          
-         
-
-#finnhub_client = finnhub.Client(api_key="ckse5rhr01qjpllh316gckse5rhr01qjpllh3170")
-
 
 if selected == "Stock Analysis Tool":
      
@@ -7122,8 +7117,8 @@ if selected == "Stock Analysis Tool":
           ticker = ticker_symbol_name.get(selected_ticker) 
           name, symbol = selected_ticker.split(' : ')
 
-     #............................... api key.................
-     #def configure():
+     #.....................................................
+    
      load_dotenv()
 
      api_key = os.getenv("api_key")
@@ -7134,12 +7129,6 @@ if selected == "Stock Analysis Tool":
           st.error("API_KEY or BASE_URL not found in environment variables.")
           st.stop()
      header = {'x-qfs-api-key': api_key}
-
-     #url = f"{base_url}{ticker}?api_key={api_key}"
-
-     #api_key = "7bd83d28344a3e5d2c2103dd4ca746f133259764"
-     #header = {'x-qfs-api-key': api_key}
-     #url = f"https://public-api.quickfs.net/v1/data/all-data/{ticker}?api_key={api_key}"
 
      @st.cache_data
      def fetch_data_from_api(ticker):
