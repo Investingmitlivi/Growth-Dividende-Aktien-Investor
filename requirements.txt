@@ -229,7 +229,7 @@ tenacity==8.5.0
 tensorboard==2.13.0
 tensorboard-data-server==0.7.2
 tensorflow==2.13.1
-tensorflow-estimator==2.15.0
+tensorflow-estimator>=2.13,<2.14
 tensorflow-io-gcs-filesystem==0.34.0
 termcolor==2.4.0
 threadpoolctl==3.5.0
