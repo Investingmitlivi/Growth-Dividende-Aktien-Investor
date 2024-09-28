@@ -1,4 +1,5 @@
-from google_auth_oauthlib import get_user_credentials 
+from google_auth_oauthlib import get_user_credentials
+from google_auth_oauthlib.flow import Flow
 import requests, json, time
 import streamlit as st, pandas as pd, numpy as np, yfinance as yf
 import plotly.express as px
@@ -14658,36 +14659,54 @@ def display_disclaimer():
      st.markdown(custom_css, unsafe_allow_html=True)
 #####################################################################
 if selected == "Contacts":
-     with st.container():
+     
+     # Load your secrets
+     client_id = st.secrets["client_id"]
+     client_secret = st.secrets["client_secret"]
 
-          #st.title(" Google OAuth")
-          def login_callback():
-               credentials = get_user_credentials(
-                    client_id = st.secrets.client_id,
-                    client_secret = st.secrets.client_secret,
-
-                    scopes = [
+     flow = Flow.from_client_config(
+          {
+               "web": {
+                    "client_id": client_id,
+                    "client_secret": client_secret,
+                    "redirect_uris": ["http://localhost:8501/"],
+                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "scope": [
                          "openid",
                          "https://www.googleapis.com/auth/userinfo.email",
-                         "https://www.googleapis.com/auth/userinfo.profile	",
+                         "https://www.googleapis.com/auth/userinfo.profile",
                     ],
-                    minimum_port=8501, maximum_port=9001,
-                    
-               )
-               
-               st.session_state.credentials = credentials
+               }
+          },
+          redirect_uri="http://localhost:8501/",
+     )
 
+
+     # Login button and callback
+     if 'credentials' not in st.session_state:
+          state = flow.state
+          st.session_state['state'] = state
+          authorization_url, state = flow.authorization_url()
+          st.session_state['authorization_url'] = authorization_url
           st.button(
                "🔑 Login with Google",
-               type='primary',
-               on_click=login_callback,
-          )     
+               on_click=lambda: st.experimental_set_query_params(authorization_url=authorization_url)
+          )
 
+     # After user authentication
+     if 'code' in st.experimental_get_query_params():
+          flow.fetch_token(authorization_response=st.experimental_get_query_params()['code'])
+          credentials = flow.credentials
+          st.session_state['credentials'] = credentials
+          st.success("Logged in successfully!")   
 
-# Call the function to display the disclaimer
+               # Optionally display user info
+     if 'credentials' in st.session_state:
+     # Fetch and display user info here
+          pass
+
 display_disclaimer()
-
-
 current_year = datetime.now().year
  
 st.markdown(f'&copy; {2023} - {current_year} Stock Valuation. All rights reserved', unsafe_allow_html=True)
