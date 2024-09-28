@@ -1211,7 +1211,6 @@ ticker_symbol_name = {
           'BY':'Byline Bancorp Inc. ',
           'BYD':'Boyd Gaming Corporation ',
           'BYFC':'Broadway Financial Corporation ',
-          'BYLOF':'Big Yellow Group PLC',
           'BYM':'Blackrock Municipal Income Quality Trust  of Beneficial Interest',
           'BYN':'Banyan Acquisition Corporation  ',
           'BYND':'Beyond Meat Inc. ',
@@ -7286,7 +7285,12 @@ if selected == "Stock Analysis Tool":
                try:
                     current_price = float(stock_info.info["previousClose"])
                except Exception as e:
-                    current_price = float(quote.fundamental_df.at[0, "Price"])
+                    try:
+                         current_price = stock_info.history(period="2d", interval="1d")["Close"].iloc[-2]
+
+                    except Exception:
+
+                         current_price = float(quote.fundamental_df.at[0, "Price"])
 
           return current_price
 
