@@ -1,48 +1,20 @@
-
 from google_auth_oauthlib import get_user_credentials 
 import requests, json, time
-#import streamlit_authenticator as stauth
-#import pickle
-#import matplotlib.pyplot as plt
 import streamlit as st, pandas as pd, numpy as np, yfinance as yf
 import plotly.express as px
-#import sqlite3 
-#import bcrypt
 import plotly.graph_objs as go
 import plotly.graph_objects as go
-#import altair as alt
-#import random
-#import string
-#import uuid  # Import the uuid library
-#import hashlib
 import time
 import firebase_admin
 import os
 from typing import List, Dict, Union
-
-
-
-#import math
-#import textwrap
-#import sklearn
-
-#import math
-#import re
-#import finnhub
-
 from datetime import datetime, timedelta, date
-#from PIL import Image,ImageDraw
-#from streamlit_lottie import st_lottie
 from numpy_financial import npv
-
 from firebase_admin import credentials
-
 from pandas_datareader import data
-#from finvizfinance.quote import finvizfinance
 from pyfinviz.quote import Quote
 from stocknews import StockNews
 from streamlit_option_menu import option_menu
-#from callbacks import supports_callbacks
 from dotenv import load_dotenv
 from typing import Dict,Any
 
