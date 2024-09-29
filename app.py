@@ -1,5 +1,7 @@
-from google_auth_oauthlib import get_user_credentials
 from google_auth_oauthlib.flow import Flow
+from google.oauth2.credentials import Credentials
+#from google.auth.transport.requests import Request
+import google.auth.transport.requests
 import requests, json, time
 import streamlit as st, pandas as pd, numpy as np, yfinance as yf
 import plotly.express as px
@@ -17,7 +19,8 @@ from pyfinviz.quote import Quote
 from stocknews import StockNews
 from streamlit_option_menu import option_menu
 from dotenv import load_dotenv
-from typing import Dict,Any
+from typing import Dict,Any,Union
+#from fastapi import FastAPI
 
 
     
@@ -5727,6 +5730,7 @@ ticker_symbol_name = {
           'SID':'Companhia Siderurgica Nacional S.A. ',
           'SIDU':'Sidus Space Inc.  ',
           'SIEB':'Siebert Financial Corp. ',
+          'SIEGY':'Siemens Aktiengesellschaft',
           'SIEN':'Sientra Inc. ',
           'SIF':'SIFCO Industries Inc. ',
           'SIFY':'Sify Technologies Limited ',
@@ -7085,7 +7089,7 @@ if selected == "Home":
           )
           st.write("[Superinvestor Portfolios >](https://valuesider.com/)")
           st.write("[Superinvestor Portfolios 13F fillings >](https://dataroma.com/m/home.php)")
-
+ 
 if selected == "Stock Analysis Tool":
      
 
@@ -7117,8 +7121,8 @@ if selected == "Stock Analysis Tool":
           ticker = ticker_symbol_name.get(selected_ticker) 
           name, symbol = selected_ticker.split(' : ')
 
-     #.....................................................
-    
+     #............................... api key.................
+ 
      load_dotenv()
 
      api_key = os.getenv("api_key")
@@ -7129,11 +7133,11 @@ if selected == "Stock Analysis Tool":
           st.error("API_KEY or BASE_URL not found in environment variables.")
           st.stop()
      header = {'x-qfs-api-key': api_key}
+     
 
      @st.cache_data
      def fetch_data_from_api(ticker):
           url = f"{base_url}{ticker}?api_key={api_key}"
-         
           response = requests.get(url, headers=header)
           
     
@@ -7145,9 +7149,6 @@ if selected == "Stock Analysis Tool":
                return  None
 
 
-
-    # data = response.json()
-
      data= fetch_data_from_api(ticker)
      #data = response.json()
      #usage = response.json()
@@ -7156,7 +7157,7 @@ if selected == "Stock Analysis Tool":
      #response.json()
      
      #--------------------------------------------------------------
-     #annual_data = data['data']['financials']['annual']
+     #Financial_data = data.get('data', {}).get('financials', {})
      Financial_data = data['data']['financials']
      annual_data = Financial_data['annual']
      quarterly_data = Financial_data['quarterly']
@@ -14647,53 +14648,86 @@ def display_disclaimer():
      st.write(disclaimer)
      st.markdown(custom_css, unsafe_allow_html=True)
 #####################################################################
-if selected == "Contacts":
-     
-     # Load your secrets
-     client_id = st.secrets["client_id"]
-     client_secret = st.secrets["client_secret"]
+#if selected == "Contacts":
 
-     flow = Flow.from_client_config(
-          {
-               "web": {
-                    "client_id": client_id,
-                    "client_secret": client_secret,
-                    "redirect_uris": ["http://localhost:8501/"],
-                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                    "token_uri": "https://oauth2.googleapis.com/token",
-                    "scope": [
+if 'authenticated' not in st.session_state:
+     st.session_state.authenticated = False
+
+def handle_callback():
+     if 'flow' not in st.session_state:
+          st.error("Authentication flow not found. Please start from the beginning.")
+          return
+     
+     try:
+          flow = st.session_state.flow
+          flow.fetch_token(code=st.query_params.get('code'))
+          credentials = flow.credentials
+          st.session_state.credentials = credentials
+          
+          st.session_state.authenticated = True
+
+               # Verify the credentials
+          request = google.auth.transport.requests.Request()
+          credentials.refresh(request)
+          st.success("Successfully authenticated!")
+          st.experimental_rerun()
+
+                  # Add a link button to return to the main page
+          st.link_button("Return to Main Page", url="http://localhost:8502", type="primary")
+
+
+     except Exception as e:
+        st.error(f"An error occurred during authentication: {str(e)}")
+        st.error("Please try logging in again.")
+
+with st.container():
+     if not st.session_state.authenticated:
+          def login_callback():
+               flow = Flow.from_client_secrets_file(
+                    'client_secret.json',
+                    scopes=[
                          "openid",
                          "https://www.googleapis.com/auth/userinfo.email",
                          "https://www.googleapis.com/auth/userinfo.profile",
-                    ],
-               }
-          },
-          redirect_uri="http://localhost:8501/",
-     )
+                         "https://www.googleapis.com/auth/calendar.events.readonly",
+                    ]
+               )
+               
+               #flow.redirect_uri =  'https://www.verstehdieaktie.com/callback'
+               flow.redirect_uri =  'http://localhost:8502/callback'
+
+               #authorization_url, _ = flow.authorization_url(prompt='consent')
+               authorization_url, _ = flow.authorization_url(prompt='consent', access_type='offline')
+
+               #st.markdown(f'Please [click here]({authorization_url}) to log in with Google')
+    
+               st.session_state.flow = flow
+
+               return authorization_url
+          auth_url = login_callback()
 
 
-     # Login button and callback
-     if 'credentials' not in st.session_state:
-          state = flow.state
-          st.session_state['state'] = state
-          authorization_url, state = flow.authorization_url()
-          st.session_state['authorization_url'] = authorization_url
-          st.button(
-               "🔑 Login with Google",
-               on_click=lambda: st.experimental_set_query_params(authorization_url=authorization_url)
-          )
+          st.link_button(
+               "Login with Google",
+               url=auth_url,
 
-     # After user authentication
-     if 'code' in st.experimental_get_query_params():
-          flow.fetch_token(authorization_response=st.experimental_get_query_params()['code'])
-          credentials = flow.credentials
-          st.session_state['credentials'] = credentials
-          st.success("Logged in successfully!")   
+               type="primary",
+               #on_click=login_callback,
+               #use_container_width=True
 
-               # Optionally display user info
-     if 'credentials' in st.session_state:
-     # Fetch and display user info here
-          pass
+               )
+
+     if st.session_state.authenticated:
+          if selected == "Contacts":
+               st.write("here is my contact")
+               st.write("Contacts section is now accessible")
+     else:
+          st.warning("Please log in to access the Contacts section")
+# Handle callback outside the container
+if 'code' in st.query_params:
+    handle_callback()
+
+
 
 display_disclaimer()
 current_year = datetime.now().year
