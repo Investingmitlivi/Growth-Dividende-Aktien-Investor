@@ -14667,7 +14667,8 @@ if selected == "Contacts":
           "https://www.googleapis.com/auth/userinfo.profile",
           "https://www.googleapis.com/auth/calendar.events.readonly",
      ]
-     REDIRECT_URI = "http://localhost:8501/callback"
+     #REDIRECT_URI = "http://localhost:8501/callback"
+     REDIRECT_URI = "https://www.verstehdieaktie.com/callback"
     
      #authorization_url = flow.authorization_url(prompt="consent")
      #st.session_state.flow =flow
@@ -14690,7 +14691,7 @@ if selected == "Contacts":
      def handle_callback():
           try:
                flow = st.session_state.flow
-               flow.fetch_token(code=st.experimental_get_query_params()['code'][0])
+               flow.fetch_token(code=st.query_params['code'])
                credentials = flow.credentials
                st.session_state.credentials = credentials
                st.write("Successfully authenticated!")
@@ -14698,15 +14699,15 @@ if selected == "Contacts":
                st.error(f"An error occurred: {str(e)}")
 
 
-     if 'code' in st.experimental_get_query_params():
+     if 'code' in st.query_params:
           handle_callback()
      elif 'credentials' not in st.session_state:
           if 'auth_url' not in st.session_state:
-               st.button(
-                    "Login with Google",
-                    type="primary",
-                    on_click=login_callback,
-               )
+
+               if st.button("Login with Google", type="primary"):
+                    login_callback()
+                    # Use JavaScript to open a new tab with the auth URL
+                    st.markdown(f'<script>window.open("{st.session_state.auth_url}", "_blank");</script>', unsafe_allow_html=True)
           else:
                st.write("Please click on the link below to authorize the application:")
                st.markdown(f"[Authorize here]({st.session_state.auth_url})")
