@@ -23,6 +23,7 @@ from typing import Dict,Any,Union
 #from fastapi import FastAPI
 
 
+
     
 
 
@@ -7134,19 +7135,28 @@ if selected == "Stock Analysis Tool":
           st.stop()
      header = {'x-qfs-api-key': api_key}
      
+     def clear_cache():
+          st.cache_data.clear()
 
-     @st.cache_data
+     @st.cache_data  #(ttl=3600) #for caching results for an hour.
      def fetch_data_from_api(ticker):
-          url = f"{base_url}{ticker}?api_key={api_key}"
-          response = requests.get(url, headers=header)
+          try:
+               url = f"{base_url}{ticker}?api_key={api_key}"
+               response = requests.get(url, headers=header)
           
     
-          if response.status_code == 200:
-               return response.json()
-          # Continue processing the data as required
-          else:
-               st.write()
-               return  None
+               if response.status_code == 200:
+                    return response.json()
+               # Continue processing the data as required
+               else:
+                    st.error(f"Error fetching data: {response.status_code} - {response.text}")
+                    clear_cache()  # Clear the cache if there is an error
+                    return  None
+
+          except Exception as e:
+               st.error(f"An error occurred: {e}")
+               clear_cache()  # Clear the cache in case of an exception
+               return None
 
 
      data= fetch_data_from_api(ticker)
@@ -14648,84 +14658,148 @@ def display_disclaimer():
      st.write(disclaimer)
      st.markdown(custom_css, unsafe_allow_html=True)
 #####################################################################
-#if selected == "Contacts":
+if selected == "Contacts":
 
-if 'authenticated' not in st.session_state:
-     st.session_state.authenticated = False
-
-def handle_callback():
-     if 'flow' not in st.session_state:
-          st.error("Authentication flow not found. Please start from the beginning.")
-          return
-     
-     try:
-          flow = st.session_state.flow
-          flow.fetch_token(code=st.query_params.get('code'))
-          credentials = flow.credentials
-          st.session_state.credentials = credentials
-          
-          st.session_state.authenticated = True
-
-               # Verify the credentials
-          request = google.auth.transport.requests.Request()
-          credentials.refresh(request)
-          st.success("Successfully authenticated!")
-          st.experimental_rerun()
-
-                  # Add a link button to return to the main page
-          st.link_button("Return to Main Page", url="http://localhost:8502", type="primary")
-
-
-     except Exception as e:
-        st.error(f"An error occurred during authentication: {str(e)}")
-        st.error("Please try logging in again.")
-
-with st.container():
-     if not st.session_state.authenticated:
-          def login_callback():
-               flow = Flow.from_client_secrets_file(
-                    'client_secret.json',
-                    scopes=[
-                         "openid",
-                         "https://www.googleapis.com/auth/userinfo.email",
-                         "https://www.googleapis.com/auth/userinfo.profile",
-                         "https://www.googleapis.com/auth/calendar.events.readonly",
-                    ]
-               )
-               
-               #flow.redirect_uri =  'https://www.verstehdieaktie.com/callback'
-               flow.redirect_uri =  'http://localhost:8502/callback'
-
-               #authorization_url, _ = flow.authorization_url(prompt='consent')
-               authorization_url, _ = flow.authorization_url(prompt='consent', access_type='offline')
-
-               #st.markdown(f'Please [click here]({authorization_url}) to log in with Google')
+     client_secrets_file = "client_secret.json"
+     SCOPES=[
+          "openid",
+          "https://www.googleapis.com/auth/userinfo.email",
+          "https://www.googleapis.com/auth/userinfo.profile",
+          "https://www.googleapis.com/auth/calendar.events.readonly",
+     ]
+     REDIRECT_URI = "http://localhost:8501/callback"
     
-               st.session_state.flow = flow
+     #authorization_url = flow.authorization_url(prompt="consent")
+     #st.session_state.flow =flow
+     #st.redirect(authorization_url)
 
-               return authorization_url
-          auth_url = login_callback()
+     def create_flow():
+          return Flow.from_client_secrets_file(
+               client_secrets_file,
+               scopes=SCOPES,
+               redirect_uri=REDIRECT_URI
+          )
 
 
-          st.link_button(
-               "Login with Google",
-               url=auth_url,
+     def login_callback():
+          flow = create_flow()
+          authorization_url, _ = flow.authorization_url(prompt="consent")
+          st.session_state.flow = flow
+          st.session_state.auth_url = authorization_url
 
-               type="primary",
-               #on_click=login_callback,
-               #use_container_width=True
+     def handle_callback():
+          try:
+               flow = st.session_state.flow
+               flow.fetch_token(code=st.experimental_get_query_params()['code'][0])
+               credentials = flow.credentials
+               st.session_state.credentials = credentials
+               st.write("Successfully authenticated!")
+          except Exception as e:
+               st.error(f"An error occurred: {str(e)}")
 
+
+     if 'code' in st.experimental_get_query_params():
+          handle_callback()
+     elif 'credentials' not in st.session_state:
+          if 'auth_url' not in st.session_state:
+               st.button(
+                    "Login with Google",
+                    type="primary",
+                    on_click=login_callback,
                )
-
-     if st.session_state.authenticated:
-          if selected == "Contacts":
-               st.write("here is my contact")
-               st.write("Contacts section is now accessible")
+          else:
+               st.write("Please click on the link below to authorize the application:")
+               st.markdown(f"[Authorize here]({st.session_state.auth_url})")
      else:
-          st.warning("Please log in to access the Contacts section")
-# Handle callback outside the container
-if 'code' in st.query_params:
-    handle_callback()
+          st.write("Already logged in. You can proceed with using the Google Calendar API.")
+
+
+          
+
+# def main():
+#      if 'authenticated' not in st.session_state:
+#           st.session_state.authenticated = False
+
+#               # Check if this is a callback from Google OAuth
+#      if 'code' in st.query_params:
+#           handle_callback()
+#      elif not st.session_state.authenticated:
+#           show_login_button()
+#      else:
+#           show_authenticated_content()
+
+# def handle_callback():
+#      if 'flow' not in st.session_state:
+#           st.error("Authentication flow not found. Please start from the beginning.")
+#           return
+     
+#      try:
+#           flow = st.session_state.flow
+#           flow.fetch_token(code=st.query_params.get('code'))
+#           credentials = flow.credentials
+#           st.session_state.credentials = credentials
+          
+#           st.session_state.authenticated = True
+
+#                # Verify the credentials
+#           request = google.auth.transport.requests.Request()
+#           credentials.refresh(request)
+#           st.write ("This is me")
+#           st.success("Successfully authenticated!")
+#           st.experimental_rerun()
+
+#                   # Add a link button to return to the main page
+#           #st.link_button("Return to Main Page", url="http://localhost:8501", type="primary")
+
+
+#      except Exception as e:
+#         st.error(f"An error occurred during authentication: {str(e)}")
+#         st.error("Please try logging in again.")
+
+
+# def show_login_button():
+#      flow = Flow.from_client_secrets_file(
+#           'client_secret.json',
+#           scopes=[
+#                "openid",
+#                "https://www.googleapis.com/auth/userinfo.email",
+#                "https://www.googleapis.com/auth/userinfo.profile",
+#                "https://www.googleapis.com/auth/calendar.events.readonly",
+#           ]
+#      )
+     
+#      #flow.redirect_uri =  'https://www.verstehdieaktie.com/callback'
+#      flow.redirect_uri =  'http://localhost:8501/callback'
+
+#      #authorization_url, _ = flow.authorization_url(prompt='consent')
+#      authorization_url, _ = flow.authorization_url(prompt='consent', access_type='offline')
+
+#      #st.markdown(f'Please [click here]({authorization_url}) to log in with Google')
+
+#      st.session_state.flow = flow
+
+#      #return authorization_url
+# #auth_url = login_callback()
+
+
+#      st.link_button(
+#           "Login with Google",
+#           url=authorization_url,
+
+#           type="primary",
+#           #on_click=login_callback,
+#           #use_container_width=True
+
+#           )
+
+# def show_authenticated_content():
+#     st.write("You are authenticated!")
+#     # Add your authenticated content here
+
+# if __name__ == "__main__":
+#     main()
+
+
 
 
 
