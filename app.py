@@ -79,8 +79,8 @@ custom_css = """
                """
 
 
-#cred = credentials.Certificate('investingmitlivi-firebase key.json')
-cred = credentials.Certificate('.streamlit/investingmitlivi-firebase key.json')
+cred = credentials.Certificate('investingmitlivi-firebase-key.json')
+#cred = credentials.Certificate('.streamlit/investingmitlivi-firebase key.json')
 try:
      firebase_admin.initialize_app(cred)
 
