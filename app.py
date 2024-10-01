@@ -7149,12 +7149,12 @@ if selected == "Stock Analysis Tool":
                     return response.json()
                # Continue processing the data as required
                else:
-                    st.error(f"Error fetching data: {response.status_code} - {response.text}")
+                    st.error(f"Error fetching data:")
                     clear_cache()  # Clear the cache if there is an error
                     return  None
 
           except Exception as e:
-               st.error(f"An error occurred: {e}")
+               st.error(f"An error occurred:")
                clear_cache()  # Clear the cache in case of an exception
                return None
 
