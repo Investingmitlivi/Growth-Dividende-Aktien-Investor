@@ -7138,7 +7138,7 @@ if selected == "Stock Analysis Tool":
      def clear_cache():
           st.cache_data.clear()
 
-     @st.cache_data  #(ttl=3600) #for caching results for an hour.
+     @st.cache_data(ttl=3600) #for caching results for an hour.
      def fetch_data_from_api(ticker):
           try:
                url = f"{base_url}{ticker}?api_key={api_key}"
