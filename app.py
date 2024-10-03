@@ -7029,6 +7029,9 @@ ticker_symbol_name = {
 
 global ticker, name, symbol
 
+base_currency = "USD"  # Example
+target_currency = "EUR"  # Example
+
 
 def get_exchange_rate(base_currency, target_currency):
                          try:
@@ -7175,7 +7178,8 @@ if selected == "Stock Analysis Tool":
                except:
                     st.warning(r.json())
           except Exception as e:
-               st.warning(f'Signup failed: {e}')
+               #st.warning(f'Signup failed: {e}')
+               st.warning(f'Signup failed:')
 
 
      def sign_in_with_email_and_password(email=None, password=None, return_secure_token=True):
@@ -7202,7 +7206,9 @@ if selected == "Stock Analysis Tool":
                except:
                     st.warning(data)
           except Exception as e:
-               st.warning(f'Signin failed: {e}')
+               #st.warning(f'Signin failed: {e}')
+               st.warning(f'Signin failed:')
+
 
      def reset_password(email):
           try:
@@ -7213,12 +7219,13 @@ if selected == "Stock Analysis Tool":
                }
                payload = json.dumps(payload)
                r = requests.post(rest_api_url, params={"key": "AIzaSyApr-etDzcGcsVcmaw7R7rPxx3A09as7uw"}, data=payload)
+               #r = requests.post(rest_api_url, params={"key": "f1592d0b7e9955f6e3909e5ecc4378aca504002d"}, data=payload)
                if r.status_code == 200:
                     return True, "Reset email Sent"
                else:
                     # Handle error response
                     error_message = r.json().get('error', {}).get('message')
-                    return False, error_message
+                    return False , error_message
           except Exception as e:
                return False, str(e)
 
@@ -7247,7 +7254,7 @@ if selected == "Stock Analysis Tool":
      
                
           except: 
-               st.warning('Login Failed')
+               st.warning('Login Failed, Email or Password is wrong')
 
      def t():
           st.session_state.signout = False
@@ -7268,9 +7275,16 @@ if selected == "Stock Analysis Tool":
  ##############################################################################
 
      if st.session_state.is_logged_in:
-          st.success(f"Welcome, {st.session_state.username}!")
-          st.text('Email id: ' + st.session_state.useremail)
-          st.button('Sign out', on_click=t)
+
+          right, middle, left = st.columns(3, gap="small")
+
+          with right:
+               st.success(f"Welcome, {st.session_state.username}!")
+          with middle:    
+          #st.text('Email_id: ' + st.session_state.useremail)
+               st.write("")
+          with left:
+               st.button('Sign out', on_click=t)
 
 
 
@@ -14640,10 +14654,10 @@ if selected == "Stock Analysis Tool":
 
                
                
-     if st.session_state.signout:
-                    st.text('Name '+st.session_state.username)
-                    st.text('Email:id: '+st.session_state.useremail)
-                    #st.button('Sign out', on_click=t) 
+          if st.session_state.signout:
+                         st.text('Name '+st.session_state.username)
+                         st.text('Email:id: '+st.session_state.useremail)
+                         #st.button('Sign out', on_click=t) 
                
 
 
