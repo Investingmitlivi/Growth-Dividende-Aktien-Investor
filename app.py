@@ -81,6 +81,20 @@ custom_css = """
 
 cred = credentials.Certificate('verstehdieaktie-firebase.json')
 #cred = credentials.Certificate('.streamlit/investingmitlivi-firebase key.json')
+
+# cred = credentials.Certificate({
+#     "type": "service_account",  # Add this line
+#     "project_id": os.getenv("PROJECT_ID"),
+#     "private_key_id": os.getenv("PRIVATE_KEY_ID"),
+#     "private_key": os.getenv("-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCs+Qkt9XOTgQGs\niMsuHdBHF32nWHHYBe9ztGIe/regG4hifHo0CvhwOlsQp7kEgZFlooYJk4oWFL7w\n+tfeYqhGmdoVbcYJxC5H+uVNYhM+I0bK9GkVPjCEdZH33VqhdTBpDTCDWbKzQeMD\nsjBwpSnu5A6lV1QJt0UsQPQlw3N3qTdBljejv9OKiUoPWg79edHIHKE6TF0PEfy5\nLiZF+LEdrot9IN+Yx7XOkutmZLttUkl1mHJdQrIqJlyRrp304Jt4N5oP82LgQQyS\nlXcAt22Rn2nvPv5V8gCVYfzjt96Q3pcDrv5pINor4XwSkGuEwxEThhSieeRAkU2V\naRDR8V4NAgMBAAECggEAB4mMVKF36ylSZnaCMHzsidOg46RbqLl+0eev5Rz6Ihnt\ne0YPGLiSjC+ey1s4/PEOqR/IHFh+n7AkoP3Q0PLd1WzbvYEVgampsp8LjK/pKBUg\nG3vuHohoxUP5Ys0x0gwxBPSl9MGHo0XTDX9KDKIbKldPDrzw/2xGlO35bnkq+Aa2\nNmb+spWMmDC3SalKA4xccMw674wvFBK7XeiCHjkmVbJ8qBA3H9fBo4ApCxAjDTcm\n28xkNBvhD6t+G37QbxFgZlCNw91l7HLejpjCSPt8TnuXxp/ee5/nGtPfAQlL8OmH\nqycsFADWV7OB3ayhJ3PmIYJyW4c4ahCoT2ArA+mOaQKBgQDz7T2/kdwpskRzpaJo\nvwQvH1TS5ABd9mbzGMwknk9bfoE1ySa93SaTk4SQtVbNcaTToVroHvQM1eM/TUp3\nj/BaRuL4ZxEbB/hD3lmCvPFy8ThoQKbgLcIpxQsVi48h4lCtl/do5X3gDDZkA17k\n9mg3Biou9Kw5uVd5sARis30YjwKBgQC1iL+E+fFIeegseeGNOnEYL81ZEHlrTVXY\n8V8TZf0wrDsq9ruN4HahNixyB03203/V3GU4w1Rq4fKikS6rYAPiZe9oWbHaRnQ4\nbUxjqgbOAdfaidUnqieBtQpYCKEChleYj7zpeVC7zbVaITeRJX92nyBOe8z0Qj6J\nAu68IskVowKBgGcERNXJJjA954bn5wVR1tSH6Oz/+d+1FpmIWX8FlQJRFQTAJSp+\nYbJl1NDApR4y5qeyN5BcsjlRg53SaKbCFYIq+eRqsuC1pvYSy77ZSSeAFJCC7Xc0\nHBJD84Bv5k0rJWOLEKQud9DNl5L5kXQlVLIYWmxmTO48BmOQIOoGX8ilAoGBAJnD\n8zXX4KDbYeYKdxsBXbp3AyFl6vMQ1p6kFTyBLy2DNbr2s3dBojp7gLo1pbxk+etU\nfAjQqzi9mqBJCZbwBVpHrbpd/2A8PUVujz38TzdAKG5cQckPP9eGWfSnmnphAOGh\nHwtETzZE0FA/wqmXcZgwwVS5WKmtUvsLGN0TOfCxAoGAXY3A+q17zNKoY3S3+UUg\n7RrI0qfwmnwIVY/dGmL05Mm4gvyc1Gyhz1VOwjp33TuUFI4LPJji9YcoEIRf69sP\nNzVHS/aR2z7TFE0fguja+Uikv4QkeAlWs2ozbqsmrPoSYbg20KS3MKrpVVbIO8sh\nIA7tnJBZjpJqVTh38Npyol8=\n-----END PRIVATE KEY-----\n"),
+#     "client_email": os.getenv("CLIENT_EMAIL"),
+#     "client_id": os.getenv("CLIENT_ID"),
+#     "auth_uri": os.getenv("AUTH_URI"),
+#     "token_uri": os.getenv("TOKEN_URI"),
+#     "auth_provider_x509_cert_url": os.getenv("AUTH_PROVIDER_X509_CERT_URL"),
+#     "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL")
+# })
+
 try:
      firebase_admin.initialize_app(cred)
 
