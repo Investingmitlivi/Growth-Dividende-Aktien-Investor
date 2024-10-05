@@ -21606,7 +21606,8 @@ if selected == "Stock Analysis Tool":
           
           else:
                # Your existing login/signup form code goes here
-               choice = st.selectbox('Login/Signup', ['Login', 'Sign up'])
+               #choice = st.selectbox('Login/Signup', ['Login', 'Sign up'])
+               choice = st.selectbox('Login', ['Login'])
                email = st.text_input('Email Address')
                password = st.text_input('Password', type='password')
                st.session_state.email_input = email
