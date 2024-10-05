@@ -7673,7 +7673,7 @@ if selected == "Stock Analysis Tool":
 
      ############################################################################################################
           
-          @st.cache_data(show_spinner=False)
+          @st.cache_data(ttl=3600)
           def calculate_stock_performance(ticker):
                periods = {
                     "1mo": "1 Month",
@@ -8264,15 +8264,28 @@ if selected == "Stock Analysis Tool":
                     # Check if the results are already in session state
                          if f'{ticker}_revenue_last' in st.session_state:
                               return (st.session_state[f'{ticker}_revenue_last'],
+
                                         st.session_state[f'{ticker}_revenue_5years'],
+                                        st.session_state[f'{ticker}_len_5_annual'],
+
                                         st.session_state[f'{ticker}_revenue_10years'],
+                                        st.session_state[f'{ticker}_len_10_annual '],
+
                                         st.session_state[f'{ticker}_revenue_quarter_10'],
+                                        st.session_state[f'{ticker}_len_10_quarter '],
+
                                         st.session_state[f'{ticker}_revenue_10years_growth'],
                                         st.session_state[f'{ticker}_revenue_growth_1year'],
                                         st.session_state[f'{ticker}_revenue_growth_3years'],
                                         st.session_state[f'{ticker}_revenue_growth_5years'],
+
+                                       
+
                                         st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'],
+
                                         st.session_state[f'{ticker}_revenue_growth_10years'],
+                                       
+
                                         st.session_state[f'{ticker}_Net_interest_Income_annual_10'],
                                         st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked'],
                                         st.session_state[f'{ticker}_shares_basic_annual_10_unpacked'],
@@ -8283,12 +8296,17 @@ if selected == "Stock Analysis Tool":
                          revenue_annual_ttm = annual_data['revenue'][-1:] 
                          average_revenue_annual_ttm = ((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000)
 
-                         Revenue_annual_5_unpacked = annual_data['revenue'][-5:] 
+                         Revenue_annual_5_unpacked = annual_data['revenue'][-5:]
+
+                         len_5_annual = len(Revenue_annual_5_unpacked) 
                          
 
                          Revenue_annual_10_unpacked  = annual_data['revenue'][-10:] 
 
-                         Revenue_quarter_10_unpacked  = quarterly_data['revenue'][-10:] 
+                         len_10_annual = len(Revenue_annual_10_unpacked)
+
+                         Revenue_quarter_10_unpacked  = quarterly_data['revenue'][-10:]
+                         len_10_quarter =len(Revenue_quarter_10_unpacked)
 
                          Revenue_growth_10_unpacked = annual_data['revenue_growth'][-10:]
 
@@ -8310,60 +8328,73 @@ if selected == "Stock Analysis Tool":
                          Revenue_growth_10years = annual_data['revenue_growth'][-10:]
                          Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
                          Revenue_growth_10years = (Revenue_growth_10years*100)
-                         try:
-                              Net_interest_Income_annual_10_unpacked = annual_data['net_interest_income'][-10:]
-                         except Exception as e:
-                              Net_interest_Income_annual_10_unpacked =[0]*10
 
-                         shares_diluted_annual_10_unpacked =annual_data['shares_diluted'][-10:]
+
+                         shares_diluted_annual_10_unpacked=annual_data['shares_diluted'][-10:]
                          shares_basic_annual_10_unpacked=annual_data['shares_basic'][-10:]
                          shares_diluted_quarter_10_unpacked =quarterly_data['shares_diluted'][-10:]
                          shares_basic_quarterly_10_unpacked =quarterly_data['shares_basic'][-10:]
 
 
+                         try:
+                              Net_interest_Income_annual_10_unpacked = annual_data['net_interest_income'][-10:]
+                         except Exception as e:
+                              Net_interest_Income_annual_10_unpacked =[0]*len_10_annual
+
+
+
+
                          # Store results in session state
                          st.session_state[f'{ticker}_revenue_last'] = average_revenue_annual_ttm
+
                          st.session_state[f'{ticker}_revenue_5years'] = Revenue_annual_5_unpacked
+                         st.session_state[f'{ticker}_len_5_annual'] =len_5_annual
+
                          st.session_state[f'{ticker}_revenue_10years'] = Revenue_annual_10_unpacked
+                         st.session_state[f'{ticker}_len_10_annual'] =len_10_annual
+
                          st.session_state[f'{ticker}_revenue_quarter_10'] = Revenue_quarter_10_unpacked
 
-                         
+                         st.session_state[f'{ticker}_len_10_quarter'] =len_10_quarter
                          st.session_state[f'{ticker}_revenue_10years_growth'] = Revenue_growth_10_unpacked
                          st.session_state[f'{ticker}_revenue_growth_1year'] = Revenue_growth_1year
                          st.session_state[f'{ticker}_revenue_growth_3years'] = Revenue_growth_3years
                          st.session_state[f'{ticker}_revenue_growth_5years'] = Revenue_growth_5years
                          st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'] = Revenue_growth_10quarter_unpacked
                          st.session_state[f'{ticker}_revenue_growth_10years'] = Revenue_growth_10years
-                         st.session_state[f'{ticker}_Net_interest_Income_annual_10'] =Net_interest_Income_annual_10_unpacked
-
                          st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked']=shares_diluted_annual_10_unpacked
                          st.session_state[f'{ticker}_shares_basic_annual_10_unpacked']=shares_basic_annual_10_unpacked
                          st.session_state[f'{ticker}_shares_diluted_quarter_10_unpacked'] =shares_diluted_quarter_10_unpacked
                          st.session_state[f'{ticker}_shares_basic_quarterly_10_unpacked']=shares_basic_quarterly_10_unpacked
+                         st.session_state[f'{ticker}_Net_interest_Income_annual_10'] =Net_interest_Income_annual_10_unpacked
+
+
 
 
                          return (average_revenue_annual_ttm,
-                                   Revenue_annual_5_unpacked,
-                                   Revenue_annual_10_unpacked,Revenue_quarter_10_unpacked,
+                                   Revenue_annual_5_unpacked,len_5_annual,
+                                   Revenue_annual_10_unpacked,len_10_annual,
+                                   Revenue_quarter_10_unpacked,len_10_quarter,
                                    Revenue_growth_10_unpacked,
                                    Revenue_growth_1year,
                                    Revenue_growth_3years,
                                    Revenue_growth_5years,
                                    Revenue_growth_10quarter_unpacked,
                                    Revenue_growth_10years,shares_diluted_annual_10_unpacked,
-                                   Net_interest_Income_annual_10_unpacked,
-                                   shares_basic_annual_10_unpacked,shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked
+                                   shares_basic_annual_10_unpacked,shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked, Net_interest_Income_annual_10_unpacked
      )
 
                     # Assuming `annual_data` and `ticker` are defined elsewhere
                     (average_revenue_annual_ttm,
-                    Revenue_annual_5_unpacked,
-                    Revenue_annual_10_unpacked,Revenue_quarter_10_unpacked,
+                    Revenue_annual_5_unpacked,len_5_annual,
+                    Revenue_annual_10_unpacked,len_10_annual,
+                    Revenue_quarter_10_unpacked,len_10_quarter,
                     Revenue_growth_10_unpacked,
                     Revenue_growth_1year,
                     Revenue_growth_3years,
-                    Revenue_growth_5years,Revenue_growth_10quarter_unpacked,Revenue_growth_10years,Net_interest_Income_annual_10_unpacked,
-                    shares_diluted_annual_10_unpacked,shares_basic_annual_10_unpacked,shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked
+                    Revenue_growth_5years,Revenue_growth_10quarter_unpacked,Revenue_growth_10years,
+                    shares_diluted_annual_10_unpacked,shares_basic_annual_10_unpacked,
+                    shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked,Net_interest_Income_annual_10_unpacked
                     ) = calculate_revenue_and_growth(annual_data,quarterly_data, ticker)
 
      ###################################################################################################
@@ -8585,8 +8616,7 @@ if selected == "Stock Analysis Tool":
                          except Exception as e:
 
                               gross_margin_quarter1_unpacked = [0]*1
-                              gross_margin_quarter10_unpacked = [0]*10
-
+                              gross_margin_quarter10_unpacked = [0]*len_10_quarter
 
                          # Store results in session state
                          st.session_state[f'{ticker}_roa_ttm'] = average_ROA_annual_ttm
@@ -8947,7 +8977,7 @@ if selected == "Stock Analysis Tool":
                                         st.session_state[f'{ticker}_StockBased_Compansation_quarter_10'])
 
                          # Unpacking annual data (last 10 years)
-                    
+    
                          Changes_in_working_capital_annual_10_unpacked = annual_data['cfo_change_in_working_capital'][-10:]
                          Net_Operating_CashFlow_annual_10_unpacked = annual_data['cf_cfo'][-10:]
                          Capex_annual_10_unpacked = annual_data['capex'][-10:]
@@ -8963,11 +8993,11 @@ if selected == "Stock Analysis Tool":
                               Net_Assets_from_Acquisitions_annual_10_unpacked = annual_data['cfi_acquisitions'][-10:]
                               StockBased_Compansation_annual_10_unpacked = annual_data['cfo_stock_comp'][-10:]
                          except Exception as e:
-                              Debt_issued_annual_10_unpacked = [0] * 10
-                              Debt_repaid_annual_10_unpacked = [0] * 10
-                              Stock_issued_of_common_Preferred_stock_annual_10_unpacked = [0] * 10
-                              Net_Assets_from_Acquisitions_annual_10_unpacked = [0] * 10
-                              StockBased_Compansation_annual_10_unpacked = [0] * 10
+                              Debt_issued_annual_10_unpacked = [0] * len_10_annual
+                              Debt_repaid_annual_10_unpacked = [0] * len_10_annual
+                              Stock_issued_of_common_Preferred_stock_annual_10_unpacked = [0] * len_10_annual
+                              Net_Assets_from_Acquisitions_annual_10_unpacked = [0] * len_10_annual
+                              StockBased_Compansation_annual_10_unpacked = [0] * len_10_annual
 
                          Repurchase_of_common_Preferred_stock_annual_10_unpacked = annual_data['cff_common_stock_repurchased'][-10:]
                          Cash_Dividends_paid_Total_annual_10_unpacked = annual_data['cff_dividend_paid'][-10:]
@@ -8991,11 +9021,11 @@ if selected == "Stock Analysis Tool":
                               Net_Assets_from_Acquisitions_quarter_10_unpacked = quarterly_data['cfi_acquisitions'][-10:]
                               StockBased_Compansation_quarter_10_unpacked = quarterly_data['cfo_stock_comp'][-10:]
                          except Exception as e:
-                              Debt_issued_quarter_10_unpacked = [0] * 10
-                              Debt_repaid_quarter_10_unpacked = [0] * 10
-                              Stock_issued_of_common_Preferred_stock_quarter_10_unpacked = [0] * 10
-                              Net_Assets_from_Acquisitions_quarter_10_unpacked = [0] * 10
-                              StockBased_Compansation_quarter_10_unpacked = [0] * 10
+                              Debt_issued_quarter_10_unpacked = [0] * len_10_quarter
+                              Debt_repaid_quarter_10_unpacked = [0] * len_10_quarter
+                              Stock_issued_of_common_Preferred_stock_quarter_10_unpacked = [0] * len_10_quarter
+                              Net_Assets_from_Acquisitions_quarter_10_unpacked = [0] * len_10_quarter
+                              StockBased_Compansation_quarter_10_unpacked = [0] * len_10_quarter
 
                          Repurchase_of_common_Preferred_stock_quarter_10_unpacked = quarterly_data['cff_common_stock_repurchased'][-10:]
                          Net_Financing_cashFlow_quarter_10_unpacked = quarterly_data['cf_cff'][-10:]
@@ -9076,8 +9106,9 @@ if selected == "Stock Analysis Tool":
 
      ###################################################################################################
                     def data_totalCashDebt(quarterly_data, annual_data, Financial_data):
-                         if f'{ticker}_Accounts_payable_quarter10' in st.session_state:
+                         if f'{ticker}_Ebita_ttm' in st.session_state:
                               return (
+                                   st.session_state[f'{ticker}_Ebita_ttm'],
                                    st.session_state[f'{ticker}_Accounts_payable_quarter10'],
                                    st.session_state[f'{ticker}_Current_accrued_liab_quarter10'],
                                    st.session_state[f'{ticker}_Tax_payable_quarter10'],
@@ -9101,7 +9132,7 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_operating_margin_annual1'],
                                    st.session_state[f'{ticker}_operating_margin_annual5'],
                                    st.session_state[f'{ticker}_operating_margin_annual10'],
-                                   st.session_state[f'{ticker}_Ebita_ttm'],
+                                   
                                    st.session_state[f'{ticker}_debt_Assets_annual1'],
                                    st.session_state[f'{ticker}_debt_equity_annual1'],
                                    st.session_state[f'{ticker}_debt_Assets_annual10'],
@@ -9112,51 +9143,52 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_cash_equiv_quarter1']
                               )
 
+                         Ebita_ttm = Financial_data['ttm']['ebitda'] / 1_000_000_000
                          # Unpacking data with error handling
                          try:
                               Accounts_payable_quarter10_unpacked = quarterly_data['accounts_payable'][-10:]
                          except KeyError:
-                              Accounts_payable_quarter10_unpacked = [0] * 10
+                              Accounts_payable_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               Current_accrued_liab_quarter10_unpacked = quarterly_data['current_accrued_liabilities'][-10:]
                          except KeyError:
-                              Current_accrued_liab_quarter10_unpacked = [0] * 10
+                              Current_accrued_liab_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               Tax_payable_quarter10_unpacked = quarterly_data['tax_payable'][-10:]
                          except KeyError:
-                              Tax_payable_quarter10_unpacked = [0] * 10
+                              Tax_payable_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               Other_current_liabilities_quarter10_unpacked = quarterly_data['other_current_liabilities'][-10:]
                          except KeyError:
-                              Other_current_liabilities_quarter10_unpacked = [0] * 10
+                              Other_current_liabilities_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               Current_deferred_revenue_quarter10_unpacked = quarterly_data['current_deferred_revenue'][-10:]
                          except KeyError:
-                              Current_deferred_revenue_quarter10_unpacked = [0] * 10
+                              Current_deferred_revenue_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               Total_current_liabilities_quarter10_unpacked = quarterly_data['total_current_liabilities'][-10:]
                          except KeyError:
-                              Total_current_liabilities_quarter10_unpacked = [0] * 10
+                              Total_current_liabilities_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               capital_leases_quarter10_unpacked = quarterly_data['noncurrent_capital_leases'][-10:]
                          except KeyError:
-                              capital_leases_quarter10_unpacked = [0] * 10
+                              capital_leases_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               LongTerm_debt_quarter10_unpacked = quarterly_data['lt_debt'][-10:]
                          except KeyError:
-                              LongTerm_debt_quarter10_unpacked = [0] * 10
+                              LongTerm_debt_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               current_portion_of_lease_obligation_quarter10_unpacked = quarterly_data['current_capital_leases'][-10:]
                          except KeyError:
-                              current_portion_of_lease_obligation_quarter10_unpacked = [0] * 10
+                              current_portion_of_lease_obligation_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               st_investments_quarter1_unpacked = quarterly_data['st_investments'][-1:]
@@ -9166,22 +9198,22 @@ if selected == "Stock Analysis Tool":
                          try:
                               Short_term_debt_quarter10_unpacked = quarterly_data['st_debt'][-10:]
                          except KeyError:
-                              Short_term_debt_quarter10_unpacked = [0] * 10
+                              Short_term_debt_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               Other_longterm_liabilities_quarter10_unpacked = quarterly_data['other_lt_liabilities'][-10:]
                          except KeyError:
-                              Other_longterm_liabilities_quarter10_unpacked = [0] * 10
+                              Other_longterm_liabilities_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               Total_liabilities_quarter10_unpacked = quarterly_data['total_liabilities'][-10:]
                          except KeyError:
-                              Total_liabilities_quarter10_unpacked = [0] * 10
+                              Total_liabilities_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
                          except KeyError:
-                              Total_Equity_quarter10_unpacked = [0] * 10
+                              Total_Equity_quarter10_unpacked = [0] * len_10_quarter
 
                          try:
                               Total_Equity_quarter1_unpacked = quarterly_data['total_equity'][-1:]
@@ -9196,12 +9228,12 @@ if selected == "Stock Analysis Tool":
                          try:
                               gross_margin_annual5_unpacked = annual_data['gross_margin'][-5:]
                          except KeyError:
-                              gross_margin_annual5_unpacked = [0] * 5
+                              gross_margin_annual5_unpacked = [0] * len_5_annual
 
                          try:
                               gross_margin_annual10_unpacked = annual_data['gross_margin'][-10:]
                          except KeyError:
-                              gross_margin_annual10_unpacked = [0] * 10
+                              gross_margin_annual10_unpacked = [0] * len_10_annual
 
                          try:
                               operating_margin_quater1_unpacked = quarterly_data['operating_margin'][-1:]
@@ -9211,7 +9243,7 @@ if selected == "Stock Analysis Tool":
                          try:
                               operating_margin_quater10_unpacked = quarterly_data['operating_margin'][-10:]
                          except KeyError:
-                              operating_margin_quater10_unpacked = [0] * 10
+                              operating_margin_quater10_unpacked = [0] * len_10_quarter
 
                          try:
                               operating_margin_annual1_unpacked = annual_data['operating_margin'][-1:]
@@ -9221,14 +9253,12 @@ if selected == "Stock Analysis Tool":
                          try:
                               operating_margin_annual5_unpacked = annual_data['operating_margin'][-5:]
                          except KeyError:
-                              operating_margin_annual5_unpacked = [0] * 5
+                              operating_margin_annual5_unpacked = [0] * len_5_annual
 
                          try:
                               operating_margin_annual10_unpacked = annual_data['operating_margin'][-10:]
                          except KeyError:
-                              operating_margin_annual10_unpacked = [0] * 10
-
-                         Ebita_ttm = Financial_data['ttm']['ebitda'] / 1_000_000_000
+                              operating_margin_annual10_unpacked = [0] * len_10_annual
 
                          try:
                               debt_Assets_annual1_unpacked = annual_data['debt_to_assets'][-1:]
@@ -9243,7 +9273,7 @@ if selected == "Stock Analysis Tool":
                          try:
                               debt_Assets_annual10_unpacked = annual_data['debt_to_assets'][-10:]
                          except KeyError:
-                              debt_Assets_annual10_unpacked = [0] * 10
+                              debt_Assets_annual10_unpacked = [0] * len_10_annual
 
                          try:
                               LongTerm_debt_annual1_unpacked = annual_data['lt_debt'][-1:]
@@ -9271,6 +9301,7 @@ if selected == "Stock Analysis Tool":
                               cash_equiv_quarter1_unpacked = [0] * 1
 
                          # Store the unpacked data in session state
+                         st.session_state[f'{ticker}_Ebita_ttm'] = Ebita_ttm
                          st.session_state[f'{ticker}_Accounts_payable_quarter10'] = Accounts_payable_quarter10_unpacked
                          st.session_state[f'{ticker}_Current_accrued_liab_quarter10'] = Current_accrued_liab_quarter10_unpacked
                          st.session_state[f'{ticker}_Tax_payable_quarter10'] = Tax_payable_quarter10_unpacked
@@ -9294,7 +9325,6 @@ if selected == "Stock Analysis Tool":
                          st.session_state[f'{ticker}_operating_margin_annual1'] = operating_margin_annual1_unpacked
                          st.session_state[f'{ticker}_operating_margin_annual5'] = operating_margin_annual5_unpacked
                          st.session_state[f'{ticker}_operating_margin_annual10'] = operating_margin_annual10_unpacked
-                         st.session_state[f'{ticker}_Ebita_ttm'] = Ebita_ttm
                          st.session_state[f'{ticker}_debt_Assets_annual1'] = debt_Assets_annual1_unpacked
                          st.session_state[f'{ticker}_debt_equity_annual1'] = debt_equity_annual1_unpacked
                          st.session_state[f'{ticker}_debt_Assets_annual10'] = debt_Assets_annual10_unpacked
@@ -9305,6 +9335,7 @@ if selected == "Stock Analysis Tool":
                          st.session_state[f'{ticker}_cash_equiv_quarter1'] = cash_equiv_quarter1_unpacked
 
                          return (
+                              Ebita_ttm,
                               Accounts_payable_quarter10_unpacked,
                               Current_accrued_liab_quarter10_unpacked,
                               Tax_payable_quarter10_unpacked,
@@ -9328,7 +9359,7 @@ if selected == "Stock Analysis Tool":
                               operating_margin_annual1_unpacked,
                               operating_margin_annual5_unpacked,
                               operating_margin_annual10_unpacked,
-                              Ebita_ttm,
+                             
                               debt_Assets_annual1_unpacked,
                               debt_equity_annual1_unpacked,
                               debt_Assets_annual10_unpacked,
@@ -9340,6 +9371,7 @@ if selected == "Stock Analysis Tool":
                          )
 
                     (
+                    Ebita_ttm,
                     Accounts_payable_quarter10_unpacked,
                     Current_accrued_liab_quarter10_unpacked,
                     Tax_payable_quarter10_unpacked,
@@ -9363,7 +9395,7 @@ if selected == "Stock Analysis Tool":
                     operating_margin_annual1_unpacked,
                     operating_margin_annual5_unpacked,
                     operating_margin_annual10_unpacked,
-                    Ebita_ttm,
+                    
                     debt_Assets_annual1_unpacked,
                     debt_equity_annual1_unpacked,
                     debt_Assets_annual10_unpacked,
@@ -10004,7 +10036,7 @@ if selected == "Stock Analysis Tool":
                     st.markdown(contact_form, unsafe_allow_html = True)
      #################################################################################
           
-                    @st.cache_data
+                    @st.cache_data(ttl=3600)
                     def local_css(file_name):
                               with open(file_name)as f:
                                    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)      
@@ -10104,39 +10136,42 @@ if selected == "Stock Analysis Tool":
                               cogs_list_annual_10_unpacked = annual_data['cogs'][-10:]
                               gross_profit_annual_10_unpacked = annual_data['gross_profit'][-10:]
                               SGA_Expense_annual_10_unpacked = annual_data['total_opex'][-10:]
+                              Research_Dev_annual_10_unpacked = annual_data['rnd'][-10:]
+                              interest_expense_list_annual_10_unpacked = annual_data['interest_expense'][-10:]
+                              operating_income_list_annual_10_unpacked = annual_data['operating_income'][-10:]
+
 
                               try:
                                    Depreciation_Depletion_Amortisation_annual_10_unpacked = annual_data['cfo_da'][-10:]
                                    Interest_Income_annual_10_unpacked = annual_data['interest_income'][-10:]
                               except KeyError:
-                                   Depreciation_Depletion_Amortisation_annual_10_unpacked = [0] * 10
-                                   Interest_Income_annual_10_unpacked = [0] * 10
+                                   Depreciation_Depletion_Amortisation_annual_10_unpacked = [0] * len_10_annual
+                                   Interest_Income_annual_10_unpacked = [0] * len_10_annual
 
-                              Research_Dev_annual_10_unpacked = annual_data['rnd'][-10:]
-                              interest_expense_list_annual_10_unpacked = annual_data['interest_expense'][-10:]
-                              operating_income_list_annual_10_unpacked = annual_data['operating_income'][-10:]
 
                               # Store unpacked data in session state
                               st.session_state.update({
                                    session_keys['cogs_list_annual_10']: cogs_list_annual_10_unpacked,
                                    session_keys['gross_profit_annual_10']: gross_profit_annual_10_unpacked,
                                    session_keys['SGA_Expense_annual_10']: SGA_Expense_annual_10_unpacked,
-                                   session_keys['Depreciation_Depletion_Amortisation_annual_10']: Depreciation_Depletion_Amortisation_annual_10_unpacked,
-                                   session_keys['Interest_Income_annual_10']: Interest_Income_annual_10_unpacked,
                                    session_keys['Research_Dev_annual_10']: Research_Dev_annual_10_unpacked,
                                    session_keys['interest_expense_list_annual_10']: interest_expense_list_annual_10_unpacked,
-                                   session_keys['operating_income_list_annual_10']: operating_income_list_annual_10_unpacked
+                                   session_keys['operating_income_list_annual_10']: operating_income_list_annual_10_unpacked,
+                                   session_keys['Depreciation_Depletion_Amortisation_annual_10']: Depreciation_Depletion_Amortisation_annual_10_unpacked,
+                                   session_keys['Interest_Income_annual_10']: Interest_Income_annual_10_unpacked
+                                  
                               })
 
                               return (
                                    cogs_list_annual_10_unpacked,
                                    gross_profit_annual_10_unpacked,
                                    SGA_Expense_annual_10_unpacked,
-                                   Depreciation_Depletion_Amortisation_annual_10_unpacked,
-                                   Interest_Income_annual_10_unpacked,
                                    Research_Dev_annual_10_unpacked,
                                    interest_expense_list_annual_10_unpacked,
-                                   operating_income_list_annual_10_unpacked
+                                   operating_income_list_annual_10_unpacked,
+                                   Depreciation_Depletion_Amortisation_annual_10_unpacked,
+                                   Interest_Income_annual_10_unpacked
+                                  
                               )
 
                          except KeyError:
@@ -10301,8 +10336,8 @@ if selected == "Stock Analysis Tool":
                                                        Total_interest_income_list_annual_df,Total_interest_expense_list_annual_df,Net_interest_Income_annual_df,
                                                        Total_Non_interest_revenue_annual_df,Prov_Credit_losses_annual_df,revenue_2013_annual_df,
                                                        Netinterest_Prov_Credit_losses_annual_df, Total_Non_interest_expenses_annual_df,
-                                                       Pretax_income_annual_df,Income_tax_annual_df,net_income_annual_df,eps_basic_annual_df, shares_basic_annual_df,
-                                                       eps_diluted_annual_df, shares_diluted_annual_df,Ebita_annual_df
+                                                       Pretax_income_annual_df,Income_tax_annual_df,net_income_annual_df,eps_basic_annual_df,shares_basic_annual_df,
+                                                       eps_diluted_annual_df,shares_diluted_annual_df,Ebita_annual_df
                                    
                                    ])
                                                   ################################ Quarter###############################
@@ -10516,6 +10551,10 @@ if selected == "Stock Analysis Tool":
                                                   cogs_list_quarter_10_unpacked  = quarterly_data['cogs'][-10:]
                                                   gross_profit_quarter_10_unpacked  = quarterly_data['gross_profit'][-10:]
                                                   SGA_Expense_quarter_10_unpacked  = quarterly_data['total_opex'][-10:]
+                                                  Research_Dev_annual_10_unpacked   = annual_data['rnd'][-10:]
+                                                  interest_expense_list_annual_10_unpacked   = annual_data['interest_expense'][-10:]
+                                                  Ebita_annual_10_unpacked = annual_data['ebitda'][-10:]
+                                                  operating_income_list_annual_10_unpacked  = annual_data['operating_income'][-10:] 
 
 
                                                   try:
@@ -10528,18 +10567,15 @@ if selected == "Stock Analysis Tool":
 
                                                   
                                                   except Exception as e:
-                                                       Depreciation_Depletion_Amortisation_annual_10_unpacked = [0] * 10
-                                                       Interest_Income_annual_10_unpacked = [0] * 10
+                                                       Depreciation_Depletion_Amortisation_annual_10_unpacked = [0] * len_10_annual
+                                                       Interest_Income_annual_10_unpacked = [0] * len_10_annual
                                                                  ################################ Quarter###############################
 
-                                                       Depreciation_Depletion_Amortisation_quater_10_unpacked= [0] * 10
-                                                       Interest_Income_quarter_10_unpacked= [0] * 10
+                                                       Depreciation_Depletion_Amortisation_quater_10_unpacked= [0] * len_10_annual
+                                                       Interest_Income_quarter_10_unpacked= [0] * len_10_annual
 
 
-                                                  Research_Dev_annual_10_unpacked   = annual_data['rnd'][-10:]
-                                                  interest_expense_list_annual_10_unpacked   = annual_data['interest_expense'][-10:]
-                                                  Ebita_annual_10_unpacked = annual_data['ebitda'][-10:]
-                                                  operating_income_list_annual_10_unpacked  = annual_data['operating_income'][-10:] 
+
                                                                  ################################ Quarter###############################
 
                                                   Research_Dev_quarter_10_unpacked  = quarterly_data['rnd'][-10:]
@@ -13349,8 +13385,8 @@ if selected == "Stock Analysis Tool":
                          #    Annual,Quarterly = st.tabs(["Annual","Quarterly"])
                               
                     with Annual:
-                              len_of_revenue = len(Revenue_annual_10_unpacked)
-                              Period_end_dates_annual = annual_data['period_end_date'][-len_of_revenue:]
+                              
+                              Period_end_dates_annual = annual_data['period_end_date'][-len_10_annual:]
                               index = range(len(Period_end_dates_annual))
 
                               total = pd.DataFrame({
