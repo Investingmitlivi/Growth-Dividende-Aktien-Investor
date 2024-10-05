@@ -83,6 +83,8 @@ custom_css = """
 
 
 cred = credentials.Certificate('verstehdieaktie-firebase.json')
+
+secret_key = secrets.token_hex(32)  
 #cred = credentials.Certificate('.streamlit/investingmitlivi-firebase key.json')
 
 # cred = credentials.Certificate({
@@ -7112,8 +7114,8 @@ if selected == "Home":
           st.write("[Superinvestor Portfolios 13F fillings >](https://dataroma.com/m/home.php)")
 
 
-          secret_key = secrets.token_hex(32)  # Generates a 64-character hexadecimal string
-          st.write("Your secret key:", secret_key)
+          # Generates a 64-character hexadecimal string
+          #st.write("Your secret key:", secret_key)
  
 
 st.markdown("""
@@ -7292,6 +7294,8 @@ if selected == "Stock Analysis Tool":
                          st.warning(f"Password reset failed: {message}") 
                
  #############################################################################################################
+
+          right, middle, left = st.columns(3, gap="small")
                    # Check if we need to rerun the app
           if st.session_state.needs_rerun:
                st.session_state.needs_rerun = False
@@ -7299,9 +7303,11 @@ if selected == "Stock Analysis Tool":
 
                # Main app logic 
           if st.session_state.is_logged_in:
-               st.success(f"Welcome, {st.session_state.username}!")
+               with middle:
+                    st.success(f"Welcome, {st.session_state.username}!")
                #st.text('Email_id: ' + st.session_state.useremail)
-               st.button('Sign out', on_click=logout)
+               with left:
+                    st.button('Sign out', on_click=logout)
 
 
                st.markdown("""
@@ -14231,13 +14237,24 @@ if selected == "Stock Analysis Tool":
                     }
 
 
-
+               
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
 
-               col1, col2 = st.columns(2)
-               with col1:    
+               #col1, col2 = st.columns(2)
+               #with col1: 
+               with right:   
                     selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')    
+                    # Text input for ticker search
+                    #search_query = st.text_input("Type a ticker symbol")
 
+                    # Filter available tickers based on the search query
+                    #filtered_tickers = {k: v for k, v in ticker_symbol_name.items() if search_query.upper() in k}
+
+                    #if filtered_tickers:
+                         #selected_ticker = st.selectbox('Select a ticker', list(filtered_tickers.keys()))
+                         #st.write(f"You selected: **{selected_ticker} - {filtered_tickers[selected_ticker]}**")
+                    #else:
+                         #st.write("No matching tickers found.")
 
 
                #ticker = ticker_symbol_name.get(selected_ticker) 
