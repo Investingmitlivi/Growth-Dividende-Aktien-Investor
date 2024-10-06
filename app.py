@@ -1,5 +1,3 @@
-from google_auth_oauthlib.flow import Flow
-from google.oauth2.credentials import Credentials
 #from google.auth.transport.requests import Request
 import google.auth.transport.requests
 import requests, json, time
@@ -10,6 +8,8 @@ import plotly.graph_objects as go
 import time
 import firebase_admin
 import os
+import secrets
+
 from typing import List, Dict, Union
 from datetime import datetime, timedelta, date
 from numpy_financial import npv
@@ -21,7 +21,9 @@ from streamlit_option_menu import option_menu
 from dotenv import load_dotenv
 from typing import Dict,Any,Union
 from itsdangerous import URLSafeTimedSerializer
-import secrets
+from google_auth_oauthlib.flow import Flow
+from google.oauth2.credentials import Credentials
+
 
 #from fastapi import FastAPI
 
@@ -7184,7 +7186,7 @@ if selected == "Stock Analysis Tool":
 
           if 'login_token' in st.session_state:
                try:
-                    user_data = serializer.loads(st.session_state.login_token, max_age=86400)  # 24-hour expiry
+                    user_data = serializer.loads(st.session_state.login_token, max_age=1800)  # 30-minuts expiry expiry
                     st.session_state.username = user_data['username']
                     st.session_state.useremail = user_data['email']
                     st.session_state.is_logged_in = True
@@ -14713,6 +14715,10 @@ if selected == "Stock Analysis Tool":
                     fig.update_traces(
                     hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
                     )
+                    fig.update_layout(
+                    dragmode=False,  # Disable dragging for zooming
+                    )
+
 
                     return fig
 
@@ -20532,6 +20538,9 @@ if selected == "Stock Analysis Tool":
                                         # title=f"Revenue : 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%"
                                              ) 
                                    #fig1.update_layout(title_x=0.05)     
+                                   fig1.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
 
                                    
                                                        
@@ -20557,7 +20566,10 @@ if selected == "Stock Analysis Tool":
                                              #title=f"5 YR Revenue Y/Y: {Revenue_growth_5years:.2f}%    1 YR Revenue: {Revenue_growth_1year:.2f}%"
                                              ) 
                                    
-                                   
+                                   fig2.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+
                          
                          #colr3.info(f"Revenue Growth: {Revenue_growth_10years}")
                                                        #barmode='group')  # Use 'group' to display bars side by side
@@ -20632,8 +20644,10 @@ if selected == "Stock Analysis Tool":
                                    )
 
                                    # Display the chart using Streamlit
-                                   
-                                   #fig1.update_layout(title_x=0.05)
+                                   fig1.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+
 
                                    shares_diluted_annual21 = ["{:.3f}".format(value/1e9) for value in shares_diluted_annual21_unpacked]
 
@@ -20653,7 +20667,10 @@ if selected == "Stock Analysis Tool":
                                              #title=f" Share Buyback/dilution past 5 YR: {Shares_outstanding_funf_growth:.2f}%  "
                                              )
 
-                                   
+                                   fig2.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+
                                    #fig2.update_traces(texttemplate='%{y}', textposition='outside')
                                    #fig2.update_layout(title_x=0.05)
                                    # Display the chart using Streamlit
@@ -20813,21 +20830,28 @@ if selected == "Stock Analysis Tool":
                                    
 
                                    #title_text = f"Dividend 20 CAGR: {Dividend_20_CAGR}% Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
-                                   fig.update_layout(barmode='group', xaxis_title='Date', yaxis_title='FCF / Dividends Paid in Billion USD',
+                                   fig.update_layout(
+                                        barmode='group', xaxis_title='Date',
+                                         yaxis_title='FCF / Dividends Paid in Billion USD',
                                                   #title=title_text
                                                   )
                                                        # Update legend placement
-                                   fig.update_layout(legend=dict(
+                                   fig.update_layout(
+                                   legend=dict (
                                    orientation="h",
                                    yanchor="top",
                                    y=1.1,
                                    xanchor="center",
                                    x=0.5
-                                   ))
+                                   )
+                                   )
 
                                    fig.update_traces(texttemplate='%{y}', textposition='inside')
 
-                              
+                                   fig.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+                                                                 
                                    #Free_cash_flow_per_share_annual_2003 =annual_data['fcf_per_share'][-21:]
                                    #Free_cash_flow_per_share_annual_2003 = ["{:.2f}".format(value) for value in Free_cash_flow_per_share_annual_2003]
 
@@ -20879,7 +20903,9 @@ if selected == "Stock Analysis Tool":
                                                   labels={'value': 'Amount($)'},  # Include the percentage sign in the label
                                                   #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
                                                   )
-
+                                   fig1.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
 
                          
                               # Extract the last 21 years of dividends per share growth data
@@ -20901,7 +20927,9 @@ if selected == "Stock Analysis Tool":
                                         # title='Dividend per Share growth'
                                              )
 
-                                   #fig2.update_layout(title_x=0.05)
+                                   fig2.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
 
                                    col1, col2 =st.columns(2)
                                    with col1:
@@ -20941,7 +20969,9 @@ if selected == "Stock Analysis Tool":
                                              ) 
                                    
                                    
-                              # fig1.update_layout(title_x=0.05)
+                                   fig1.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
 
 
 
@@ -20967,7 +20997,9 @@ if selected == "Stock Analysis Tool":
                                              #title=f"5 YR ROE Y/Y: {five_ROE}%    Current ROE: {ROE_ttm}"
                                              ) 
                                    
-                                   #fig2.update_layout(title_x=0.05)
+                                   fig2.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
 
                                    col1, col2 = st.columns(2)
                                    with col1:
@@ -21019,7 +21051,9 @@ if selected == "Stock Analysis Tool":
                                              ) 
 
 
-                                   #fig1.update_layout(title_x=0.05)
+                                   fig1.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
 
                                    
                                    Operating_Margin_10_annual = ["{:.2f}%".format(operating_margin_annual10_unpacked * 100) for operating_margin_annual10_unpacked in operating_margin_annual10_unpacked]
@@ -21048,10 +21082,10 @@ if selected == "Stock Analysis Tool":
                                              labels={'value': 'Amount(%)'}  # Include the percentage sign in the label
                                              )
 
-                                   # Display the custom title and description with st.write
-                                   #with col2:
-                                   
-                                        #col1, col2 = st.columns(2)
+                                   fig2.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+                                                                           #col1, col2 = st.columns(2)
                                    with col1:
                                         st.write(f"""
                                         <b>5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}</b>
@@ -21101,8 +21135,9 @@ if selected == "Stock Analysis Tool":
                                              #title=title_text
                                              )
 
-
-                                   #fig1.update_layout(title_x=0.05)
+                                   fig1.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
 
                                    try:
                                         FCF_Margin_annual10 = ["{:.2f}%".format(FCF_Margin_annual_10unpacked * 100) for FCF_Margin_annual_10unpacked in FCF_Margin_annual_10unpacked]
@@ -21129,7 +21164,9 @@ if selected == "Stock Analysis Tool":
                                    
 
                                    
-                                   #fig2.update_layout(title_x=0.05)
+                                   fig2.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
 
 
                                    col1, col2 = st.columns(2)
@@ -21197,10 +21234,9 @@ if selected == "Stock Analysis Tool":
                                    #st.plotly_chart(fig21,use_container_width=True,config=config)
           
 
-                                                                      #Marketcap_in_Billion 
-
-                                   #market_cap_history = np.append(market_cap_history, 45.78)
-                                   #date_annual_20yrs = np.append(date_annual_20yrs, 2023)
+                                   fig21.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
 
                                    Price_to_fcf_history = ["{:.2f}".format(value) for value in price_to_fcf_annual21_unpacked]
                                    #Price_to_earnings = "{:.2f}".format((Price_to_earnings))
@@ -21231,17 +21267,18 @@ if selected == "Stock Analysis Tool":
                                    yref='y',
                                    )
                                    
-                                   fig22.add_annotation(
-                                   text=f'',
+                                   fig22.add_annotation(text=f'',
                                    xref='paper',  # Set xref to 'paper' for center alignment
                                    yref='paper',  # Set yref to 'paper' for center alignment
                                    x=0.10,  # Adjust to center horizontally
                                    y=0.7,  # Adjust to center vertically
                                    showarrow=False,  # Remove the arrow
                                    font=dict(color='red'),  # Set font color to red
-                              )          
+                                   )          
 
-
+                                   fig22.update_layout(
+                                        dragmode=False,  # Disable dragging for zooming
+                                   )
                                    col2, col3 =st.columns(2)
                                    with col2:
                                         st.write(f"""
@@ -21300,9 +21337,9 @@ if selected == "Stock Analysis Tool":
                                    font=dict(color='red'),  # Set font color to red
                                    )
 
-                                   # Display the chart using Streamlit
-                                   #st.plotly_chart(fig11,use_container_width=True,config=config)
-
+                                   fig11.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
                                    #-------------------------------------------------------------------------------------------------
                               
                                    BVPS_quater1=sum(BVPS_quater1_unpacked)/len(BVPS_quater1_unpacked)
@@ -21327,7 +21364,6 @@ if selected == "Stock Analysis Tool":
                                              #title=f'10 P/BV: {average_price_to_book:.2f}  Current P/B: {PBVPS:.2f}'
                                              )
                                    
-                                   #fig12.update_layout(title_x=0.05)
 
                                    fig12.add_shape(
                                    type='line',
@@ -21349,6 +21385,9 @@ if selected == "Stock Analysis Tool":
                                    font=dict(color='red'),  # Set font color to red
                                    )
 
+                                   fig12.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
 
                                    # Display the chart using Streamlit
                                    #st.plotly_chart(fig12,use_container_width=True,config=config)
