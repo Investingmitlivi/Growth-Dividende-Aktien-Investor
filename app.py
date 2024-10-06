@@ -7108,21 +7108,12 @@ if selected == "Home":
                          file_name="Key_Financial_Ratios_Verstehdieaktie.pdf",  # This will be the name of the downloaded file
                          mime="application/pdf"  # MIME type for PDF files
                     )
-          pdf_file_path = 'DCF Update.png'
-          with left:
-               st.image('DCF Update.png',use_column_width=True)
-               with open(pdf_file_path, 'rb') as pdf_file:
-                    pdf_data = pdf_file.read()
-                    st.download_button(
-                         label=" 📁 " 'DCF model',
-                         data=pdf_data,
-                         file_name="DCF Update.png",  # This will be the name of the downloaded file
-                         mime="application/png"  # MIME type for PDF files
-                    )
+
+
 #########################################################################################################################
           # Function to format currency
           def format_currency(amount):
-               return f"€{amount:,.2f}"
+               return f"€ {amount:,.2f}"
 
           # Function to calculate the future value of an investment for each year
           def calculate_investment_over_time(initial_investment, annual_contribution, years, annual_return, compounding_frequency):
@@ -7212,6 +7203,9 @@ if selected == "Home":
                fig2.update_traces(texttemplate='%{text}', textposition='inside')
                fig2.update_layout(yaxis_tickprefix='€', yaxis_tickformat='.2f')  # To format y-axis ticks
 
+               fig2.update_layout(
+                    dragmode=False,  # Disable dragging for zooming
+                    )
                st.plotly_chart(fig2,config={'displayModeBar': False})
 
                
@@ -7231,6 +7225,21 @@ if selected == "Home":
           This investment calculator estimates the future value of your investments by taking into account the initial investment, regular annual contributions, the expected rate of return, and the compounding frequency (e.g., annually, quarterly, or monthly).
           The chart shows the total ending balance and the expected return at the end of each year using bar charts.
           """)
+
+
+
+#########################################################################################################################
+          pdf_file_path = 'DCF Update.png'
+          with left:
+               st.image('DCF Update.png',use_column_width=True)
+               with open(pdf_file_path, 'rb') as pdf_file:
+                    pdf_data = pdf_file.read()
+                    st.download_button(
+                         label=" 📁 " 'DCF model',
+                         data=pdf_data,
+                         file_name="DCF Update.png",  # This will be the name of the downloaded file
+                         mime="application/png"  # MIME type for PDF files
+                    )
 
 #########################################################################################################################
 
