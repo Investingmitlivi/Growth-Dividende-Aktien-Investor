@@ -15614,6 +15614,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_debt_equity_annual_10'] ,
                                              st.session_state[f'{ticker}_Price_to_tangible_book_annual_10'] ,
                                              st.session_state[f'{ticker}_EBITDA_growth_annual_10'] ,
+                                             st.session_state[f'{ticker}_Price_to_book_annual_5'] ,
                                              st.session_state[f'{ticker}_Price_to_book_annual_10'] ,
                                              st.session_state[f'{ticker}_fcf_per_share_annual_10'] ,
                                              st.session_state[f'{ticker}_revenue_per_share_annual_10'] ,
@@ -15686,6 +15687,7 @@ if selected == "Stock Analysis Tool":
                               debt_equity_annual_10_unpacked = annual_data['debt_to_equity'][-10:]
                               Price_to_tangible_book_annual_10_unpacked = annual_data['price_to_tangible_book'][-10:]
                               EBITDA_growth_annual_10_unpacked = annual_data['ebitda_growth'][-10:]
+                              Price_to_book_5_annual_unpacked = annual_data['price_to_book'][-5:]
                               Price_to_book_10_annual_unpacked = annual_data['price_to_book'][-10:]
                               fcf_per_share_annual_10_unpacked = annual_data['fcf_per_share'][-10:]
                               revenue_per_share_annual_10_unpacked = annual_data['revenue_per_share'][-10:]
@@ -15740,6 +15742,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_debt_equity_annual_10'] = debt_equity_annual_10_unpacked
                               st.session_state[f'{ticker}_Price_to_tangible_book_annual_10'] = Price_to_tangible_book_annual_10_unpacked
                               st.session_state[f'{ticker}_EBITDA_growth_annual_10'] = EBITDA_growth_annual_10_unpacked
+                              st.session_state[f'{ticker}_Price_to_book_annual_5'] = Price_to_book_5_annual_unpacked
                               st.session_state[f'{ticker}_Price_to_book_annual_10'] = Price_to_book_10_annual_unpacked
                               st.session_state[f'{ticker}_fcf_per_share_annual_10'] = fcf_per_share_annual_10_unpacked
                               st.session_state[f'{ticker}_revenue_per_share_annual_10'] = revenue_per_share_annual_10_unpacked
@@ -15776,7 +15779,7 @@ if selected == "Stock Analysis Tool":
                                    Net_income_margin_10_unpacked, Net_income_margin_annual5_unpacked, Net_income_margin_1,
                                    FCF_Margin_annual_10unpacked, FCF_Margin_5, FCF_Margin_1,
                                    debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,
-                                   EBITDA_growth_annual_10_unpacked, Price_to_book_10_annual_unpacked, 
+                                   EBITDA_growth_annual_10_unpacked, Price_to_book_5_annual_unpacked,Price_to_book_10_annual_unpacked, 
                                    fcf_per_share_annual_10_unpacked, revenue_per_share_annual_10_unpacked,
                                    Payout_ratio_annual_10_unpacked, NetIncome_growth_annual_10_unpacked,
                                    Book_Value_growth_annual_10_unpacked, Price_to_sales_annual_10_unpacked,
@@ -15797,7 +15800,7 @@ if selected == "Stock Analysis Tool":
                          Net_income_margin_10_unpacked, Net_income_margin_annual5_unpacked, Net_income_margin_1,
                          FCF_Margin_annual_10unpacked, FCF_Margin_5, FCF_Margin_1,
                          debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,
-                         EBITDA_growth_annual_10_unpacked, Price_to_book_10_annual_unpacked, 
+                         EBITDA_growth_annual_10_unpacked,Price_to_book_5_annual_unpacked,Price_to_book_10_annual_unpacked, 
                          fcf_per_share_annual_10_unpacked, revenue_per_share_annual_10_unpacked,
                          Payout_ratio_annual_10_unpacked, NetIncome_growth_annual_10_unpacked,
                          Book_Value_growth_annual_10_unpacked, Price_to_sales_annual_10_unpacked,
@@ -15818,9 +15821,18 @@ if selected == "Stock Analysis Tool":
                          Net_income_margin_10years = sum(Net_income_margin_10_unpacked)/len(Net_income_margin_10_unpacked)
                          Net_income_margin_annual5 = sum(Net_income_margin_annual5_unpacked)/len(Net_income_margin_annual5_unpacked)
 
+                         BVPS_quater1=sum(BVPS_quater1_unpacked)/len(BVPS_quater1_unpacked)
+                         PBVPS=amount/BVPS_quater1
+                         if len_10_annual == 10:
+                              average_price_to_book = round(sum(Price_to_book_10_annual_unpacked)/len(Price_to_book_10_annual_unpacked),2)
 
+                         else:
+                              average_price_to_book = 0.00
+                         if len_5_annual == 5:
 
-
+                              average_price_to_book_annual_5= round(sum(Price_to_book_5_annual_unpacked)/len(Price_to_book_5_annual_unpacked),2)
+                         else:
+                              average_price_to_book_annual_5 = 0.00
           ###################################################################################################
                          def unpack_annual21_data(annual_data,ticker):
 
@@ -17068,6 +17080,9 @@ if selected == "Stock Analysis Tool":
                          'P/S': [Price_to_sales_last],
                          '5 YR P/S': [P_sales_5],
                          '10 YR P/S': [P_sales_10],
+                         'P/B': '{:.2f}'.format(PBVPS),
+                         '5 YR P/B': '{:.2f}'.format(average_price_to_book_annual_5),
+                         '10 YR P/B':'{:.2f}'.format(average_price_to_book),
                          'ROA': [average_ROA_annual_ttm],
                          '5 YR ROE': ["{:.5}%".format(five_ROE)],
                          'ROE': [ROE_ttm],
@@ -21556,8 +21571,8 @@ if selected == "Stock Analysis Tool":
 
                                    #-------------------------------------------------------------------------------------------------
                               
-                                   BVPS_quater1=sum(BVPS_quater1_unpacked)/len(BVPS_quater1_unpacked)
-                                   PBVPS=amount/BVPS_quater1
+
+                                  
                                    #PBVPS=sum(PBVPS)/len(PBVPS)
                                    #st.write("BVPS",BVPS)
                                    #st.write("PBVPS",PBVPS)
@@ -21570,7 +21585,6 @@ if selected == "Stock Analysis Tool":
                                    #st.title('Free Cash Flow and Revenue Data')
 
                                    # Create a Plotly Express bar chart with side-by-side bars
-                                   average_price_to_book = round(sum(Price_to_book_10_annual_unpacked)/len(Price_to_book_10_annual_unpacked),2)
 
                                    fig12 = px.bar(data, x='Date', y='Price/Book Value',
                                              text ='Price/Book Value',  
