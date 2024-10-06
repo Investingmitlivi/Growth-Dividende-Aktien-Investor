@@ -1,6 +1,8 @@
 firebase_admin>=6.2.0,<6.6.0
+fpdf==1.7.2
 google_auth_oauthlib>=0.5.1,<2.0.0
-itsdangerous>=2.0.0
+itsdangerous>=2.2.0
+kaleido==0.2.1
 libcst==1.1.0
 numpy>=1.22.3,<1.25.0
 numpy_financial==1.0.0

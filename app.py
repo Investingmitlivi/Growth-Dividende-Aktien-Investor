@@ -10,6 +10,7 @@ import firebase_admin
 import os
 import secrets
 
+
 from typing import List, Dict, Union
 from datetime import datetime, timedelta, date
 from numpy_financial import npv
@@ -23,6 +24,7 @@ from typing import Dict,Any,Union
 from itsdangerous import URLSafeTimedSerializer
 from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
+from fpdf import FPDF
 
 
 #from fastapi import FastAPI
@@ -7089,10 +7091,150 @@ if selected == "Home":
           
           )
           st.write("[Youtube Channel >](https://www.youtube.com/@Verstehdieaktie)")
-          #st.write("---")
+#########################################################################################################################
+          right,left = st.columns(2, gap="small")
+          # Load the PDF document
+          pdf_file_path = 'Key_Financial_Ratios_Verstehdieaktie.pdf'
+          # Download button for the PDF
+          
+
+          with right:
+               st.image('Key_Financial_Ratios_Verstehdieaktie.png', use_column_width=True)
+               with open(pdf_file_path, 'rb') as pdf_file:
+                    pdf_data = pdf_file.read()
+                    st.download_button(
+                         label=" 📁 " 'Key financial ratios',
+                         data=pdf_data,
+                         file_name="Key_Financial_Ratios_Verstehdieaktie.pdf",  # This will be the name of the downloaded file
+                         mime="application/pdf"  # MIME type for PDF files
+                    )
+          pdf_file_path = 'DCF Update.png'
+          with left:
+               st.image('DCF Update.png',use_column_width=True)
+               with open(pdf_file_path, 'rb') as pdf_file:
+                    pdf_data = pdf_file.read()
+                    st.download_button(
+                         label=" 📁 " 'DCF model',
+                         data=pdf_data,
+                         file_name="DCF Update.png",  # This will be the name of the downloaded file
+                         mime="application/png"  # MIME type for PDF files
+                    )
+#########################################################################################################################
+          # Function to format currency
+          def format_currency(amount):
+               return f"€{amount:,.2f}"
+
+          # Function to calculate the future value of an investment for each year
+          def calculate_investment_over_time(initial_investment, annual_contribution, years, annual_return, compounding_frequency):
+               rate_per_period = (annual_return / 100) / compounding_frequency
+               ending_balances = []
+               returns = []
+               
+               # Calculate the balance and return for each year
+               for year in range(1, years + 1):
+                    periods = year * compounding_frequency
+                    
+                    # Future value of initial investment (compound interest formula)
+                    future_value_initial = initial_investment * (1 + rate_per_period) ** periods
+                    
+                    # Future value of regular contributions (future value of series formula)
+                    future_value_contributions = annual_contribution * (((1 + rate_per_period) ** periods - 1) / rate_per_period)
+                    
+                    # Total future value (ending balance)
+                    ending_balance = future_value_initial + future_value_contributions
+                    ending_balances.append(ending_balance)
+                    
+                    # Expected return is the difference between this year's balance and last year's balance
+                    if year > 1:
+                         annual_return_value = ending_balance - ending_balances[-2] - annual_contribution
+                    else:
+                         annual_return_value = ending_balance - initial_investment
+                    
+                    returns.append(annual_return_value)
+               
+               return ending_balances, returns
+
+               # Function to create and save chart as PDF
+          def create_chart_pdf(periods, ending_balances, returns):
+               # Create the bar plot with Plotly Express
+               fig2 = px.bar(x=periods, 
+                              y=ending_balances, 
+                              labels={'x': 'Years', 'y': 'Ending Balance (€)'},
+                              title='Ending Balance Over Time', 
+                              text=[format_currency(balance) for balance in ending_balances])  # Format text
 
 
-          st.write("##")
+                              
+               fig2.add_bar(x=periods, y=returns, name='Expected Return (€)', 
+                              text=[format_currency(return_value) for return_value in returns])  # Format text for returns
+
+               
+               # Save the chart as a static image (PNG) to embed in the PDF
+               fig2.write_image("investment_growth_chart.png")
+               
+               # Create a PDF with the image
+               pdf = FPDF()
+               pdf.add_page()
+               pdf.image("investment_growth_chart.png", x=10, y=8, w=190)
+               pdf.output("investment_growth_chart.pdf", "F")
+
+               # Clean up the image file
+               os.remove("investment_growth_chart.png")
+
+               return "investment_growth_chart.pdf"
+
+          with right:
+               st.title("Investment Calculator")
+
+               # User inputs
+               initial_investment = st.number_input("Initial Investment Amount (€)", value=1000.0, min_value=0.0, step=100.0)
+               annual_contribution = st.number_input("Additional Contribution (€)", value=1000.0, min_value=0.0, step=100.0)
+               years = st.number_input("Investment Time Horizon (years)", value=10, min_value=1, step=1)
+               annual_return = st.number_input("Expected Annual Return (%)", value=9.0, min_value=0.0, step=0.1)
+               compounding_frequency = st.selectbox("Compounding Frequency", [1, 4, 6, 12], index=2)  # Annually, Quarterly, Semi-annually, Monthly
+
+          # Calculate the future value over time
+          if st.button("Calculate"):
+               ending_balances, returns = calculate_investment_over_time(initial_investment, annual_contribution, years, annual_return, compounding_frequency)
+               periods = np.arange(1, years + 1)
+               
+               st.write(f"### Final Investment Balance after {years} years: {format_currency(ending_balances[-1])}")
+               
+               fig2 = px.bar(
+               x=periods,
+               y=ending_balances,
+               text=[format_currency(balance) for balance in ending_balances],
+               labels={'x': 'Years', 'y': 'Ending Balance'},
+               title="Investment Growth Over Time"
+               )
+
+               # Customize the layout to show the text properly
+               fig2.update_traces(texttemplate='%{text}', textposition='inside')
+               fig2.update_layout(yaxis_tickprefix='€', yaxis_tickformat='.2f')  # To format y-axis ticks
+
+               st.plotly_chart(fig2,config={'displayModeBar': False})
+
+               
+               # Automatically generate the PDF and provide a download link icon
+               pdf_file = create_chart_pdf(periods, ending_balances, returns)
+               with open(pdf_file, "rb") as pdf:
+                    st.download_button(
+                         label="📁 Download as PDF file",
+                         data=pdf,
+                         file_name="investment_growth_chart.pdf",
+                         mime="application/pdf",
+                         use_container_width=True
+                    )
+
+          # Explanation of the calculator
+          st.write("""
+          This investment calculator estimates the future value of your investments by taking into account the initial investment, regular annual contributions, the expected rate of return, and the compounding frequency (e.g., annually, quarterly, or monthly).
+          The chart shows the total ending balance and the expected return at the end of each year using bar charts.
+          """)
+
+#########################################################################################################################
+
+          st.write("#")
           st.write("Tip: To invest in shares, ETFs, Cryptos and funds, you need a securities account. You can find the best providers in the following overview:"
           )
           st.write("[Trade Republic >](https://ref.trade.re/6q9kgz11)")
@@ -7192,7 +7334,7 @@ if selected == "Stock Analysis Tool":
                     st.session_state.is_logged_in = True
 
                except Exception:
-                    st.warning("Login session expired. Please log in again.")
+                    #st.warning("Login session expired. Please log in again.")
                     del st.session_state.login_token
 
 
@@ -20542,6 +20684,9 @@ if selected == "Stock Analysis Tool":
                                    dragmode=False,  # Disable dragging for zooming
                                    )
 
+                                   fig1.update_layout(
+                                   xaxis_type='category' 
+                                   )
                                    
                                                        
                                    #revenue_2003 = [round(value, 2) for value in revenue_2003]
@@ -20570,6 +20715,9 @@ if selected == "Stock Analysis Tool":
                                    dragmode=False,  # Disable dragging for zooming
                                    )
 
+                                   fig2.update_layout(
+                                   xaxis_type='category' 
+                                   )
                          
                          #colr3.info(f"Revenue Growth: {Revenue_growth_10years}")
                                                        #barmode='group')  # Use 'group' to display bars side by side
@@ -20626,7 +20774,7 @@ if selected == "Stock Analysis Tool":
                                              ) 
 
                                    # Customize the chart
-                                   fig1.update_traces(textposition='outside')
+                                   #fig1.update_traces(textposition='outside')
                                    fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
 
                                    #streamlit_blue = '#1f77b4'  # This is Streamlit's default blue color
@@ -20670,7 +20818,10 @@ if selected == "Stock Analysis Tool":
                                    fig2.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
                                    )
-
+                                                                      # Update layout for better readability
+                                   fig2.update_layout(
+                                   xaxis_type='category' 
+                                   )
                                    #fig2.update_traces(texttemplate='%{y}', textposition='outside')
                                    #fig2.update_layout(title_x=0.05)
                                    # Display the chart using Streamlit
@@ -20810,10 +20961,15 @@ if selected == "Stock Analysis Tool":
                                    'Dividends': dividendPaidInTheLast21Years_unpacked,
                                    'Free Cash Flow': Free_cash_flow_annual_21_unpacked,
                                    })
+
                                    fig = go.Figure()
 
 
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Free Cash Flow'], name='Free Cash Flow'))
+
+                                   fig.update_layout(
+                                   xaxis_type='category' 
+                                   )
                                    # Add the Dividends bar plot
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'],marker_color='black',  name='Dividends Paid'))
                                    
@@ -20906,6 +21062,9 @@ if selected == "Stock Analysis Tool":
                                    fig1.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
                                    )
+                                   fig1.update_layout(
+                                   xaxis_type='category' 
+                                   )
 
                          
                               # Extract the last 21 years of dividends per share growth data
@@ -20929,6 +21088,10 @@ if selected == "Stock Analysis Tool":
 
                                    fig2.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
+                                   )
+
+                                   fig2.update_layout(
+                                   xaxis_type='category' 
                                    )
 
                                    col1, col2 =st.columns(2)
@@ -20973,6 +21136,9 @@ if selected == "Stock Analysis Tool":
                                    dragmode=False,  # Disable dragging for zooming
                                    )
 
+                                   fig1.update_layout(
+                                   xaxis_type='category' 
+                                   )
 
 
                                    try:
@@ -20999,6 +21165,10 @@ if selected == "Stock Analysis Tool":
                                    
                                    fig2.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
+                                   )
+
+                                   fig2.update_layout(
+                                   xaxis_type='category' 
                                    )
 
                                    col1, col2 = st.columns(2)
@@ -21055,6 +21225,10 @@ if selected == "Stock Analysis Tool":
                                    dragmode=False,  # Disable dragging for zooming
                                    )
 
+                                   fig1.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
                                    
                                    Operating_Margin_10_annual = ["{:.2f}%".format(operating_margin_annual10_unpacked * 100) for operating_margin_annual10_unpacked in operating_margin_annual10_unpacked]
                                    
@@ -21085,7 +21259,12 @@ if selected == "Stock Analysis Tool":
                                    fig2.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
                                    )
-                                                                           #col1, col2 = st.columns(2)
+                                          
+                                   fig2.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
+                                 #col1, col2 = st.columns(2)
                                    with col1:
                                         st.write(f"""
                                         <b>5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}</b>
@@ -21139,6 +21318,10 @@ if selected == "Stock Analysis Tool":
                                    dragmode=False,  # Disable dragging for zooming
                                    )
 
+                                   fig1.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
                                    try:
                                         FCF_Margin_annual10 = ["{:.2f}%".format(FCF_Margin_annual_10unpacked * 100) for FCF_Margin_annual_10unpacked in FCF_Margin_annual_10unpacked]
                                    except Exception as e:
@@ -21168,6 +21351,9 @@ if selected == "Stock Analysis Tool":
                                    dragmode=False,  # Disable dragging for zooming
                                    )
 
+                                   fig2.update_layout(
+                                   xaxis_type='category' 
+                                   )
 
                                    col1, col2 = st.columns(2)
                                    with col1:
@@ -21205,6 +21391,7 @@ if selected == "Stock Analysis Tool":
                                    # Create a Plotly Express bar chart with side-by-side bars
                                    
                                    fig21 = px.bar(data, x='Date', y='PE Ratio',
+                                             text ='PE Ratio',
                                              labels={'value': 'Ratio'},
                                              #title=f"-><span style='color:dodgerblue'>10 YR PE:</span> {average_PE_historical}  -><span style='color:dodgerblue'>5 YR PE: </span> {pe_five_}  -><span style='color:dodgerblue'>Current PE: </span> {pe_ttm}  -><span style='color:dodgerblue'>Forward P/E:</span>  {forwardPE}"
                                              )  # Use 'group' to display bars side by side
@@ -21228,7 +21415,7 @@ if selected == "Stock Analysis Tool":
                                    y=0.7,  # Adjust to center vertically
                                    showarrow=False,  # Remove the arrow
                                    font=dict(color='red'),  # Set font color to red
-                              )          
+                                   )          
 
                                    # Display the chart using Streamlit
                                    #st.plotly_chart(fig21,use_container_width=True,config=config)
@@ -21237,6 +21424,11 @@ if selected == "Stock Analysis Tool":
                                    fig21.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
                                    )
+
+                                   fig21.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
 
                                    Price_to_fcf_history = ["{:.2f}".format(value) for value in price_to_fcf_annual21_unpacked]
                                    #Price_to_earnings = "{:.2f}".format((Price_to_earnings))
@@ -21252,6 +21444,7 @@ if selected == "Stock Analysis Tool":
                                    
                                                                                                                                             
                                    fig22 = px.bar(data, x='Date', y='Price/FCF',
+                                             text ='Price/FCF',
                                              labels={'value': 'ratio'},
                                              #title=f'Market Cap:  Current Market Cap: {Marketcap_in_Billion}'
                                              )
@@ -21279,6 +21472,12 @@ if selected == "Stock Analysis Tool":
                                    fig22.update_layout(
                                         dragmode=False,  # Disable dragging for zooming
                                    )
+
+
+                                   fig22.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
                                    col2, col3 =st.columns(2)
                                    with col2:
                                         st.write(f"""
@@ -21303,7 +21502,7 @@ if selected == "Stock Analysis Tool":
                                    #st.write("PTBVPS",PTBVPS)
                                    data = pd.DataFrame({
                                    'Date': date_annual,
-                                   'Price to Tangible Book Value': Price_to_tangible_book_annual_10_unpacked,
+                                   'Price/Tangible Book Value': Price_to_tangible_book_annual_10_unpacked,
                                    })
 
                                                        
@@ -21312,7 +21511,8 @@ if selected == "Stock Analysis Tool":
                                    # Create a Plotly Express bar chart with side-by-side bars
                                    Average_Price_to_tangible_book =round(sum(Price_to_tangible_book_annual_10_unpacked)/len(Price_to_tangible_book_annual_10_unpacked))
                                    
-                                   fig11 = px.bar(data, x='Date', y='Price to Tangible Book Value',               
+                                   fig11 = px.bar(data, x='Date', y='Price/Tangible Book Value', 
+                                             text ='Price/Tangible Book Value',              
                                              labels={'value': 'Ratio'},
                                              #title=f'10 P/TBV: {Average_Price_to_tangible_book:.2f}  Current P/TBV: {PTBVPS:.2f}'
                                              )  # Use 'group' to display bars side by side
@@ -21340,6 +21540,11 @@ if selected == "Stock Analysis Tool":
                                    fig11.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
                                    )
+
+                                   fig11.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
                                    #-------------------------------------------------------------------------------------------------
                               
                                    BVPS_quater1=sum(BVPS_quater1_unpacked)/len(BVPS_quater1_unpacked)
@@ -21349,7 +21554,7 @@ if selected == "Stock Analysis Tool":
                                    #st.write("PBVPS",PBVPS)
                                    data = pd.DataFrame({
                                    'Date': list(date_annual),
-                                   'Price to Book Value': Price_to_book_10_annual_unpacked,
+                                   'Price/Book Value': Price_to_book_10_annual_unpacked,
                                    })
 
                                    # Create a Streamlit app
@@ -21358,7 +21563,8 @@ if selected == "Stock Analysis Tool":
                                    # Create a Plotly Express bar chart with side-by-side bars
                                    average_price_to_book = round(sum(Price_to_book_10_annual_unpacked)/len(Price_to_book_10_annual_unpacked),2)
 
-                                   fig12 = px.bar(data, x='Date', y='Price to Book Value',
+                                   fig12 = px.bar(data, x='Date', y='Price/Book Value',
+                                             text ='Price/Book Value',  
                                              labels={'value': 'Ratio'},
                                              #title='Price to Book Value,{average_price_to_book:.2f}')
                                              #title=f'10 P/BV: {average_price_to_book:.2f}  Current P/B: {PBVPS:.2f}'
@@ -21387,6 +21593,10 @@ if selected == "Stock Analysis Tool":
 
                                    fig12.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
+                                   )
+
+                                   fig12.update_layout(
+                                   xaxis_type='category' 
                                    )
 
                                    # Display the chart using Streamlit
@@ -22308,5 +22518,5 @@ if selected == "Contacts":
 display_disclaimer()
 current_year = datetime.now().year
  
-st.markdown(f'&copy; {2023} - {current_year} Stock Valuation. All rights reserved', unsafe_allow_html=True)
+st.markdown(f'&copy; {2023} - {current_year} Verstehdieaktie. All rights reserved', unsafe_allow_html=True)
 
