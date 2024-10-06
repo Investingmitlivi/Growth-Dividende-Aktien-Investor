@@ -7092,13 +7092,14 @@ if selected == "Home":
           )
           st.write("[Youtube Channel >](https://www.youtube.com/@Verstehdieaktie)")
 #########################################################################################################################
-          right,left = st.columns(2, gap="small")
+          #right,left = st.columns(2, gap="small")
+          col1,col2 = st.columns(2)
           # Load the PDF document
           pdf_file_path = 'Key_Financial_Ratios_Verstehdieaktie.pdf'
           # Download button for the PDF
           
 
-          with right:
+          with col1:
                st.image('Key_Financial_Ratios_Verstehdieaktie.png', use_column_width=True)
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
@@ -7110,7 +7111,24 @@ if selected == "Home":
                     )
 
 
+
+
 #########################################################################################################################
+          pdf_file_path = 'DCF Update.png'
+          with col2:
+               st.image('DCF Update.png',use_column_width=True)
+               with open(pdf_file_path, 'rb') as pdf_file:
+                    pdf_data = pdf_file.read()
+                    st.download_button(
+                         label=" 📁 " 'DCF model',
+                         data=pdf_data,
+                         file_name="DCF Update.png",  # This will be the name of the downloaded file
+                         mime="application/png"  # MIME type for PDF files
+                    )
+
+
+#########################################################################################################################
+
           # Function to format currency
           def format_currency(amount):
                return f"€ {amount:,.2f}"
@@ -7174,11 +7192,11 @@ if selected == "Home":
 
                return "investment_growth_chart.pdf"
 
-          with right:
+          with col1:
                st.title("Investment Calculator")
 
                # User inputs
-               initial_investment = st.number_input("Initial Investment Amount (€)", value=1000.0, min_value=0.0, step=100.0)
+               initial_investment = st.number_input("Initial Investment Amount (€)", value=20000.0, min_value=0.0, step=100.0)
                annual_contribution = st.number_input("Additional Contribution (€)", value=1000.0, min_value=0.0, step=100.0)
                years = st.number_input("Investment Time Horizon (years)", value=10, min_value=1, step=1)
                annual_return = st.number_input("Expected Annual Return (%)", value=9.0, min_value=0.0, step=0.1)
@@ -7227,19 +7245,6 @@ if selected == "Home":
           """)
 
 
-
-#########################################################################################################################
-          pdf_file_path = 'DCF Update.png'
-          with left:
-               st.image('DCF Update.png',use_column_width=True)
-               with open(pdf_file_path, 'rb') as pdf_file:
-                    pdf_data = pdf_file.read()
-                    st.download_button(
-                         label=" 📁 " 'DCF model',
-                         data=pdf_data,
-                         file_name="DCF Update.png",  # This will be the name of the downloaded file
-                         mime="application/png"  # MIME type for PDF files
-                    )
 
 #########################################################################################################################
 
