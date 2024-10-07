@@ -7110,9 +7110,6 @@ if selected == "Home":
                          mime="application/pdf"  # MIME type for PDF files
                     )
 
-
-
-
 #########################################################################################################################
           pdf_file_path = 'DCF Update.png'
           with col2:
@@ -7125,10 +7122,25 @@ if selected == "Home":
                          file_name="DCF Update.png",  # This will be the name of the downloaded file
                          mime="application/png"  # MIME type for PDF files
                     )
+#########################################################################################################################
+
+          col1,col2 = st.columns(2)
+          pdf_file_path = 'Verstehdieaktie_Financial_Ratios_calculation.pdf'
+          with col1:
+               st.image('Verstehdieaktie_Financial_Ratios_calculation.jpg',use_column_width=True)
+               with open(pdf_file_path, 'rb') as pdf_file:
+                    pdf_data = pdf_file.read()
+                    st.download_button(
+                         label=" 📁 " 'Accounting ratios',
+                         data=pdf_data,
+                         file_name="Verstehdieaktie_Financial_Ratios_calculation.pdf",  # This will be the name of the downloaded file
+                         mime="application/png"  # MIME type for PDF files
+                    )
+
 
 
 #########################################################################################################################
-
+          col1,col2 = st.columns(2)
           # Function to format currency
           def format_currency(amount):
                return f"€ {amount:,.2f}"
@@ -7201,7 +7213,7 @@ if selected == "Home":
                years = st.number_input("Investment Time Horizon (years)", value=10, min_value=1, step=1)
                annual_return = st.number_input("Expected Annual Return (%)", value=9.0, min_value=0.0, step=0.1)
                compounding_frequency = st.selectbox("Compounding Frequency", [1, 4, 6, 12], index=2)  # Annually, Quarterly, Semi-annually, Monthly
-
+          
           # Calculate the future value over time
           if st.button("Calculate"):
                ending_balances, returns = calculate_investment_over_time(initial_investment, annual_contribution, years, annual_return, compounding_frequency)
