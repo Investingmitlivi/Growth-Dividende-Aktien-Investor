@@ -25,16 +25,13 @@ from itsdangerous import URLSafeTimedSerializer
 from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 from fpdf import FPDF
-
-
-#from fastapi import FastAPI
-
-
-
-    
+from PIL import Image
 
 
 st.set_page_config(page_title="Verstehdieaktie", page_icon = "📖", layout="wide")
+
+# favicon = Image.open("")  # Path to your image
+# st.image(favicon, width=50)  
 
 hide_streamlit_style = """
                 <div style="max-width: 100%;">
@@ -7064,7 +7061,7 @@ usd_to_eur_rate = get_exchange_rate("USD", "EUR")
 selected = option_menu(
      menu_title= None, #required
      options=["Home","Stock Analysis Tool","Contacts"], #required
-     icons=["house","book","envelope"],
+     icons=["house","graph-up","envelope"],
      menu_icon="cast", #optional
      default_index=0,
      orientation="horizontal", 
@@ -22157,6 +22154,7 @@ def display_disclaimer():
      st.markdown(custom_css, unsafe_allow_html=True)
 #####################################################################
 if selected == "Contacts":
+     st.write("You can reach us at: verstehdieaktie@gmail.com")
      # #st.title('Welcome to :violet[Pondering] :sunglasses:')
 
      # def app():
