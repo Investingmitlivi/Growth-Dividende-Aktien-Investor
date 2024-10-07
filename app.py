@@ -34,7 +34,7 @@ from fpdf import FPDF
     
 
 
-st.set_page_config(page_title="Stock Valuation", page_icon = "📚", layout="wide")
+st.set_page_config(page_title="Verstehdieaktie", page_icon = "📖", layout="wide")
 
 hide_streamlit_style = """
                 <div style="max-width: 100%;">
