@@ -7252,7 +7252,7 @@ if selected == "Home":
 
           # Explanation of the calculator
           st.write("""
-          This investment calculator estimates the future value of your investments by taking into account the initial investment, regular annual contributions, the expected rate of return, and the compounding frequency (e.g., annually, quarterly, or monthly).
+          This investment calculator estimates the future value of your investments by taking into account the initial investment, additional contributions, the expected rate of return, and the compounding frequency (e.g., annually, quarterly, or monthly).
           The chart shows the total ending balance and the expected return at the end of each year using bar charts.
           """)
 
@@ -19238,21 +19238,22 @@ if selected == "Stock Analysis Tool":
                               payout = "🔴" 
 
                          try:
-                              if netincome_annual_funf_growth_ < -1:
+                              if netincome_annual_funf_growth_ < 0:
                                         netincome = "🔴"  # Red X for KGV less than 23
                               else:
                                         netincome= "✅"  # Green checkmark for KGV greater than or equal to 23
 
 
-                              if revenue_annual_funf_Growth < -1:
+                              if revenue_annual_funf_Growth < 0:
                                         rev = "🔴"  # Red X for KGV less than 23
                               else:
                                         rev= "✅"  # Green checkmark for KGV greater than or equal to 23
                          except Exception as e:
                               rev = "🔴" 
+                              netincome = "🔴"
 
                          try:
-                              if FCF_funf_growth < -1:
+                              if FCF_funf_growth < 0:
                                         fcf = "🔴"  # Red X for KGV less than 23
                               else:
                                         fcf= "✅"  # Green checkmark for KGV greater than or equal to 23
@@ -19265,6 +19266,7 @@ if selected == "Stock Analysis Tool":
                          except Exception as e:
 
                               share = "🔴" 
+                              fcf = "🔴"
                          try:
                               if Average_ROIC_funf == 'NA' or float(Average_ROIC_funf[:-1]) < 9:
                                         roic = "🔴"  # Red X for 'NA' or less than 9
