@@ -15912,20 +15912,20 @@ if selected == "Stock Analysis Tool":
                               try:
                                    if value_at_index_6 == 0:
                                         # If value at index -6 is 0, CAGR is 0
-                                        FCF_5_CAGR = 0
+                                        FCF_5_CAGR = "{:.2f}".format(0.00)
                                    else:
                                         try:
                                              # Calculate CAGR
                                              FCF_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
                                              # Handle complex number case
                                              if isinstance(FCF_5_CAGR, complex):
-                                                  FCF_5_CAGR = 0
+                                                  FCF_5_CAGR = "{:.2f}".format(0.00)
                                              else:
                                                   FCF_5_CAGR = "{:.2f}".format(FCF_5_CAGR)
                                         except Exception as e:
-                                             FCF_5_CAGR = 0
+                                             FCF_5_CAGR = "{:.2f}".format(0.00)
                               except Exception as e:
-                                   FCF_5_CAGR = 0
+                                   FCF_5_CAGR = "{:.2f}".format(0.00)
 
                               # Store the result in session state
                               st.session_state[f'{ticker}_FCF_5_CAGR'] = FCF_5_CAGR
@@ -15957,20 +15957,20 @@ if selected == "Stock Analysis Tool":
                               try:
                                    if value_at_index_6 == 0:
                                         # If value at index -6 is 0, CAGR is 0
-                                        EPS_5_CAGR = 0
+                                        EPS_5_CAGR = "{:.2f}".format(0.00)
                                    else:
                                         try:
                                              # Calculate CAGR
                                              EPS_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
                                              # Handle complex number case
                                              if isinstance(EPS_5_CAGR, complex):
-                                                  EPS_5_CAGR = 0
+                                                  EPS_5_CAGR = "{:.2f}".format(0.00)
                                              else:
                                                   EPS_5_CAGR = "{:.2f}".format(EPS_5_CAGR)
                                         except Exception as e:
-                                             EPS_5_CAGR = 0
+                                             EPS_5_CAGR = "{:.2f}".format(0.00)
                               except Exception as e:
-                                   EPS_5_CAGR = 0
+                                   EPS_5_CAGR = "{:.2f}".format(0.00)
 
                               # Store the result in session state
                               st.session_state[f'{ticker}_EPS_5_CAGR'] = EPS_5_CAGR
@@ -15999,20 +15999,20 @@ if selected == "Stock Analysis Tool":
                               try:
                                    if value_at_index_6 == 0:
                                         # If value at index -6 is 0, CAGR is 0
-                                        Revenue_5_CAGR = 0
+                                        Revenue_5_CAGR = "{:.2f}".format(0.00)
                                    else:
                                         try:
                                              # Calculate CAGR
                                              Revenue_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
                                              # Handle complex number case
                                              if isinstance(Revenue_5_CAGR, complex):
-                                                  Revenue_5_CAGR = 0
+                                                  Revenue_5_CAGR = "{:.2f}".format(0.00)
                                              else:
                                                   Revenue_5_CAGR = "{:.2f}".format(Revenue_5_CAGR)
                                         except Exception as e:
-                                             Revenue_5_CAGR = 0
+                                             Revenue_5_CAGR = "{:.2f}".format(0.00)
                               except Exception as e:
-                                   Revenue_5_CAGR = 0
+                                   Revenue_5_CAGR = "{:.2f}".format(0.00)
 
                               # Store the result in session state
                               st.session_state[f'{ticker}_Revenue_5_CAGR'] = Revenue_5_CAGR
