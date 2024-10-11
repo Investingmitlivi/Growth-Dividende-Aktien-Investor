@@ -15494,11 +15494,7 @@ if selected == "Stock Analysis Tool":
                               ) = calculate_net_income_averages(annual_data,quarterly_data, ticker)
 
           ###################################################################################################
-                         st.write("len_5_annual",len_5_annual)
-                         st.write("len_10_annual",len_10_annual)
-                         st.write("len_10_quarter",len_10_quarter)
                         
-
 
                          Average_net_income_annual_funf_Billion_Million = (
                          "{:.2f}B".format(Average_net_income_annual_funf / 1e9) 
