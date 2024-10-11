@@ -7348,7 +7348,7 @@ if selected == "Home":
 
 #########################################################################################################################
 
-          st.write("#")
+          #st.write("#")
           st.write("Tip: To invest in shares, ETFs, Cryptos and funds, you need a securities account. You can find the best providers in the following overview:"
           )
           st.write("[Trade Republic >](https://ref.trade.re/6q9kgz11)")
@@ -22635,7 +22635,7 @@ if selected == "Contacts":
 
 
 
-
+st.markdown("---")
 display_disclaimer()
 current_year = datetime.now().year
  
