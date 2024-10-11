@@ -19,4 +19,5 @@ streamlit>=1.26.0,<1.39.0
 streamlit_option_menu==0.3.13
 typing-extensions<4.6.0,>=3.6.6
 yfinance>=0.2.31,<0.3.0
+watchdog==4.0.2
 
