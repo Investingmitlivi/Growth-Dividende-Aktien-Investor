@@ -7101,7 +7101,7 @@ if selected == "Home":
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
                     st.download_button(
-                         label=" 📁 " 'Key financial ratios',
+                         label=" 📁 " 'Download',
                          data=pdf_data,
                          file_name="Key_Financial_Ratios_Verstehdieaktie.pdf",  # This will be the name of the downloaded file
                          mime="application/pdf"  # MIME type for PDF files
@@ -7114,7 +7114,7 @@ if selected == "Home":
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
                     st.download_button(
-                         label=" 📁 " 'DCF model',
+                         label=" 📁 " 'Download',
                          data=pdf_data,
                          file_name="DCF Update.png",  # This will be the name of the downloaded file
                          mime="application/png"  # MIME type for PDF files
@@ -7128,7 +7128,7 @@ if selected == "Home":
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
                     st.download_button(
-                         label=" 📁 " 'Accounting ratios',
+                         label=" 📁 " 'Download',
                          data=pdf_data,
                          file_name="Verstehdieaktie_Financial_Ratios_calculation.pdf",  # This will be the name of the downloaded file
                          mime="application/png"  # MIME type for PDF files
@@ -7212,48 +7212,139 @@ if selected == "Home":
                compounding_frequency = st.selectbox("Compounding Frequency", [1, 4, 6, 12], index=2)  # Annually, Quarterly, Semi-annually, Monthly
           
           # Calculate the future value over time
-          if st.button("Calculate"):
-               ending_balances, returns = calculate_investment_over_time(initial_investment, annual_contribution, years, annual_return, compounding_frequency)
-               periods = np.arange(1, years + 1)
-               
-               st.write(f"### Final Investment Balance after {years} years: {format_currency(ending_balances[-1])}")
-               
-               fig2 = px.bar(
-               x=periods,
-               y=ending_balances,
-               text=[format_currency(balance) for balance in ending_balances],
-               labels={'x': 'Years', 'y': 'Ending Balance'},
-               title="Investment Growth Over Time"
-               )
-
-               # Customize the layout to show the text properly
-               fig2.update_traces(texttemplate='%{text}', textposition='inside')
-               fig2.update_layout(yaxis_tickprefix='€', yaxis_tickformat='.2f')  # To format y-axis ticks
-
-               fig2.update_layout(
-                    dragmode=False,  # Disable dragging for zooming
-                    )
-               st.plotly_chart(fig2,config={'displayModeBar': False})
-
-               
-               # Automatically generate the PDF and provide a download link icon
-               pdf_file = create_chart_pdf(periods, ending_balances, returns)
-               with open(pdf_file, "rb") as pdf:
-                    st.download_button(
-                         label="📁 Download as PDF file",
-                         data=pdf,
-                         file_name="investment_growth_chart.pdf",
-                         mime="application/pdf",
-                         use_container_width=True
+               if st.button("Calculate"):
+                    ending_balances, returns = calculate_investment_over_time(initial_investment, annual_contribution, years, annual_return, compounding_frequency)
+                    periods = np.arange(1, years + 1)
+                    
+                    st.write(f"### Final Investment Balance after {years} years: {format_currency(ending_balances[-1])}")
+                    
+                    fig2 = px.bar(
+                    x=periods,
+                    y=ending_balances,
+                    text=[format_currency(balance) for balance in ending_balances],
+                    labels={'x': 'Years', 'y': 'Ending Balance'},
+                    title="Investment Growth Over Time"
                     )
 
-          # Explanation of the calculator
-          st.write("""
-          This investment calculator estimates the future value of your investments by taking into account the initial investment, additional contributions, the expected rate of return, and the compounding frequency (e.g., annually, quarterly, or monthly).
-          The chart shows the total ending balance and the expected return at the end of each year using bar charts.
-          """)
+                    # Customize the layout to show the text properly
+                    fig2.update_traces(texttemplate='%{text}', textposition='inside')
+                    fig2.update_layout(yaxis_tickprefix='€', yaxis_tickformat='.2f')  # To format y-axis ticks
+
+                    fig2.update_layout(
+                         dragmode=False,  # Disable dragging for zooming
+                         )
+                    st.plotly_chart(fig2,config={'displayModeBar': False})
+
+                    
+                    # Automatically generate the PDF and provide a download link icon
+                    pdf_file = create_chart_pdf(periods, ending_balances, returns)
+                    with open(pdf_file, "rb") as pdf:
+                         st.download_button(
+                              label="📁 Download as PDF file",
+                              data=pdf,
+                              file_name="investment_growth_chart.pdf",
+                              mime="application/pdf",
+                              use_container_width=True
+                         )
+
+                    # Explanation of the calculator
+                    st.write("""
+                    This investment calculator estimates the future value of your investments by taking into account the initial investment, additional contributions, the expected rate of return, and the compounding frequency (e.g., annually, quarterly, or monthly).
+                    The chart shows the total ending balance and the expected return at the end of each year using bar charts.
+                    """)
 
 
+
+#########################################################################################################################
+
+          # Function to calculate dividends and investment growth
+          def calculate_dividends(starting_principal, annual_contribution, dividend_tax_rate, tax_exempt_income,
+                                   initial_dividend_yield, dividend_increase_rate, share_price_appreciation, years):
+
+               total_investment = starting_principal
+               dividends_over_years = []
+          
+               for year in range(1, years + 1):
+                    # Calculate annual dividend before tax
+                    annual_dividend = total_investment * (initial_dividend_yield / 100)
+                    # Apply tax exemption
+                    taxable_dividend = max(0, annual_dividend - tax_exempt_income)
+                    # Calculate dividends after tax
+                    net_dividend = taxable_dividend * (1 - dividend_tax_rate / 100)
+                    dividends_over_years.append(net_dividend)
+                    
+                    # Update investment with contributions and appreciation
+                    total_investment += annual_contribution  # add annual contribution
+                    total_investment *= (1 + share_price_appreciation / 100)  # apply share price appreciation
+                    # Update dividend yield with the expected increase
+                    initial_dividend_yield *= (1 + dividend_increase_rate / 100)  # adjust yield for next year
+
+               total_dividend_sum = sum(dividends_over_years)
+               return total_dividend_sum, dividends_over_years
+
+          with col2:
+               st.title("Dividend Calculator")
+
+               # User inputs
+               starting_principal = st.number_input("Starting Principal (€)", min_value=0.0, value=100000.0, format="%.2f")
+               annual_contribution = st.number_input("Annual Contribution (€)", min_value=0.0, value=20000.0, format="%.2f")
+               dividend_tax_rate = st.number_input("Dividend Tax Rate (%)", min_value=0.0, value=15.0, format="%.2f")
+               tax_exempt_income = st.number_input("Tax-Exempt Dividend Income Allowed Per Year (€)", min_value=0.0, value=0.0, format="%.2f")
+               initial_dividend_yield = st.number_input("Initial Annual Dividend Yield (%)", min_value=0.0, value=5.0, format="%.2f")
+               dividend_increase_rate = st.number_input("Expected Annual Dividend Amount Increase (%)", min_value=0.0, value=3.0, format="%.2f")
+               share_price_appreciation = st.number_input("Expected Annual Share Price Appreciation (%)", min_value=0.0, value=7.0, format="%.2f")
+               years = st.number_input("Years Invested", min_value=1, value=5)
+
+               # Button for calculating dividends and plotting
+               if st.button("Calculate Dividends"):
+                    total_dividend_sum, dividends_over_years = calculate_dividends(
+                         starting_principal, annual_contribution, dividend_tax_rate, tax_exempt_income,
+                         initial_dividend_yield, dividend_increase_rate, share_price_appreciation, years
+                    )
+                      # Format the output to include commas and a currency symbol
+                    formatted_total_dividend_sum = f"€ {total_dividend_sum:,.2f}"
+                    st.success(f"Total Dividends after {years} years: {formatted_total_dividend_sum}")
+
+                    # Create a Plotly chart
+                    year_list = list(range(1, years + 1))
+                    
+                                   # Create a bar plot for dividends over years
+                    fig = go.Figure()
+                    fig.add_trace(go.Bar(
+                         x=year_list,
+                         y=dividends_over_years,
+                         marker=dict(color='royalblue'),
+                         text=[f'€ {dividend:,.2f}' for dividend in dividends_over_years],  # Text to display on bars
+                         textposition='inside'  # Position of the text inside the bars
+                    ))
+
+                    # Customize the layout
+                    fig.update_layout(
+                         title='Projected Dividends Over the Years',
+                         xaxis_title='Years',
+                         yaxis_title='Dividends After Tax (€)',
+                         yaxis_tickprefix='€',  # Add euro sign as a prefix
+                         yaxis_tickformat='.2f',  # Format y-axis ticks to two decimal places
+                         template='plotly_white'
+                    )
+
+                    # Display the Plotly chart with mode bar hidden
+                    st.plotly_chart(fig, config={'displayModeBar': False})
+
+               # Additional information
+               st.markdown("""
+               ### How It Works:
+               1. Enter the starting principal amount in euros.
+               2. Input the annual contribution you plan to make.
+               3. Specify the dividend tax rate.
+               4. Enter the tax-exempt dividend income allowed per year.
+               5. Input the initial annual dividend yield as a percentage.
+               6. Enter the expected annual dividend amount increase percentage.
+               7. Specify the expected annual share price appreciation.
+               8. Click the "Calculate Dividends" button to see the total dividends you can expect after the specified years.
+               """)
+#########################################################################################################################
+          st.markdown("---")
 
 #########################################################################################################################
 
@@ -7351,7 +7442,7 @@ if selected == "Stock Analysis Tool":
 
           if 'login_token' in st.session_state:
                try:
-                    user_data = serializer.loads(st.session_state.login_token, max_age=1800)  # 30-minuts expiry expiry
+                    user_data = serializer.loads(st.session_state.login_token, max_age=3600)  # 1 hour expiry expiry
                     st.session_state.username = user_data['username']
                     st.session_state.useremail = user_data['email']
                     st.session_state.is_logged_in = True
@@ -14513,7 +14604,7 @@ if selected == "Stock Analysis Tool":
                shares_basic_annual_one = annual_data['shares_basic'][-1:]
                shares_basic_annual_funf_unpacked = annual_data['shares_basic'][-5:]
 
-               Average_shares_basic_annual_one = round((sum(shares_basic_annual_one) / len(shares_basic_annual_one)) / 1000000000, 2)
+               Average_shares_basic_annual_one = (sum(shares_basic_annual_one) / len(shares_basic_annual_one)) / 1000000000
                #EPS_growth_annual_unpacked= annual_data['eps_diluted_growth'][-10:]
                Dividend_per_share = Financial_data['ttm']['dividends']
                #---------------------------pyfinanz-----------------------------------
@@ -15299,7 +15390,15 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_BVPS_quater1_unpacked'],
 
                                              st.session_state[f'{ticker}_AverageEndPrice_annual5_unpacked'],
-                                             st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_5_unpacked'])
+                                             st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_5_unpacked'],
+                                             st.session_state[f'{ticker}_revenue_5years'],
+                                             st.session_state[f'{ticker}_len_5_annual'],
+
+                                             st.session_state[f'{ticker}_revenue_10years'],
+                                             st.session_state[f'{ticker}_len_10_annual'],
+
+                                             st.session_state[f'{ticker}_revenue_quarter_10'],
+                                             st.session_state[f'{ticker}_len_10_quarter'])
 
                               net_income_annual_one = annual_data['net_income'][-1:]
                               round_net_income_annual_one =(sum(net_income_annual_one) / len(net_income_annual_one))
@@ -15328,6 +15427,18 @@ if selected == "Stock Analysis Tool":
                               AverageEndPrice_annual5_unpacked = annual_data['period_end_price'][-5:]
                               Net_Operating_CashFlow_annual_5_unpacked = annual_data['cf_cfo'][-5:]
 
+                              Revenue_annual_5_unpacked = annual_data['revenue'][-5:]
+
+                              len_5_annual = len(Revenue_annual_5_unpacked) 
+                              
+
+                              Revenue_annual_10_unpacked  = annual_data['revenue'][-10:] 
+
+                              len_10_annual = len(Revenue_annual_10_unpacked)
+
+                              Revenue_quarter_10_unpacked  = quarterly_data['revenue'][-10:]
+                              len_10_quarter =len(Revenue_quarter_10_unpacked)
+
                               st.session_state[f'{ticker}_net_income_last'] = round_net_income_annual_one
                               st.session_state[f'{ticker}_net_income_annual_funf_unpacked'] = net_income_annual_funf_unpacked
                               st.session_state[f'{ticker}_net_income_annual_10_unpacked'] = net_income_annual_10_unpacked
@@ -15344,6 +15455,15 @@ if selected == "Stock Analysis Tool":
 
                               st.session_state[f'{ticker}_AverageEndPrice_annual5_unpacked']= AverageEndPrice_annual5_unpacked
                               st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_5_unpacked']= Net_Operating_CashFlow_annual_5_unpacked
+                              st.session_state[f'{ticker}_revenue_5years'] = Revenue_annual_5_unpacked
+                              st.session_state[f'{ticker}_len_5_annual'] =len_5_annual
+
+                              st.session_state[f'{ticker}_revenue_10years'] = Revenue_annual_10_unpacked
+                              st.session_state[f'{ticker}_len_10_annual'] =len_10_annual
+
+                              st.session_state[f'{ticker}_revenue_quarter_10'] = Revenue_quarter_10_unpacked
+
+                              st.session_state[f'{ticker}_len_10_quarter'] =len_10_quarter
 
                               
 
@@ -15354,7 +15474,10 @@ if selected == "Stock Analysis Tool":
                                         TBVPS_quater1_unpacked,
                                         BVPS_quater1_unpacked,
                                         AverageEndPrice_annual5_unpacked,
-                                        Net_Operating_CashFlow_annual_5_unpacked
+                                        Net_Operating_CashFlow_annual_5_unpacked,
+                                         Revenue_annual_5_unpacked,len_5_annual,
+                                        Revenue_annual_10_unpacked,len_10_annual,
+                                        Revenue_quarter_10_unpacked,len_10_quarter
                                         )
 
                          (round_net_income_annual_one, net_income_annual_funf_unpacked,net_income_annual_10_unpacked,
@@ -15364,11 +15487,17 @@ if selected == "Stock Analysis Tool":
                               TBVPS_quater1_unpacked,
                               BVPS_quater1_unpacked,
                               AverageEndPrice_annual5_unpacked,
-                              Net_Operating_CashFlow_annual_5_unpacked
+                              Net_Operating_CashFlow_annual_5_unpacked,
+                              Revenue_annual_5_unpacked,len_5_annual,
+                              Revenue_annual_10_unpacked,len_10_annual,
+                              Revenue_quarter_10_unpacked,len_10_quarter,
                               ) = calculate_net_income_averages(annual_data,quarterly_data, ticker)
 
           ###################################################################################################
-
+                         st.write("len_5_annual",len_5_annual)
+                         st.write("len_10_annual",len_10_annual)
+                         st.write("len_10_quarter",len_10_quarter)
+                        
 
 
                          Average_net_income_annual_funf_Billion_Million = (
@@ -15386,28 +15515,12 @@ if selected == "Stock Analysis Tool":
                          # Check if the results are already in session state
                               if f'{ticker}_revenue_last' in st.session_state:
                                    return (st.session_state[f'{ticker}_revenue_last'],
-
-                                             st.session_state[f'{ticker}_revenue_5years'],
-                                             st.session_state[f'{ticker}_len_5_annual'],
-
-                                             st.session_state[f'{ticker}_revenue_10years'],
-                                             st.session_state[f'{ticker}_len_10_annual'],
-
-                                             st.session_state[f'{ticker}_revenue_quarter_10'],
-                                             st.session_state[f'{ticker}_len_10_quarter'],
-
                                              st.session_state[f'{ticker}_revenue_10years_growth'],
                                              st.session_state[f'{ticker}_revenue_growth_1year'],
                                              st.session_state[f'{ticker}_revenue_growth_3years'],
                                              st.session_state[f'{ticker}_revenue_growth_5years'],
-
-                                        
-
                                              st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'],
-
                                              st.session_state[f'{ticker}_revenue_growth_10years'],
-                                        
-
                                              st.session_state[f'{ticker}_Net_interest_Income_annual_10'],
                                              st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked'],
                                              st.session_state[f'{ticker}_shares_basic_annual_10_unpacked'],
@@ -15418,21 +15531,9 @@ if selected == "Stock Analysis Tool":
                               revenue_annual_ttm = annual_data['revenue'][-1:] 
                               average_revenue_annual_ttm = ((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000)
 
-                              Revenue_annual_5_unpacked = annual_data['revenue'][-5:]
-
-                              len_5_annual = len(Revenue_annual_5_unpacked) 
-                              
-
-                              Revenue_annual_10_unpacked  = annual_data['revenue'][-10:] 
-
-                              len_10_annual = len(Revenue_annual_10_unpacked)
-
-                              Revenue_quarter_10_unpacked  = quarterly_data['revenue'][-10:]
-                              len_10_quarter =len(Revenue_quarter_10_unpacked)
-
                               Revenue_growth_10_unpacked = annual_data['revenue_growth'][-10:]
-
                               Revenue_growth_1year = annual_data['revenue_growth'][-1:]
+
                               Revenue_growth_1year=sum(Revenue_growth_1year)/len(Revenue_growth_1year)
                               Revenue_growth_1year = (Revenue_growth_1year*100)
 
@@ -15442,19 +15543,18 @@ if selected == "Stock Analysis Tool":
 
                               Revenue_growth_5years = annual_data['revenue_growth'][-5:]
                               Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
+
                               Revenue_growth_5years = (Revenue_growth_5years*100)
-
-
                               Revenue_growth_10quarter_unpacked= quarterly_data['revenue_growth'][-10:]
 
                               Revenue_growth_10years = annual_data['revenue_growth'][-10:]
                               Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
+
                               Revenue_growth_10years = (Revenue_growth_10years*100)
 
-
-                              shares_diluted_annual_10_unpacked=annual_data['shares_diluted'][-10:]
+                              shares_diluted_annual_10_unpacked=annual_data['shares_diluted'][-len_10_annual :]
                               shares_basic_annual_10_unpacked=annual_data['shares_basic'][-10:]
-                              shares_diluted_quarter_10_unpacked =quarterly_data['shares_diluted'][-10:]
+                              shares_diluted_quarter_10_unpacked =quarterly_data['shares_diluted'][-len_10_quarter:]
                               shares_basic_quarterly_10_unpacked =quarterly_data['shares_basic'][-10:]
 
 
@@ -15468,16 +15568,6 @@ if selected == "Stock Analysis Tool":
 
                               # Store results in session state
                               st.session_state[f'{ticker}_revenue_last'] = average_revenue_annual_ttm
-
-                              st.session_state[f'{ticker}_revenue_5years'] = Revenue_annual_5_unpacked
-                              st.session_state[f'{ticker}_len_5_annual'] =len_5_annual
-
-                              st.session_state[f'{ticker}_revenue_10years'] = Revenue_annual_10_unpacked
-                              st.session_state[f'{ticker}_len_10_annual'] =len_10_annual
-
-                              st.session_state[f'{ticker}_revenue_quarter_10'] = Revenue_quarter_10_unpacked
-
-                              st.session_state[f'{ticker}_len_10_quarter'] =len_10_quarter
                               st.session_state[f'{ticker}_revenue_10years_growth'] = Revenue_growth_10_unpacked
                               st.session_state[f'{ticker}_revenue_growth_1year'] = Revenue_growth_1year
                               st.session_state[f'{ticker}_revenue_growth_3years'] = Revenue_growth_3years
@@ -15494,9 +15584,6 @@ if selected == "Stock Analysis Tool":
 
 
                               return (average_revenue_annual_ttm,
-                                        Revenue_annual_5_unpacked,len_5_annual,
-                                        Revenue_annual_10_unpacked,len_10_annual,
-                                        Revenue_quarter_10_unpacked,len_10_quarter,
                                         Revenue_growth_10_unpacked,
                                         Revenue_growth_1year,
                                         Revenue_growth_3years,
@@ -15508,9 +15595,7 @@ if selected == "Stock Analysis Tool":
 
                          # Assuming `annual_data` and `ticker` are defined elsewhere
                          (average_revenue_annual_ttm,
-                         Revenue_annual_5_unpacked,len_5_annual,
-                         Revenue_annual_10_unpacked,len_10_annual,
-                         Revenue_quarter_10_unpacked,len_10_quarter,
+                        
                          Revenue_growth_10_unpacked,
                          Revenue_growth_1year,
                          Revenue_growth_3years,
@@ -17360,6 +17445,7 @@ if selected == "Stock Analysis Tool":
                                              Total_Non_interest_expenses_annual_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_expenses_annual_10']
                                              Total_Non_interest_revenue_annual_10_unpacked = st.session_state[f'{ticker}_Total_Non_interest_revenue_annual_10']
                                              Ebita_annual_10_unpacked = st.session_state[f'{ticker}_Ebita_annual_10']
+                                             
                                                   ################################ Quarter###############################
                                              Total_interest_income_list_quarterly_10_unpacked = st.session_state[f'{ticker}_Total_interest_income_list_quarterly_10']
                                              Pretax_income_quarterly_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarterly_10']
@@ -17457,7 +17543,7 @@ if selected == "Stock Analysis Tool":
                                         eps_basic_quarterly_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
                                         shares_basic_quarterly_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
                                         eps_diluted_quarterly_df = financials_df(Eps_diluted_quarterly_10_unpacked,date_quarter, "EPS Diluted")
-                                        shares_diluted_quarterly_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
+                                        shares_diluted_quarterly_df = financials_df(shares_diluted_quarter_10_unpacked,date_quarter,"Shares Diluted")
                                         Income_tax_quarterly_df = financials_df(Income_tax_quarterly_10_unpacked, date_quarter, "Income Tax Expense")
                                         net_income_quarterly_df = financials_df(net_income_quarterly_10_unpacked, date_quarter, "Net Income")
                                         Total_interest_income_list_quarterly_df = financials_df(Total_interest_income_list_quarterly_10_unpacked, date_quarter, "Total Interest Income")
@@ -17577,6 +17663,7 @@ if selected == "Stock Analysis Tool":
                                                   st.session_state[f'{ticker}_Pretax_income_quarter_10'] = Pretax_income_quarter_10_unpacked
                                                   st.session_state[f'{ticker}_Income_tax_quarter_10'] = Income_tax_quarter_10_unpacked
                                                   st.session_state[f'{ticker}_Ebita_quarter_10'] = Ebita_quarter_10_unpacked
+                                                  st.session_state[f'{ticker}_shares_diluted_quarter_10_unpacked'] =shares_diluted_quarter_10_unpacked
 
 
 
@@ -17661,6 +17748,7 @@ if selected == "Stock Analysis Tool":
                                                        interest_expense_list_annual_10_unpacked = st.session_state[f'{ticker}_Interest_Expense_annual_10']
                                                        Ebita_annual_10_unpacked = st.session_state[f'{ticker}_EBITDA_annual_10']
                                                        operating_income_list_annual_10_unpacked = st.session_state[f'{ticker}_Operating_Income_annual_10']
+                                                       
 
                                                        ################################ Quarter###############################
                                                        Pretax_income_quarter_10_unpacked = st.session_state[f'{ticker}_Pretax_income_quarter_10']
@@ -17674,6 +17762,7 @@ if selected == "Stock Analysis Tool":
                                                        interest_expense_list_quarter_10_unpacked = st.session_state[f'{ticker}_interest_expense_list_quarter_10']
                                                        Ebita_quarter_10_unpacked = st.session_state[f'{ticker}_Ebita_quarter_10']
                                                        operating_income_list_quarter_10_unpacked = st.session_state[f'{ticker}_operating_income_list_quarter_10']
+                                                                                                              
 
                                                   else:             
                                                        Pretax_income_annual_10_unpacked  = annual_data['pretax_income'][-10:]
@@ -17681,6 +17770,13 @@ if selected == "Stock Analysis Tool":
                                                        cogs_list_annual_10_unpacked  = annual_data['cogs'][-10:]
                                                        gross_profit_annual_10_unpacked  = annual_data['gross_profit'][-10:]
                                                        SGA_Expense_annual_10_unpacked   = annual_data['total_opex'][-10:]
+
+                                                       Research_Dev_annual_10_unpacked  = annual_data['rnd'][-10:]
+                                                       interest_expense_list_annual_10_unpacked  = annual_data['interest_expense'][-10:]
+                                                       Ebita_annual_10_unpacked = annual_data['ebitda'][-10:]
+                                                       operating_income_list_annual_10_unpacked = annual_data['operating_income'][-10:] 
+
+
                                                        ################################ Quarter###############################
 
                                                        Pretax_income_quarter_10_unpacked  = quarterly_data['pretax_income'][-10:]
@@ -17688,10 +17784,10 @@ if selected == "Stock Analysis Tool":
                                                        cogs_list_quarter_10_unpacked  = quarterly_data['cogs'][-10:]
                                                        gross_profit_quarter_10_unpacked  = quarterly_data['gross_profit'][-10:]
                                                        SGA_Expense_quarter_10_unpacked  = quarterly_data['total_opex'][-10:]
-                                                       Research_Dev_annual_10_unpacked   = annual_data['rnd'][-10:]
-                                                       interest_expense_list_annual_10_unpacked   = annual_data['interest_expense'][-10:]
-                                                       Ebita_annual_10_unpacked = annual_data['ebitda'][-10:]
-                                                       operating_income_list_annual_10_unpacked  = annual_data['operating_income'][-10:] 
+                                                       Research_Dev_quarter_10_unpacked   = quarterly_data['rnd'][-10:]
+                                                       interest_expense_list_quarter_10_unpacked   = quarterly_data['interest_expense'][-10:]
+                                                       Ebita_quarter_10_unpacked = quarterly_data['ebitda'][-10:]
+                                                       operating_income_list_quarter_10_unpacked  = quarterly_data['operating_income'][-10:] 
 
 
                                                        try:
@@ -17708,11 +17804,11 @@ if selected == "Stock Analysis Tool":
                                                             Interest_Income_annual_10_unpacked = [0] * len_10_annual
                                                                       ################################ Quarter###############################
 
-                                                            Depreciation_Depletion_Amortisation_quater_10_unpacked= [0] * len_10_annual
-                                                            Interest_Income_quarter_10_unpacked= [0] * len_10_annual
+                                                            Depreciation_Depletion_Amortisation_quater_10_unpacked= [0] * len_10_quarter 
+                                                            Interest_Income_quarter_10_unpacked= [0] * len_10_quarter 
 
 
-
+                                                      
                                                                       ################################ Quarter###############################
 
                                                        Research_Dev_quarter_10_unpacked  = quarterly_data['rnd'][-10:]
@@ -17776,7 +17872,7 @@ if selected == "Stock Analysis Tool":
                                                   eps_basic_quarter_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
                                                   shares_basic_quarter_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
                                                   eps_diluted_quarter_df = financials_df(Eps_diluted_quarterly_10_unpacked, date_quarter, "EPS Diluted")
-                                                  shares_diluted_quarter_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
+                                                  #shares_diluted_quarter_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
                                                   Income_tax_quarter_df = financials_df(Income_tax_quarter_10_unpacked, date_quarter, "Income Tax Expense")
                                                   net_income_quarter_df = financials_df(net_income_quarter_10_unpacked, date_quarter, "Net Income")
                                                   cogs_list_quarter_df = financials_df(cogs_list_quarter_10_unpacked, date_quarter, "COGS")
@@ -17808,7 +17904,7 @@ if selected == "Stock Analysis Tool":
                                                   interest_expense_list_quarter_df,Interest_Income_quarter_df,Pretax_income_quarter_df,
                                                   Income_tax_quarter_df,
                                                   net_income_quarter_df,eps_basic_quarter_df, shares_basic_quarter_df,
-                                                  eps_diluted_quarter_df, shares_diluted_quarter_df,
+                                                  eps_diluted_quarter_df, #shares_diluted_quarter_df,
                                                   Ebita_quarter_10_unpacked_df
                                                   ])
 
@@ -19451,37 +19547,38 @@ if selected == "Stock Analysis Tool":
 
                          if Average_ROIC_funf == 'NA':
                               Average_ROIC_funf = 0.0
-                              
+ ############################################################################################################################                             
 
 
                with st.container():   
                     with Stock_Analyser:
+
+                         # Function to calculate NPV
+                         def calculate_npv(wacc, discounted_values,):
+                              return npv(wacc / 100, discounted_values)
+
+                         @st.fragment
+                         def simple_chart(fig, average_fcf_values1, average_fcf_values2, npv_result, npv_result2):
+                              if st.form_submit_button(label="Display FCF Estimate"):
+                                   st.plotly_chart(fig,use_container_width=True, config=config)
+              
+
+
                          def display_growth_rate_formexer():
 
                               with st.form(key='growth_rate_formex'):
                               
                                    treasury = "^TNX"
                                    treasury_yield_data = yf.download(treasury, period='1d')
-                                   treasury_yield_data = yf.download(treasury)
+                                   #treasury_yield_data = yf.download(treasury)
                                    
 
-                              # Check if the treasury_yield_data DataFrame is empty
                                    if not treasury_yield_data.empty:
                                         treasury_yield = treasury_yield_data['Close'].iloc[-1]
-                                        Average_10years_treasury_rate = round(treasury_yield,2)
-                                        #print("10-year Treasury yield:", treasury_yield)
+                                        st.session_state['Average_10years_treasury_rate'] = round(treasury_yield, 2)
                                    else:
-                                        #print("Error: No price data found for the 10-year Treasury yield symbol.")
-                                        Average_10years_treasury_rate = 4.25
+                                        st.session_state['Average_10years_treasury_rate'] = 4.25
 
-
-                                   #Pepetual_growth_rate = 0.025
-                                   #Growth_rate = 8.30
-
-                                   WACC = 8.00
-                                   # Store variables in st.session_state for efficiency
-                                   #if "WACC" not in st.session_state:
-                                   #    st.session_state["WACC"] = 8.00
 
                                    if "Pepetual_growth_rate" not in st.session_state:
                                         st.session_state["Pepetual_growth_rate"] = 0.025
@@ -19489,319 +19586,316 @@ if selected == "Stock Analysis Tool":
 
                                    col1, col2,col3,col4,col5 = st.columns(5)
 
-                                   #col1.info(f"FCF 10 CAGR: {FCF_Cagr_10}%")
                                    col1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 10 CAGR:<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
                                    
-                                   #col2.info(f"FCF 5 CAGR: {FCF_5_CAGR}%")
                                    col2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 5 CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
                                    
-                                   #col3.info(f"EPS 10 CAGR: {EPS_Cagr_10}%")
                                    col3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 10 CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
 
-                                   #col4.info(f"EPS 5 CAGR: {EPS_5_CAGR}%")
                                    col4.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 5 CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
 
-                                   #col5.info(f"EPS next 5 YR (per annum): {Earnings_next_5_yrs}")
                                    col5.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
 
 
                               #to add space
                                    st.write("")
-                                   #st.markdown("<br>", unsafe_allow_html=True)
 
 
                                    col1,col2,col3 = st.columns(3)
                               
                                    with col1:
                                         st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
-                                        #col1.info(f"FCF Growth YOY: {Average_fcf_growth_ten}%")
                                         
                                    with col2:    
                                         st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
                               
                                    with col3:    
                                         st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
-                                        #col3.info(f"3 YR FCF Growth YOY: {Average_fcf_growth_3years}")
 
                                    st.write("")
                                    col5,col4= st.columns(2)
 
-                                   WACC = float(col5.text_input("WACC (%):", value=f"{WACC:.2f}").replace(',', '.'))
-                                   #st.write(f"<div style='background-color:skyblue; padding: 10px; border-radius: 5px; color:black;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+                                   #WACC = float(col5.text_input("WACC (%):", value="8.00").replace(',', '.'))
+                                   WACC = float(col5.text_input("WACC (%):", value=st.session_state.get('WACC', 8.00)).replace(',', '.'))
 
+                         
                                    #FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)).replace(',', '.'))
+                                   FCF_discount_in_years = int(col4.text_input("Years:", value=st.session_state.get('FCF_discount_in_years', 10)).replace(',', '.'))
 
-                                   
-                                   #st.session_state["WACC"] = float(col5.text_input("WACC (%):", value=f"{st.session_state['WACC']:.2f}").replace(',', '.'))
-                                   FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)).replace(',', '.'))
 
                               
                               #------------------------------------------------------------------------------------------------------------------------
                                    col9, col8,col34,col10= st.columns(4)
                                    
-                                   #Growth_rate1 = col9.number_input("Growth Rate (Base Case) in %:", value=0.00,key="growth_rate1")
                                    Growth_rate1 = float(col9.text_input("Growth Rate (Base Case) in %:",value=0.00,key="growth_rate1ex").replace(',', '.'))
                                    col8.write('')
                                    col34.write('')
                                    Growth_rate2 = float(col10.text_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2ex").replace(',', '.'))
                               
-          # Growth rates and margin of safety input
 
                               
                               #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
 
                                    cola, col8,col34,colc= st.columns(4)
-                                   #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
                                    Margin_of_safety1 = float(cola.text_input("1.Margin of Safety (%):", value=9.00).replace(',', '.'))
-                              # Margin_of_safety2 = colb.number_input("2.Margin of Safety %:", value=8.50)
                                    col8.write('')
                                    col34.write('')
                                    Margin_of_safety3 = float(colc.text_input("2.Margin of Safety (%):", value=9.00).replace(',', '.'))
                               #-------------------------------------------------------------------------------------------------------------------------------------------
-                                   #print("last FCF:",average_fcf_Annual_one)
 
 
-                                   #Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
-                                   #Average_Free_cash_flow_annual_one = ((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000
-                                   #Average_Free_cash_flow_annual_one_one =Average_Free_cash_flow_annual_one
+                                   if st.form_submit_button(label="Calculate"):
+                                        if average_fcf_Annual_one <= 0.00:
 
-                                   #average_fcf_Annual_DCF1 = ((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000
-                                   if average_fcf_Annual_one <= 0.00:
+                                             average_fcf_Annual_DCF1 = rounded_fcf_Annual_five/1000000000
+                                             average_fcf_Annual_DCF2 = rounded_fcf_Annual_five/1000000000
+                                             print("last 5 years FCF:",rounded_fcf_Annual_five/1000000000)
+                                        else:
 
-                                        average_fcf_Annual_DCF1 = rounded_fcf_Annual_five/1000000000
-                                        average_fcf_Annual_DCF2 = rounded_fcf_Annual_five/1000000000
-                                        print("last 5 years FCF:",rounded_fcf_Annual_five/1000000000)
-                                   else:
-
-                                        average_fcf_Annual_DCF1=average_fcf_Annual_one
-                                        average_fcf_Annual_DCF2=average_fcf_Annual_one
-                                        print("last FCF:",average_fcf_Annual_one)
+                                             average_fcf_Annual_DCF1=average_fcf_Annual_one
+                                             average_fcf_Annual_DCF2=average_fcf_Annual_one
+                                             print("last FCF:",average_fcf_Annual_one)
 
 
-                                   discounted_values = [] 
-                              
-                                   for i in range(FCF_discount_in_years):
-                                        discounted_value = average_fcf_Annual_DCF1 * (1 + (Growth_rate1/100))
-                                        average_fcf_Annual_DCF1 = discounted_value
-                                        #discounted_values.append(discounted_value)  # Add the discounted value to the list
-                                        discounted_values.append(round(discounted_value, 2)) 
-                                        #print(discounted_values.append(round(discounted_value, 2)) )
-                                   #discounted_values[4]*
-                                   sum_discounted_values = sum(discounted_values) 
+                                        discounted_values = [] 
+                                        average_fcf_values1 = []
+                                         # Array for average FCF values (Base Case)
 
-                                   #Terminal_Value = discounted_values[4]*(1+Pepetual_growth_rate)/(WACC/100-Pepetual_growth_rate)
-                                   for i, value in enumerate(discounted_values):
-                                        if i == len(discounted_values) - 1:
-                                             #Terminal_Value = value * (1 + Pepetual_growth_rate) / ((WACC/100) - Pepetual_growth_rate)
-                                             Terminal_Value = value * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
-                                             #discounted_values[-1] = round(Terminal_Value + value, 2)
+                                   
+                                        for i in range(FCF_discount_in_years):
+                                             discounted_value = average_fcf_Annual_DCF1 * (1 + (Growth_rate1/100))
+                                             average_fcf_Annual_DCF1 = discounted_value
+                                             average_fcf_values1.append(average_fcf_Annual_DCF1)  # Store in the array
 
-                                             Sum_terminal_fcf = Terminal_Value + discounted_values[i]
+                                             discounted_values.append(discounted_value) 
+
+                                             print(average_fcf_Annual_DCF1)
+
+                                        #sum_discounted_values = sum(discounted_values)
+                                        #print("summe discounted FCF",sum_discounted_values) 
+
+                                        #for i, value in enumerate(discounted_values):
+                                             if i == FCF_discount_in_years - 1:
+
+                                        #Terminal_Value = calculate_terminal_value(discounted_values[-1], st.session_state["Pepetual_growth_rate"], WACC)
+                                                  Terminal_Value = discounted_value * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
+                                                  #discounted_values[-1] = Terminal_Value + discounted_values
+                                                  discounted_values[-1] = round(discounted_value + Terminal_Value, 2)
+
+
+                                                  #Sum_terminal_fcf = Terminal_Value + discounted_values[i]
+                                                  #print("summe discounted FCF + terminal",Sum_terminal_fcf) 
+                                                       
+
+                                   
+                                        #discounted_values[-1] = round(Sum_terminal_fcf,2)
                                         
 
-                              
-                                   discounted_values[-1] = round(Sum_terminal_fcf,2)
-                                   
-                                   npv_result = npv(WACC/100, discounted_values)
-                                   rounded_npv_result = round(npv_result, 2)  
-                                   print("Total_Debt_from_all_calc",(Total_Debt_from_all_calc/1000000000))
-                                   print("Total_cash_last_years",Total_cash_last_years)
-                                   Equity_value = rounded_npv_result+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
-                                   Intrinsic_value =Equity_value/Average_shares_basic_annual_one
-                                   #st.write(npv_result)
+                                        
+                                        #npv_result = npv(WACC/100, discounted_values)
+                                        npv_result = calculate_npv(WACC, discounted_values)
 
-                                   Euro_equivalent = Intrinsic_value*usd_to_eur_rate
-                                        #print(f"{Intrinsic_value} USD is approximately {Euro_equivalent:.2f} EUR")
-                                   # Display the result
-                                   #print(f"{amount} {base_currency} is equal to {converted_amount} {target_currency}")
-                              # .   ....................................................................................   
+                                        print("NPV",npv_result) 
+                                        #rounded_npv_result = round(npv_result, 2)  
+                                        print("Total_Debt_from_all_calc",(Total_Debt_from_all_calc/1000000000))
+                                        print("Total_cash_last_years",Total_cash_last_years)
+                                        Equity_value = npv_result+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
+                                        Intrinsic_value =Equity_value/Average_shares_basic_annual_one
+                                        print("Average_shares_basic_annual_one",Average_shares_basic_annual_one)
+                                        #st.write(npv_result)
+
+                                        Euro_equivalent = Intrinsic_value*usd_to_eur_rate
+
                                    
 
                               #----------------------------------------------------------2:Growth rate Estimate------------------------------------------------------------------------
-                              
-                              
-                                   # if average_fcf_Annual_DCF2 < 0:
-                                   #      average_fcf_Annual_DCF2 = rounded_fcf_Annual_five/ 1000000000
-                              
-                                   discounted_values2 = [] 
-                                   # Create an empty list to store discounted values
-                                   for j in range(FCF_discount_in_years):
-                                        discounted_value2 = average_fcf_Annual_DCF2 * (1 + (Growth_rate2/100))
-                                        average_fcf_Annual_DCF2 = discounted_value2
-                                        discounted_values2.append(round(discounted_value2,2))  # Add the discounted value to the list
-                                        #print(discounted_value2)
-                                   #Terminal_Value2 = discounted_values2[4]*(1+Pepetual_growth_rate)/(WACC/100-Pepetual_growth_rate)
-
-                                   #sum_discounted_values2 = sum(discounted_values2)
-
-                                   for j, value2 in enumerate(discounted_values2):
-                                        if j == len(discounted_values2) - 1:
-                                             Terminal_Value2 = value2 * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
-                                             Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[i]
-
-                              
-                                   discounted_values2[-1] = round(Terminal_Value2+value2,2)
-
-                                   #Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[4]
-
-                                   discounted_values2[-1] = round(Sum_terminal_fcf2,2)
-                                   npv_result2 = npv(WACC/100,discounted_values2)   
-                                   rounded_npv_result2 = round(npv_result2, 2)  
-
-                                   Equity_value2 = rounded_npv_result2+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
-                                   Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
-                                   #st.write(npv_result)
-
-                                   Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
-                                        #print(f"{Intrinsic_value2} USD is approximately {Euro_equivalent2:.2f} EUR")
-                                   # Display the result
-
-                                   # Display the result
-                                   #print(f"{amount} {base_currency} is equal to {converted_amount} {target_currency}")
-                              # .   ....................................................................................   
-                              
-                              #...................................................................................................................................
-
-                                   #print(f"The current 10-year Treasury yield is: {Average_10years_treasury_rate:.2f}")
-                              
-                                   #------------------------------------------Graham 1.Estimate--------------------------------------------------------------
 
                                    
+                                        discounted_values2 = [] 
+                                        average_fcf_values2 = []  # Array for average FCF values (Bullish Case)
+                                        # Create an empty list to store discounted values
+                                        for j in range(FCF_discount_in_years):
+                                             discounted_value2 = average_fcf_Annual_DCF2 * (1 + (Growth_rate2/100))
+                                             average_fcf_Annual_DCF2 = discounted_value2
+                                             average_fcf_values2.append(average_fcf_Annual_DCF2)  # Store in the array
+
+                                             discounted_values2.append(discounted_value2)  # Add the discounted value to the list
+                                          
+
+                                        #for j, value2 in enumerate(discounted_values2):
+                                         #    if j == len(discounted_values2) - 1:
+                                             if j == FCF_discount_in_years - 1:
+                                                  Terminal_Value2 = discounted_value2 * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
+                                                  #Terminal_Value2 = calculate_terminal_value(discounted_values2[-1], st.session_state["Pepetual_growth_rate"], WACC)
+
+                                                  #Sum_terminal_fcf2 = discounted_value2 + Terminal_Value2
+
+                                             
+                                                  discounted_values2[-1] = discounted_value2 + Terminal_Value2
+                                                  #discounted_values2[-1] = Terminal_Value2 + discounted_values2[-1]
+
+
+                                        #Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[4]
+
+                                        #discounted_values2[-1] = round(Sum_terminal_fcf2,2)
+                                        #npv_result2 = npv(WACC/100,discounted_values2) 
+                                        npv_result2 = calculate_npv(WACC, discounted_values2)
+  
+                                        #rounded_npv_result2 = round(npv_result2, 2)  
+
+                                        Equity_value2 = npv_result2+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
+                                        Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
+                                        #st.write(npv_result)
+
+                                        Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
+
                                    
+                                        #------------------------------------------Graham 1.Estimate--------------------------------------------------------------
 
-                                   if EPS_last_average < 0:
-                                        EPS_last_average_graham = Average_eps_basic_annual_five
-                                        EPS_last_average_graham2 =Average_eps_basic_annual_five
-                                   else:
-                                        EPS_last_average_graham =EPS_last_average
-                                        EPS_last_average_graham2 =EPS_last_average
-
-                                   graham_valuation = (EPS_last_average_graham * (7+1.5*Growth_rate1)*4.4)/(Average_10years_treasury_rate)
-                                   
-                                   Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
-                                        #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
-                                   # Display the result
-                              # .   ...........................................Graham 2.Estimate.........................................   
-                              
-                                   graham_valuation2 = (EPS_last_average_graham2 * (7+1.5*Growth_rate2)*4.4)/(Average_10years_treasury_rate)
-                              
-                                   Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
-                                        #print(f"{graham_valuation2} USD is approximately {Euro_equivalent_graham_valuation2:.2f} EUR")
-                                   # Display the result
-                         
-
-                              #........................................................................................
-                              
-                                   if Euro_equivalent_graham_valuation < 0:
-
-                                        Euro_equivalent_graham_valuation = Euro_equivalent
-
-                                   elif Euro_equivalent < 0:
                                         
-                                        Euro_equivalent=Euro_equivalent_graham_valuation
-
-                                   if Euro_equivalent_graham_valuation2 < 0:
-
-                                        Euro_equivalent_graham_valuation2 = Euro_equivalent2
-
-                                   elif Euro_equivalent2 < 0:
-                                        Euro_equivalent2=Euro_equivalent_graham_valuation2
-
-                                   Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
-                              
-                                   average_sum1 = Multiples_valuation1 / 2
-                                   average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
-                                   
-                                   #st.write(average_sum_both1,converted_amount)
-
-
-                                   Multiples_valuation2 =Euro_equivalent2+Euro_equivalent_graham_valuation2
-                                   average_sum2 = Multiples_valuation2 / 2
-                                   average_sum_both2=average_sum2 *(1-Margin_of_safety3/100)
-
-                                   #Middle_multiple_value = average_sum2+average_sum1
-                                   #average_Middle_multiple_value =Middle_multiple_value/2
-                                   #average_Middle_multiple_value=average_Middle_multiple_value*(1-Margin_of_safety2/100)
-                                   Middle_multiple_value = average_sum_both1+average_sum_both2
-                                   average_Middle_multiple_value =round(Middle_multiple_value/2,2)
-
-                                   #Middle_DCF =Euro_equivalent+Euro_equivalent2
-                                   #Average_Middle_DCF =Middle_DCF/2
-                                   #Average_Middle_DCF=Average_Middle_DCF*(1-Margin_of_safety2/100)
-
-                                   low_DCF=(Euro_equivalent*(1-Margin_of_safety1/100))
-                                   high_DCF=(Euro_equivalent2*(1-Margin_of_safety3/100))
-
-                                   Average_Middle_DCF=(low_DCF+high_DCF)/2
-
-                                   #Average_both_multiples_sum = Average_both_multiples/2
-                                   submit_button = st.form_submit_button(label='Calculate')
-                                   #if st.button("Calculate", key="Calculate_DCF"):
-
-                              if   submit_button:
-                                   col11, col12,col13, col14= st.columns(4)
-                                        #input_box9 = col9.text_input("1.Growth Estimate %:", value=Growth_rate_with_percentage)
-                                        #col11.write(f'<span style=Current Price: &euro;"color: green;">; {converted_amount:.2f}</span>',unsafe_allow_html=True)
-                                   #print("converted_amount",converted_amount)     
-                                   col11.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
-
-                                   col12.write(f"Low Estimate:")
-                                   col13.write(f"Middle Estimate: ")
-                                   col14.write(f"High Estimate:")
-
-
-                                   col15, col16, col17, col18 = st.columns(4)
-
-
-                                   col15.write(f" Benjamin Graham + DCF:  ")
-                                        #col16.write(f"{average_sum_both1:.2f} €")
-                                        
-                                   if average_sum_both1 > float(converted_amount):
-                                        font_color = "green"
-                                   else:
-                                        font_color = "red"
-                                   col16.write(f"<span style='color:{font_color}'>{average_sum_both1:.2f} €</span>", unsafe_allow_html=True)
-
-                                   if average_Middle_multiple_value > float(converted_amount):
-                                        font_color = "green"
-                                   else:
-                                        font_color = "red"
-                                        #col17.write(f"{average_Middle_multiple_value:.2f} €")
-                                   
-                                   col17.write(f"<span style='color:{font_color}'>{average_Middle_multiple_value:.2f} €</span>", unsafe_allow_html=True)
-                                        #col18.write(f"{average_sum_both2:.2f} €")
                                         
 
-                                   if average_sum_both2 > float(converted_amount):
-                                        font_color = "green"
-                                   else:
-                                        font_color = "red"
-                                   col18.write(f"<span style='color:{font_color}'>{average_sum_both2:.2f} €</span>", unsafe_allow_html=True)
+                                        if EPS_last_average < 0:
+                                             EPS_last_average_graham = Average_eps_basic_annual_five
+                                             EPS_last_average_graham2 =Average_eps_basic_annual_five
+                                        else:
+                                             EPS_last_average_graham =EPS_last_average
+                                             EPS_last_average_graham2 =EPS_last_average
 
-                                             # Display number outputs for each estimate
-                                   col19, col20, col21, col22 = st.columns(4)
+                                        graham_valuation = (EPS_last_average_graham * (7+1.5 * Growth_rate1) * 4.4)/ st.session_state["Average_10years_treasury_rate"]
+                                        
+                                        Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
+                                             #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
+                                        # Display the result
+                                   # .   ...........................................Graham 2.Estimate.........................................   
+                                   
+                                        graham_valuation2 = (EPS_last_average_graham2 * (7+1.5*Growth_rate2)*4.4)/ st.session_state["Average_10years_treasury_rate"]
+                                   
+                                        Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
 
-                                   col19.write(f"Discounted Cash Flow Analysis (DCF):")
-                                        #col20.write(f"{low_DCF:.2f} €")
-                                   if low_DCF > float(converted_amount):
-                                        font_color = "green"
-                                   else:
-                                        font_color = "red"
-                                   col20.write(f"<span style='color:{font_color}'>{low_DCF:.2f} €</span>", unsafe_allow_html=True)
-                                        #col21.write(f"{Average_Middle_DCF:.2f} €")
 
-                                   if Average_Middle_DCF > float(converted_amount):
-                                        font_color = "green"
-                                   else:
-                                        font_color = "red"
-                                   col21.write(f"<span style='color:{font_color}'>{Average_Middle_DCF:.2f} €</span>", unsafe_allow_html=True)
-                                        #col22.write(f"{high_DCF:.2f} €")
+                                   #........................................................................................
+                                   
+                                        if Euro_equivalent_graham_valuation < 0:
 
-                                   if high_DCF > float(converted_amount):
-                                        font_color = "green"
-                                   else:
-                                        font_color = "red"
-                                   col22.write(f"<span style='color:{font_color}'>{high_DCF:.2f} €</span>", unsafe_allow_html=True)
+                                             Euro_equivalent_graham_valuation = Euro_equivalent
+
+                                        elif Euro_equivalent < 0:
+                                             
+                                             Euro_equivalent=Euro_equivalent_graham_valuation
+
+                                        if Euro_equivalent_graham_valuation2 < 0:
+
+                                             Euro_equivalent_graham_valuation2 = Euro_equivalent2
+
+                                        elif Euro_equivalent2 < 0:
+                                             Euro_equivalent2=Euro_equivalent_graham_valuation2
+
+                                        Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
+                                   
+                                        average_sum1 = Multiples_valuation1 / 2
+                                        average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
+                                        
+                                        #st.write(average_sum_both1,converted_amount)
+
+
+                                        Multiples_valuation2 =Euro_equivalent2+Euro_equivalent_graham_valuation2
+                                        average_sum2 = Multiples_valuation2 / 2
+                                        average_sum_both2=average_sum2 *(1-Margin_of_safety3/100)
+
+                                        Middle_multiple_value = average_sum_both1+average_sum_both2
+                                        average_Middle_multiple_value =round(Middle_multiple_value/2,2)
+
+
+                                        low_DCF=(Euro_equivalent*(1-Margin_of_safety1/100))
+                                        high_DCF=(Euro_equivalent2*(1-Margin_of_safety3/100))
+
+                                        Average_Middle_DCF=(low_DCF+high_DCF)/2
+
+
+
+                                        col11, col12,col13, col14= st.columns(4)
+   
+                                        col11.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
+
+                                        col12.write(f"Low Estimate:")
+                                        col13.write(f"Middle Estimate: ")
+                                        col14.write(f"High Estimate:")
+
+
+                                        col15, col16, col17, col18 = st.columns(4)
+
+
+                                        col15.write(f" Benjamin Graham + DCF:  ")
+
+                                             
+                                        if average_sum_both1 > float(converted_amount):
+                                             font_color = "green"
+                                        else:
+                                             font_color = "red"
+                                        col16.write(f"<span style='color:{font_color}'>{average_sum_both1:.2f} €</span>", unsafe_allow_html=True)
+
+                                        if average_Middle_multiple_value > float(converted_amount):
+                                             font_color = "green"
+                                        else:
+                                             font_color = "red"
+                                             #col17.write(f"{average_Middle_multiple_value:.2f} €")
+                                        
+                                        col17.write(f"<span style='color:{font_color}'>{average_Middle_multiple_value:.2f} €</span>", unsafe_allow_html=True)
+                                             #col18.write(f"{average_sum_both2:.2f} €")
+                                             
+
+                                        if average_sum_both2 > float(converted_amount):
+                                             font_color = "green"
+                                        else:
+                                             font_color = "red"
+                                        col18.write(f"<span style='color:{font_color}'>{average_sum_both2:.2f} €</span>", unsafe_allow_html=True)
+
+                                                  # Display number outputs for each estimate
+                                        col19, col20, col21, col22 = st.columns(4)
+
+                                        col19.write(f"Discounted Cash Flow Analysis (DCF):")
+                                             #col20.write(f"{low_DCF:.2f} €")
+                                        if low_DCF > float(converted_amount):
+                                             font_color = "green"
+                                        else:
+                                             font_color = "red"
+                                        col20.write(f"<span style='color:{font_color}'>{low_DCF:.2f} €</span>", unsafe_allow_html=True)
+                                             #col21.write(f"{Average_Middle_DCF:.2f} €")
+
+                                        if Average_Middle_DCF > float(converted_amount):
+                                             font_color = "green"
+                                        else:
+                                             font_color = "red"
+                                        col21.write(f"<span style='color:{font_color}'>{Average_Middle_DCF:.2f} €</span>", unsafe_allow_html=True)
+                                             #col22.write(f"{high_DCF:.2f} €")
+
+                                        if high_DCF > float(converted_amount):
+                                             font_color = "green"
+                                        else:
+                                             font_color = "red"
+                                        col22.write(f"<span style='color:{font_color}'>{high_DCF:.2f} €</span>", unsafe_allow_html=True)
+                                        # Save average FCF values to a DataFrame for plotting
+                                        fcf_df = pd.DataFrame({
+                                             'Year': range(1, FCF_discount_in_years+1),
+                                             'Discounted Cash Flow (Base Case)': average_fcf_values1,
+                                             'Discounted Cash Flow (Bullish Case)': average_fcf_values2
+                                        })
+
+                                        # Plot the chart using Plotly as a bar chart
+                                        fig = px.bar(fcf_df, x='Year', y=['Discounted Cash Flow (Base Case)', 'Discounted Cash Flow (Bullish Case)'],
+                                                       title='Discounted Cash Flows Comparison in Billion USD',
+                                                       labels={'value': 'Discounted Cash Flow', 'Year': 'Year'})
+                                        fig.update_traces(textposition='auto')  # Automatically position text labels
+
+                                        fig.update_layout(
+                                        dragmode=False,  # Disable dragging for zooming
+                                        )
+
+                                        # Call the chart display function
+                                        simple_chart(fig, average_fcf_values1, average_fcf_values2,npv_result, npv_result2)
+
+
                                    
                          display_growth_rate_formexer()
           #################
@@ -19829,16 +19923,7 @@ if selected == "Stock Analysis Tool":
                               #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
                               with st.form(key='growth_rate_form31'):
-                                   #converted_amount =340 
-                                                  # Initialize variables with default values
-
-                                   Profit_Margin_1 = annual_data['fcf_margin'][-1:]     
-                                   Profit_Margin_1=sum(Profit_Margin_1)/len(Profit_Margin_1)
-                                   Profit_Margin_1 = (Profit_Margin_1*100)
-
-
-                                   
-
+                               
                                    col1,col2 = st.columns(2)
 
                                    with col1:
