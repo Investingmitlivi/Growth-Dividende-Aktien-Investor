@@ -14539,7 +14539,7 @@ if selected == "Stock Analysis Tool":
                def clear_cache():
                     st.cache_data.clear()
 
-               @st.cache_data(ttl=3600) #for caching results for an hour.
+               @st.cache_data(show_spinner=False,ttl=3600) #for caching results for an hour.
                def fetch_data_from_api(ticker):
                     try:
                          url = f"{base_url}{ticker}?api_key={api_key}"
@@ -14882,7 +14882,7 @@ if selected == "Stock Analysis Tool":
 
           ############################################################################################################
                
-               @st.cache_data(ttl=3600)
+               @st.cache_data(show_spinner=False,ttl=3600)
                def calculate_stock_performance(ticker):
                     periods = {
                          "1mo": "1 Month",
@@ -15918,16 +15918,20 @@ if selected == "Stock Analysis Tool":
 
                          BVPS_quater1=sum(BVPS_quater1_unpacked)/len(BVPS_quater1_unpacked)
                          PBVPS=amount/BVPS_quater1
+
                          if len_10_annual == 10:
-                              average_price_to_book = round(sum(Price_to_book_10_annual_unpacked)/len(Price_to_book_10_annual_unpacked),2)
+                              average_price_to_book = "{:.2f}".format(sum(Price_to_book_10_annual_unpacked)/len(Price_to_book_10_annual_unpacked))
+                              Average_Price_to_tangible_book ="{:.2f}".format(sum(Price_to_tangible_book_annual_10_unpacked)/len(Price_to_tangible_book_annual_10_unpacked))
 
                          else:
-                              average_price_to_book = 0.00
+                              average_price_to_book = "{:.2f}".format(0.00)
+                              Average_Price_to_tangible_book = "{:.2f}".format(0.00)
+
                          if len_5_annual == 5:
 
                               average_price_to_book_annual_5= round(sum(Price_to_book_5_annual_unpacked)/len(Price_to_book_5_annual_unpacked),2)
                          else:
-                              average_price_to_book_annual_5 = 0.00
+                              average_price_to_book_annual_5 = "{:.2f}".format(0.00)
           ###################################################################################################
                          def unpack_annual21_data(annual_data,ticker):
 
@@ -17177,7 +17181,7 @@ if selected == "Stock Analysis Tool":
                          '10 YR P/S': [P_sales_10],
                          'P/B': '{:.2f}'.format(PBVPS),
                          '5 YR P/B': '{:.2f}'.format(average_price_to_book_annual_5),
-                         '10 YR P/B':'{:.2f}'.format(average_price_to_book),
+                         '10 YR P/B':[average_price_to_book],
                          'ROA': [average_ROA_annual_ttm],
                          '5 YR ROE': ["{:.5}%".format(five_ROE)],
                          'ROE': [ROE_ttm],
@@ -17254,7 +17258,7 @@ if selected == "Stock Analysis Tool":
                          st.markdown(contact_form, unsafe_allow_html = True)
           #################################################################################
                
-                         @st.cache_data(ttl=3600)
+                         @st.cache_data(show_spinner=False,ttl=3600)
                          def local_css(file_name):
                                    with open(file_name)as f:
                                         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)      
@@ -21630,7 +21634,6 @@ if selected == "Stock Analysis Tool":
 
 
                                    # Create a Plotly Express bar chart with side-by-side bars
-                                   Average_Price_to_tangible_book =round(sum(Price_to_tangible_book_annual_10_unpacked)/len(Price_to_tangible_book_annual_10_unpacked))
                                    
                                    fig11 = px.bar(data, x='Date', y='Price/Tangible Book Value', 
                                              text ='Price/Tangible Book Value',              
@@ -21726,13 +21729,13 @@ if selected == "Stock Analysis Tool":
                                    col1, col2 =st.columns(2)
                                    with col1:
                                         st.write(f"""
-                                        <b>10 P/TBV: {Average_Price_to_tangible_book:.2f}  Current P/TBV: {PTBVPS:.2f}
+                                        <b>10 P/TBV: {Average_Price_to_tangible_book}  Current P/TBV: {PTBVPS:.2f}
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig11,use_container_width=True,config=config)
                                         
                                    with col2:
                                         st.write(f"""
-                                        <b>10 P/BV: {average_price_to_book:.2f}  Current P/B: {PBVPS:.2f}
+                                        <b>10 P/BV: {average_price_to_book}  Current P/B: {PBVPS:.2f}
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig12,use_container_width=True,config=config)
                #.........
