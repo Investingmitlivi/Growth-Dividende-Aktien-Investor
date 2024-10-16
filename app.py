@@ -7788,6 +7788,7 @@ if selected == "Stock Analysis Tool":
                          'AHH':'Armada Hoffler Properties Inc. ',
                          'AHI':'Advanced Health Intelligence Ltd. ADR',
                          'AHT':'Ashford Hospitality Trust Inc ',
+                         'ASHTF':'Ashtead Group PLC',
                          'AI':'C3.ai Inc.  ',
                          'AIB':'AIB Acquisition Corporation ',
                          'AIBBU':'AIB Acquisition Corporation Unit',
@@ -14632,19 +14633,27 @@ if selected == "Stock Analysis Tool":
                     st.write(styled_link, unsafe_allow_html=True)
                #.............................................................................................
 
-               if ticker == 'ADS:DE':
-                    ticker = 'ADS.DE'
+               # if ticker == 'ADS:DE':
+               #      ticker = 'ADS.DE'
 
-               if ticker == 'BRK.A':
-                    ticker ='BRK-A'
+               # if ticker == 'BRK.A':
+               #      ticker ='BRK-A'
 
-               if ticker == 'BRK.B':
-                    ticker ='BRK-B'
+               # if ticker == 'BRK.B':
+               #      ticker ='BRK-B'
 
-               else:
+               # else:
                
-                    ticker = ticker
+               #      ticker = ticker
                
+               ticker_mapping = {
+               'ADS:DE': 'ADS.DE',
+               'BRK.A': 'BRK-A',
+               'BRK.B': 'BRK-B'
+               }
+
+               # Use the dictionary to get the correct ticker or fallback to the original one
+               ticker = ticker_mapping.get(ticker, ticker)
 
                stock_info = yf.Ticker(ticker)
 
@@ -19917,7 +19926,7 @@ if selected == "Stock Analysis Tool":
 
                          #@st.fragment
                          #@st.cache_data
-                         
+                    
                          def display_growth_rate_form():
                               #current_price = get_current_price(ticker)  # Get current price
                               #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
