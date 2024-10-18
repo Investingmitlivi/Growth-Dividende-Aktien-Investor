@@ -26,6 +26,8 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 from fpdf import FPDF
 from PIL import Image
+from scipy import optimize
+
 
 
 st.set_page_config(page_title="Verstehdieaktie", page_icon = "📖", layout="wide")
@@ -13171,7 +13173,6 @@ if selected == "Stock Analysis Tool":
                          'SGBX':'Safe & Green Holdings Corp. ',
                          'SGC':'Superior Group of Companies Inc. ',
                          'SGE':'Strong Global Entertainment Inc.  Common Voting Shares',
-                         'SGEN':'Seagen Inc. ',
                          'SGH':'SMART Global Holdings Inc. ',
                          'SGHC':'Super Group (SGHC) Limited ',
                          'SGHT':'Sight Sciences Inc. ',
@@ -15133,7 +15134,9 @@ if selected == "Stock Analysis Tool":
                # 	return data
           ############################################################################################################
 
-               Metric, Financials,Pillar_Analysis,Stock_Analyser,Multiple_Valuation,Dividend_Discount_Model,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow Analysis","Multiple of Earnings Valuation","Dividend Discount Model","Charts","Key Ratios","Calculator","Top 10 News"])
+               #Metric, Financials,Pillar_Analysis,Stock_Analyser,Reversed_DCF,Multiple_Valuation,Dividend_Discount_Model,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow (DCF)","Reversed DCF","Multiple of Earnings Valuation","Dividend Discount Model","Charts","Key Ratios","Calculator","Top 10 News"])
+               Metric, Financials,Pillar_Analysis,Stock_Analyser,Reversed_DCF,Multiple_Valuation,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow (DCF)","Reversed DCF","Multiple of Earnings Valuation","Charts","Key Ratios","Calculator","Top 10 News"])
+
           
 
                with st.container():
@@ -19572,7 +19575,7 @@ if selected == "Stock Analysis Tool":
                                    st.plotly_chart(fig,use_container_width=True, config=config)
               
 
-
+                         #@st.cache_data(show_spinner=False,ttl=3600) 
                          def display_growth_rate_formexer():
 
                               with st.form(key='growth_rate_formex'):
@@ -19836,6 +19839,8 @@ if selected == "Stock Analysis Tool":
 
 
                                         col15.write(f" Benjamin Graham + DCF:  ")
+                                        #col15.info("Growth rate after the forecast period")
+
 
                                              
                                         if average_sum_both1 > float(converted_amount):
@@ -19908,10 +19913,82 @@ if selected == "Stock Analysis Tool":
                                    
                          display_growth_rate_formexer()
           #################
+               with st.container():   
+                    with Reversed_DCF:                         
 
+                         # Discounted Cash Flow function with reverse DCF logic
+                         @st.cache_data(show_spinner=False, ttl=3600) 
+                         def present_value(g, fcf, r, t, years):
+                              pv = 0
+                              for i in range(1, years + 1):
+                                   pv += fcf * (1 + g)**i / (1 + r)**i
+                              terminal_value = fcf * (1 + g)**years * (1 + t) / (r - t)
+                              pv += terminal_value / (1 + r)**years
+                              return pv
 
+                         def find_growth_rate(fcf, r, t, years, current_price):
+                              def objective(g):
+                                   return present_value(g, fcf, r, t, years) - current_price
+                              return optimize.brentq(objective, -0.5, 0.5)
 
+                         st.write("""
+                         This app calculates the Implied Growth Rate using a Two-Stage Reverse DCF model.
+                         The default forecast period is set to 10 years.
+                         """)
 
+                         with st.form("reverse_dcf_form"):
+                              st.markdown(
+                              f"""<span style='color: green;'>**{name}**</span> FCF (TTM): <span style='color: green;'>**{fcf_ttm:.2f} B**</span> 
+                              , Market Capitalization: <span style='color: green;'>**{Marketcap_in_Billion}**</span>
+                              , FCF CAGR (10 Years): <span style='color: green;'>**{FCF_Cagr_10}%**</span>
+                              , 5-Year FCF CAGR: <span style='color: green;'>**{FCF_5_CAGR}%**</span>
+                              , FCF Growth YOY (10 Years): <span style='color: green;'>**{Average_fcf_growth_ten}%**</span>""",
+                              unsafe_allow_html=True
+                              )
+                              col1, col2 = st.columns(2)
+                              with col1:
+                                   fcf = st.number_input("Current FCF ($):", value=0.00, format="%.2f")
+                                   r = st.number_input("Discount rate WACC (%):", value=8.0, format="%.1f")
+                                   years =10
+                              with col2:
+                                   t = st.number_input("Terminal Growth Rate (%):", value=3.0, format="%.1f")
+                                   current_price = st.number_input("Marketcap.($):", value=0.00, format="%.2f")
+
+                              submitted = st.form_submit_button("Calculate")
+
+                         if submitted:
+                              try:
+                                   r = r / 100  # Convert to decimal
+                                   t = t / 100  # Convert to decimal
+
+                                   implied_growth = find_growth_rate(fcf, r, t, years, current_price)
+                                   
+                                   st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
+
+                                   st.write("### Interpretation")
+                                   st.write(f"""
+                                   - The implied growth rate of **{implied_growth*100:.3f}%** means the company's Free Cash Flow 
+                                        needs to grow at this rate annually for the next **{years}** years to justify the current share price.
+                                   - After year {years}, the growth is assumed to slow to the terminal growth rate of {t*100:.1f}%.
+                                   - If this growth rate seems unrealistically high compared to historical performance or industry standards, 
+                                        the stock might be overvalued.
+                                   - Compare this rate with industry averages and the company's historical growth rates for context.
+                                   """)
+
+                                   # Additional information
+                                   st.write("### Additional Information")
+                                   final_fcf = fcf * (1 + implied_growth)**years
+                                   st.write(f"- Projected FCF after {years} years: ${final_fcf:.2f}")
+                                   terminal_value = final_fcf * (1 + t) / (r - t)
+                                   st.write(f"- Terminal Value: ${terminal_value:.2f}")
+                                   
+                                   # Calculate percentage of value from terminal value
+                                   total_value = present_value(implied_growth, fcf, r, t, years)
+                                   terminal_value_percentage = (terminal_value / (1 + r)**years) / total_value * 100
+                                   st.write(f"- Percentage of value from terminal value: {terminal_value_percentage:.2f}%")
+
+                              except Exception as e:
+                                   st.error(f"An error occurred: {str(e)}")
           ################################experiment2########
                
                                    
@@ -20249,9 +20326,9 @@ if selected == "Stock Analysis Tool":
                          
 
 
-               with st.container(): 
-                    use_container_width=True             
-                    with Dividend_Discount_Model:
+               # with st.container(): 
+               #      use_container_width=True             
+               #      with Dividend_Discount_Model:
                          
                          # with st.form(key='growth_rate_form3'):
                          
@@ -20444,171 +20521,173 @@ if selected == "Stock Analysis Tool":
                          #                st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True,use_container_width=True)
 
                #######################################experiment###############################  
-                         #  
-                         #@st.experimental_fragment
-                         #@st.fragment
-                         #@st.cache_data(show_spinner=False)
-                         def display_growth_rate_formdiv():              
-                              with st.form(key='growth_rate_form4'):
+               # with st.container(): 
+               #      use_container_width=True             
+               #      with Dividend_Discount_Model:          #  
+               #           #@st.experimental_fragment
+               #           #@st.fragment
+               #           #@st.cache_data(show_spinner=False)
+               #           def display_growth_rate_formdiv():              
+               #                with st.form(key='growth_rate_form4'):
                               
-                                   # .......................................DDM............................................
-                                   #Dividend_annual = annual_data['dividends'][-4:]     
+               #                     # .......................................DDM............................................
+               #                     #Dividend_annual = annual_data['dividends'][-4:]     
                                    
 
-                                   #Dividend_per_share_quarter = quarterly_data['dividends'][-14:]  
-                                   #Dividend_growth_quarter = quarterly_data['dividends_per_share_growth'][-14:]
-                                   #Dividend_current_dividend_growth_ttm=Dividend_current_dividend*4
+               #                     #Dividend_per_share_quarter = quarterly_data['dividends'][-14:]  
+               #                     #Dividend_growth_quarter = quarterly_data['dividends_per_share_growth'][-14:]
+               #                     #Dividend_current_dividend_growth_ttm=Dividend_current_dividend*4
 
 
-                                   cola, colb, colc, cold,col2 = st.columns(5)
+               #                     cola, colb, colc, cold,col2 = st.columns(5)
 
-                                   percentage_increase_1_2 = 0
-                                   percentage_increase_2_3 = 0
-                                   percentage_increase_3_4 = 0
-                                   percentage_increase_4_5 = 0
+               #                     percentage_increase_1_2 = 0
+               #                     percentage_increase_2_3 = 0
+               #                     percentage_increase_3_4 = 0
+               #                     percentage_increase_4_5 = 0
 
-                                   for i in range(len(Dividend_per_share_quarter14_unpacked)):
-                                        if i == 0:
-                                             Dividend_quarter1 = Dividend_per_share_quarter14_unpacked[i]
-                                             Dividend11 = cola.text_input("quarterly", value=round(Dividend_quarter1,3),key="unique_keydiv1")
-                                        elif i == 12 - 8:
-                                             Dividend_quarter2 = Dividend_per_share_quarter14_unpacked[i]
-                                             Dividend12 = colb.text_input("quarterly", value=Dividend_quarter2,key="unique_keydv2")
-                                             if Dividend_quarter1 != 0:
-                                                  percentage_increase_1_2 = ((Dividend_quarter2 - Dividend_quarter1) / Dividend_quarter1) * 100
-                                        elif i == 12-4:
-                                             Dividend_quarter3 = Dividend_per_share_quarter14_unpacked[i] 
-                                             Dividend13 = colc.text_input("quarterly", value=Dividend_quarter3,key="unique_keydv3")
-                                             if Dividend_quarter2 != 0:
-                                                  percentage_increase_2_3 = ((Dividend_quarter3 - Dividend_quarter2) / Dividend_quarter2) * 100
-                                        elif i == 12:
-                                             Dividend_quarter4 = Dividend_per_share_quarter14_unpacked[i] 
-                                             Dividend14 = cold.text_input("quarterly", value=Dividend_quarter4,key="unique_keydv4")
-                                             if Dividend_quarter3 != 0:
-                                                  percentage_increase_3_4 = ((Dividend_quarter4 - Dividend_quarter3) / Dividend_quarter3) * 100
-                                        elif i == 13:
-                                             Dividend_quarter5 = Dividend_per_share_quarter14_unpacked[i] 
-                                             Dividend15 = float(col2.text_input("current Dividend", value=Dividend_quarter5,key="unique_keydv5"))
-                                             if Dividend_quarter4 != 0:
-                                                  percentage_increase_4_5 = ((Dividend_quarter5 - Dividend_quarter4) / Dividend_quarter4) * 100
+               #                     for i in range(len(Dividend_per_share_quarter14_unpacked)):
+               #                          if i == 0:
+               #                               Dividend_quarter1 = Dividend_per_share_quarter14_unpacked[i]
+               #                               Dividend11 = cola.text_input("quarterly", value=round(Dividend_quarter1,3),key="unique_keydiv1")
+               #                          elif i == 12 - 8:
+               #                               Dividend_quarter2 = Dividend_per_share_quarter14_unpacked[i]
+               #                               Dividend12 = colb.text_input("quarterly", value=Dividend_quarter2,key="unique_keydv2")
+               #                               if Dividend_quarter1 != 0:
+               #                                    percentage_increase_1_2 = ((Dividend_quarter2 - Dividend_quarter1) / Dividend_quarter1) * 100
+               #                          elif i == 12-4:
+               #                               Dividend_quarter3 = Dividend_per_share_quarter14_unpacked[i] 
+               #                               Dividend13 = colc.text_input("quarterly", value=Dividend_quarter3,key="unique_keydv3")
+               #                               if Dividend_quarter2 != 0:
+               #                                    percentage_increase_2_3 = ((Dividend_quarter3 - Dividend_quarter2) / Dividend_quarter2) * 100
+               #                          elif i == 12:
+               #                               Dividend_quarter4 = Dividend_per_share_quarter14_unpacked[i] 
+               #                               Dividend14 = cold.text_input("quarterly", value=Dividend_quarter4,key="unique_keydv4")
+               #                               if Dividend_quarter3 != 0:
+               #                                    percentage_increase_3_4 = ((Dividend_quarter4 - Dividend_quarter3) / Dividend_quarter3) * 100
+               #                          elif i == 13:
+               #                               Dividend_quarter5 = Dividend_per_share_quarter14_unpacked[i] 
+               #                               Dividend15 = float(col2.text_input("current Dividend", value=Dividend_quarter5,key="unique_keydv5"))
+               #                               if Dividend_quarter4 != 0:
+               #                                    percentage_increase_4_5 = ((Dividend_quarter5 - Dividend_quarter4) / Dividend_quarter4) * 100
 
 
-                                   #if  Dividend_quarter4 and Dividend_quarter5!=0:  
-                                   try:
-                                        Growth_rate= round(((Dividend_quarter5- Dividend_quarter4)/Dividend_quarter4)*100,2)
+               #                     #if  Dividend_quarter4 and Dividend_quarter5!=0:  
+               #                     try:
+               #                          Growth_rate= round(((Dividend_quarter5- Dividend_quarter4)/Dividend_quarter4)*100,2)
 
-                                   except Exception as e:
-                                        Growth_rate= 0
+               #                     except Exception as e:
+               #                          Growth_rate= 0
                                         
 
-                                   cola, colb, colc, cold,col2 = st.columns(5)
-                                   # for i in range(len(Dividend_growth_quarter)):
-                                   #      if i == 0:
-                                   #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
-                                   try:
-                                        Dividend101 = cola.text_input("Year 4", value=Dividend_quarter1*4, key="unique_key_for_Dividenddv101")
-                                   #      elif i == 12-8:
-                                   except Exception as e:
-                                        Dividend101 =0
-                                   #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
-                                   try:
-                                        Dividend201 = colb.text_input("Year 3", value=Dividend_quarter2*4, key="unique_key_for_Dividenddv201")
+               #                     cola, colb, colc, cold,col2 = st.columns(5)
+               #                     # for i in range(len(Dividend_growth_quarter)):
+               #                     #      if i == 0:
+               #                     #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
+               #                     try:
+               #                          Dividend101 = cola.text_input("Year 4", value=Dividend_quarter1*4, key="unique_key_for_Dividenddv101")
+               #                     #      elif i == 12-8:
+               #                     except Exception as e:
+               #                          Dividend101 =0
+               #                     #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
+               #                     try:
+               #                          Dividend201 = colb.text_input("Year 3", value=Dividend_quarter2*4, key="unique_key_for_Dividenddv201")
 
-                                   except Exception as  e:
-                                        Dividend201 =0
-                                   #      elif i == 12-4:
-                                   #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
-                                   try:
-                                        Dividend301 = colc.text_input("Year 2", value=Dividend_quarter3*4, key="unique_key_for_Dividenddv301")
-                                   #      elif i == 12:
-                                   except Exception as e:
-                                        Dividend301=0
-                                   #   
-                                   #         Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
+               #                     except Exception as  e:
+               #                          Dividend201 =0
+               #                     #      elif i == 12-4:
+               #                     #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
+               #                     try:
+               #                          Dividend301 = colc.text_input("Year 2", value=Dividend_quarter3*4, key="unique_key_for_Dividenddv301")
+               #                     #      elif i == 12:
+               #                     except Exception as e:
+               #                          Dividend301=0
+               #                     #   
+               #                     #         Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
 
-                                   try:
-                                        Dividend401 = cold.text_input("Year 1", value=Dividend_quarter4*4, key="unique_key_for_Dividenddv401")
-                                   except Exception as e:
-                                        Dividend401 = 0
+               #                     try:
+               #                          Dividend401 = cold.text_input("Year 1", value=Dividend_quarter4*4, key="unique_key_for_Dividenddv401")
+               #                     except Exception as e:
+               #                          Dividend401 = 0
 
-                                   #      elif i == 13:
-                                   #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
+               #                     #      elif i == 13:
+               #                     #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
                                    
-                                   try:  
-                                        Dividend501 = col2.text_input("Current year", value=Dividend_quarter5*4, key="unique_key_for_Dividenddv501")
+               #                     try:  
+               #                          Dividend501 = col2.text_input("Current year", value=Dividend_quarter5*4, key="unique_key_for_Dividenddv501")
 
-                                   except Exception as e:
+               #                     except Exception as e:
                                    
-                                        Dividend501 = 0
+               #                          Dividend501 = 0
                               
                               
 
-                                   cola, colb, colc, cold,col2 = st.columns(5)
-                                   # for i in range(len(Dividend_growth_quarter)):
-                                   #      if i == 0:
-                                   #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
-                                   Dividend1 = cola.text_input("Growth Rate(%)", value=None, key="unique_key_for_Dividenddv1")
-                                   #      elif i == 12-8:
-                                   #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
-                                   Dividend2 = float(colb.text_input("Growth Rate(%)", value=f"{percentage_increase_1_2:.2f}", key="unique_key_for_Dividenddv2"))
-                                   #      elif i == 12-4:
-                                   #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
-                                   Dividend3 = colc.text_input("Growth Rate(%)", value=f"{percentage_increase_2_3:.2f}",key="unique_key_for_Dividenddv3")
-                                   #      elif i == 12:
-                                   #           Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
-                                   Dividend4 = cold.text_input("Growth Rate(%)", value=f"{percentage_increase_3_4:.2f}", key="unique_key_for_Dividenddv4")
+               #                     cola, colb, colc, cold,col2 = st.columns(5)
+               #                     # for i in range(len(Dividend_growth_quarter)):
+               #                     #      if i == 0:
+               #                     #           Dividend_growth_quarter1 = Dividend_growth_quarter[i] * 100
+               #                     Dividend1 = cola.text_input("Growth Rate(%)", value=None, key="unique_key_for_Dividenddv1")
+               #                     #      elif i == 12-8:
+               #                     #           Dividend_growth_quarter2 = Dividend_growth_quarter[i] * 100
+               #                     Dividend2 = float(colb.text_input("Growth Rate(%)", value=f"{percentage_increase_1_2:.2f}", key="unique_key_for_Dividenddv2"))
+               #                     #      elif i == 12-4:
+               #                     #           Dividend_growth_quarter3 = Dividend_growth_quarter[i] * 100
+               #                     Dividend3 = colc.text_input("Growth Rate(%)", value=f"{percentage_increase_2_3:.2f}",key="unique_key_for_Dividenddv3")
+               #                     #      elif i == 12:
+               #                     #           Dividend_growth_quarter4 = Dividend_growth_quarter[i] * 100
+               #                     Dividend4 = cold.text_input("Growth Rate(%)", value=f"{percentage_increase_3_4:.2f}", key="unique_key_for_Dividenddv4")
 
-                                   #      elif i == 13:
-                                   #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
-                                   Dividend5 = col2.text_input("Growth Rate(%)", value=f"{percentage_increase_4_5:.2f}", key="unique_key_for_Dividenddv5")
+               #                     #      elif i == 13:
+               #                     #           Dividend_growth_quarter5 = Dividend_growth_quarter[i] * 100
+               #                     Dividend5 = col2.text_input("Growth Rate(%)", value=f"{percentage_increase_4_5:.2f}", key="unique_key_for_Dividenddv5")
 
-                                   cola, colb = st.columns(2)
+               #                     cola, colb = st.columns(2)
 
-                                   cola.write(f"10 YR CAGR Quarter Dividend per share : {Dividend_per_share_cagr_10_quarter} %")
-                                   colb.write(f"10 YR CAGR Annual Dividend per share : {Dividend_per_share_cagr_10} %")
+               #                     cola.write(f"10 YR CAGR Quarter Dividend per share : {Dividend_per_share_cagr_10_quarter} %")
+               #                     colb.write(f"10 YR CAGR Annual Dividend per share : {Dividend_per_share_cagr_10} %")
 
-                                   col10,col11 =st.columns(2)
-                                   Growth_rate_dividend = float(col10.text_input("Growth Rate %:", value=0.00).replace(',', '.'))
-                                   WACC = 8
-                                   WACC = float(col11.text_input("WACC in (%):", value=f"{WACC:.2f}").replace(',', '.'))
+               #                     col10,col11 =st.columns(2)
+               #                     Growth_rate_dividend = float(col10.text_input("Growth Rate %:", value=0.00).replace(',', '.'))
+               #                     WACC = 8
+               #                     WACC = float(col11.text_input("WACC in (%):", value=f"{WACC:.2f}").replace(',', '.'))
 
-                                   try: 
-                                        intrinsic_value3 = (Dividend15 * 4) * (1 + (Growth_rate_dividend / 100)) / ((WACC / 100) - (Growth_rate_dividend / 100))
+               #                     try: 
+               #                          intrinsic_value3 = (Dividend15 * 4) * (1 + (Growth_rate_dividend / 100)) / ((WACC / 100) - (Growth_rate_dividend / 100))
 
-                                   except Exception as e:
+               #                     except Exception as e:
                                         
-                                        intrinsic_value3 =0
-                                   #st.write(intrinsic_value3)
-                                   submit_button = st.form_submit_button(label='Calculate')
-                                   #try:
-                                   #if st.button("Calculate", key="Calculate_DDM"):
+               #                          intrinsic_value3 =0
+               #                     #st.write(intrinsic_value3)
+               #                     submit_button = st.form_submit_button(label='Calculate')
+               #                     #try:
+               #                     #if st.button("Calculate", key="Calculate_DDM"):
                          
-                              if submit_button:
+               #                if submit_button:
                                    
-                                   DDM_intrinsic_value3 = intrinsic_value3*usd_to_eur_rate
+               #                     DDM_intrinsic_value3 = intrinsic_value3*usd_to_eur_rate
                                         
-                                   col1,col2 = st.columns(2)
+               #                     col1,col2 = st.columns(2)
 
 
-                                   if float(converted_amount) < DDM_intrinsic_value3:
-                                        font_color = "green"
+               #                     if float(converted_amount) < DDM_intrinsic_value3:
+               #                          font_color = "green"
 
-                                        with col1:
-                                             st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
-                                        with col2:
-                                             st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True)
-                                   else:
-                                        font_color = "red"
+               #                          with col1:
+               #                               st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
+               #                          with col2:
+               #                               st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True)
+               #                     else:
+               #                          font_color = "red"
 
-                                        with col1:
-                                             st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
-                                        with col2:
-                                             st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True)
+               #                          with col1:
+               #                               st.write(f'Current Price:    <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
+               #                          with col2:
+               #                               st.write(f"Fair Value:    <span style='color:{font_color}'>{DDM_intrinsic_value3:.2f} €</span>", unsafe_allow_html=True)
 
 
-               # 
-                         display_growth_rate_formdiv()
-          
+               # # 
+               #           display_growth_rate_formdiv()
+#####################################################################################################################################################          
                with st.container(): 
                     use_container_width=True             
                     with Key_ratios:

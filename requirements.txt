@@ -14,6 +14,8 @@ protobuf==4.21.6
 pyfinviz>=0.17,<2.0.0
 python-dotenv==1.0.1
 Requests==2.32.3
+scikit-optimize==0.10.2
+scipy==01.10.1
 stocknews==0.9.11
 streamlit>=1.26.0,<1.39.0
 streamlit_option_menu==0.3.13
