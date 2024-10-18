@@ -35,40 +35,76 @@ st.set_page_config(page_title="Verstehdieaktie", page_icon = "📖", layout="wid
 # favicon = Image.open("")  # Path to your image
 # st.image(favicon, width=50)  
 
+# hide_streamlit_style = """
+#                 <div style="max-width: 100%;">
+#                 <style>
+#                 div[data-testid="stToolbar"] {
+#                 visibility: hidden;
+#                 height: 0%;
+#                 position: fixed;
+#                 }
+#                 div[data-testid="stDecoration"] {
+#                 visibility: hidden;
+#                 height: 0%;
+#                 position: fixed;
+#                 }
+#                 div[data-testid="stStatusWidget"] {
+#                 visibility: hidden;
+#                 height: 0%;
+#                 position: fixed;
+#                 }
+#                 #MainMenu {
+#                 visibility: hidden;
+#                 height: 0%;
+#                 }
+#                 header {
+#                 visibility: hidden;
+#                 height: 0%;
+#                 }
+#                 footer {
+#                 visibility: hidden;
+#                 height: 0%;
+#                 }
+#                 </style>
+#                 </div>
+#                 """
+# st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+
 hide_streamlit_style = """
-                <div style="max-width: 100%;">
-                <style>
-                div[data-testid="stToolbar"] {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
-                }
-                div[data-testid="stDecoration"] {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
-                }
-                div[data-testid="stStatusWidget"] {
-                visibility: hidden;
-                height: 0%;
-                position: fixed;
-                }
-                #MainMenu {
-                visibility: hidden;
-                height: 0%;
-                }
-                header {
-                visibility: hidden;
-                height: 0%;
-                }
-                footer {
-                visibility: hidden;
-                height: 0%;
-                }
-                </style>
-                </div>
-                """
+    <style>
+    div[data-testid="stToolbar"] {
+        visibility: hidden;
+        height: 0%;
+        position: fixed;
+    }
+    div[data-testid="stDecoration"] {
+        visibility: hidden;
+        height: 0%;
+        position: fixed;
+    }
+    div[data-testid="stStatusWidget"] {
+        visibility: hidden;
+        height: 0%;
+        position: fixed;
+    }
+    #MainMenu {
+        visibility: hidden;
+    }
+    header {
+        visibility: hidden;
+        height: 0%;
+    }
+    footer {
+        visibility: hidden;
+        height: 0%;
+    }
+    </style>
+    """
+
+# Apply the custom style
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 
 
 
