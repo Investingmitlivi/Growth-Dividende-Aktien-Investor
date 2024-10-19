@@ -19978,7 +19978,7 @@ if selected == "Stock Analysis Tool":
                               , Market Capitalization: <span style='color: green;'>**{Marketcap_in_Billion}**</span>
                               , FCF CAGR (10 Years): <span style='color: green;'>**{FCF_Cagr_10}%**</span>
                               , 5-Year FCF CAGR: <span style='color: green;'>**{FCF_5_CAGR}%**</span>
-                              , FCF Growth YOY (10 Years): <span style='color: green;'>**{Average_fcf_growth_ten}%**</span>""",
+                              , FCF Growth YOY: <span style='color: green;'>**{Average_fcf_growth_ten}%**</span>""",
                               unsafe_allow_html=True
                               )
                               col1, col2 = st.columns(2)
@@ -20024,7 +20024,7 @@ if selected == "Stock Analysis Tool":
                                    st.write(f"- Percentage of value from terminal value: {terminal_value_percentage:.2f}%")
 
                               except Exception as e:
-                                   st.error(f"An error occurred: {str(e)}")
+                                   st.write(f" ")
           ################################experiment2########
                
                                    
