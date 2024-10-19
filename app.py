@@ -7295,31 +7295,32 @@ if selected == "Home":
 
 #########################################################################################################################
 
-          # Function to calculate dividends and investment growth
           def calculate_dividends(starting_principal, annual_contribution, dividend_tax_rate, tax_exempt_income,
-                                   initial_dividend_yield, dividend_increase_rate, share_price_appreciation, years):
-
+                        initial_dividend_yield, dividend_increase_rate, share_price_appreciation, years):
                total_investment = starting_principal
                dividends_over_years = []
-          
+               total_dividends_before_tax = 0
+
+               current_dividend_yield = initial_dividend_yield
+
                for year in range(1, years + 1):
-                    # Calculate annual dividend before tax
-                    annual_dividend = total_investment * (initial_dividend_yield / 100)
-                    # Apply tax exemption
+                    # Calculate annual dividend before tax based on start-of-year investment
+                    annual_dividend = total_investment * (current_dividend_yield / 100)
+                    total_dividends_before_tax += annual_dividend
+                    
+                    # Apply tax exemption and calculate after-tax dividend for display purposes
                     taxable_dividend = max(0, annual_dividend - tax_exempt_income)
-                    # Calculate dividends after tax
-                    net_dividend = taxable_dividend * (1 - dividend_tax_rate / 100)
+                    net_dividend = annual_dividend - (taxable_dividend * dividend_tax_rate / 100)
                     dividends_over_years.append(net_dividend)
                     
                     # Update investment with contributions and appreciation
-                    total_investment += annual_contribution  # add annual contribution
-                    total_investment *= (1 + share_price_appreciation / 100)  # apply share price appreciation
-                    # Update dividend yield with the expected increase
-                    initial_dividend_yield *= (1 + dividend_increase_rate / 100)  # adjust yield for next year
+                    total_investment += annual_contribution
+                    total_investment *= (1 + share_price_appreciation / 100)
+                    
+                    # Update dividend yield for next year
+                    current_dividend_yield *= (1 + dividend_increase_rate / 100)
 
-               total_dividend_sum = sum(dividends_over_years)
-               return total_dividend_sum, dividends_over_years
-
+               return total_dividends_before_tax, dividends_over_years
           with col2:
                st.title("Dividend Calculator")
 
@@ -7330,39 +7331,40 @@ if selected == "Home":
                tax_exempt_income = st.number_input("Tax-Exempt Dividend Income Allowed Per Year (€)", min_value=0.0, value=0.0, format="%.2f")
                initial_dividend_yield = st.number_input("Initial Annual Dividend Yield (%)", min_value=0.0, value=5.0, format="%.2f")
                dividend_increase_rate = st.number_input("Expected Annual Dividend Amount Increase (%)", min_value=0.0, value=3.0, format="%.2f")
-               share_price_appreciation = st.number_input("Expected Annual Share Price Appreciation (%)", min_value=0.0, value=7.0, format="%.2f")
-               years = st.number_input("Years Invested", min_value=1, value=5)
+               share_price_appreciation = st.number_input("Expected Annual Share Price Appreciation (%)", min_value=0.0, value=3.0, format="%.2f")
+               years = st.number_input("Years Invested", min_value=1, value=20)
 
                # Button for calculating dividends and plotting
                if st.button("Calculate Dividends"):
-                    total_dividend_sum, dividends_over_years = calculate_dividends(
+                    total_dividends_before_tax, dividends_over_years = calculate_dividends(
                          starting_principal, annual_contribution, dividend_tax_rate, tax_exempt_income,
                          initial_dividend_yield, dividend_increase_rate, share_price_appreciation, years
                     )
-                      # Format the output to include commas and a currency symbol
-                    formatted_total_dividend_sum = f"€ {total_dividend_sum:,.2f}"
-                    st.success(f"Total Dividends after {years} years: {formatted_total_dividend_sum}")
+                    
+                    # Format the output to include commas and a currency symbol
+                    formatted_total_dividends = f"€ {total_dividends_before_tax:,.2f}"
+                    st.success(f"Total Dividends (Before Tax) after {years} years: {formatted_total_dividends}")
 
                     # Create a Plotly chart
                     year_list = list(range(1, years + 1))
                     
-                                   # Create a bar plot for dividends over years
+                    # Create a bar plot for dividends over years
                     fig = go.Figure()
                     fig.add_trace(go.Bar(
                          x=year_list,
                          y=dividends_over_years,
                          marker=dict(color='royalblue'),
-                         text=[f'€ {dividend:,.2f}' for dividend in dividends_over_years],  # Text to display on bars
-                         textposition='inside'  # Position of the text inside the bars
+                         text=[f'€ {dividend:,.2f}' for dividend in dividends_over_years],
+                         textposition='inside'
                     ))
 
                     # Customize the layout
                     fig.update_layout(
-                         title='Projected Dividends Over the Years',
+                         title='Projected Dividends Over the Years (After Tax)',
                          xaxis_title='Years',
                          yaxis_title='Dividends After Tax (€)',
-                         yaxis_tickprefix='€',  # Add euro sign as a prefix
-                         yaxis_tickformat='.2f',  # Format y-axis ticks to two decimal places
+                         yaxis_tickprefix='€',
+                         yaxis_tickformat='.2f',
                          template='plotly_white'
                     )
 
@@ -7379,8 +7381,10 @@ if selected == "Home":
                5. Input the initial annual dividend yield as a percentage.
                6. Enter the expected annual dividend amount increase percentage.
                7. Specify the expected annual share price appreciation.
-               8. Click the "Calculate Dividends" button to see the total dividends you can expect after the specified years.
+               8. Click the "Calculate Dividends" button to see the total dividends before tax you can expect after the specified years.
                """)
+
+
 #########################################################################################################################
           st.markdown("---")
 
@@ -14653,8 +14657,7 @@ if selected == "Stock Analysis Tool":
                link = f"https://www.sec.gov/edgar/browse/?CIK={cik}&owner=exclude"
 
                styled_link = f'<div style="display: flex; justify-content: center;"><a href="{link}" style="color: green; font-family: serif;" target="_blank">Annual/Quarterly Reports &rarr;</a></div>'
-
-
+              
 
 
                
@@ -22136,7 +22139,7 @@ if selected == "Stock Analysis Tool":
                #              st.text('Name '+st.session_state.username)
                               #st.text('Email:id: '+st.session_state.useremail)
                               #st.button('Sign out', on_click=t) 
-                         
+
 
      if __name__ == "__main__":     
           app()
@@ -22284,10 +22287,10 @@ if selected == "Stock Analysis Tool":
                # print("Enterprise_value",Enterprise_value)
                # print("shares_diluted_ttm:",shares_diluted_ttm)
                # print("shares_basic_ttm",shares_basic_ttm)
-               # print("shares_eop_ttm",shares_eop_ttm)
-               # print("shares_eop_change_ttm",shares_eop_change_ttm)
-               # print("shares_eop_annual",shares_eop_annual)
-               # print("shares_eop_quarter",shares_eop_quarter)
+               #print("shares_eop_ttm",shares_eop_ttm)
+               #print("shares_eop_change_ttm",shares_eop_change_ttm)
+               #print("shares_eop_annual",shares_eop_annual)
+               #print("shares_eop_quarter",shares_eop_quarter)
                # print("shares_basic_quarter",shares_basic_quarter)
                # #print("shares_diluted_quarter",shares)
                # print("last 5 year price",(annual_data['period_end_price'][-5:]))
