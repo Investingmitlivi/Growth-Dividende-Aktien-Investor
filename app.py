@@ -7169,8 +7169,10 @@ if selected == "Home":
                          label=" 📁 " 'Download',
                          data=pdf_data,
                          file_name="Verstehdieaktie_Financial_Ratios_calculation.pdf",  # This will be the name of the downloaded file
-                         mime="application/png"  # MIME type for PDF files
+                         mime="application/pdf"  # MIME type for PDF files
                     )
+
+                    
 
 
 
@@ -7271,7 +7273,7 @@ if selected == "Home":
                     fig2.update_layout(
                          dragmode=False,  # Disable dragging for zooming
                          )
-                    st.plotly_chart(fig2,config={'displayModeBar': False})
+                    st.plotly_chart(fig2,use_container_width=True,config={'displayModeBar': False})
 
                     
                     # Automatically generate the PDF and provide a download link icon
@@ -7369,7 +7371,7 @@ if selected == "Home":
                     )
 
                     # Display the Plotly chart with mode bar hidden
-                    st.plotly_chart(fig, config={'displayModeBar': False})
+                    st.plotly_chart(fig,use_container_width=True,config={'displayModeBar': False})   
 
                # Additional information
                st.markdown("""
@@ -14823,12 +14825,18 @@ if selected == "Stock Analysis Tool":
 
                     with st.container():
                          try:
-                              arrow_text = " 🔼 " if percentage_difference > 0 else " 🔻 "
-                              text_color = "green" if percentage_difference > 0 else "red"
+                              # Set arrow text and color based on percentage_difference
+                              if percentage_difference > 0:
+                                   arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
+                              else:
+                                   arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
 
                               st.markdown(
-                                   f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color} "
-                                   f"Aktueller Preis: {formatted_price_with_color2} {arrow_text}<span style='color:{text_color};'>{percentage_difference:.2f}%</span></div>",
+                                   f"<div style='text-align: center; width: 100%;'>"
+                                   f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
+                                   f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
+                                   f"{arrow_text} <span style='color:{'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
+                                   f"</div>",
                                    unsafe_allow_html=True
                               )
                          except Exception as e:
