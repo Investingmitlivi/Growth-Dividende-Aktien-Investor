@@ -19998,7 +19998,7 @@ if selected == "Stock Analysis Tool":
                                    r = st.number_input("Discount rate WACC (%):", value=8.0, format="%.1f")
                                    years =10
                               with col2:
-                                   t = st.number_input("Terminal Growth Rate (%):", value=3.0, format="%.1f")
+                                   t = st.number_input("Terminal Growth Rate (%):", value=2.5, format="%.1f")
                                    current_price = st.number_input("Marketcap.($):", value=0.00, format="%.2f")
 
                               submitted = st.form_submit_button("Calculate")
