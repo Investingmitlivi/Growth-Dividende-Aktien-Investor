@@ -22177,9 +22177,9 @@ if selected == "Stock Analysis Tool":
                                    login()
                               #if st.button('Forgot Password'):
                               #    forget()
-
-               if st.button('Forgot Password', key='forgot_password'):
-                    forget()
+               with middle:
+                    if st.button('Forgot Password', key='forgot_password'):
+                         forget()
 
                          
                          
