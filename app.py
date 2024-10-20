@@ -17172,11 +17172,11 @@ if selected == "Stock Analysis Tool":
                                         {'selector': 'th.col0',  # Apply to the first column header
                                         'props': [('background-color', 'white'),  # Green background for the first header
                                                   ('color', 'white'),# White text color for the first header
-                                                  ('text-align', 'center')]},  # Centered text
+                                                  ('text-align', 'left')]},  # Centered text
                                         {'selector': 'th:not(.col0)',  # Apply to other headers
                                         'props': [('color', '#2E8B57'), 
                                                   # Green text color for other headers
-                                                  ('text-align', 'center')]},  # Centered text for other headers
+                                                  ('text-align', 'left')]},  # Centered text for other headers
                                    ],
                                    overwrite=False
                               ).hide(axis='index')#.set_caption("")
