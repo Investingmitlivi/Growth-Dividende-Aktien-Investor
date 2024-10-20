@@ -7602,14 +7602,31 @@ if selected == "Stock Analysis Tool":
           if st.session_state.needs_rerun:
                st.session_state.needs_rerun = False
                st.rerun()
+          left_col, center_col, right_col = st.columns([1, 2, 1])
+
+          #with center_col:
 
                # Main app logic 
           if st.session_state.is_logged_in:
-               with middle:
-                    st.success(f"Welcome, {st.session_state.username}!")
-               #st.text('Email_id: ' + st.session_state.useremail)
+               # with middle:
+               # #st.success(f"Welcome, {st.session_state.username}!")
+               # #st.text('Email_id: ' + st.session_state.useremail)
+               # #with left:
+               # #st.button('Sign out', on_click=logout)
+               #      message_placeholder = st.empty()
+               
+               # # Display the success message
+               #      with message_placeholder:
+               #           st.success(f"Welcome, {st.session_state.username}!")
+                    
+               #      # Wait for 1 second
+               #      time.sleep(1)
+                    
+               #      # Clear the success message
+               #      message_placeholder.empty()
+
                with left:
-                    st.button('Sign out', on_click=logout)
+                    st.button('Sign out', on_click=logout, key='signout_button')
 
 
                st.markdown("""
@@ -14659,7 +14676,7 @@ if selected == "Stock Analysis Tool":
                link = f"https://www.sec.gov/edgar/browse/?CIK={cik}&owner=exclude"
 
                styled_link = f'<div style="display: flex; justify-content: center;"><a href="{link}" style="color: green; font-family: serif;" target="_blank">Annual/Quarterly Reports &rarr;</a></div>'
-              
+          
 
 
                
@@ -14824,27 +14841,29 @@ if selected == "Stock Analysis Tool":
                     formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
 
                     with st.container():
-                         try:
-                              # Set arrow text and color based on percentage_difference
-                              if percentage_difference > 0:
-                                   arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
-                              else:
-                                   arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
 
-                              st.markdown(
-                                   f"<div style='text-align: center; width: 100%;'>"
-                                   f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
-                                   f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
-                                   f"{arrow_text} <span style='color:{'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
-                                   f"</div>",
-                                   unsafe_allow_html=True
-                              )
-                         except Exception as e:
-                              st.markdown(
-                                   f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color} "
-                                   f"Aktueller Preis: {formatted_price_with_color2}</div>",
-                                   unsafe_allow_html=True
-                              )
+                         with middle:
+                              try:
+                                   # Set arrow text and color based on percentage_difference
+                                   if percentage_difference > 0:
+                                        arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
+                                   else:
+                                        arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
+
+                                   st.markdown(
+                                        f"<div style='text-align: center; width: 100%;'>"
+                                        f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
+                                        f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
+                                        f"{arrow_text} <span style='color:{'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
+                                        f"</div>",
+                                        unsafe_allow_html=True
+                                   )
+                              except Exception as e:
+                                   st.markdown(
+                                        f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color} "
+                                        f"Aktueller Preis: {formatted_price_with_color2}</div>",
+                                        unsafe_allow_html=True
+                                   )
 
                if __name__ == "__main__":
                     main()
@@ -15534,7 +15553,7 @@ if selected == "Stock Analysis Tool":
                                         BVPS_quater1_unpacked,
                                         AverageEndPrice_annual5_unpacked,
                                         Net_Operating_CashFlow_annual_5_unpacked,
-                                         Revenue_annual_5_unpacked,len_5_annual,
+                                        Revenue_annual_5_unpacked,len_5_annual,
                                         Revenue_annual_10_unpacked,len_10_annual,
                                         Revenue_quarter_10_unpacked,len_10_quarter
                                         )
@@ -15553,7 +15572,7 @@ if selected == "Stock Analysis Tool":
                               ) = calculate_net_income_averages(annual_data,quarterly_data, ticker)
 
           ###################################################################################################
-                        
+                    
 
                          Average_net_income_annual_funf_Billion_Million = (
                          "{:.2f}B".format(Average_net_income_annual_funf / 1e9) 
@@ -15650,7 +15669,7 @@ if selected == "Stock Analysis Tool":
 
                          # Assuming `annual_data` and `ticker` are defined elsewhere
                          (average_revenue_annual_ttm,
-                        
+                    
                          Revenue_growth_10_unpacked,
                          Revenue_growth_1year,
                          Revenue_growth_3years,
@@ -17867,7 +17886,7 @@ if selected == "Stock Analysis Tool":
                                                             Interest_Income_quarter_10_unpacked= [0] * len_10_quarter 
 
 
-                                                      
+                                                  
                                                                       ################################ Quarter###############################
 
                                                        Research_Dev_quarter_10_unpacked  = quarterly_data['rnd'][-10:]
@@ -19606,7 +19625,7 @@ if selected == "Stock Analysis Tool":
 
                          if Average_ROIC_funf == 'NA':
                               Average_ROIC_funf = 0.0
- ############################################################################################################################                             
+############################################################################################################################                             
 
 
                with st.container():   
@@ -19620,7 +19639,7 @@ if selected == "Stock Analysis Tool":
                          def simple_chart(fig, average_fcf_values1, average_fcf_values2, npv_result, npv_result2):
                               if st.form_submit_button(label="Display FCF Estimate"):
                                    st.plotly_chart(fig,use_container_width=True, config=config)
-              
+          
 
                          #@st.cache_data(show_spinner=False,ttl=3600) 
                          def display_growth_rate_formexer():
@@ -19718,7 +19737,7 @@ if selected == "Stock Analysis Tool":
 
                                         discounted_values = [] 
                                         average_fcf_values1 = []
-                                         # Array for average FCF values (Base Case)
+                                        # Array for average FCF values (Base Case)
 
                                    
                                         for i in range(FCF_discount_in_years):
@@ -19779,10 +19798,10 @@ if selected == "Stock Analysis Tool":
                                              average_fcf_values2.append(average_fcf_Annual_DCF2)  # Store in the array
 
                                              discounted_values2.append(discounted_value2)  # Add the discounted value to the list
-                                          
+                                        
 
                                         #for j, value2 in enumerate(discounted_values2):
-                                         #    if j == len(discounted_values2) - 1:
+                                        #    if j == len(discounted_values2) - 1:
                                              if j == FCF_discount_in_years - 1:
                                                   Terminal_Value2 = discounted_value2 * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
                                                   #Terminal_Value2 = calculate_terminal_value(discounted_values2[-1], st.session_state["Pepetual_growth_rate"], WACC)
@@ -19799,7 +19818,7 @@ if selected == "Stock Analysis Tool":
                                         #discounted_values2[-1] = round(Sum_terminal_fcf2,2)
                                         #npv_result2 = npv(WACC/100,discounted_values2) 
                                         npv_result2 = calculate_npv(WACC, discounted_values2)
-  
+
                                         #rounded_npv_result2 = round(npv_result2, 2)  
 
                                         Equity_value2 = npv_result2+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
@@ -19874,7 +19893,7 @@ if selected == "Stock Analysis Tool":
 
 
                                         col11, col12,col13, col14= st.columns(4)
-   
+
                                         col11.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
 
                                         col12.write(f"Low Estimate:")
@@ -20056,7 +20075,7 @@ if selected == "Stock Analysis Tool":
                               #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
                               with st.form(key='growth_rate_form31'):
-                               
+                              
                                    col1,col2 = st.columns(2)
 
                                    with col1:
@@ -21248,7 +21267,7 @@ if selected == "Stock Analysis Tool":
                                    #title_text = f"Dividend 20 CAGR: {Dividend_20_CAGR}% Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
                                    fig.update_layout(
                                         barmode='group', xaxis_title='Date',
-                                         yaxis_title='FCF / Dividends Paid in Billion USD',
+                                        yaxis_title='FCF / Dividends Paid in Billion USD',
                                                   #title=title_text
                                                   )
                                                        # Update legend placement
@@ -21519,12 +21538,12 @@ if selected == "Stock Analysis Tool":
                                    fig2.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
                                    )
-                                          
+                                        
                                    fig2.update_layout(
                                    xaxis_type='category' 
                                    )
 
-                                 #col1, col2 = st.columns(2)
+                              #col1, col2 = st.columns(2)
                                    with col1:
                                         st.write(f"""
                                         <b>5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}</b>
@@ -21807,7 +21826,7 @@ if selected == "Stock Analysis Tool":
                                    #-------------------------------------------------------------------------------------------------
                               
 
-                                  
+                              
                                    #PBVPS=sum(PBVPS)/len(PBVPS)
                                    #st.write("BVPS",BVPS)
                                    #st.write("PBVPS",PBVPS)
@@ -22091,7 +22110,7 @@ if selected == "Stock Analysis Tool":
                          # Display the news
                          display_news(stock_info)
 
-             
+          
                # current_capital_leases = quarterly_data['current_capital_leases'][-2:]
                # lt_debt = quarterly_data['lt_debt'][-2:]
                # noncurrent_capital_leases = quarterly_data['noncurrent_capital_leases'][-2:]
@@ -22110,36 +22129,57 @@ if selected == "Stock Analysis Tool":
                # print("accounts_payable",accounts_payable)
 
 
-          
+     
           else:
+               with middle:
                # Your existing login/signup form code goes here
                #choice = st.selectbox('Login/Signup', ['Login', 'Sign up'])
-               choice = st.selectbox('Login', ['Login'])
-               email = st.text_input('Email Address')
-               password = st.text_input('Password', type='password')
-               st.session_state.email_input = email
-               st.session_state.password_input = password
-                         
-               if choice == 'Sign up':
-                    username = st.text_input("Enter  your unique username")
-                    
-                    if st.button('Create my account'):
-                         try:
-                         # user = auth.create_user(email = email, password = password,uid=username)
-                              user = sign_up_with_email_and_password(email=email,password=password,username=username)
-                              if user:
-                                   st.success('Account created successfully! Please login using your email and password.')
-                                   st.balloons()
-                              else:
-                                   st.error('Failed to create account. Please try again.')
-                         except Exception as e:
-                              st.error(f'An error occurred: {str(e)}')
+               #choice = st.selectbox('Login/Signup', ['Login', 'Sign up'], key='login_choice')
+                    choice = st.selectbox('Login', ['Login'],key='login_choice')
 
-               else:
-                    if st.button('Login'):
-                         login()
-                    if st.button('Forgot Password'):
-                         forget()
+                    with st.form(key='auth_form'):
+
+                         email = st.text_input('Email Address')
+                         password = st.text_input('Password', type='password')
+                         st.session_state.email_input = email
+                         st.session_state.password_input = password
+                              
+                         if choice == 'Sign up':
+                              username = st.text_input("Enter your unique username")
+                              #submit_button = st.form_submit_button(label='Create my account', key='signup_submit')
+                              submit_button = st.form_submit_button(label='Login')
+
+
+                              
+                              #if st.button('Create my account'):
+                              if submit_button:
+
+                                   try:
+                                   # user = auth.create_user(email = email, password = password,uid=username)
+                                        user = sign_up_with_email_and_password(email=email,password=password,username=username)
+                                        if user:
+                                             st.success('Account created successfully! Please login using your email and password.')
+                                             st.balloons()
+                                        else:
+                                             st.error('Failed to create account. Please try again.')
+                                   except Exception as e:
+                                        st.error(f'An error occurred: {str(e)}')
+
+                         #else:
+                         else:
+                              submit_button = st.form_submit_button(label='Login')
+                              #if st.button('Login'):
+                              #    login()
+
+                              if submit_button:
+                                   st.session_state.email_input = email
+                                   st.session_state.password_input = password
+                                   login()
+                              #if st.button('Forgot Password'):
+                              #    forget()
+
+               if st.button('Forgot Password', key='forgot_password'):
+                    forget()
 
                          
                          
