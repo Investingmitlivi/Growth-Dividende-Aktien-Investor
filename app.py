@@ -19854,19 +19854,19 @@ if selected == "Stock Analysis Tool":
 
                                    #........................................................................................
                                    
-                                        if Euro_equivalent_graham_valuation < 0:
+                                        if Euro_equivalent_graham_valuation < 0.0:
 
                                              Euro_equivalent_graham_valuation = Euro_equivalent
 
-                                        elif Euro_equivalent < 0:
+                                        elif Euro_equivalent < 0.0:
                                              
                                              Euro_equivalent=Euro_equivalent_graham_valuation
 
-                                        if Euro_equivalent_graham_valuation2 < 0:
+                                        if Euro_equivalent_graham_valuation2 < 0.0:
 
                                              Euro_equivalent_graham_valuation2 = Euro_equivalent2
 
-                                        elif Euro_equivalent2 < 0:
+                                        elif Euro_equivalent2 < 0.0:
                                              Euro_equivalent2=Euro_equivalent_graham_valuation2
 
                                         Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
