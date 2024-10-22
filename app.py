@@ -19933,13 +19933,13 @@ if selected == "Stock Analysis Tool":
 
 
                                              
-                                        if average_sum_both1 > float(converted_amount):
+                                        if float(average_sum_both1) > float(converted_amount):
                                              font_color = "green"
                                         else:
                                              font_color = "red"
                                         col16.write(f"<span style='color:{font_color}'>{average_sum_both1:.2f} €</span>", unsafe_allow_html=True)
 
-                                        if average_Middle_multiple_value > float(converted_amount):
+                                        if float(average_Middle_multiple_value) > float(converted_amount):
                                              font_color = "green"
                                         else:
                                              font_color = "red"
@@ -19949,7 +19949,7 @@ if selected == "Stock Analysis Tool":
                                              #col18.write(f"{average_sum_both2:.2f} €")
                                              
 
-                                        if average_sum_both2 > float(converted_amount):
+                                        if float(average_sum_both2) > float(converted_amount):
                                              font_color = "green"
                                         else:
                                              font_color = "red"
@@ -19960,21 +19960,21 @@ if selected == "Stock Analysis Tool":
 
                                         col19.write(f"Discounted Cash Flow Analysis (DCF):")
                                              #col20.write(f"{low_DCF:.2f} €")
-                                        if low_DCF > float(converted_amount):
+                                        if float(low_DCF) > float(converted_amount):
                                              font_color = "green"
                                         else:
                                              font_color = "red"
                                         col20.write(f"<span style='color:{font_color}'>{low_DCF:.2f} €</span>", unsafe_allow_html=True)
                                              #col21.write(f"{Average_Middle_DCF:.2f} €")
 
-                                        if Average_Middle_DCF > float(converted_amount):
+                                        if float(Average_Middle_DCF) > float(converted_amount):
                                              font_color = "green"
                                         else:
                                              font_color = "red"
                                         col21.write(f"<span style='color:{font_color}'>{Average_Middle_DCF:.2f} €</span>", unsafe_allow_html=True)
                                              #col22.write(f"{high_DCF:.2f} €")
 
-                                        if high_DCF > float(converted_amount):
+                                        if float(high_DCF) > float(converted_amount):
                                              font_color = "green"
                                         else:
                                              font_color = "red"
