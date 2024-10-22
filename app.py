@@ -16007,7 +16007,7 @@ if selected == "Stock Analysis Tool":
 
                          if len_5_annual == 5:
 
-                              average_price_to_book_annual_5= round(sum(Price_to_book_5_annual_unpacked)/len(Price_to_book_5_annual_unpacked),2)
+                              average_price_to_book_annual_5=  "{:.2f}".format(sum(Price_to_book_5_annual_unpacked)/len(Price_to_book_5_annual_unpacked))
                          else:
                               average_price_to_book_annual_5 = "{:.2f}".format(0.00)
           ###################################################################################################
@@ -17258,7 +17258,7 @@ if selected == "Stock Analysis Tool":
                          '5 YR P/S': [P_sales_5],
                          '10 YR P/S': [P_sales_10],
                          'P/B': '{:.2f}'.format(PBVPS),
-                         '5 YR P/B': '{:.2f}'.format(average_price_to_book_annual_5),
+                         '5 YR P/B': [average_price_to_book_annual_5],
                          '10 YR P/B':[average_price_to_book],
                          'ROA': [average_ROA_annual_ttm],
                          '5 YR ROE': ["{:.5}%".format(five_ROE)],
