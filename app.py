@@ -19896,7 +19896,7 @@ if selected == "Stock Analysis Tool":
                                         Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
                                    
                                         average_sum1 = Multiples_valuation1 / 2
-                                        average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
+                                        average_sum_both1 =  (average_sum1*(1-Margin_of_safety1/100))
                                         
                                         #st.write(average_sum_both1,converted_amount)
 
@@ -19906,7 +19906,7 @@ if selected == "Stock Analysis Tool":
                                         average_sum_both2=average_sum2 *(1-Margin_of_safety3/100)
 
                                         Middle_multiple_value = average_sum_both1+average_sum_both2
-                                        average_Middle_multiple_value =round(Middle_multiple_value/2,2)
+                                        average_Middle_multiple_value =Middle_multiple_value/2
 
 
                                         low_DCF=(Euro_equivalent*(1-Margin_of_safety1/100))
