@@ -17026,6 +17026,10 @@ if selected == "Stock Analysis Tool":
                               total = total[1:]
                               total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
 
+                              #total = total.apply(lambda row: row.apply(lambda x: "{:,.0f}".format(x / 1000000)))
+
+                              ###
+
                               # Extract the last value from the 'Total Debt' column
                               total_debt_column = df['Total Debt']
                               last_value_total_debt = total_debt_column.iloc[-1]
@@ -19854,44 +19858,44 @@ if selected == "Stock Analysis Tool":
 
                                    #........................................................................................
 
-                                        def is_negative(value):
-                                             if isinstance(value, (pd.Series, pd.DataFrame)):
-                                                  return (value < 0.0).any()
-                                             return value < 0.0
+                                        # def is_negative(value):
+                                        #      if isinstance(value, (pd.Series, pd.DataFrame)):
+                                        #           return (value < 0.0).any()
+                                        #      return value < 0.0
 
-                                             # Your existing code...
+                                        #      # Your existing code...
 
-                                        if is_negative(Euro_equivalent_graham_valuation):
-                                             Euro_equivalent_graham_valuation = Euro_equivalent
+                                        # if is_negative(Euro_equivalent_graham_valuation):
+                                        #      Euro_equivalent_graham_valuation = Euro_equivalent
 
-                                        if is_negative(Euro_equivalent):
-                                             Euro_equivalent = Euro_equivalent_graham_valuation
+                                        # if is_negative(Euro_equivalent):
+                                        #      Euro_equivalent = Euro_equivalent_graham_valuation
 
 
                                    
-                                        # if Euro_equivalent_graham_valuation < 0.0:
+                                        if Euro_equivalent_graham_valuation < 0.0:
 
-                                        #      Euro_equivalent_graham_valuation = Euro_equivalent
+                                             Euro_equivalent_graham_valuation = Euro_equivalent
 
-                                        # elif Euro_equivalent < 0.0:
+                                        elif Euro_equivalent < 0.0:
                                              
-                                        #      Euro_equivalent=Euro_equivalent_graham_valuation
+                                             Euro_equivalent=Euro_equivalent_graham_valuation
 
 
-                                        if is_negative(Euro_equivalent_graham_valuation2):
-                                             Euro_equivalent_graham_valuation2 = Euro_equivalent2
-
-                                        if is_negative(Euro_equivalent2):
-                                             Euro_equivalent2=Euro_equivalent_graham_valuation2
-
-
-
-                                        # if Euro_equivalent_graham_valuation2 < 0.0:
-
+                                        # if is_negative(Euro_equivalent_graham_valuation2):
                                         #      Euro_equivalent_graham_valuation2 = Euro_equivalent2
 
-                                        # elif Euro_equivalent2 < 0.0:
+                                        # if is_negative(Euro_equivalent2):
                                         #      Euro_equivalent2=Euro_equivalent_graham_valuation2
+
+
+
+                                        if Euro_equivalent_graham_valuation2 < 0.0:
+
+                                             Euro_equivalent_graham_valuation2 = Euro_equivalent2
+
+                                        elif Euro_equivalent2 < 0.0:
+                                             Euro_equivalent2=Euro_equivalent_graham_valuation2
 
                                         Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
                                    
