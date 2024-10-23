@@ -19650,20 +19650,25 @@ if selected == "Stock Analysis Tool":
 
                               with st.form(key='growth_rate_formex'):
                               
-                                   treasury = "^TNX"
-                                   treasury_yield_data = yf.download(treasury, period='1d')
-                                   #treasury_yield_data = yf.download(treasury)
-                                   
+                                   # treasury = "^TNX"
+                                   # treasury_yield_data = yf.download(treasury, period='1d')
+                                   # #treasury_yield_data = yf.download(treasury)
+                                   # #print("treasury_yield_data",treasury_yield_data)
 
-                                   if not treasury_yield_data.empty:
-                                        treasury_yield = treasury_yield_data['Close'].iloc[-1]
-                                        st.session_state['Average_10years_treasury_rate'] = round(treasury_yield, 2)
-                                   else:
-                                        st.session_state['Average_10years_treasury_rate'] = 4.25
+                                   # if not treasury_yield_data.empty:
+                                   #      treasury_yield = treasury_yield_data['Close'].iloc[-1]
+                                   #      st.session_state['Average_10years_treasury_rate'] = round(treasury_yield,2)
+                                   #      print("treasury_yield_data",treasury_yield)
+                                   # else:
+
+                                   if "Average_10years_treasury_rate" not in st.session_state:
+                                        st.session_state["Average_10years_treasury_rate"] = 4.25
+                                        #print("treasury_yield_data",Average_10years_treasury_rate)
 
 
                                    if "Pepetual_growth_rate" not in st.session_state:
                                         st.session_state["Pepetual_growth_rate"] = 0.025
+                                        
 
 
                                    col1, col2,col3,col4,col5 = st.columns(5)
