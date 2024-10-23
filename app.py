@@ -19896,23 +19896,23 @@ if selected == "Stock Analysis Tool":
                                         Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
                                    
                                         average_sum1 = Multiples_valuation1 / 2
-                                        average_sum_both1 =  (average_sum1*(1-Margin_of_safety1/100))
+                                        average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
                                         
                                         #st.write(average_sum_both1,converted_amount)
 
 
                                         Multiples_valuation2 =Euro_equivalent2+Euro_equivalent_graham_valuation2
                                         average_sum2 = Multiples_valuation2 / 2
-                                        average_sum_both2=average_sum2 *(1-Margin_of_safety3/100)
+                                        average_sum_both2=round(average_sum2 *(1-Margin_of_safety3/100),2)
 
                                         Middle_multiple_value = average_sum_both1+average_sum_both2
-                                        average_Middle_multiple_value =Middle_multiple_value/2
+                                        average_Middle_multiple_value =round(Middle_multiple_value/2,2)
 
 
                                         low_DCF=(Euro_equivalent*(1-Margin_of_safety1/100))
                                         high_DCF=(Euro_equivalent2*(1-Margin_of_safety3/100))
 
-                                        Average_Middle_DCF=(low_DCF+high_DCF)/2
+                                        Average_Middle_DCF=round((low_DCF+high_DCF)/2)
 
 
 
@@ -19937,7 +19937,7 @@ if selected == "Stock Analysis Tool":
                                              font_color = "green"
                                         else:
                                              font_color = "red"
-                                        col16.write(f"<span style='color:{font_color}'>{average_sum_both1:.2f} €</span>", unsafe_allow_html=True)
+                                        col16.write(f"<span style='color:{font_color}'>{average_sum_both1} €</span>", unsafe_allow_html=True)
 
                                         if float(average_Middle_multiple_value) > float(converted_amount):
                                              font_color = "green"
@@ -19945,7 +19945,7 @@ if selected == "Stock Analysis Tool":
                                              font_color = "red"
                                              #col17.write(f"{average_Middle_multiple_value:.2f} €")
                                         
-                                        col17.write(f"<span style='color:{font_color}'>{average_Middle_multiple_value:.2f} €</span>", unsafe_allow_html=True)
+                                        col17.write(f"<span style='color:{font_color}'>{average_Middle_multiple_value} €</span>", unsafe_allow_html=True)
                                              #col18.write(f"{average_sum_both2:.2f} €")
                                              
 
@@ -19953,7 +19953,7 @@ if selected == "Stock Analysis Tool":
                                              font_color = "green"
                                         else:
                                              font_color = "red"
-                                        col18.write(f"<span style='color:{font_color}'>{average_sum_both2:.2f} €</span>", unsafe_allow_html=True)
+                                        col18.write(f"<span style='color:{font_color}'>{average_sum_both2} €</span>", unsafe_allow_html=True)
 
                                                   # Display number outputs for each estimate
                                         col19, col20, col21, col22 = st.columns(4)
