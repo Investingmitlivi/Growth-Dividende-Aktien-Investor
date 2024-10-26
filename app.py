@@ -71,8 +71,45 @@ st.set_page_config(page_title="Verstehdieaktie", page_icon = "📖", layout="wid
 # st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
+# hide_streamlit_style = """
+#     <style>
+#     div[data-testid="stToolbar"] {
+#         visibility: hidden;
+#         height: 0%;
+#         position: fixed;
+#     }
+#     div[data-testid="stDecoration"] {
+#         visibility: hidden;
+#         height: 0%;
+#         position: fixed;
+#     }
+#     div[data-testid="stStatusWidget"] {
+#         visibility: hidden;
+#         height: 0%;
+#         position: fixed;
+#     }
+#     #MainMenu {
+#         visibility: hidden;
+#     }
+#     header {
+#         visibility: hidden;
+#         height: 0%;
+#     }
+#     footer {
+#         visibility: hidden;
+#         height: 0%;
+#     }
+#     </style>
+#     """
+
+# # Apply the custom style
+# st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 hide_streamlit_style = """
     <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
     div[data-testid="stToolbar"] {
         visibility: hidden;
         height: 0%;
@@ -88,21 +125,12 @@ hide_streamlit_style = """
         height: 0%;
         position: fixed;
     }
-    #MainMenu {
+    #stHeaderLogo {
         visibility: hidden;
-    }
-    header {
-        visibility: hidden;
-        height: 0%;
-    }
-    footer {
-        visibility: hidden;
-        height: 0%;
     }
     </style>
-    """
+"""
 
-# Apply the custom style
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
