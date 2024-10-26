@@ -17052,9 +17052,9 @@ if selected == "Stock Analysis Tool":
                               total = df.T
                               total.columns = total.iloc[0]  # Use the first row as column names
                               total = total[1:]
-                              #total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
+                              total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
 
-                              total = total.apply(lambda row: row.apply(lambda x: "{:,.0f}".format(x / 1000000)))
+                              #total = total.apply(lambda row: row.apply(lambda x: "{:,.0f}".format(x / 1000000)))
 
                               ###
 
@@ -17216,10 +17216,7 @@ if selected == "Stock Analysis Tool":
                                         return 'color: green'
                                    return ''  
                               # Default styling (no additional styling)
-
-                              
-                              #styled_df = df.style.applymap(highlight_negative) \
-                              styled_df = df.style.apply(highlight_negative) \
+                              styled_df = df.style.applymap(highlight_negative) \
                                    .set_table_styles(
 
                                    [
@@ -18607,7 +18604,7 @@ if selected == "Stock Analysis Tool":
                                              total.columns = total.iloc[0]  
                                              total = total[1:]  # Remove the first row
 
-                                             total_annual = total.apply(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
+                                             total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
 
                                              ################################ Quarter###############################
 
@@ -18635,7 +18632,7 @@ if selected == "Stock Analysis Tool":
                                              total = total[1:]  # Remove the first row
 
 
-                                             total_quarter = total.apply(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
+                                             total_quarter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
 
 
           
@@ -19182,7 +19179,7 @@ if selected == "Stock Analysis Tool":
                                    total.columns = total.iloc[0]  # Use the first row as column names
                                    total = total[1:]  
 
-                                   total_annual = total.apply(lambda x: "{:.2f}B".format(x / 1e9) if abs(x)>= 1e9 else "{:,.0f}M".format(x / 1e6))
+                                   total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x)>= 1e9 else "{:,.0f}M".format(x / 1e6))
                                    Changes_in_working_capital_annual_df = financials_df(Changes_in_working_capital_annual_10_unpacked, date_annual, "Changes in Working Capital")
                                    Capex_annual_df = financials_df(Capex_annual_10_unpacked, date_annual, "Capital Expenditure")
                                    Purchase_of_Investment_annual_df = financials_df(Purchase_of_Investment_annual_10_unpacked, date_annual, "Purchase of Investments")
@@ -19236,7 +19233,7 @@ if selected == "Stock Analysis Tool":
                                         total.columns = total.iloc[0]  # Use the first row as column names
                                         total = total[1:]  # Remove the first row
 
-                                        total_quarter = total.apply(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
+                                        total_quarter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.0f}M".format(x / 1e6))
 
 
                                         Net_Operating_CashFlow_quarter_df = financials_df(Net_Operating_CashFlow_quarter_10_unpacked , date_quarter, "Net Operating Cash Flow")
