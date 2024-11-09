@@ -14901,7 +14901,7 @@ if selected == "Stock Analysis Tool":
                     # Create the arrow based on percentage difference
                   
 
-                    if percentage_difference > float(0.0):
+                    if percentage_difference > 0.0:
                          arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
                     else:
                          arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
