@@ -14849,8 +14849,8 @@ if selected == "Stock Analysis Tool":
                     start_date = datetime.now() - timedelta(days=39 * 365)
                     end_date=datetime.now() 
 
-                    start_date = datetime.now() - timedelta(days=39 * 365)
-                    end_date = datetime.now()
+                    #start_date = datetime.now() - timedelta(days=39 * 365)
+                    #end_date = datetime.now()
 
                     data = yf.download(ticker, start=start_date, end=end_date)
                
@@ -14858,12 +14858,21 @@ if selected == "Stock Analysis Tool":
                          close_price = round(data['Close'][-2], 2)
                          percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
                          converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+
+
+                         # Store percentage_difference and converted_amount in session_state
+                         st.session_state.percentage_difference = percentage_difference
+                         st.session_state.converted_amount = converted_amount
+
                     except Exception as e:
                          close_price = None
                          percentage_difference = None
                          converted_amount = None
+                         st.session_state.percentage_difference = None
+                         st.session_state.converted_amount = None
+
                     
-                    return close_price, percentage_difference, converted_amount
+                    return percentage_difference, converted_amount
 
                # Main function to run the app
                def main():
@@ -14876,9 +14885,10 @@ if selected == "Stock Analysis Tool":
                          st.session_state.current_price = get_current_price(ticker)  # Define this function as needed
                          st.session_state.price_data = get_price_data(ticker, st.session_state.current_price, usd_to_eur_rate)
 
+                    # Unpack price data from session state
                     current_price = st.session_state.current_price
-                    close_price, percentage_difference,converted_amount= st.session_state.price_data
-                    converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+                    percentage_difference,converted_amount= st.session_state.price_data
+                    #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
                     green_style = "color: green;"
                     formatted_value = f"{current_price:.2f} $"
@@ -14887,37 +14897,43 @@ if selected == "Stock Analysis Tool":
                     formatted_value2 = f"{converted_amount} €"
                     formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
 
-                    with st.container():
+                        # Create the arrow based on percentage difference
+                    if percentage_difference is not None:
+                         if percentage_difference > 0:
+                              arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
+                         else:
+                              arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
 
-                         with middle:
-                              try:
-                                   # Set arrow text and color based on percentage_difference
-                                   if percentage_difference > 0:
-                                        arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
-                                   else:
-                                        arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
 
-                                      # Render formatted prices and the arrow
-                                   st.markdown(
-                                        f"<div style='text-align: center; width: 100%;'>"
-                                        f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
-                                        f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
-                                        f"{arrow_text} <span style='color:{'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
-                                        f"</div>",
-                                        unsafe_allow_html=True
-                                   )
-                              except Exception as e:
-                                   st.markdown(
-                                        f"<div style='text-align: center; width: 100%;'>"
-                                        f"Current Price: {formatted_price_with_color} "
-                                        f"Aktueller Preis: {formatted_price_with_color2}</div>",
-                                        unsafe_allow_html=True
-                                   )
+
+                         with st.container():
+
+                              with middle:
+                                   try:
+                                        st.markdown(
+                                             f"<div style='text-align: center; width: 100%;'>"
+                                             f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
+                                             f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
+                                             f"{arrow_text} <span style='color:{'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
+                                             f"</div>",
+                                             unsafe_allow_html=True
+                                        )
+                                   except Exception as e:
+                                        st.markdown(
+                                             f"<div style='text-align: center; width: 100%;'>"
+                                             f"Current Price: {formatted_price_with_color} "
+                                             f"Aktueller Preis: {formatted_price_with_color2}</div>",
+                                             unsafe_allow_html=True
+                                        )
+                    else:
+                         st.write("Error: Unable to fetch price data")
+
                if __name__ == "__main__":
                     main()
 
                current_price = get_current_price(ticker)  # Get current price
                converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+               #converted_amount = converted_amount
 
 
                ########################
