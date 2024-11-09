@@ -14844,7 +14844,7 @@ if selected == "Stock Analysis Tool":
                def format_date(date):
                     return date.strftime('%Y/%m/%d')
 
-
+               
                def get_price_data(ticker, current_price, usd_to_eur_rate):
                     start_date = datetime.now() - timedelta(days=39 * 365)
                     end_date=datetime.now() 
@@ -14879,6 +14879,7 @@ if selected == "Stock Analysis Tool":
                     #ticker = st.text_input("Enter Ticker Symbol", "AAPL")  # Example ticker input
                     #usd_to_eur_rate = 0.85  # Example conversion rate
 
+          
                     # Check if ticker has changed
                     if ticker not in st.session_state or st.session_state.ticker != ticker:
                          st.session_state.ticker = ticker
@@ -14897,35 +14898,38 @@ if selected == "Stock Analysis Tool":
                     formatted_value2 = f"{converted_amount} €"
                     formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
 
-                        # Create the arrow based on percentage difference
-               
-                    if percentage_difference > 0:
-                         arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
+                    # Create the arrow based on percentage difference
+                    if percentage_difference is not None:
+
+                         if percentage_difference > 0:
+                              arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
+                         else:
+                              arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
+
+
+
+                         with st.container():
+
+                              with middle:
+                                   try:
+                                        st.markdown(
+                                             f"<div style='text-align: center; width: 100%;'>"
+                                             f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
+                                             f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
+                                             f"{arrow_text} <span style='color:{'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
+                                             f"</div>",
+                                             unsafe_allow_html=True
+                                        )
+                                   except Exception as e:
+                                        st.markdown(
+                                             f"<div style='text-align: center; width: 100%;'>"
+                                             f"Current Price: {formatted_price_with_color} "
+                                             f"Aktueller Preis: {formatted_price_with_color2}</div>",
+                                             unsafe_allow_html=True
+                                             )
                     else:
-                         arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
+                         st.write("Error: Unable to fetch price data")
 
-
-
-                    with st.container():
-
-                         with middle:
-                              try:
-                                   st.markdown(
-                                        f"<div style='text-align: center; width: 100%;'>"
-                                        f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
-                                        f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
-                                        f"{arrow_text} <span style='color:{'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
-                                        f"</div>",
-                                        unsafe_allow_html=True
-                                   )
-                              except Exception as e:
-                                   st.markdown(
-                                        f"<div style='text-align: center; width: 100%;'>"
-                                        f"Current Price: {formatted_price_with_color} "
-                                        f"Aktueller Preis: {formatted_price_with_color2}</div>",
-                                        unsafe_allow_html=True
-                                   )
-               
                if __name__ == "__main__":
                     main()
 
