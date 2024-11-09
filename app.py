@@ -14856,7 +14856,7 @@ if selected == "Stock Analysis Tool":
                
                     try:
                          close_price = round(data['Close'][-2], 2)
-                         percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
+                         percentage_difference = (((current_price - close_price) / close_price) * 100)
                          converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
 
@@ -14905,7 +14905,7 @@ if selected == "Stock Analysis Tool":
                      #    arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
                     #else:
                      #    arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
-                    up_down = 0 
+                    up_down = 0.0
 
                     arrow_text = '<span style="color: green; font-size: 24px;">↗</span>' if percentage_difference >= up_down else '<span style="color: red; font-size: 24px;">↘</span>'
                     color = 'green' if percentage_difference >= up_down else 'red'
