@@ -14856,7 +14856,7 @@ if selected == "Stock Analysis Tool":
                
                     try:
                          close_price = round(data['Close'][-2], 2)
-                         percentage_difference = float(round(((current_price - close_price) / close_price) * 100, 2))
+                         percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
                          converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
 
@@ -14906,8 +14906,11 @@ if selected == "Stock Analysis Tool":
                     #else:
                      #    arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
                     up_down = 0 
+
                     arrow_text = '<span style="color: green; font-size: 24px;">↗</span>' if percentage_difference >= up_down else '<span style="color: red; font-size: 24px;">↘</span>'
-                    formatted_text = f"{arrow_text} <span style='color: {'green' if percentage_difference >= up_down else 'red'};'>{percentage_difference:.2f}%</span>"
+                    color = 'green' if percentage_difference >= up_down else 'red'
+                    formatted_text = f"{arrow_text} <span style='color: {color};'>{percentage_difference:.2f}%</span>"
+
 
 
                     with st.container():
@@ -14922,6 +14925,7 @@ if selected == "Stock Analysis Tool":
                                         f"</div>",
                                         unsafe_allow_html=True
                                    )
+
                               except Exception as e:
                                    st.markdown(
                                         f"<div style='text-align: center; width: 100%;'>"
@@ -14929,6 +14933,7 @@ if selected == "Stock Analysis Tool":
                                         f"Aktueller Preis: {formatted_price_with_color2}</div>",
                                         unsafe_allow_html=True
                                    )
+
 
                if __name__ == "__main__":
                     main()
