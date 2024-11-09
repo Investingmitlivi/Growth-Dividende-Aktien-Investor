@@ -14899,13 +14899,14 @@ if selected == "Stock Analysis Tool":
                     formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
 
                     # Create the arrow based on percentage difference
-                  
+                    #print("percentage_difference",percentage_difference)
 
-                    if percentage_difference > 0.0:
-                         arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
-                    else:
-                         arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
-
+                    #if percentage_difference > float(0.0):
+                     #    arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
+                    #else:
+                     #    arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
+                    arrow_text = '<span style="color: green; font-size: 24px;">↗</span>' if percentage_difference > 0 else '<span style="color: red; font-size: 24px;">↘</span>'
+                    formatted_text = f"{arrow_text} <span style='color: {'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
 
 
                     with st.container():
@@ -14916,7 +14917,7 @@ if selected == "Stock Analysis Tool":
                                         f"<div style='text-align: center; width: 100%;'>"
                                         f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
                                         f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
-                                        f"{arrow_text} <span style='color:{'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
+                                        f"{formatted_text}"
                                         f"</div>",
                                         unsafe_allow_html=True
                                    )
