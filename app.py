@@ -14857,6 +14857,7 @@ if selected == "Stock Analysis Tool":
                     try:
                          close_price = round(data['Close'][-2], 2)
                          percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
+                         
                          converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
                     except Exception as e:
                          close_price = None
@@ -14864,6 +14865,10 @@ if selected == "Stock Analysis Tool":
                          converted_amount = None
                     
                     return close_price, percentage_difference, converted_amount
+               
+
+
+               
 
                # Main function to run the app
                def main():
@@ -14892,7 +14897,7 @@ if selected == "Stock Analysis Tool":
                          with middle:
                               try:
                                    # Set arrow text and color based on percentage_difference
-                                   if percentage_difference > 0:
+                                   if percentage_difference > 0.1:
                                         arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
                                    else:
                                         arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
@@ -14901,7 +14906,7 @@ if selected == "Stock Analysis Tool":
                                         f"<div style='text-align: center; width: 100%;'>"
                                         f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
                                         f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
-                                        f"{arrow_text} <span style='color:{'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
+                                        f"{arrow_text} <span style='color:{'green' if percentage_difference > 0.1 else 'red'};'>{percentage_difference:.2f}%</span>"
                                         f"</div>",
                                         unsafe_allow_html=True
                                    )
@@ -15643,6 +15648,11 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'],
                                              st.session_state[f'{ticker}_revenue_growth_10years'],
                                              st.session_state[f'{ticker}_Net_interest_Income_annual_10'],
+                                             st.session_state[f'{ticker}_Net_interest_Income_annual_10_growth'],
+                                             st.session_state[f'{ticker}_Net_interest_Income_quarter_10_growth'],
+
+
+
                                              st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked'],
                                              st.session_state[f'{ticker}_shares_basic_annual_10_unpacked'],
                                              st.session_state[f'{ticker}_shares_diluted_quarter_10_unpacked'],
@@ -15681,8 +15691,12 @@ if selected == "Stock Analysis Tool":
 
                               try:
                                    Net_interest_Income_annual_10_unpacked = annual_data['net_interest_income'][-10:]
+                                   Net_interest_Income_annual_10_growth_unpacked = annual_data['net_interest_income_growth'][-10:]
+                                   Net_interest_Income_quarter_10_unpacked = quarterly_data['net_interest_income_growth'][-10:]       
                               except Exception as e:
                                    Net_interest_Income_annual_10_unpacked =[0]*len_10_annual
+                                   Net_interest_Income_annual_10_growth_unpacked =[0]*len_10_annual
+                                   Net_interest_Income_quarter_10_unpacked =[0]*len_10_quarter          
 
 
 
@@ -15701,6 +15715,9 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_shares_basic_quarterly_10_unpacked']=shares_basic_quarterly_10_unpacked
                               st.session_state[f'{ticker}_Net_interest_Income_annual_10'] =Net_interest_Income_annual_10_unpacked
 
+                              st.session_state[f'{ticker}_Net_interest_Income_annual_10_growth'] =Net_interest_Income_annual_10_growth_unpacked
+                              st.session_state[f'{ticker}_Net_interest_Income_quarter_10_growth'] =Net_interest_Income_quarter_10_unpacked
+
 
 
 
@@ -15711,8 +15728,10 @@ if selected == "Stock Analysis Tool":
                                         Revenue_growth_5years,
                                         Revenue_growth_10quarter_unpacked,
                                         Revenue_growth_10years,shares_diluted_annual_10_unpacked,
-                                        shares_basic_annual_10_unpacked,shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked, Net_interest_Income_annual_10_unpacked
-          )
+                                        shares_basic_annual_10_unpacked,shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked, 
+                                        Net_interest_Income_annual_10_unpacked,Net_interest_Income_annual_10_growth_unpacked,
+                                        Net_interest_Income_quarter_10_unpacked
+                                        )
 
                          # Assuming `annual_data` and `ticker` are defined elsewhere
                          (average_revenue_annual_ttm,
@@ -15722,7 +15741,9 @@ if selected == "Stock Analysis Tool":
                          Revenue_growth_3years,
                          Revenue_growth_5years,Revenue_growth_10quarter_unpacked,Revenue_growth_10years,
                          shares_diluted_annual_10_unpacked,shares_basic_annual_10_unpacked,
-                         shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked,Net_interest_Income_annual_10_unpacked
+                         shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked,Net_interest_Income_annual_10_unpacked,
+                         Net_interest_Income_annual_10_growth_unpacked,
+                         Net_interest_Income_quarter_10_unpacked
                          ) = calculate_revenue_and_growth(annual_data,quarterly_data, ticker)
 
           ###################################################################################################
@@ -20851,6 +20872,7 @@ if selected == "Stock Analysis Tool":
                                    'Period End Date': Period_end_dates_annual,
                                    'Revenue growth': Revenue_growth_10_unpacked,
                                    'Net Income growth': NetIncome_growth_annual_10_unpacked,
+                                   'Net Interest Income growth': Net_interest_Income_annual_10_growth_unpacked,
                                    'FCF growth': fcf_growth_annual_10_unpacked ,
                                    'EPS growth':EPS_growth_annual_10yrs_unpacked,
                                    'FCF Margin':FCF_Margin_annual_10unpacked,
@@ -20879,6 +20901,7 @@ if selected == "Stock Analysis Tool":
                
                                    ('Revenue growth', Revenue_growth_10_unpacked),
                                    ('Net Income growth', NetIncome_growth_annual_10_unpacked),
+                                   ('Net Interest Income growth', Net_interest_Income_annual_10_growth_unpacked),
                                    ('FCF growth', fcf_growth_annual_10_unpacked ),
                                    ('EPS growth',EPS_growth_annual_10yrs_unpacked),
                                    ('FCF Margin',FCF_Margin_annual_10unpacked), 
@@ -20908,7 +20931,7 @@ if selected == "Stock Analysis Tool":
                                         if not isinstance(metric_data, list):
                                              metric_data = [metric_data]  # Convert non-iterable values to lists
 
-                                        if metric_name in ('Revenue growth', 'Net Income growth', 'FCF growth', 'EPS growth','FCF Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
+                                        if metric_name in ('Revenue growth', 'Net Income growth','Net Interest Income growth','FCF growth', 'EPS growth','FCF Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
                                              formatted_data = ["{:.2f}%".format(data * 100) for data in metric_data]
                                         elif metric_name == 'Book Value':
                                              formatted_data = ["{:.2f}B".format(data / 1_000_000_000) for data in metric_data]
@@ -20936,6 +20959,7 @@ if selected == "Stock Analysis Tool":
                                                        'Period End Date': Period_end_dates_quarter,
                                                        'Revenue growth': Revenue_growth_10quarter_unpacked,
                                                        'Net Income growth': NetIncome_growth_quarter_10_unpacked,
+                                                       'Net Interest Income growth': Net_interest_Income_quarter_10_unpacked,
                                                        'FCF growth': FCF_growth_quarter_10_unpacked,
                                                        'EPS growth':EPS_growth_quarter_10_unpacked,
                                                        'FCF Margin':FCF_Margin_quarter_10_unpacked,
@@ -20962,6 +20986,7 @@ if selected == "Stock Analysis Tool":
                                                        metrics = [
                                                        ('Revenue growth ', Revenue_growth_10quarter_unpacked),
                                                        ('Net Income growth', NetIncome_growth_quarter_10_unpacked),
+                                                       ('Net Interest Income growth', Net_interest_Income_quarter_10_unpacked),
                                                        ('FCF growth', FCF_growth_quarter_10_unpacked),
                                                        ('EPS growth',EPS_growth_quarter_10_unpacked),
                                                        ('FCF Margin',FCF_Margin_quarter_10_unpacked), 
@@ -20991,7 +21016,7 @@ if selected == "Stock Analysis Tool":
                                                             if not isinstance(metric_data, list):
                                                                  metric_data = [metric_data]  # Convert non-iterable values to lists
 
-                                                            if metric_name in ('Revenue growth', 'Net Income growth', 'FCF growth', 'EPS growth','FCF Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
+                                                            if metric_name in ('Revenue growth', 'Net Income growth','Net Interest Income growth', 'FCF growth', 'EPS growth','FCF Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
                                                                  formatted_data = ["{:.2f}%".format(data * 100) for data in metric_data]
                                                             elif metric_name == 'Book Value':
                                                                  formatted_data = ["{:.2f}B".format(data / 1_000_000_000) for data in metric_data]
@@ -21012,7 +21037,7 @@ if selected == "Stock Analysis Tool":
 
 
                with st.container():
-                    use_container_width=True
+                    #use_container_width=True
                     with Charts:
                               Annual, Quarter = st.tabs(["Annual", "Quarterly"])
                               with Annual:
