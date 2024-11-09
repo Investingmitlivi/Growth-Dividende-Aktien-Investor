@@ -14899,36 +14899,34 @@ if selected == "Stock Analysis Tool":
                     formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
 
                     # Create the arrow based on percentage difference
-                    if percentage_difference is not None:
+                  
 
-                         if percentage_difference > 0:
-                              arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
-                         else:
-                              arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
-
-
-
-                         with st.container():
-
-                              with middle:
-                                   try:
-                                        st.markdown(
-                                             f"<div style='text-align: center; width: 100%;'>"
-                                             f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
-                                             f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
-                                             f"{arrow_text} <span style='color:{'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
-                                             f"</div>",
-                                             unsafe_allow_html=True
-                                        )
-                                   except Exception as e:
-                                        st.markdown(
-                                             f"<div style='text-align: center; width: 100%;'>"
-                                             f"Current Price: {formatted_price_with_color} "
-                                             f"Aktueller Preis: {formatted_price_with_color2}</div>",
-                                             unsafe_allow_html=True
-                                             )
+                    if percentage_difference > 0:
+                         arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
                     else:
-                         st.write("Error: Unable to fetch price data")
+                         arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
+
+
+
+                    with st.container():
+
+                         with middle:
+                              try:
+                                   st.markdown(
+                                        f"<div style='text-align: center; width: 100%;'>"
+                                        f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
+                                        f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
+                                        f"{arrow_text} <span style='color:{'green' if percentage_difference > 0 else 'red'};'>{percentage_difference:.2f}%</span>"
+                                        f"</div>",
+                                        unsafe_allow_html=True
+                                   )
+                              except Exception as e:
+                                   st.markdown(
+                                        f"<div style='text-align: center; width: 100%;'>"
+                                        f"Current Price: {formatted_price_with_color} "
+                                        f"Aktueller Preis: {formatted_price_with_color2}</div>",
+                                        unsafe_allow_html=True
+                                   )
 
                if __name__ == "__main__":
                     main()
