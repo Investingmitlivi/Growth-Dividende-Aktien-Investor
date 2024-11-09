@@ -3137,7 +3137,7 @@ config = {'displayModeBar': False}
 #           'HGLB':'Highland Global Allocation Fund ',
 #           'HGTY':'Hagerty Inc.  ',
 #           'HGV':'Hilton Grand Vacations Inc. ',
-#           'HHC':'Howard Hughes Corporation ',
+#           'HHH':'Howard Hughes Corporation ',
 #           'HHGC':'HHG Capital Corporation ',
 #           'HHGCR':'HHG Capital Corporation Rights',
 #           'HHGCW':'HHG Capital Corporation ',
@@ -7492,11 +7492,12 @@ if selected == "Stock Analysis Tool":
           if 'username' not in st.session_state:
                st.session_state.username = ''
           if 'useremail' not in st.session_state:
-               st.session_state.useremail = ''
-
-           #from perplexity    
+               st.session_state.useremail = ''  
           if 'is_logged_in' not in st.session_state:
                st.session_state.is_logged_in = False
+          if 'needs_rerun' not in st.session_state:
+               st.session_state.needs_rerun = False
+
          # if "signedout" not in st.session_state:
            #    st.session_state["signedout"] = False
          # if 'signout' not in st.session_state:
@@ -7505,12 +7506,23 @@ if selected == "Stock Analysis Tool":
           # Check for login token in query parameters
 
               
-          if 'needs_rerun' not in st.session_state:
-               st.session_state.needs_rerun = False
 
-              # Check for login token in query parameters or session state
-          if 'login_token' in st.query_params:
-               st.session_state.login_token = st.query_params['login_token']
+          #     # Check for login token in query parameters or session state
+          # if 'login_token' in st.query_params:
+          #      st.session_state.login_token = st.query_params['login_token']
+
+                   # Retrieve current query parameters
+          # Retrieve current query parameters
+          query_params = st.query_params
+
+          # Check for 'login_token' in query parameters
+          if 'login_token' in query_params:
+               # Save the token to session state and remove it from the URL
+               st.session_state.login_token = query_params['login_token'][0]
+               
+               # Remove 'login_token' from the URL by updating query parameters
+               del query_params['login_token']
+               st.query_params = query_params
 
           if 'login_token' in st.session_state:
                try:
@@ -10622,7 +10634,7 @@ if selected == "Stock Analysis Tool":
                          'HGLB':'Highland Global Allocation Fund ',
                          'HGTY':'Hagerty Inc.  ',
                          'HGV':'Hilton Grand Vacations Inc. ',
-                         'HHC':'Howard Hughes Corporation ',
+                         'HHH':'Howard Hughes Holdings Inc. ',
                          'HHGC':'HHG Capital Corporation ',
                          'HHGCR':'HHG Capital Corporation Rights',
                          'HHGCW':'HHG Capital Corporation ',
@@ -14685,6 +14697,13 @@ if selected == "Stock Analysis Tool":
                Stock_description=data["data"]["metadata"]["description"]
                stock_sector=data["data"]["metadata"]["sector"]
                cik=data["data"]["metadata"]["CIK"]
+               net_debt_quater =quarterly_data['net_debt'][-5:]
+               net_debt_annual=annual_data['net_debt'][-5:]
+
+               print("net_debt_quater",net_debt_quater)
+               print("net_debt_annual",net_debt_annual)
+               
+               
                
           
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
@@ -22615,9 +22634,23 @@ if selected == "Contacts":
           if 'needs_rerun' not in st.session_state:
                st.session_state.needs_rerun = False
 
-              # Check for login token in query parameters or session state
-          if 'login_token' in st.query_params:
-               st.session_state.login_token = st.query_params['login_token']
+          #     # Check for login token in query parameters or session state
+          # if 'login_token' in st.query_params:
+          #      st.session_state.login_token = st.query_params['login_token']
+
+          # Retrieve current query parameters
+          query_params = st.experimental_get_query_params()
+
+          # Check if 'login_token' is in query parameters
+          if 'login_token' in query_params:
+          # Save the token to session state and remove it from the URL
+               st.session_state.login_token = query_params['login_token'][0]
+          
+          # Remove the token from the query parameters and update the URL
+               del query_params['login_token']
+               st.experimental_set_query_params(**query_params)  # Apply the updated query parameters
+
+               
 
           if 'login_token' in st.session_state:
                try:
