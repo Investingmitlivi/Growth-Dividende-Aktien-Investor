@@ -14905,8 +14905,9 @@ if selected == "Stock Analysis Tool":
                      #    arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
                     #else:
                      #    arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
-                    arrow_text = '<span style="color: green; font-size: 24px;">↗</span>' if percentage_difference > float(0.0) else '<span style="color: red; font-size: 24px;">↘</span>'
-                    formatted_text = f"{arrow_text} <span style='color: {'green' if percentage_difference > float(0.0) else 'red'};'>{percentage_difference:.2f}%</span>"
+                    up_down = 0 
+                    arrow_text = '<span style="color: green; font-size: 24px;">↗</span>' if percentage_difference > up_down else '<span style="color: red; font-size: 24px;">↘</span>'
+                    formatted_text = f"{arrow_text} <span style='color: {'green' if percentage_difference > up_down else 'red'};'>{percentage_difference:.2f}%</span>"
 
 
                     with st.container():
