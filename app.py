@@ -14897,6 +14897,7 @@ if selected == "Stock Analysis Tool":
                                    else:
                                         arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
 
+                                      # Render formatted prices and the arrow
                                    st.markdown(
                                         f"<div style='text-align: center; width: 100%;'>"
                                         f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
@@ -14907,11 +14908,11 @@ if selected == "Stock Analysis Tool":
                                    )
                               except Exception as e:
                                    st.markdown(
-                                        f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color} "
+                                        f"<div style='text-align: center; width: 100%;'>"
+                                        f"Current Price: {formatted_price_with_color} "
                                         f"Aktueller Preis: {formatted_price_with_color2}</div>",
                                         unsafe_allow_html=True
                                    )
-
                if __name__ == "__main__":
                     main()
 
