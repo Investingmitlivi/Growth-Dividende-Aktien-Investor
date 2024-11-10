@@ -7176,7 +7176,7 @@ if selected == "Home":
 #########################################################################################################################
           pdf_file_path = 'DCF Update.png'
           with col2:
-               st.image('DCF Update.png',use_container_width=True)
+               st.image('DCF Update.png',use_container_width =True)
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
                     st.download_button(
@@ -7190,7 +7190,7 @@ if selected == "Home":
           col1,col2 = st.columns(2)
           pdf_file_path = 'Verstehdieaktie_Financial_Ratios_calculation.pdf'
           with col1:
-               st.image('Verstehdieaktie_Financial_Ratios_calculation.jpg',use_container_width=True)
+               st.image('Verstehdieaktie_Financial_Ratios_calculation.jpg',use_container_width =True)
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
                     st.download_button(
@@ -14717,10 +14717,13 @@ if selected == "Stock Analysis Tool":
                #EPS_growth_annual_unpacked= annual_data['eps_diluted_growth'][-10:]
                Dividend_per_share = Financial_data['ttm']['dividends']
                #---------------------------pyfinanz-----------------------------------
-               try:        
+               try:
+
                     quote = Quote(ticker)
+
                except Exception:
-                    st.write()  
+                    st.write()
+               
                #--------------------------10K-----------------------------------
 
                link = f"https://www.sec.gov/edgar/browse/?CIK={cik}&owner=exclude"
@@ -14798,21 +14801,25 @@ if selected == "Stock Analysis Tool":
                #@st.cache_data(show_spinner=False)
                def get_current_price(ticker):
                     stock_info = yf.Ticker(ticker)
-                    # = Quote(ticker)
+                    #quote = Quote(ticker)
                     try:
                          current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
                          #current_price = float(quote.fundamental_df.at[0, "Price"])
                     except Exception as e:
                          try:
                               current_price = float(stock_info.info["previousClose"])
+                              
                          except Exception as e:
                               try:
                                    current_price = stock_info.history(period="2d", interval="1d")["Close"].iloc[-2]
 
                               except Exception:
 
-                                   current_price = (quote.fundamental_df.at[0, "Price"])
+                                   current_price = float(quote.fundamental_df.at[0, "Price"])
                                    current_price = float(current_price.replace(',', ''))
+
+                                   #current_price =  None 
+
 
                     return current_price
 
@@ -16782,6 +16789,7 @@ if selected == "Stock Analysis Tool":
                          try:
                               def unpack_and_store_fundamental_data(quote, ticker):
                                    # Check if data is already in session state
+                              
                                    if f'{ticker}_forwardPE' in st.session_state:
                                         return (
                                              st.session_state[f'{ticker}_forwardPE'],
@@ -16804,7 +16812,9 @@ if selected == "Stock Analysis Tool":
                          
                               
                                    # Unpacking the data from quote.fundamental_df
-                                   try:
+                                   try:            
+                                        #quote = Quote(ticker)
+
                                         forwardPE = quote.fundamental_df.at[0, "Forward P/E"]
                                         RSI = quote.fundamental_df.at[0, "RSI (14)"]
                                         PEG = quote.fundamental_df.at[0, "PEG"]
@@ -16867,9 +16877,9 @@ if selected == "Stock Analysis Tool":
                                         Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, 
                                         Earnings_next_5_yrs, Average_debt_equity_one)
 
-                                   # Usage
                               (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, Earnings_this_yr, 
                               Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, Average_debt_equity_one) = unpack_and_store_fundamental_data(quote, ticker)
+
                          except Exception as e:
                               forwardPE = "{:.2f}".format(00.00)
                               RSI = "{:.2f}".format(0.00)
@@ -16885,7 +16895,7 @@ if selected == "Stock Analysis Tool":
                               Earnings_next_yr_in_prozent = "{:.2f}".format(0.00)
                               Earnings_next_yr_in_value = "{:.2f}".format(0.00)
                               Earnings_next_5_yrs = "{:.2f}".format(0.00)
-                              Average_debt_equity_one = "{:.2f}".format(0.00)
+                              Average_debt_equity_one = "{:.2f}".format(0.0)
 
           ###################################################################################################
 
@@ -22119,27 +22129,27 @@ if selected == "Stock Analysis Tool":
                          #st.image('fcf estimate.png', use_column_width=True)
 
                          #st.write("DCF Calculation")
-                         st.image('DCF Update.png', caption = 'DCF Calculation' ,use_container_width=True)
+                         st.image('DCF Update.png', caption = 'DCF Calculation' ,use_container_width =True)
 
                          #st.write("Terminal Value")
-                         st.image('Terminal-Value.png', caption = 'Terminal Value' , use_container_width=True)
+                         st.image('Terminal-Value.png', caption = 'Terminal Value' , use_container_width =True)
 
                          #st.write("Multiple of Earnings Valuation")
-                         st.image('Multiples of Earnings.png', caption = "Multiple of Earnings Valuation", use_container_width=True)
+                         st.image('Multiples of Earnings.png', caption = "Multiple of Earnings Valuation", use_container_width =True)
 
                          #st.write("Net Present Value")
                          #st.image('NPV.png', caption = '**Net Present Value**', use_column_width=True)
                          #st.markdown("**Net Present Value**")
                          
-                         st.image('NPV.png', caption='Net Present Value', use_container_width=True)
+                         st.image('NPV.png', caption='Net Present Value', use_container_width =True)
 
 
                          #st.write("Dividend Discount Model")
                          #st.write("Das Modell basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden")
-                         st.image('DDM.png', caption='Das Dividend Discount Model basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden',use_container_width=True) 
+                         st.image('DDM.png', caption='Das Dividend Discount Model basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden',use_container_width =True) 
 
                          #st.write("CAGR")
-                         st.image('CAGR.png',caption='CAGR', use_container_width=True) 
+                         st.image('CAGR.png',caption='CAGR', use_container_width =True) 
 
                          
 
