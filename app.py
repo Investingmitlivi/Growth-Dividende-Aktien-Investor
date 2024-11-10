@@ -7163,7 +7163,7 @@ if selected == "Home":
           
 
           with col1:
-               st.image('Key_Financial_Ratios_Verstehdieaktie.png', use_column_width=True)
+               st.image('Key_Financial_Ratios_Verstehdieaktie.png', use_container_width=True)
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
                     st.download_button(
@@ -7176,7 +7176,7 @@ if selected == "Home":
 #########################################################################################################################
           pdf_file_path = 'DCF Update.png'
           with col2:
-               st.image('DCF Update.png',use_column_width=True)
+               st.image('DCF Update.png',use_container_width=True)
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
                     st.download_button(
@@ -7190,7 +7190,7 @@ if selected == "Home":
           col1,col2 = st.columns(2)
           pdf_file_path = 'Verstehdieaktie_Financial_Ratios_calculation.pdf'
           with col1:
-               st.image('Verstehdieaktie_Financial_Ratios_calculation.jpg',use_column_width=True)
+               st.image('Verstehdieaktie_Financial_Ratios_calculation.jpg',use_container_width=True)
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
                     st.download_button(
@@ -14717,8 +14717,10 @@ if selected == "Stock Analysis Tool":
                #EPS_growth_annual_unpacked= annual_data['eps_diluted_growth'][-10:]
                Dividend_per_share = Financial_data['ttm']['dividends']
                #---------------------------pyfinanz-----------------------------------
-                         
-               quote = Quote(ticker)
+               try:        
+                    quote = Quote(ticker)
+               except Exception:
+                    st.write()  
                #--------------------------10K-----------------------------------
 
                link = f"https://www.sec.gov/edgar/browse/?CIK={cik}&owner=exclude"
@@ -14796,7 +14798,7 @@ if selected == "Stock Analysis Tool":
                #@st.cache_data(show_spinner=False)
                def get_current_price(ticker):
                     stock_info = yf.Ticker(ticker)
-                    quote = Quote(ticker)
+                    # = Quote(ticker)
                     try:
                          current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
                          #current_price = float(quote.fundamental_df.at[0, "Price"])
@@ -14809,7 +14811,8 @@ if selected == "Stock Analysis Tool":
 
                               except Exception:
 
-                                   current_price = float(quote.fundamental_df.at[0, "Price"])
+                                   current_price = (quote.fundamental_df.at[0, "Price"])
+                                   current_price = float(current_price.replace(',', ''))
 
                     return current_price
 
@@ -16776,97 +16779,113 @@ if selected == "Stock Analysis Tool":
 
 
           ###################################################################################################
+                         try:
+                              def unpack_and_store_fundamental_data(quote, ticker):
+                                   # Check if data is already in session state
+                                   if f'{ticker}_forwardPE' in st.session_state:
+                                        return (
+                                             st.session_state[f'{ticker}_forwardPE'],
+                                             st.session_state[f'{ticker}_RSI'],
+                                             st.session_state[f'{ticker}_PEG'],
+                                             st.session_state[f'{ticker}_Beta'],
+                                             st.session_state[f'{ticker}_Moving_200'],
+                                             st.session_state[f'{ticker}_Moving_50'],
+                                             st.session_state[f'{ticker}_Target_Price'],
+                                             st.session_state[f'{ticker}_Dividend_TTM'],
+                                             st.session_state[f'{ticker}_Dividend_Est'],
+                                             st.session_state[f'{ticker}_Dividend_Ex_Date'],
+                                             st.session_state[f'{ticker}_Earnings_this_yr'],
+                                             st.session_state[f'{ticker}_Earnings_next_yr_in_prozent'],
+                                             st.session_state[f'{ticker}_Earnings_next_yr_in_value'],
+                                             st.session_state[f'{ticker}_Earnings_next_5_yrs'],
+                                             st.session_state[f'{ticker}_Average_debt_equity_one']
+                                        )
 
-                         def unpack_and_store_fundamental_data(quote, ticker):
-                              # Check if data is already in session state
-                              if f'{ticker}_forwardPE' in st.session_state:
-                                   return (
-                                        st.session_state[f'{ticker}_forwardPE'],
-                                        st.session_state[f'{ticker}_RSI'],
-                                        st.session_state[f'{ticker}_PEG'],
-                                        st.session_state[f'{ticker}_Beta'],
-                                        st.session_state[f'{ticker}_Moving_200'],
-                                        st.session_state[f'{ticker}_Moving_50'],
-                                        st.session_state[f'{ticker}_Target_Price'],
-                                        st.session_state[f'{ticker}_Dividend_TTM'],
-                                        st.session_state[f'{ticker}_Dividend_Est'],
-                                        st.session_state[f'{ticker}_Dividend_Ex_Date'],
-                                        st.session_state[f'{ticker}_Earnings_this_yr'],
-                                        st.session_state[f'{ticker}_Earnings_next_yr_in_prozent'],
-                                        st.session_state[f'{ticker}_Earnings_next_yr_in_value'],
-                                        st.session_state[f'{ticker}_Earnings_next_5_yrs'],
-                                        st.session_state[f'{ticker}_Average_debt_equity_one']
-                                   )
-
-                    
                          
-                              # Unpacking the data from quote.fundamental_df
-                              try:
-                                   forwardPE = quote.fundamental_df.at[0, "Forward P/E"]
-                                   RSI = quote.fundamental_df.at[0, "RSI (14)"]
-                                   PEG = quote.fundamental_df.at[0, "PEG"]
-                                   Beta = quote.fundamental_df.at[0, "Beta"]
-                                   Moving_200 = quote.fundamental_df.at[0, "SMA200"]
-                                   Moving_50 = quote.fundamental_df.at[0, "SMA50"]
-                                   Target_Price = quote.fundamental_df.at[0, "Target Price"]
-                                   Dividend_TTM = quote.fundamental_df.at[0, "Dividend TTM"]
-                                   Dividend_Est = quote.fundamental_df.at[0, "Dividend Est."]
-                                   Dividend_Ex_Date = quote.fundamental_df.at[0, "Dividend Ex-Date"]
-                                   Earnings_this_yr = quote.fundamental_df.at[0, "EPS this Y"]
-                                   Earnings_next_yr_in_prozent = quote.fundamental_df.at[0, "EPS next Y - EPS growth next year"]
-                                   Earnings_next_yr_in_value = quote.fundamental_df.at[0, "EPS next Y - EPS estimate for next year"]
-                                   Earnings_next_5_yrs = quote.fundamental_df.at[0, "EPS next 5Y"]
-                                   Average_debt_equity_one = quote.fundamental_df.at[0, "Debt/Eq"]
-
-                    
-
-                              except Exception as e:
-                                   forwardPE = "{:.2f}".format(00.00)
-                                   RSI = "{:.2f}".format(0.00)
-                                   PEG = "{:.2f}".format(0.00)
-                                   Beta = beta
-                                   Moving_200 = "{:.2f}".format(0.00)
-                                   Moving_50 = "{:.2f}".format(0.00)
-                                   Target_Price = "{:.2f}".format(0.00)
-                                   Dividend_TTM = "{:.2f}".format(0.00)
-                                   Dividend_Est = "{:.2f}".format(0.00)
-                                   Dividend_Ex_Date = "{:.2f}".format(0.00)
-                                   Earnings_this_yr = "{:.2f}".format(0.00)
-                                   Earnings_next_yr_in_prozent = "{:.2f}".format(0.00)
-                                   Earnings_next_yr_in_value = "{:.2f}".format(0.00)
-                                   Earnings_next_5_yrs = "{:.2f}".format(0.00)
-
-                                   Average_debt_equity_one = round((((sum(debt_equity_annual1_unpacked) / len(debt_equity_annual1_unpacked)))), 2)
+                              
+                                   # Unpacking the data from quote.fundamental_df
                                    try:
-                                        checking_valid_debt_equity = float(Average_debt_equity_one) > 0.00
+                                        forwardPE = quote.fundamental_df.at[0, "Forward P/E"]
+                                        RSI = quote.fundamental_df.at[0, "RSI (14)"]
+                                        PEG = quote.fundamental_df.at[0, "PEG"]
+                                        Beta = quote.fundamental_df.at[0, "Beta"]
+                                        Moving_200 = quote.fundamental_df.at[0, "SMA200"]
+                                        Moving_50 = quote.fundamental_df.at[0, "SMA50"]
+                                        Target_Price = quote.fundamental_df.at[0, "Target Price"]
+                                        Dividend_TTM = quote.fundamental_df.at[0, "Dividend TTM"]
+                                        Dividend_Est = quote.fundamental_df.at[0, "Dividend Est."]
+                                        Dividend_Ex_Date = quote.fundamental_df.at[0, "Dividend Ex-Date"]
+                                        Earnings_this_yr = quote.fundamental_df.at[0, "EPS this Y"]
+                                        Earnings_next_yr_in_prozent = quote.fundamental_df.at[0, "EPS next Y - EPS growth next year"]
+                                        Earnings_next_yr_in_value = quote.fundamental_df.at[0, "EPS next Y - EPS estimate for next year"]
+                                        Earnings_next_5_yrs = quote.fundamental_df.at[0, "EPS next 5Y"]
+                                        Average_debt_equity_one = quote.fundamental_df.at[0, "Debt/Eq"]
+
+                         
+
                                    except Exception as e:
-                                        Average_debt_equity_one = Average_debt_equity_one
+                                        forwardPE = "{:.2f}".format(00.00)
+                                        RSI = "{:.2f}".format(0.00)
+                                        PEG = "{:.2f}".format(0.00)
+                                        Beta = beta
+                                        Moving_200 = "{:.2f}".format(0.00)
+                                        Moving_50 = "{:.2f}".format(0.00)
+                                        Target_Price = "{:.2f}".format(0.00)
+                                        Dividend_TTM = "{:.2f}".format(0.00)
+                                        Dividend_Est = "{:.2f}".format(0.00)
+                                        Dividend_Ex_Date = "{:.2f}".format(0.00)
+                                        Earnings_this_yr = "{:.2f}".format(0.00)
+                                        Earnings_next_yr_in_prozent = "{:.2f}".format(0.00)
+                                        Earnings_next_yr_in_value = "{:.2f}".format(0.00)
+                                        Earnings_next_5_yrs = "{:.2f}".format(0.00)
 
-                              # Store the data in session state
-                              st.session_state[f'{ticker}_forwardPE'] = forwardPE
-                              st.session_state[f'{ticker}_RSI'] = RSI
-                              st.session_state[f'{ticker}_PEG'] = PEG
-                              st.session_state[f'{ticker}_Beta'] = Beta
-                              st.session_state[f'{ticker}_Moving_200'] = Moving_200
-                              st.session_state[f'{ticker}_Moving_50'] = Moving_50
-                              st.session_state[f'{ticker}_Target_Price'] = Target_Price
-                              st.session_state[f'{ticker}_Dividend_TTM'] = Dividend_TTM
-                              st.session_state[f'{ticker}_Dividend_Est'] = Dividend_Est
-                              st.session_state[f'{ticker}_Dividend_Ex_Date'] = Dividend_Ex_Date
-                              st.session_state[f'{ticker}_Earnings_this_yr'] = Earnings_this_yr
-                              st.session_state[f'{ticker}_Earnings_next_yr_in_prozent'] = Earnings_next_yr_in_prozent
-                              st.session_state[f'{ticker}_Earnings_next_yr_in_value'] = Earnings_next_yr_in_value
-                              st.session_state[f'{ticker}_Earnings_next_5_yrs'] = Earnings_next_5_yrs
-                              st.session_state[f'{ticker}_Average_debt_equity_one'] = Average_debt_equity_one
+                                        Average_debt_equity_one = round((((sum(debt_equity_annual1_unpacked) / len(debt_equity_annual1_unpacked)))), 2)
+                                        try:
+                                             checking_valid_debt_equity = float(Average_debt_equity_one) > 0.00
+                                        except Exception as e:
+                                             Average_debt_equity_one = Average_debt_equity_one
 
-                              return (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, 
-                                   Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, 
-                                   Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, 
-                                   Earnings_next_5_yrs, Average_debt_equity_one)
+                                   # Store the data in session state
+                                   st.session_state[f'{ticker}_forwardPE'] = forwardPE
+                                   st.session_state[f'{ticker}_RSI'] = RSI
+                                   st.session_state[f'{ticker}_PEG'] = PEG
+                                   st.session_state[f'{ticker}_Beta'] = Beta
+                                   st.session_state[f'{ticker}_Moving_200'] = Moving_200
+                                   st.session_state[f'{ticker}_Moving_50'] = Moving_50
+                                   st.session_state[f'{ticker}_Target_Price'] = Target_Price
+                                   st.session_state[f'{ticker}_Dividend_TTM'] = Dividend_TTM
+                                   st.session_state[f'{ticker}_Dividend_Est'] = Dividend_Est
+                                   st.session_state[f'{ticker}_Dividend_Ex_Date'] = Dividend_Ex_Date
+                                   st.session_state[f'{ticker}_Earnings_this_yr'] = Earnings_this_yr
+                                   st.session_state[f'{ticker}_Earnings_next_yr_in_prozent'] = Earnings_next_yr_in_prozent
+                                   st.session_state[f'{ticker}_Earnings_next_yr_in_value'] = Earnings_next_yr_in_value
+                                   st.session_state[f'{ticker}_Earnings_next_5_yrs'] = Earnings_next_5_yrs
+                                   st.session_state[f'{ticker}_Average_debt_equity_one'] = Average_debt_equity_one
 
-                              # Usage
-                         (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, Earnings_this_yr, 
-                         Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, Average_debt_equity_one) = unpack_and_store_fundamental_data(quote, ticker)
+                                   return (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, 
+                                        Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, 
+                                        Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, 
+                                        Earnings_next_5_yrs, Average_debt_equity_one)
+
+                                   # Usage
+                              (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, Earnings_this_yr, 
+                              Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, Average_debt_equity_one) = unpack_and_store_fundamental_data(quote, ticker)
+                         except Exception as e:
+                              forwardPE = "{:.2f}".format(00.00)
+                              RSI = "{:.2f}".format(0.00)
+                              PEG = "{:.2f}".format(0.00)
+                              Beta = beta
+                              Moving_200 = "{:.2f}".format(0.00)
+                              Moving_50 = "{:.2f}".format(0.00)
+                              Target_Price = "{:.2f}".format(0.00)
+                              Dividend_TTM = "{:.2f}".format(0.00)
+                              Dividend_Est = "{:.2f}".format(0.00)
+                              Dividend_Ex_Date = "{:.2f}".format(0.00)
+                              Earnings_this_yr = "{:.2f}".format(0.00)
+                              Earnings_next_yr_in_prozent = "{:.2f}".format(0.00)
+                              Earnings_next_yr_in_value = "{:.2f}".format(0.00)
+                              Earnings_next_5_yrs = "{:.2f}".format(0.00)
+                              Average_debt_equity_one = "{:.2f}".format(0.00)
 
           ###################################################################################################
 
@@ -22100,27 +22119,27 @@ if selected == "Stock Analysis Tool":
                          #st.image('fcf estimate.png', use_column_width=True)
 
                          #st.write("DCF Calculation")
-                         st.image('DCF Update.png', caption = 'DCF Calculation' ,use_column_width=True)
+                         st.image('DCF Update.png', caption = 'DCF Calculation' ,use_container_width=True)
 
                          #st.write("Terminal Value")
-                         st.image('Terminal-Value.png', caption = 'Terminal Value' , use_column_width=True)
+                         st.image('Terminal-Value.png', caption = 'Terminal Value' , use_container_width=True)
 
                          #st.write("Multiple of Earnings Valuation")
-                         st.image('Multiples of Earnings.png', caption = "Multiple of Earnings Valuation", use_column_width=True)
+                         st.image('Multiples of Earnings.png', caption = "Multiple of Earnings Valuation", use_container_width=True)
 
                          #st.write("Net Present Value")
                          #st.image('NPV.png', caption = '**Net Present Value**', use_column_width=True)
                          #st.markdown("**Net Present Value**")
                          
-                         st.image('NPV.png', caption='Net Present Value', use_column_width=True)
+                         st.image('NPV.png', caption='Net Present Value', use_container_width=True)
 
 
                          #st.write("Dividend Discount Model")
                          #st.write("Das Modell basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden")
-                         st.image('DDM.png', caption='Das Dividend Discount Model basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden',use_column_width=True) 
+                         st.image('DDM.png', caption='Das Dividend Discount Model basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden',use_container_width=True) 
 
                          #st.write("CAGR")
-                         st.image('CAGR.png',caption='CAGR', use_column_width=True) 
+                         st.image('CAGR.png',caption='CAGR', use_container_width=True) 
 
                          
 
