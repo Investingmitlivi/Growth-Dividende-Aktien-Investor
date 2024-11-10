@@ -7163,7 +7163,8 @@ if selected == "Home":
           
 
           with col1:
-               st.image('Key_Financial_Ratios_Verstehdieaktie.png', use_container_width=True)
+               #st.image('Key_Financial_Ratios_Verstehdieaktie.png', use_container_width=True)
+               st.image('Key_Financial_Ratios_Verstehdieaktie.png')
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
                     st.download_button(
@@ -7176,7 +7177,8 @@ if selected == "Home":
 #########################################################################################################################
           pdf_file_path = 'DCF Update.png'
           with col2:
-               st.image('DCF Update.png',use_container_width =True)
+               #st.image('DCF Update.png',use_container_width =True)
+               st.image('DCF Update.png')
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
                     st.download_button(
@@ -7190,7 +7192,8 @@ if selected == "Home":
           col1,col2 = st.columns(2)
           pdf_file_path = 'Verstehdieaktie_Financial_Ratios_calculation.pdf'
           with col1:
-               st.image('Verstehdieaktie_Financial_Ratios_calculation.jpg',use_container_width =True)
+               #st.image('Verstehdieaktie_Financial_Ratios_calculation.jpg',use_container_width =True)
+               st.image('Verstehdieaktie_Financial_Ratios_calculation.jpg')
                with open(pdf_file_path, 'rb') as pdf_file:
                     pdf_data = pdf_file.read()
                     st.download_button(
@@ -22129,19 +22132,25 @@ if selected == "Stock Analysis Tool":
                          #st.image('fcf estimate.png', use_column_width=True)
 
                          #st.write("DCF Calculation")
-                         st.image('DCF Update.png', caption = 'DCF Calculation' ,use_container_width =True)
+                         #st.image('DCF Update.png', caption = 'DCF Calculation' ,use_container_width =True)
+                         st.image('DCF Update.png', caption = 'DCF Calculation')
 
                          #st.write("Terminal Value")
-                         st.image('Terminal-Value.png', caption = 'Terminal Value' , use_container_width =True)
+                         #st.image('Terminal-Value.png', caption = 'Terminal Value' , use_container_width =True)
+                         st.image('Terminal-Value.png', caption = 'Terminal Value')
 
                          #st.write("Multiple of Earnings Valuation")
-                         st.image('Multiples of Earnings.png', caption = "Multiple of Earnings Valuation", use_container_width =True)
+                         #st.image('Multiples of Earnings.png', caption = "Multiple of Earnings Valuation", use_container_width =True)
+                         st.image('Multiples of Earnings.png', caption = "Multiple of Earnings Valuation")
+
 
                          #st.write("Net Present Value")
                          #st.image('NPV.png', caption = '**Net Present Value**', use_column_width=True)
                          #st.markdown("**Net Present Value**")
                          
-                         st.image('NPV.png', caption='Net Present Value', use_container_width =True)
+                         #st.image('NPV.png', caption='Net Present Value', use_container_width =True)
+                         st.image('NPV.png', caption='Net Present Value')
+
 
 
                          #st.write("Dividend Discount Model")
@@ -22149,7 +22158,8 @@ if selected == "Stock Analysis Tool":
                          st.image('DDM.png', caption='Das Dividend Discount Model basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden',use_container_width =True) 
 
                          #st.write("CAGR")
-                         st.image('CAGR.png',caption='CAGR', use_container_width =True) 
+                         #st.image('CAGR.png',caption='CAGR', use_container_width =True)
+                         st.image('CAGR.png',caption='CAGR')  
 
                          
 
