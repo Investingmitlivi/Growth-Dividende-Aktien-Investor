@@ -22155,7 +22155,7 @@ if selected == "Stock Analysis Tool":
 
                          #st.write("Dividend Discount Model")
                          #st.write("Das Modell basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden")
-                         st.image('DDM.png', caption='Das Dividend Discount Model basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden',use_container_width =True) 
+                         st.image('DDM.png', caption='Das Dividend Discount Model basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden') 
 
                          #st.write("CAGR")
                          #st.image('CAGR.png',caption='CAGR', use_container_width =True)
