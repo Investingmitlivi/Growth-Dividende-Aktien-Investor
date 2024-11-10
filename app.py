@@ -14592,7 +14592,8 @@ if selected == "Stock Analysis Tool":
                          'ZWS':'Zurn Elkay Water Solutions Corporation ',
                          'ZYME':'Zymeworks Inc. ',
                          'ZYNE':'Zynerba Pharmaceuticals Inc. ',
-                         'ZYXI':'Zynex Inc. '
+                         'ZYXI':'Zynex Inc. ',
+                         'EHMEF':'goeasy Ltd'
                     }
 
 
