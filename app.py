@@ -7448,7 +7448,7 @@ if selected == "Home":
 
           st.write(
           """
-          Track Super Investor portfolio like Warren Buffet, Ruane Cunniff, B.Tweedy, Ch. Browne
+          S&P 500 PE ratio, Price to Sales ratio, Earnings etc
            """
          )
           st.write("[Shiller PE ratio for the S&P 500 >](https://www.multpl.com/shiller-pe)")
