@@ -7449,7 +7449,14 @@ if selected == "Home":
 
           # Generates a 64-character hexadecimal string
           #st.write("Your secret key:", secret_key)
- 
+        
+          st.write(
+          """
+          Track Super Investor portfolio like Warren Buffet, Ruane Cunniff, B.Tweedy, Ch. Browne
+           """
+         )
+          st.write("[Shiller PE ratio for the S&P 500 >](https://www.multpl.com/shiller-pe)")
+         
 
 st.markdown("""
     <style>
