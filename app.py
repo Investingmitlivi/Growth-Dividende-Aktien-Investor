@@ -21799,7 +21799,7 @@ if selected == "Stock Analysis Tool":
                                         <b>5 YR Operating Margin Y/Y: {five_yrs_average_operating_margin}</b>
                                         <b> Current Operating Margin: {average_operating_margin1_quarter}</b><br>
                                         <span style='font-family: Calibri; font-style: italic;'>
-                                        Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) 
+                                        Die Operative Marge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) 
                                         und der Betriebskosten (wie Material-, Produktions-, Verwaltungs- und 
                                         Vertriebskosten) vom Umsatz übrig bleibt.
                                         </span>
