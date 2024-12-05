@@ -20138,6 +20138,7 @@ if selected == "Stock Analysis Tool":
                               def objective(g):
                                    return present_value(g, fcf, r, t, years) - current_price
                               return optimize.brentq(objective, -0.5, 0.5)
+                              
 
                          st.write("""
                          This app calculates the Implied Growth Rate using a Two-Stage Reverse DCF model.
@@ -20186,6 +20187,9 @@ if selected == "Stock Analysis Tool":
                                    # Additional information
                                    st.write("### Additional Information")
                                    final_fcf = fcf * (1 + implied_growth)**years
+                                   projected_fcfs = [fcf * (1 + implied_growth)**i for i in range(1, years + 1)]
+                                   projected_fcfs_rounded = [round(fcf, 2) for fcf in projected_fcfs]
+
                                    st.write(f"- Projected FCF after {years} years: ${final_fcf:.2f}")
                                    terminal_value = final_fcf * (1 + t) / (r - t)
                                    st.write(f"- Terminal Value: ${terminal_value:.2f}")
@@ -20193,7 +20197,36 @@ if selected == "Stock Analysis Tool":
                                    # Calculate percentage of value from terminal value
                                    total_value = present_value(implied_growth, fcf, r, t, years)
                                    terminal_value_percentage = (terminal_value / (1 + r)**years) / total_value * 100
+
                                    st.write(f"- Percentage of value from terminal value: {terminal_value_percentage:.2f}%")
+
+
+#                                   Use `simple_chart` to generate the FCF projections chart
+                                   @st.fragment
+                                   def simple_chart():
+                                        if st.button(label="Display FCF Estimate"):
+                                             # Generate FCF chart
+                                             years_list = list(range(1, years + 1))
+                                             fig = go.Figure()
+                                             fig.add_trace(
+                                                  go.Scatter(
+                                                  x=years_list, 
+                                                  y=projected_fcfs_rounded, 
+                                                  mode='lines+markers', 
+                                                  name="Projected FCF"
+                                                  )
+                                             )
+                                             fig.update_layout(
+                                                  title="Free Cash Flow (FCF) Projections",
+                                                  xaxis_title="Year",
+                                                  yaxis_title="FCF ($)",
+                                                  template="plotly_white",
+                                                  dragmode=False,  # Disable dragging for zooming
+                                             )
+                                             st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+                                   # Call the `simple_chart` function to display the plot
+                                   simple_chart()
 
                               except Exception as e:
                                    st.write(f" ")
