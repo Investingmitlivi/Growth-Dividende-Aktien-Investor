@@ -14869,12 +14869,13 @@ if selected == "Stock Analysis Tool":
                     start_date = datetime.now() - timedelta(days=39 * 365)
                     end_date=datetime.now() 
 
-                    start_date = datetime.now() - timedelta(days=39 * 365)
-                    end_date = datetime.now()
+                    #start_date = datetime.now() - timedelta(days=39 * 365)
+                    #end_date = datetime.now()
 
-                    data = yf.download(ticker, start=start_date, end=end_date)
+                    #data = yf.download(ticker, start=start_date, end=end_date)
                
                     try:
+                         data = yf.download(ticker, start=start_date, end=end_date)
                          close_price = round(data['Close'][-2], 2)
                          percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
                          
@@ -14906,36 +14907,68 @@ if selected == "Stock Analysis Tool":
                     converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
                     green_style = "color: green;"
-                    formatted_value = f"{current_price:.2f} $"
-                    formatted_price_with_color = f"<span style='{green_style}'>{formatted_value}</span>"
+                    red_style = "color: red;"
 
-                    formatted_value2 = f"{converted_amount} €"
-                    formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
+                    #formatted_value = f"{current_price:.2f} $"
+                    #formatted_price_with_color = f"<span style='{green_style}'>{formatted_value}</span>"
+
+                    #formatted_value2 = f"{converted_amount} €"
+                    #formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
+
+                        # Format values
+                    formatted_price_usd = f"{current_price:.2f} $"
+                    formatted_price_eur = f"{converted_amount} €"
+                    arrow_text = ""
+                    percentage_text = ""
+
+                        # Handle percentage difference rendering
+                    if percentage_difference is not None:
+                         if percentage_difference > 0:
+                              arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
+                              percentage_text = f"<span style='{green_style}'>{percentage_difference:.2f}%</span>"
+                         else:
+                              arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
+                              percentage_text = f"<span style='{red_style}'>{percentage_difference:.2f}%</span>"
+
+
 
                     with st.container():
 
                          with middle:
-                              try:
-                                   # Set arrow text and color based on percentage_difference
-                                   if percentage_difference > 0.1:
-                                        arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
-                                   else:
-                                        arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
+                              # try:
+                              #      # Set arrow text and color based on percentage_difference
+                              #      if percentage_difference > 0:
+                              #           arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
+                              #      else:
+                              #           arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
 
-                                   st.markdown(
-                                        f"<div style='text-align: center; width: 100%;'>"
-                                        f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
-                                        f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
-                                        f"{arrow_text} <span style='color:{'green' if percentage_difference > 0.1 else 'red'};'>{percentage_difference:.2f}%</span>"
-                                        f"</div>",
-                                        unsafe_allow_html=True
-                                   )
-                              except Exception as e:
-                                   st.markdown(
-                                        f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color} "
-                                        f"Aktueller Preis: {formatted_price_with_color2}</div>",
-                                        unsafe_allow_html=True
-                                   )
+                              #      st.markdown(
+                              #           f"<div style='text-align: center; width: 100%;'>"
+                              #           f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
+                              #           f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
+                              #           f"{arrow_text} <span style='color:{'green' if percentage_difference > 0.1 else 'red'};'>{percentage_difference:.2f}%</span>"
+                              #           f"</div>",
+                              #           unsafe_allow_html=True
+                              #      )
+                              # except Exception as e:
+                              #      st.markdown(
+                              #           f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color} "
+                              #           f"Aktueller Preis: {formatted_price_with_color2}</div>",
+                              #           unsafe_allow_html=True
+                              #      )
+
+                                      # Display current price and percentage difference
+                              st.markdown(
+                                   f"""
+                                   <div style="text-align: center; width: 100%;">
+                                        Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
+                                        Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
+                                        {arrow_text} {percentage_text}
+                                   </div>
+                                   """,
+                                   unsafe_allow_html=True,
+                              )
+
 
                if __name__ == "__main__":
                     main()
