@@ -14920,7 +14920,8 @@ if selected == "Stock Analysis Tool":
                     formatted_price_eur = f"{converted_amount} €"
                     #arrow_text = ""
                     #percentage_text = ""
-
+                    # Default value for percentage_text
+                    percentage_text = ""
                         # Handle percentage difference rendering
                     if percentage_difference is not None:
                          if percentage_difference > 0:
@@ -14928,12 +14929,13 @@ if selected == "Stock Analysis Tool":
                               #percentage_text = f"<span style='{green_style}'>{percentage_difference:.2f}%</span>"
                               percentage_text = f"(<span style='{green_style}'>{percentage_difference:.2f}%</span>)"
 
-                         else:
+                         elif percentage_difference < 0:
                               #arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
                               #percentage_text = f"<span style='{red_style}'>{percentage_difference:.2f}%</span>"
                               percentage_text = f"(<span style='{red_style}'>{percentage_difference:.2f}%</span>)"
 
-
+                         else:
+                                   percentage_text = "(0%)"  # In case of zero percentage difference
 
 
                     with st.container():
