@@ -14918,17 +14918,21 @@ if selected == "Stock Analysis Tool":
                         # Format values
                     formatted_price_usd = f"{current_price:.2f} $"
                     formatted_price_eur = f"{converted_amount} €"
-                    arrow_text = ""
-                    percentage_text = ""
+                    #arrow_text = ""
+                    #percentage_text = ""
 
                         # Handle percentage difference rendering
                     if percentage_difference is not None:
                          if percentage_difference > 0:
-                              arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
-                              percentage_text = f"<span style='{green_style}'>{percentage_difference:.2f}%</span>"
+                              #arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
+                              #percentage_text = f"<span style='{green_style}'>{percentage_difference:.2f}%</span>"
+                              percentage_text = f"(<span style='{green_style}'>{percentage_difference:.2f}%</span>)"
+
                          else:
-                              arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
-                              percentage_text = f"<span style='{red_style}'>{percentage_difference:.2f}%</span>"
+                              #arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
+                              #percentage_text = f"<span style='{red_style}'>{percentage_difference:.2f}%</span>"
+                              percentage_text = f"(<span style='{red_style}'>{percentage_difference:.2f}%</span>)"
+
 
 
 
@@ -14958,16 +14962,28 @@ if selected == "Stock Analysis Tool":
                               #      )
 
                                       # Display current price and percentage difference
+                              # st.markdown(
+                              #      f"""
+                              #      <div style="text-align: center; width: 100%;">
+                              #           Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
+                              #           Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
+                              #           {arrow_text} {percentage_text}
+                              #      </div>
+                              #      """,
+                              #      unsafe_allow_html=True,
+                              # )
+
                               st.markdown(
-                                   f"""
-                                   <div style="text-align: center; width: 100%;">
-                                        Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
-                                        Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
-                                        {arrow_text} {percentage_text}
-                                   </div>
-                                   """,
-                                   unsafe_allow_html=True,
-                              )
+                              f"""
+                              <div style="text-align: center; width: 100%;">
+                                   Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
+                                   Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
+                                   {percentage_text}
+                              </div>
+                              """,
+                              unsafe_allow_html=True,
+                         )
+
 
 
                if __name__ == "__main__":
@@ -19511,7 +19527,7 @@ if selected == "Stock Analysis Tool":
                               elif float(KGV) < 0.00:
                                         pe = "🔴"  # Red X for KCV smaller than 0
                               else:
-                                        pe = "✅"  # Green checkmark for KGV greater than or equal to 23      
+                                        pe = "🟢"  # Green checkmark for KGV greater than or equal to 23      
                          except Exception as e:
                               pe = "🔴" 
                          
@@ -19521,7 +19537,7 @@ if selected == "Stock Analysis Tool":
                               elif float(KCV) < 0.00:
                                         pcf = "🔴"  # Red X for KCV smaller than 0
                               else:
-                                        pcf= "✅"  # Green checkmark for KGV greater than or equal to 23
+                                        pcf= "🟢"  # Green checkmark for KGV greater than or equal to 23
                                    
                          except Exception as e:
                               pcf = "🔴" 
@@ -19532,11 +19548,11 @@ if selected == "Stock Analysis Tool":
                                         roe = "🔴"  # Red X for KGV less than 23
                               
                               else:
-                                        roe= "✅"  # Green checkmark for KGV greater than or equal to 23          
+                                        roe= "🟢"  # Green checkmark for KGV greater than or equal to 23          
 
                               if float(five_yrs_Nettomarge) > 5:
                                         
-                                   netmarge = "✅"  
+                                   netmarge = "🟢"  
                               else:
                                    netmarge = "🔴"    
                          except Exception as e:
@@ -19549,7 +19565,7 @@ if selected == "Stock Analysis Tool":
                               elif one_FCF_annual_payout < 0:
                                         payout = "🔴"  # Red X for KCV smaller than 0           
                               else:
-                                        payout= "✅"  # Green checkmark for KGV greater than or equal to 23
+                                        payout= "🟢"  # Green checkmark for KGV greater than or equal to 23
                          except Exception as e:
 
                               payout = "🔴" 
@@ -19558,13 +19574,13 @@ if selected == "Stock Analysis Tool":
                               if netincome_annual_funf_growth_ < 0:
                                         netincome = "🔴"  # Red X for KGV less than 23
                               else:
-                                        netincome= "✅"  # Green checkmark for KGV greater than or equal to 23
+                                        netincome= "🟢"  # Green checkmark for KGV greater than or equal to 23
 
 
                               if revenue_annual_funf_Growth < 0:
                                         rev = "🔴"  # Red X for KGV less than 23
                               else:
-                                        rev= "✅"  # Green checkmark for KGV greater than or equal to 23
+                                        rev= "🟢"  # Green checkmark for KGV greater than or equal to 23
                          except Exception as e:
                               rev = "🔴" 
                               netincome = "🔴"
@@ -19573,13 +19589,13 @@ if selected == "Stock Analysis Tool":
                               if FCF_funf_growth < 0:
                                         fcf = "🔴"  # Red X for KGV less than 23
                               else:
-                                        fcf= "✅"  # Green checkmark for KGV greater than or equal to 23
+                                        fcf= "🟢"  # Green checkmark for KGV greater than or equal to 23
 
 
                               if Shares_outstanding_funf_growth > 0:
                                         share = "🔴"  # Red X for KGV less than 23
                               else:
-                                        share= "✅"  # Green checkmark for KGV greater than or equal to 23
+                                        share= "🟢"  # Green checkmark for KGV greater than or equal to 23
                          except Exception as e:
 
                               share = "🔴" 
@@ -19588,7 +19604,7 @@ if selected == "Stock Analysis Tool":
                               if Average_ROIC_funf == 'NA' or float(Average_ROIC_funf[:-1]) < 9:
                                         roic = "🔴"  # Red X for 'NA' or less than 9
                               else:
-                                        roic= "✅"  # Green checkmark for KGV greater than or equal to 23
+                                        roic= "🟢"  # Green checkmark for KGV greater than or equal to 23
                          except Exception as e:
 
                               roic = "🔴" 
@@ -19602,7 +19618,7 @@ if selected == "Stock Analysis Tool":
                                    dt_equt = "🔴"  # Red X for KGV less than 23
 
                               else:
-                                        dt_equt= "✅"  # Gree
+                                        dt_equt= "🟢"  # Gree
 
                          except Exception as e:
 
@@ -19615,7 +19631,7 @@ if selected == "Stock Analysis Tool":
                                    
                                    schuld = "🔴"  # Red X for KGV less than 23
                               else:
-                                   schuld= "✅"  # Gree
+                                   schuld= "🟢"  # Gree
                          except Exception as e:
                               schuld ="🔴" 
 
