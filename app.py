@@ -7274,55 +7274,55 @@ if selected == "Home":
 
           with col1:
                st.title("Investment Calculator")
-
-               # User inputs
-               initial_investment = st.number_input("Initial Investment Amount (€)", value=20000.0, min_value=0.0, step=100.0)
-               annual_contribution = st.number_input("Additional Contribution (€)", value=1000.0, min_value=0.0, step=100.0)
-               years = st.number_input("Investment Time Horizon (years)", value=10, min_value=1, step=1)
-               annual_return = st.number_input("Expected Annual Return (%)", value=9.0, min_value=0.0, step=0.1)
-               compounding_frequency = st.selectbox("Compounding Frequency", [1, 4, 6, 12], index=2)  # Annually, Quarterly, Semi-annually, Monthly
-          
-          # Calculate the future value over time
-               if st.button("Calculate"):
-                    ending_balances, returns = calculate_investment_over_time(initial_investment, annual_contribution, years, annual_return, compounding_frequency)
-                    periods = np.arange(1, years + 1)
-                    
-                    st.write(f"### Final Investment Balance after {years} years: {format_currency(ending_balances[-1])}")
-                    
-                    fig2 = px.bar(
-                    x=periods,
-                    y=ending_balances,
-                    text=[format_currency(balance) for balance in ending_balances],
-                    labels={'x': 'Years', 'y': 'Ending Balance'},
-                    title="Investment Growth Over Time"
-                    )
-
-                    # Customize the layout to show the text properly
-                    fig2.update_traces(texttemplate='%{text}', textposition='inside')
-                    fig2.update_layout(yaxis_tickprefix='€', yaxis_tickformat='.2f')  # To format y-axis ticks
-
-                    fig2.update_layout(
-                         dragmode=False,  # Disable dragging for zooming
-                         )
-                    st.plotly_chart(fig2,use_container_width=True,config={'displayModeBar': False})
-
-                    
-                    # Automatically generate the PDF and provide a download link icon
-                    pdf_file = create_chart_pdf(periods, ending_balances, returns)
-                    with open(pdf_file, "rb") as pdf:
-                         st.download_button(
-                              label="📁 Download as PDF file",
-                              data=pdf,
-                              file_name="investment_growth_chart.pdf",
-                              mime="application/pdf",
-                              use_container_width=True
+               with st.expander("Click to Expand/minimize for Investment Inputs"):
+                    # User inputs
+                    initial_investment = st.number_input("Initial Investment Amount (€)", value=20000.0, min_value=0.0, step=100.0)
+                    annual_contribution = st.number_input("Additional Contribution (€)", value=1000.0, min_value=0.0, step=100.0)
+                    years = st.number_input("Investment Time Horizon (years)", value=10, min_value=1, step=1)
+                    annual_return = st.number_input("Expected Annual Return (%)", value=9.0, min_value=0.0, step=0.1)
+                    compounding_frequency = st.selectbox("Compounding Frequency", [1, 4, 6, 12], index=2)  # Annually, Quarterly, Semi-annually, Monthly
+               
+               # Calculate the future value over time
+                    if st.button("Calculate"):
+                         ending_balances, returns = calculate_investment_over_time(initial_investment, annual_contribution, years, annual_return, compounding_frequency)
+                         periods = np.arange(1, years + 1)
+                         
+                         st.write(f"### Final Investment Balance after {years} years: {format_currency(ending_balances[-1])}")
+                         
+                         fig2 = px.bar(
+                         x=periods,
+                         y=ending_balances,
+                         text=[format_currency(balance) for balance in ending_balances],
+                         labels={'x': 'Years', 'y': 'Ending Balance'},
+                         title="Investment Growth Over Time"
                          )
 
-                    # Explanation of the calculator
-                    st.write("""
-                    This investment calculator estimates the future value of your investments by taking into account the initial investment, additional contributions, the expected rate of return, and the compounding frequency (e.g., annually, quarterly, or monthly).
-                    The chart shows the total ending balance and the expected return at the end of each year using bar charts.
-                    """)
+                         # Customize the layout to show the text properly
+                         fig2.update_traces(texttemplate='%{text}', textposition='inside')
+                         fig2.update_layout(yaxis_tickprefix='€', yaxis_tickformat='.2f')  # To format y-axis ticks
+
+                         fig2.update_layout(
+                              dragmode=False,  # Disable dragging for zooming
+                              )
+                         st.plotly_chart(fig2,use_container_width=True,config={'displayModeBar': False})
+
+                         
+                         # Automatically generate the PDF and provide a download link icon
+                         pdf_file = create_chart_pdf(periods, ending_balances, returns)
+                         with open(pdf_file, "rb") as pdf:
+                              st.download_button(
+                                   label="📁 Download as PDF file",
+                                   data=pdf,
+                                   file_name="investment_growth_chart.pdf",
+                                   mime="application/pdf",
+                                   use_container_width=True
+                              )
+
+                         # Explanation of the calculator
+                         st.write("""
+                         This investment calculator estimates the future value of your investments by taking into account the initial investment, additional contributions, the expected rate of return, and the compounding frequency (e.g., annually, quarterly, or monthly).
+                         The chart shows the total ending balance and the expected return at the end of each year using bar charts.
+                         """)
 
 
 
@@ -7356,66 +7356,66 @@ if selected == "Home":
                return total_dividends_before_tax, dividends_over_years
           with col2:
                st.title("Dividend Calculator")
+               with st.expander("Click to Expand/minimize for your Inputs"):
+                    # User inputs
+                    starting_principal = st.number_input("Starting Principal (€)", min_value=0.0, value=100000.0, format="%.2f")
+                    annual_contribution = st.number_input("Annual Contribution (€)", min_value=0.0, value=20000.0, format="%.2f")
+                    dividend_tax_rate = st.number_input("Dividend Tax Rate (%)", min_value=0.0, value=15.0, format="%.2f")
+                    tax_exempt_income = st.number_input("Tax-Exempt Dividend Income Allowed Per Year (€)", min_value=0.0, value=0.0, format="%.2f")
+                    initial_dividend_yield = st.number_input("Initial Annual Dividend Yield (%)", min_value=0.0, value=5.0, format="%.2f")
+                    dividend_increase_rate = st.number_input("Expected Annual Dividend Amount Increase (%)", min_value=0.0, value=3.0, format="%.2f")
+                    share_price_appreciation = st.number_input("Expected Annual Share Price Appreciation (%)", min_value=0.0, value=3.0, format="%.2f")
+                    years = st.number_input("Years Invested", min_value=1, value=20)
 
-               # User inputs
-               starting_principal = st.number_input("Starting Principal (€)", min_value=0.0, value=100000.0, format="%.2f")
-               annual_contribution = st.number_input("Annual Contribution (€)", min_value=0.0, value=20000.0, format="%.2f")
-               dividend_tax_rate = st.number_input("Dividend Tax Rate (%)", min_value=0.0, value=15.0, format="%.2f")
-               tax_exempt_income = st.number_input("Tax-Exempt Dividend Income Allowed Per Year (€)", min_value=0.0, value=0.0, format="%.2f")
-               initial_dividend_yield = st.number_input("Initial Annual Dividend Yield (%)", min_value=0.0, value=5.0, format="%.2f")
-               dividend_increase_rate = st.number_input("Expected Annual Dividend Amount Increase (%)", min_value=0.0, value=3.0, format="%.2f")
-               share_price_appreciation = st.number_input("Expected Annual Share Price Appreciation (%)", min_value=0.0, value=3.0, format="%.2f")
-               years = st.number_input("Years Invested", min_value=1, value=20)
+                    # Button for calculating dividends and plotting
+                    if st.button("Calculate Dividends"):
+                         total_dividends_before_tax, dividends_over_years = calculate_dividends(
+                              starting_principal, annual_contribution, dividend_tax_rate, tax_exempt_income,
+                              initial_dividend_yield, dividend_increase_rate, share_price_appreciation, years
+                         )
+                         
+                         # Format the output to include commas and a currency symbol
+                         formatted_total_dividends = f"€ {total_dividends_before_tax:,.2f}"
+                         st.success(f"Total Dividends (Before Tax) after {years} years: {formatted_total_dividends}")
 
-               # Button for calculating dividends and plotting
-               if st.button("Calculate Dividends"):
-                    total_dividends_before_tax, dividends_over_years = calculate_dividends(
-                         starting_principal, annual_contribution, dividend_tax_rate, tax_exempt_income,
-                         initial_dividend_yield, dividend_increase_rate, share_price_appreciation, years
-                    )
-                    
-                    # Format the output to include commas and a currency symbol
-                    formatted_total_dividends = f"€ {total_dividends_before_tax:,.2f}"
-                    st.success(f"Total Dividends (Before Tax) after {years} years: {formatted_total_dividends}")
+                         # Create a Plotly chart
+                         year_list = list(range(1, years + 1))
+                         
+                         # Create a bar plot for dividends over years
+                         fig = go.Figure()
+                         fig.add_trace(go.Bar(
+                              x=year_list,
+                              y=dividends_over_years,
+                              marker=dict(color='royalblue'),
+                              text=[f'€ {dividend:,.2f}' for dividend in dividends_over_years],
+                              textposition='inside'
+                         ))
 
-                    # Create a Plotly chart
-                    year_list = list(range(1, years + 1))
-                    
-                    # Create a bar plot for dividends over years
-                    fig = go.Figure()
-                    fig.add_trace(go.Bar(
-                         x=year_list,
-                         y=dividends_over_years,
-                         marker=dict(color='royalblue'),
-                         text=[f'€ {dividend:,.2f}' for dividend in dividends_over_years],
-                         textposition='inside'
-                    ))
+                         # Customize the layout
+                         fig.update_layout(
+                              title='Projected Dividends Over the Years (After Tax)',
+                              xaxis_title='Years',
+                              yaxis_title='Dividends After Tax (€)',
+                              yaxis_tickprefix='€',
+                              yaxis_tickformat='.2f',
+                              template='plotly_white'
+                         )
 
-                    # Customize the layout
-                    fig.update_layout(
-                         title='Projected Dividends Over the Years (After Tax)',
-                         xaxis_title='Years',
-                         yaxis_title='Dividends After Tax (€)',
-                         yaxis_tickprefix='€',
-                         yaxis_tickformat='.2f',
-                         template='plotly_white'
-                    )
+                         # Display the Plotly chart with mode bar hidden
+                         st.plotly_chart(fig,use_container_width=True,config={'displayModeBar': False})   
 
-                    # Display the Plotly chart with mode bar hidden
-                    st.plotly_chart(fig,use_container_width=True,config={'displayModeBar': False})   
-
-               # Additional information
-               st.markdown("""
-               ### How It Works:
-               1. Enter the starting principal amount in euros.
-               2. Input the annual contribution you plan to make.
-               3. Specify the dividend tax rate.
-               4. Enter the tax-exempt dividend income allowed per year.
-               5. Input the initial annual dividend yield as a percentage.
-               6. Enter the expected annual dividend amount increase percentage.
-               7. Specify the expected annual share price appreciation.
-               8. Click the "Calculate Dividends" button to see the total dividends before tax you can expect after the specified years.
-               """)
+                    # Additional information
+                    st.markdown("""
+                    ### How It Works:
+                    1. Enter the starting principal amount in euros.
+                    2. Input the annual contribution you plan to make.
+                    3. Specify the dividend tax rate.
+                    4. Enter the tax-exempt dividend income allowed per year.
+                    5. Input the initial annual dividend yield as a percentage.
+                    6. Enter the expected annual dividend amount increase percentage.
+                    7. Specify the expected annual share price appreciation.
+                    8. Click the "Calculate Dividends" button to see the total dividends before tax you can expect after the specified years.
+                    """)
 
 
 #########################################################################################################################
