@@ -7523,6 +7523,8 @@ if selected == "Stock Analysis Tool":
                    # Retrieve current query parameters
           # Retrieve current query parameters
           query_params = st.query_params
+          #query_params = st.experimental_get_query_params()
+
 
           # Check for 'login_token' in query parameters
           if 'login_token' in query_params:
@@ -7530,12 +7532,14 @@ if selected == "Stock Analysis Tool":
                st.session_state.login_token = query_params['login_token'][0]
                
                # Remove 'login_token' from the URL by updating query parameters
-               del query_params['login_token']
-               st.query_params = query_params
+               #del query_params['login_token']
+               #st.query_params = query_params
+
+
 
           if 'login_token' in st.session_state:
                try:
-                    user_data = serializer.loads(st.session_state.login_token, max_age=3600)  # 1 hour expiry expiry
+                    user_data = serializer.loads(st.session_state.login_token, max_age=18000)  # 5 hour expiry expiry
                     st.session_state.username = user_data['username']
                     st.session_state.useremail = user_data['email']
                     st.session_state.is_logged_in = True
@@ -7543,6 +7547,7 @@ if selected == "Stock Analysis Tool":
                except Exception:
                     #st.warning("Login session expired. Please log in again.")
                     del st.session_state.login_token
+                    #st.session_state.is_logged_in = False
 
 
 
@@ -14879,6 +14884,7 @@ if selected == "Stock Analysis Tool":
                          close_price = round(data['Close'][-2], 2)
                          percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
                          
+                         
                          converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
                     except Exception as e:
                          close_price = None
@@ -14926,13 +14932,15 @@ if selected == "Stock Analysis Tool":
                     if percentage_difference is not None:
                          if percentage_difference > 0:
                               #arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
-                              #percentage_text = f"<span style='{green_style}'>{percentage_difference:.2f}%</span>"
-                              percentage_text = f"(<span style='{green_style}'>{percentage_difference:.2f}%</span>)"
+                              #percentage_text = f"(<span style='{green_style}'>{percentage_difference}%</span>)"
+                              percentage_text = f"(<span style='{green_style}'>+{percentage_difference:.2f}%</span>)"
+                              #st.write(percentage_difference)
 
                          elif percentage_difference < 0:
                               #arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
                               #percentage_text = f"<span style='{red_style}'>{percentage_difference:.2f}%</span>"
-                              percentage_text = f"(<span style='{red_style}'>{percentage_difference:.2f}%</span>)"
+                              percentage_text = f"(<span style='{red_style}'>{percentage_difference}%</span>)"
+                              #st.write(percentage_difference)
 
                          else:
                                    percentage_text = "(0%)"  # In case of zero percentage difference
