@@ -14882,7 +14882,9 @@ if selected == "Stock Analysis Tool":
                     try:
                          data = yf.download(ticker, start=start_date, end=end_date)
                          close_price = round(data['Close'][-2], 2)
-                         percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
+                         percentage_difference = ((round(current_price,2) - close_price) / close_price) * 100
+                         percentage_difference = round(percentage_difference,2)
+                         st.write(round(current_price,2))
                          st.write(percentage_difference)
                          
                          
