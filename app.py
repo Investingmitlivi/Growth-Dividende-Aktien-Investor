@@ -14891,7 +14891,8 @@ if selected == "Stock Analysis Tool":
                          converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
                     except Exception as e:
                          close_price = None
-                         percentage_difference = None
+                         #percentage_difference = None
+                         percentage_difference = ((round(amount,2) - close_price) / close_price) * 100
                          converted_amount = None
                     
                     return close_price, percentage_difference, converted_amount
