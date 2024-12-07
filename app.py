@@ -14882,9 +14882,9 @@ if selected == "Stock Analysis Tool":
                     try:
                          data = yf.download(ticker, start=start_date, end=end_date)
                          close_price = round(data['Close'][-2], 2)
-                         percentage_difference = ((round(current_price,2) - close_price) / close_price) * 100
+                         percentage_difference = ((round(amount,2) - close_price) / close_price) * 100
                          percentage_difference = round(percentage_difference,2)
-                         st.write(round(current_price,2))
+                         st.write(round(amount,2))
                          st.write(percentage_difference)
                          
                          
@@ -14904,6 +14904,8 @@ if selected == "Stock Analysis Tool":
                def main():
                     #ticker = st.text_input("Enter Ticker Symbol", "AAPL")  # Example ticker input
                     #usd_to_eur_rate = 0.85  # Example conversion rate
+
+                    
 
                     # Check if ticker has changed
                     if ticker not in st.session_state or st.session_state.ticker != ticker:
