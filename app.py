@@ -14933,7 +14933,7 @@ if selected == "Stock Analysis Tool":
                          if percentage_difference > 0:
                               #arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
                               #percentage_text = f"(<span style='{green_style}'>{percentage_difference}%</span>)"
-                              percentage_text = f"(<span style='{green_style}'>+{percentage_difference:.2f}%</span>)"
+                              percentage_text = f"(<span style='{green_style}'>+{percentage_difference}%</span>)"
                               #st.write(percentage_difference)
 
                          elif percentage_difference < 0:
@@ -14992,8 +14992,9 @@ if selected == "Stock Analysis Tool":
                               </div>
                               """,
                               unsafe_allow_html=True,
+                              #st.write(percentage_difference)
                          )
-
+                    st.write(percentage_difference)
 
 
                if __name__ == "__main__":
