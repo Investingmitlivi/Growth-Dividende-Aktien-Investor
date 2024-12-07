@@ -14883,6 +14883,7 @@ if selected == "Stock Analysis Tool":
                          data = yf.download(ticker, start=start_date, end=end_date)
                          close_price = round(data['Close'][-2], 2)
                          percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
+                         st.write(percentage_difference)
                          
                          
                          converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
