@@ -33,7 +33,24 @@ from scipy import optimize
 st.set_page_config(page_title="Verstehdieaktie", page_icon = "📖", layout="wide")
 
 # favicon = Image.open("")  # Path to your image
-# st.image(favicon, width=50)  
+# st.image(favicon, width=50) 
+
+
+# CSS to hide number input spin buttons
+st.markdown("""
+<style>
+/* Target all number inputs in the form */
+div[data-testid="stNumberInput"] input::-webkit-outer-spin-button,
+div[data-testid="stNumberInput"] input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+ 
+div[data-testid="stNumberInput"] input[type=number] {
+    -moz-appearance: textfield;
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 hide_streamlit_style = """
@@ -10317,8 +10334,8 @@ if selected == "Stock Analysis Tool":
                               for df, col in zip(dfs, cols):
                                    with col:
                                         st.table(df)
-
-                         # Data for the tables
+                      
+                                                  # Data for the tables
                          data1 = {
                          'Market Cap (intraday)': [Marketcap_in_Billion],
                          'Enterprise Value': [Enterprise_value_in_Billion], 
@@ -12576,6 +12593,7 @@ if selected == "Stock Analysis Tool":
                                    
                          display_growth_rate_formexer()
           #################
+
                with st.container():   
                     with Reversed_DCF:                         
 
@@ -12610,13 +12628,17 @@ if selected == "Stock Analysis Tool":
                               unsafe_allow_html=True
                               )
                               col1, col2 = st.columns(2)
+
                               with col1:
-                                   fcf = st.number_input("Current FCF ($):", value=0.00, format="%.2f")
+                                   fcf = st.number_input("Current FCF ($):", value=0.00, key="fcf_input",help="Enter Free Cash Flow value")
+
                                    r = st.number_input("Discount rate WACC (%):", value=8.0, format="%.1f")
+                             
                                    years =10
                               with col2:
                                    t = st.number_input("Terminal Growth Rate (%):", value=2.5, format="%.1f")
                                    current_price = st.number_input("Marketcap.($):", value=0.00, format="%.2f")
+                                 
 
                               submitted = st.form_submit_button("Calculate")
 
