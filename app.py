@@ -12622,8 +12622,8 @@ if selected == "Stock Analysis Tool":
                               st.markdown(
                               f"""<span style='color: green;'>**{name}**</span> FCF (TTM): <span style='color: green;'>**{fcf_ttm:.2f} B**</span> 
                               , Market Capitalization: <span style='color: green;'>**{Marketcap_in_Billion}**</span>
-                              , FCF CAGR (10 Years): <span style='color: green;'>**{FCF_Cagr_10}%**</span>
-                              , 5-Year FCF CAGR: <span style='color: green;'>**{FCF_5_CAGR}%**</span>
+                              , FCF 10Y CAGR %: <span style='color: green;'>**{FCF_Cagr_10}%**</span>
+                              , FCF 5Y CAGR %: <span style='color: green;'>**{FCF_5_CAGR}%**</span>
                               , FCF Growth YOY: <span style='color: green;'>**{Average_fcf_growth_ten}%**</span>""",
                               unsafe_allow_html=True
                               )
