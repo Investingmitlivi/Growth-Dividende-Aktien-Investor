@@ -12254,13 +12254,13 @@ if selected == "Stock Analysis Tool":
 
                                    col1, col2,col3,col4,col5 = st.columns(5)
 
-                                   col1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 10 CAGR:<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
+                                   col1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 10Y CAGR :<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
                                    
-                                   col2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 5 CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
+                                   col2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 5Y CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
                                    
-                                   col3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 10 CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
+                                   col3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 10Y CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
 
-                                   col4.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 5 CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
+                                   col4.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 5Y CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
 
                                    col5.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
 
@@ -12519,7 +12519,9 @@ if selected == "Stock Analysis Tool":
 
 
                                         col15.write(f" Benjamin Graham + DCF:  ")
-                                        #col15.info("Growth rate after the forecast period")
+                                        # Adding a help expander below
+                                       # with col15.expander("What is Benjamin Graham + DCF?"):
+                                        #     st.write("Benjamin Graham's valuation formula combines his principles with a Discounted Cash Flow (DCF) approach.")
 
 
                                              
