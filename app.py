@@ -10348,7 +10348,7 @@ if selected == "Stock Analysis Tool":
                          'P/E (TTM)': [pe_ttm],
                          '5 YR P/E': [pe_five_],
                          '10 YR P/E': [average_PE_historical],
-                         'Operating Cash Flow (OCF : TTM)': [current_Operating_cash_Flow_Value], 
+                         'Operating Cashflow (TTM)': [current_Operating_cash_Flow_Value], 
                          'Price/OCF (TTM)': [P_OCF_ttm],  
                          '5 YR Price/OCF ': [P_OCF_5],  
                          '10 YR Price/OCF': [P_OCF_10],  
