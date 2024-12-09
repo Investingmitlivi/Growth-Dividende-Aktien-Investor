@@ -14314,7 +14314,9 @@ if selected == "Stock Analysis Tool":
                # Your existing login/signup form code goes here
                #choice = st.selectbox('Login/Signup', ['Login', 'Sign up'])
                #choice = st.selectbox('Login/Signup', ['Login', 'Sign up'], key='login_choice')
-                    choice = st.selectbox('Login', ['Login'],key='login_choice')
+                   
+                    choice = st.radio('', ['Login', 'Sign up button will be activated soon'], horizontal=True)
+
 
                     with st.form(key='auth_form'):
 
@@ -14347,15 +14349,13 @@ if selected == "Stock Analysis Tool":
                          #else:
                          else:
                               submit_button = st.form_submit_button(label='Login')
-                              #if st.button('Login'):
-                              #    login()
+                             
 
                               if submit_button:
                                    st.session_state.email_input = email
                                    st.session_state.password_input = password
                                    login()
-                              #if st.button('Forgot Password'):
-                              #    forget()
+                              
                with middle:
                     if st.button('Forgot Password', key='forgot_password'):
                          forget()
@@ -14685,7 +14685,9 @@ if selected == "Contacts":
                # For example, you could add a data visualization or a form here
           else:
                # Your existing login/signup form code goes here
-               choice = st.selectbox('Login/Signup', ['Login', 'Sign up'])
+              # choice = st.selectbox('Login/Signup', ['Login', 'Sign up'])
+               choice = st.radio('Login/Signup', ['Login', 'Sign up'])
+
                email = st.text_input('Email Address')
                password = st.text_input('Password', type='password')
                st.session_state.email_input = email
