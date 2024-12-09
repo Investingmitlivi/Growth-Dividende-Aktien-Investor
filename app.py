@@ -7911,7 +7911,7 @@ if selected == "Stock Analysis Tool":
                     try:
                          data = yf.download(ticker, start=start_date, end=end_date)
                          close_price = round(data['Close'][-2], 2)
-                         percentage_difference =round((float(round(current_price,2)) - float(close_price)) / float((close_price)) * 100,2)
+                         percentage_difference =round(((float(round(current_price,2))) - (float((close_price)))) / (float((close_price))) * 100,2)
                          #st.write(percentage_difference)
                          #st.write(close_price)
                          
@@ -14314,8 +14314,9 @@ if selected == "Stock Analysis Tool":
                # Your existing login/signup form code goes here
                #choice = st.selectbox('Login/Signup', ['Login', 'Sign up'])
                #choice = st.selectbox('Login/Signup', ['Login', 'Sign up'], key='login_choice')
-                   
-                    choice = st.radio('', ['Login', 'Sign up button will be activated soon'], horizontal=True)
+                    choice = st.selectbox('Login', ['Login'],key='login_choice')
+                    #choice = st.radio('', ['Login', 'Sign up'], horizontal=True)
+                    st.markdown('<p style="color: green; font-size: 18px;">Sign up button will be activated soon........</p>', unsafe_allow_html=True)
 
 
                     with st.form(key='auth_form'):
