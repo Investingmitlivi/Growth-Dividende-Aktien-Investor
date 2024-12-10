@@ -8222,27 +8222,59 @@ if selected == "Stock Analysis Tool":
                     with st.container():
                          if f'{ticker}_performances' not in st.session_state:
                               performances = calculate_stock_performance(ticker)
+                              st.session_state[f'{ticker}_performances'] = performances
+
                          else:
                               performances = st.session_state[f'{ticker}_performances']
 
                          options = [f"{period} ({perf})" for period, perf in performances.items()]
                          
-                         if 'selected_period' not in st.session_state:
-                              st.session_state.selected_period = "MAX"
+                         # Set default period
 
+                         #if 'selected_period' not in st.session_state:
+                           #   st.session_state.selected_period = "MAX"
+
+                         
+                         if 'selected_period' not in st.session_state:
+                              st.session_state.selected_period = "5 Years" if "5 Years" in performances else "MAX"
+
+
+                         # selected = option_menu(
+                         #      menu_title=None,  # required
+                         #      options=options,  # using the new options with performance data
+                         #      icons=["None"] * len(options),  # empty icons for each option
+                         #      menu_icon="cast",  # optional
+                         #      #default_index=0,
+                         #      default_index=options.index(f"MAX ({performances['MAX']})") if f"MAX ({performances['MAX']})" in options else 0,
+                         #      orientation="horizontal",
+                         #      key=f"option_menu_{ticker}" 
+                         # )
+
+                         # st.session_state.selected_period = selected.split(" (")[0]
+
+                         try:
+                              default_index = options.index(f"5 Years ({performances['5 Years']})" 
+                                   if "5 Years" in performances 
+                                   else f"MAX ({performances['MAX']})" 
+                                   if f"MAX ({performances['MAX']})" in options 
+                                   else 0
+                              )
+                         except ValueError:
+                              default_index = 0
 
                          selected = option_menu(
-                              menu_title=None,  # required
-                              options=options,  # using the new options with performance data
-                              icons=["None"] * len(options),  # empty icons for each option
-                              menu_icon="cast",  # optional
-                              #default_index=0,
-                              default_index=options.index(f"MAX ({performances['MAX']})") if f"MAX ({performances['MAX']})" in options else 0,
+                              menu_title=None,
+                              options=options,
+                              icons=["None"] * len(options),
+                              menu_icon="cast",
+                              default_index=default_index,
                               orientation="horizontal",
-                              key=f"option_menu_{ticker}" 
+                              key=f"option_menu_{ticker}"
                          )
 
+                         # Update selected period
                          st.session_state.selected_period = selected.split(" (")[0]
+
 
                          period_mapping = {
                               "1 Month": "1mo", 
