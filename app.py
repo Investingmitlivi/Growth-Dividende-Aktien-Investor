@@ -7646,22 +7646,14 @@ if selected == "Stock Analysis Tool":
                #col1, col2 = st.columns(2)
                #with col1: 
                with right:   
-                    selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')    
-                    # Text input for ticker search
-                    #search_query = st.text_input("Type a ticker symbol")
-
-                    # Filter available tickers based on the search query
-                    #filtered_tickers = {k: v for k, v in ticker_symbol_name.items() if search_query.upper() in k}
-
-                    #if filtered_tickers:
-                         #selected_ticker = st.selectbox('Select a ticker', list(filtered_tickers.keys()))
-                         #st.write(f"You selected: **{selected_ticker} - {filtered_tickers[selected_ticker]}**")
-                    #else:
-                         #st.write("No matching tickers found.")
-
-
-               #ticker = ticker_symbol_name.get(selected_ticker) 
-               #name, symbol = selected_ticker.split(' : ')
+                    #selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')  
+                    selected_ticker = st.selectbox(
+                    'Select a ticker',
+                    options=list(ticker_symbol_name.keys()),
+                    key='symbol'
+                    #help='Start typing to search for a ticker'
+                    )
+  
 
 
                if selected_ticker:
@@ -7744,8 +7736,7 @@ if selected == "Stock Analysis Tool":
                net_debt_quater =quarterly_data['net_debt'][-5:]
                net_debt_annual=annual_data['net_debt'][-5:]
 
-               print("net_debt_quater",net_debt_quater)
-               print("net_debt_annual",net_debt_annual)
+              
                
                
                
@@ -10395,7 +10386,8 @@ if selected == "Stock Analysis Tool":
                          '5 YR ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
                          'ROCE': [ "{:.2f}%".format(One_YR_ROCE)],
                          f'ATH ({format_date(st.session_state.all_time_high_date)})': f"$ {st.session_state.all_time_high_price:.2f}",
-                         f'52WK LOW ({format_date(st.session_state.fifty_two_week_low_date)})': f"$ {st.session_state.fifty_two_week_low:.2f}"
+                         f'52WK LOW ({format_date(st.session_state.fifty_two_week_low_date)})': f"$ {st.session_state.fifty_two_week_low:.2f}",
+                         'Analyst Target Price': [f"$ {Target_Price}"]
                          }
           
 
@@ -10414,7 +10406,6 @@ if selected == "Stock Analysis Tool":
                          'RSI (14)': [RSI],
                          '50 SMA': [Moving_50],
                          '200 SMA': [Moving_200],
-                         'Analyst Target Price': [f"$ {Target_Price}"],
                          'Current price': ["$ {:.2f}".format(amount)] 
                          }
 
