@@ -10240,6 +10240,7 @@ if selected == "Stock Analysis Tool":
                                         st.session_state[f'{ticker}_Enterprise_value'],
                                         st.session_state[f'{ticker}_Enterprise_value_in_Billion'],
                                         st.session_state[f'{ticker}_Debt_to_EBITDA'],
+                                        st.session_state[f'{ticker}_Ebita_ttm_Billion'],
                                         st.session_state[f'{ticker}_revenue_ttm'],
                                         st.session_state[f'{ticker}_Dividend_ttm'],
                                         st.session_state[f'{ticker}_netincome_ttm'],
@@ -10253,10 +10254,13 @@ if selected == "Stock Analysis Tool":
                                    Enterprise_value = ((Marketcap) + (Total_Debt_from_all_calc/1000000000) - Total_cash_last_years)
                                    Enterprise_value_in_Billion = "{:.2f}T".format(Enterprise_value / 1000) if abs(Enterprise_value) >= 1000 else "{:,.2f}B".format(Enterprise_value)
                                    Debt_to_EBITDA = "{:.2f}".format((Total_Debt_from_all_calc / 1000000000) / Ebita_ttm)
+                                   Ebita_ttm_Billion = "{:.2f}T".format(Ebita_ttm / 1000) if abs(Ebita_ttm) >= 1000 else "{:,.2f}B".format(Ebita_ttm)
+
                               except Exception as e:
                                    Enterprise_value = "N/A"
                                    Enterprise_value_in_Billion = "N/A"
                                    Debt_to_EBITDA = "{:.2f}".format(0.00)
+                                   Ebita_ttm_Billion = "{:.2f}".format(0.00)
                               #print("enterprice",((Marketcap) + (Total_Debt_from_all_calc / 1000000000) - Total_cash_last_years))
                               # Scaling revenue and dividend values
                               revenue_ttm *= 1000000000
@@ -10285,6 +10289,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_Enterprise_value'] = Enterprise_value
                               st.session_state[f'{ticker}_Enterprise_value_in_Billion'] = Enterprise_value_in_Billion
                               st.session_state[f'{ticker}_Debt_to_EBITDA'] = Debt_to_EBITDA
+                              st.session_state[f'{ticker}_Ebita_ttm_Billion'] = Ebita_ttm_Billion
                               st.session_state[f'{ticker}_revenue_ttm'] = revenue_ttm
                               st.session_state[f'{ticker}_Dividend_ttm'] = Dividend_ttm
                               st.session_state[f'{ticker}_netincome_ttm'] = netincome_ttm
@@ -10296,6 +10301,7 @@ if selected == "Stock Analysis Tool":
                                    Enterprise_value,
                                    Enterprise_value_in_Billion,
                                    Debt_to_EBITDA,
+                                   Ebita_ttm_Billion,
                                    revenue_ttm,
                                    Dividend_ttm,
                                    netincome_ttm,
@@ -10307,13 +10313,14 @@ if selected == "Stock Analysis Tool":
                          (Enterprise_value,
                                    Enterprise_value_in_Billion,
                                    Debt_to_EBITDA,
+                                   Ebita_ttm_Billion,
                                    revenue_ttm,
                                    Dividend_ttm,
                                    netincome_ttm,
                                    fcf_ttm,
                                    current_Operating_cash_Flow_Value,
                                    P_OCF_ttm)=calculate_financial_metrics(ticker, Marketcap, Total_Debt_from_all_calc, Total_cash_last_years, 
-                                                            Ebita_ttm, revenue_ttm, Dividend_ttm, netincome_ttm, 
+                                                            Ebita_ttm,revenue_ttm, Dividend_ttm, netincome_ttm, 
                                                             fcf_ttm, current_Operating_cash_Flow)
 
           ############################################################################
@@ -10361,7 +10368,8 @@ if selected == "Stock Analysis Tool":
                                                   # Data for the tables
                          data1 = {
                          'Market Cap (intraday)': [Marketcap_in_Billion],
-                         'Enterprise Value': [Enterprise_value_in_Billion], 
+                         'Enterprise Value': [Enterprise_value_in_Billion],
+                         'EBITDA (TTM)': [Ebita_ttm_Billion], 
                          'Debt/EBITDA': [Debt_to_EBITDA],
                          'Revenue (TTM)': [revenue_ttm],      
                          '5 YR Net Income': [Average_net_income_annual_funf_Billion_Million], 
