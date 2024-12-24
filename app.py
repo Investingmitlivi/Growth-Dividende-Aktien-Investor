@@ -8104,11 +8104,11 @@ if selected == "Stock Analysis Tool":
                     start_date_input = start_date
 
 
-               #data = yf.download(ticker,start=start_date_input, end=end_date)
+               #data = yf.download(ticker,start=start_date_input, end=end_date) decemeber
 
 
 
-              # data['Adj Close'] = data['Adj Close'].round(2)
+              # data['Adj Close'] = data['Adj Close'].round(2) december
 
           ############################################################################################################
                
@@ -14317,16 +14317,31 @@ if selected == "Stock Analysis Tool":
                               
                               news = st.session_state[f'{ticker}_news']
                               
+                              # if news:
+                              #      with st.container():
+                              #           use_container_width = True  # Set to true if you want to use the full width
+                              #           for i, item in enumerate(news, 1):
+                              #                headline = item['title'] #december
+                              #                link = item['link']
+                              #                st.write(f"Headline {i}: {headline}")
+                              #                st.write(f"[Read more]({link})")
+                              # else:
+                              #      st.error("No news available for this stock.")
                               if news:
                                    with st.container():
-                                        use_container_width = True  # Set to true if you want to use the full width
+                                        use_container_width = True
                                         for i, item in enumerate(news, 1):
-                                             headline = item['title']
-                                             link = item['link']
+                                             # Use .get() to handle missing keys
+                                             headline = item.get('title', 'No title available')
+                                             link = item.get('link', '#')
                                              st.write(f"Headline {i}: {headline}")
                                              st.write(f"[Read more]({link})")
                               else:
                                    st.error("No news available for this stock.")
+
+
+
+                                   
 
                          # Example usage
                          #ticker = "AAPL"  # Replace with the desired ticker symbol
