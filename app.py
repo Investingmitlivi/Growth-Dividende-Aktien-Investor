@@ -8104,11 +8104,11 @@ if selected == "Stock Analysis Tool":
                     start_date_input = start_date
 
 
-               data = yf.download(ticker,start=start_date_input, end=end_date)
+               #data = yf.download(ticker,start=start_date_input, end=end_date)
 
 
 
-               data['Adj Close'] = data['Adj Close'].round(2)
+              # data['Adj Close'] = data['Adj Close'].round(2)
 
           ############################################################################################################
                
