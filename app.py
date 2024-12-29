@@ -14316,28 +14316,32 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_news'] = fetch_stock_news(stock_info)
                               
                               news = st.session_state[f'{ticker}_news']
-                              
+                              try:
+                                   if news:
+                                        with st.container():
+                                             use_container_width = True  # Set to true if you want to use the full width
+                                             for i, item in enumerate(news, 1):
+                                                  headline = item['title'] #december
+                                                  link = item['link']
+                                                  st.write(f"Headline {i}: {headline}")
+                                                  st.write(f"[Read more]({link})")
+                                   else:
+                                        st.error("No news available for this stock.")
+                              except Exception as e:
+                                   st.error("No news available for this stock.")
+
+
                               # if news:
                               #      with st.container():
-                              #           use_container_width = True  # Set to true if you want to use the full width
+                              #           use_container_width = True
                               #           for i, item in enumerate(news, 1):
-                              #                headline = item['title'] #december
-                              #                link = item['link']
+                              #                # Use .get() to handle missing keys
+                              #                headline = item.get('title', 'No title available')
+                              #                link = item.get('link', '#')
                               #                st.write(f"Headline {i}: {headline}")
                               #                st.write(f"[Read more]({link})")
                               # else:
                               #      st.error("No news available for this stock.")
-                              if news:
-                                   with st.container():
-                                        use_container_width = True
-                                        for i, item in enumerate(news, 1):
-                                             # Use .get() to handle missing keys
-                                             headline = item.get('title', 'No title available')
-                                             link = item.get('link', '#')
-                                             st.write(f"Headline {i}: {headline}")
-                                             st.write(f"[Read more]({link})")
-                              else:
-                                   st.error("No news available for this stock.")
 
 
 
