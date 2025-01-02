@@ -7636,6 +7636,7 @@ if selected == "Stock Analysis Tool":
                          'ZYME':'Zymeworks Inc. ',
                          'ZYNE':'Zynerba Pharmaceuticals Inc. ',
                          'ZYXI':'Zynex Inc. ',
+                         'NPSNY':'Naspers Ltd.',
                          'EHMEF':'goeasy Ltd'
                     }
 
