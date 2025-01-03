@@ -8161,7 +8161,7 @@ if selected == "Stock Analysis Tool":
                          x=detailed_data.index,
                          y=detailed_data['Close'],
                          fill='tozeroy',
-                         fillcolor='rgba(0, 100, 80, 0.4)',  # Very light green, adjust as needed
+                         fillcolor='rgba(34, 139, 34, 0.2)',  # Very light green, adjust as needed
                          line_color='rgba(0, 0, 0, 0)',  # Transparent line for fill
                          showlegend=False
                     ))
@@ -8170,7 +8170,7 @@ if selected == "Stock Analysis Tool":
                     fig.add_trace(go.Scatter(
                          x=detailed_data.index,
                          y=detailed_data['Close'],
-                         line=dict(color='rgb(0, 100, 80)', width=2),  # Darker green line, adjust as needed
+                         line=dict(color='rgba(34, 139, 34, 0.7)', width=4),  # Darker green line, adjust as needed
                          #name=None
                          showlegend=False  # Hide legend
                     ))
@@ -8347,7 +8347,7 @@ if selected == "Stock Analysis Tool":
 
 
                #Metric, Financials,Pillar_Analysis,Stock_Analyser,Reversed_DCF,Multiple_Valuation,Dividend_Discount_Model,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow (DCF)","Reversed DCF","Multiple of Earnings Valuation","Dividend Discount Model","Charts","Key Ratios","Calculator","Top 10 News"])
-               Metric, Financials,Pillar_Analysis,Stock_Analyser,Reversed_DCF,Multiple_Valuation,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow (DCF)","Reversed DCF","Multiple of Earnings Valuation","Charts","Key Ratios","Calculator","Top 10 News"])
+               Metric, Financials,Pillar_Analysis,Stock_Analyser,Reversed_DCF,Multiple_Valuation,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Stock Screener","Discounted Cash Flow (DCF)","Reversed DCF","Multiple of Earnings Valuation","Charts","Key Ratios","Calculator","Top 10 News"])
 
           
 
@@ -12401,6 +12401,7 @@ if selected == "Stock Analysis Tool":
                                         print("Total_cash_last_years",Total_cash_last_years)
                                         Equity_value = npv_result+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
                                         Intrinsic_value =Equity_value/Average_shares_basic_annual_one
+                                        
                                         print("Average_shares_basic_annual_one",Average_shares_basic_annual_one)
                                         #st.write(npv_result)
 
