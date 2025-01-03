@@ -8178,7 +8178,7 @@ if selected == "Stock Analysis Tool":
                     # Update the layout
                     fig.update_layout(
                          xaxis_title='Date',
-                         yaxis_title='Price ($)',
+                         #yaxis_title='Price ($)',
                          plot_bgcolor='white',  # White background
                          paper_bgcolor='white',  # White surrounding area
                          xaxis=dict(
@@ -8199,13 +8199,24 @@ if selected == "Stock Analysis Tool":
                     )
 
                     # Format hover text to include dollar sign
+                    # fig.update_traces(
+                    # hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
+                    # )
+                    # fig.update_layout(
+                    # dragmode=False,  # Disable dragging for zooming
+                    # )
+
                     fig.update_traces(
                     hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
                     )
                     fig.update_layout(
                     dragmode=False,  # Disable dragging for zooming
+                    hoverlabel=dict(
+                         bgcolor='rgba(139, 57, 34, 0.76)',  # Dark green background
+                         font_size=15,                      # Font size
+                         font_color='white'                 # Font color
                     )
-
+                    )
 
                     return fig
 
