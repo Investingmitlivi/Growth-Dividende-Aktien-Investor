@@ -11130,7 +11130,7 @@ if selected == "Stock Analysis Tool":
                                                   eps_basic_quarter_df = financials_df(eps_basic_quarterly_10_unpacked, date_quarter, "EPS Basic")
                                                   shares_basic_quarter_df = financials_df(shares_basic_quarterly_10_unpacked, date_quarter, "Shares Basic")
                                                   eps_diluted_quarter_df = financials_df(Eps_diluted_quarterly_10_unpacked, date_quarter, "EPS Diluted")
-                                                  #shares_diluted_quarter_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
+                                                  shares_diluted_quarter_df = financials_df(shares_diluted_quarter_10_unpacked, date_quarter, "Shares Diluted")
                                                   Income_tax_quarter_df = financials_df(Income_tax_quarter_10_unpacked, date_quarter, "Income Tax Expense")
                                                   net_income_quarter_df = financials_df(net_income_quarter_10_unpacked, date_quarter, "Net Income")
                                                   cogs_list_quarter_df = financials_df(cogs_list_quarter_10_unpacked, date_quarter, "COGS")
@@ -11162,7 +11162,7 @@ if selected == "Stock Analysis Tool":
                                                   interest_expense_list_quarter_df,Interest_Income_quarter_df,Pretax_income_quarter_df,
                                                   Income_tax_quarter_df,
                                                   net_income_quarter_df,eps_basic_quarter_df, shares_basic_quarter_df,
-                                                  eps_diluted_quarter_df, #shares_diluted_quarter_df,
+                                                  eps_diluted_quarter_df, shares_diluted_quarter_df,
                                                   Ebita_quarter_10_unpacked_df
                                                   ])
 
