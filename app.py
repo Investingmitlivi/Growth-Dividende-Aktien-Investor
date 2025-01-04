@@ -11,6 +11,7 @@ import os
 import secrets
 
 
+
 from typing import List, Dict, Union
 from datetime import datetime, timedelta, date
 from numpy_financial import npv
@@ -53,33 +54,33 @@ div[data-testid="stNumberInput"] input[type=number] {
 """, unsafe_allow_html=True)
 
 
-hide_streamlit_style = """
-    <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    div[data-testid="stToolbar"] {
-        visibility: hidden;
-        height: 0%;
-        position: fixed;
-    }
-    div[data-testid="stDecoration"] {
-        visibility: hidden;
-        height: 0%;
-        position: fixed;
-    }
-    div[data-testid="stStatusWidget"] {
-        visibility: hidden;
-        height: 0%;
-        position: fixed;
-    }
-    #stHeaderLogo {
-        visibility: hidden;
-    }
-    </style>
-"""
+# hide_streamlit_style = """
+#     <style>
+#     #MainMenu {visibility: hidden;}
+#     footer {visibility: hidden;}
+#     header {visibility: hidden;}
+#     div[data-testid="stToolbar"] {
+#         visibility: hidden;
+#         height: 0%;
+#         position: fixed;
+#     }
+#     div[data-testid="stDecoration"] {
+#         visibility: hidden;
+#         height: 0%;
+#         position: fixed;
+#     }
+#     div[data-testid="stStatusWidget"] {
+#         visibility: hidden;
+#         height: 0%;
+#         position: fixed;
+#     }
+#     #stHeaderLogo {
+#         visibility: hidden;
+#     }
+#     </style>
+# """
 
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+# st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
 
@@ -8633,7 +8634,13 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_len_10_annual'],
 
                                              st.session_state[f'{ticker}_revenue_quarter_10'],
-                                             st.session_state[f'{ticker}_len_10_quarter'])
+                                             st.session_state[f'{ticker}_len_10_quarter'],
+
+                                             st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked'],
+                                             st.session_state[f'{ticker}_shares_basic_annual_10_unpacked'],
+                                             st.session_state[f'{ticker}_shares_diluted_quarter_10_unpacked'],
+                                             st.session_state[f'{ticker}_shares_basic_quarterly_10_unpacked'])
+
 
                               net_income_annual_one = annual_data['net_income'][-1:]
                               round_net_income_annual_one =(sum(net_income_annual_one) / len(net_income_annual_one))
@@ -8674,6 +8681,11 @@ if selected == "Stock Analysis Tool":
                               Revenue_quarter_10_unpacked  = quarterly_data['revenue'][-10:]
                               len_10_quarter =len(Revenue_quarter_10_unpacked)
 
+                              shares_diluted_annual_10_unpacked=annual_data['shares_diluted'][-len_10_annual:]
+                              shares_basic_annual_10_unpacked=annual_data['shares_basic'][-10:]
+                              shares_diluted_quarter_10_unpacked =quarterly_data['shares_diluted'][-len_10_quarter:]
+                              shares_basic_quarterly_10_unpacked =quarterly_data['shares_basic'][-10:]
+
                               st.session_state[f'{ticker}_net_income_last'] = round_net_income_annual_one
                               st.session_state[f'{ticker}_net_income_annual_funf_unpacked'] = net_income_annual_funf_unpacked
                               st.session_state[f'{ticker}_net_income_annual_10_unpacked'] = net_income_annual_10_unpacked
@@ -8700,7 +8712,13 @@ if selected == "Stock Analysis Tool":
 
                               st.session_state[f'{ticker}_len_10_quarter'] =len_10_quarter
 
-                              
+
+                              st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked']=shares_diluted_annual_10_unpacked
+                              st.session_state[f'{ticker}_shares_basic_annual_10_unpacked']=shares_basic_annual_10_unpacked
+                              st.session_state[f'{ticker}_shares_diluted_quarter_10_unpacked'] =shares_diluted_quarter_10_unpacked
+                              st.session_state[f'{ticker}_shares_basic_quarterly_10_unpacked']=shares_basic_quarterly_10_unpacked
+
+               
 
                               return (round_net_income_annual_one,net_income_annual_funf_unpacked, net_income_annual_10_unpacked,
                                    Average_net_income_annual_funf,net_income_quarter_10_unpacked,
@@ -8712,7 +8730,11 @@ if selected == "Stock Analysis Tool":
                                         Net_Operating_CashFlow_annual_5_unpacked,
                                         Revenue_annual_5_unpacked,len_5_annual,
                                         Revenue_annual_10_unpacked,len_10_annual,
-                                        Revenue_quarter_10_unpacked,len_10_quarter
+                                        Revenue_quarter_10_unpacked,len_10_quarter,                                             
+                                        shares_diluted_annual_10_unpacked,
+                                        shares_basic_annual_10_unpacked,
+                                        shares_diluted_quarter_10_unpacked,
+                                        shares_basic_quarterly_10_unpacked
                                         )
 
                          (round_net_income_annual_one, net_income_annual_funf_unpacked,net_income_annual_10_unpacked,
@@ -8726,6 +8748,10 @@ if selected == "Stock Analysis Tool":
                               Revenue_annual_5_unpacked,len_5_annual,
                               Revenue_annual_10_unpacked,len_10_annual,
                               Revenue_quarter_10_unpacked,len_10_quarter,
+                              shares_diluted_annual_10_unpacked,
+                              shares_basic_annual_10_unpacked,
+                              shares_diluted_quarter_10_unpacked,
+                              shares_basic_quarterly_10_unpacked
                               ) = calculate_net_income_averages(annual_data,quarterly_data, ticker)
 
           ###################################################################################################
@@ -8754,15 +8780,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_revenue_growth_10years'],
                                              st.session_state[f'{ticker}_Net_interest_Income_annual_10'],
                                              st.session_state[f'{ticker}_Net_interest_Income_annual_10_growth'],
-                                             st.session_state[f'{ticker}_Net_interest_Income_quarter_10_growth'],
-
-
-
-                                             st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked'],
-                                             st.session_state[f'{ticker}_shares_basic_annual_10_unpacked'],
-                                             st.session_state[f'{ticker}_shares_diluted_quarter_10_unpacked'],
-                                             st.session_state[f'{ticker}_shares_basic_quarterly_10_unpacked'])
-                              
+                                             st.session_state[f'{ticker}_Net_interest_Income_quarter_10_growth'])
                                    
                               revenue_annual_ttm = annual_data['revenue'][-1:] 
                               average_revenue_annual_ttm = ((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000)
@@ -8790,10 +8808,7 @@ if selected == "Stock Analysis Tool":
 
                               Revenue_growth_10years = (Revenue_growth_10years*100)
 
-                              shares_diluted_annual_10_unpacked=annual_data['shares_diluted'][-len_10_annual :]
-                              shares_basic_annual_10_unpacked=annual_data['shares_basic'][-10:]
-                              shares_diluted_quarter_10_unpacked =quarterly_data['shares_diluted'][-len_10_quarter:]
-                              shares_basic_quarterly_10_unpacked =quarterly_data['shares_basic'][-10:]
+
 
 
                               try:
@@ -8816,10 +8831,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_revenue_growth_5years'] = Revenue_growth_5years
                               st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'] = Revenue_growth_10quarter_unpacked
                               st.session_state[f'{ticker}_revenue_growth_10years'] = Revenue_growth_10years
-                              st.session_state[f'{ticker}_shares_diluted_annual_10_unpacked']=shares_diluted_annual_10_unpacked
-                              st.session_state[f'{ticker}_shares_basic_annual_10_unpacked']=shares_basic_annual_10_unpacked
-                              st.session_state[f'{ticker}_shares_diluted_quarter_10_unpacked'] =shares_diluted_quarter_10_unpacked
-                              st.session_state[f'{ticker}_shares_basic_quarterly_10_unpacked']=shares_basic_quarterly_10_unpacked
+               
                               st.session_state[f'{ticker}_Net_interest_Income_annual_10'] =Net_interest_Income_annual_10_unpacked
 
                               st.session_state[f'{ticker}_Net_interest_Income_annual_10_growth'] =Net_interest_Income_annual_10_growth_unpacked
@@ -8834,8 +8846,7 @@ if selected == "Stock Analysis Tool":
                                         Revenue_growth_3years,
                                         Revenue_growth_5years,
                                         Revenue_growth_10quarter_unpacked,
-                                        Revenue_growth_10years,shares_diluted_annual_10_unpacked,
-                                        shares_basic_annual_10_unpacked,shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked, 
+                                        Revenue_growth_10years, 
                                         Net_interest_Income_annual_10_unpacked,Net_interest_Income_annual_10_growth_unpacked,
                                         Net_interest_Income_quarter_10_growth_unpacked
                                         )
@@ -8847,8 +8858,7 @@ if selected == "Stock Analysis Tool":
                          Revenue_growth_1year,
                          Revenue_growth_3years,
                          Revenue_growth_5years,Revenue_growth_10quarter_unpacked,Revenue_growth_10years,
-                         shares_diluted_annual_10_unpacked,shares_basic_annual_10_unpacked,
-                         shares_diluted_quarter_10_unpacked,shares_basic_quarterly_10_unpacked,Net_interest_Income_annual_10_unpacked,
+                         Net_interest_Income_annual_10_unpacked,
                          Net_interest_Income_annual_10_growth_unpacked,
                          Net_interest_Income_quarter_10_growth_unpacked
                          ) = calculate_revenue_and_growth(annual_data,quarterly_data, ticker)
