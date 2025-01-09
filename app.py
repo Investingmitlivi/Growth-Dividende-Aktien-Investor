@@ -7638,7 +7638,8 @@ if selected == "Stock Analysis Tool":
                          'ZYNE':'Zynerba Pharmaceuticals Inc. ',
                          'ZYXI':'Zynex Inc. ',
                          'NPSNY':'Naspers Ltd.',
-                         'EHMEF':'goeasy Ltd'
+                         'EHMEF':'goeasy Ltd',
+                         'CNSWF':'Constellation Software Inc.'
                     }
 
 
@@ -8590,8 +8591,8 @@ if selected == "Stock Analysis Tool":
                               ROIC_annual_3years=sum(ROIC_annual_3years)/len(ROIC_annual_3years)
                               ROIC_annual_3years = "{:.2f}%".format(ROIC_annual_3years*100)
 
-                              ROE_annual_5_unpacked =annual_data['roic'][-5:]
-                              ROE_annual_10_unpacked =annual_data['roic'][-10:]
+                              ROE_annual_5_unpacked =annual_data['roe'][-5:]
+                              ROE_annual_10_unpacked =annual_data['roe'][-10:]
 
                               st.session_state[f'{ticker}_roic_last'] = ROIC_annual_one
                               st.session_state[f'{ticker}_ROIC_annual_5_unpacked'] = ROIC_annual_5_unpacked
@@ -8773,10 +8774,11 @@ if selected == "Stock Analysis Tool":
                               if f'{ticker}_revenue_last' in st.session_state:
                                    return (st.session_state[f'{ticker}_revenue_last'],
                                              st.session_state[f'{ticker}_revenue_10years_growth'],
+                                             st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'],
+
                                              st.session_state[f'{ticker}_revenue_growth_1year'],
                                              st.session_state[f'{ticker}_revenue_growth_3years'],
                                              st.session_state[f'{ticker}_revenue_growth_5years'],
-                                             st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'],
                                              st.session_state[f'{ticker}_revenue_growth_10years'],
                                              st.session_state[f'{ticker}_Net_interest_Income_annual_10'],
                                              st.session_state[f'{ticker}_Net_interest_Income_annual_10_growth'],
@@ -8786,6 +8788,8 @@ if selected == "Stock Analysis Tool":
                               average_revenue_annual_ttm = ((sum(revenue_annual_ttm) / len(revenue_annual_ttm)) / 1000000000)
 
                               Revenue_growth_10_unpacked = annual_data['revenue_growth'][-10:]
+                              Revenue_growth_10quarter_unpacked= quarterly_data['revenue_growth'][-10:]
+
                               Revenue_growth_1year = annual_data['revenue_growth'][-1:]
 
                               Revenue_growth_1year=sum(Revenue_growth_1year)/len(Revenue_growth_1year)
@@ -8797,11 +8801,10 @@ if selected == "Stock Analysis Tool":
 
                               Revenue_growth_5years = annual_data['revenue_growth'][-5:]
                               Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
-
                               Revenue_growth_5years = (Revenue_growth_5years*100)
-                              Revenue_growth_10quarter_unpacked= quarterly_data['revenue_growth'][-10:]
 
-                              print(Revenue_growth_10quarter_unpacked)
+
+                              #print("Revenue_growth_10quarter_unpacked",Revenue_growth_10quarter_unpacked)
 
                               Revenue_growth_10years = annual_data['revenue_growth'][-10:]
                               Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
@@ -8826,10 +8829,11 @@ if selected == "Stock Analysis Tool":
                               # Store results in session state
                               st.session_state[f'{ticker}_revenue_last'] = average_revenue_annual_ttm
                               st.session_state[f'{ticker}_revenue_10years_growth'] = Revenue_growth_10_unpacked
+                              st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'] = Revenue_growth_10quarter_unpacked
+
                               st.session_state[f'{ticker}_revenue_growth_1year'] = Revenue_growth_1year
                               st.session_state[f'{ticker}_revenue_growth_3years'] = Revenue_growth_3years
                               st.session_state[f'{ticker}_revenue_growth_5years'] = Revenue_growth_5years
-                              st.session_state[f'{ticker}_Revenue_growth_10quarter_unpacked'] = Revenue_growth_10quarter_unpacked
                               st.session_state[f'{ticker}_revenue_growth_10years'] = Revenue_growth_10years
                
                               st.session_state[f'{ticker}_Net_interest_Income_annual_10'] =Net_interest_Income_annual_10_unpacked
@@ -8842,10 +8846,11 @@ if selected == "Stock Analysis Tool":
 
                               return (average_revenue_annual_ttm,
                                         Revenue_growth_10_unpacked,
+                                        Revenue_growth_10quarter_unpacked,
                                         Revenue_growth_1year,
                                         Revenue_growth_3years,
                                         Revenue_growth_5years,
-                                        Revenue_growth_10quarter_unpacked,
+                                        
                                         Revenue_growth_10years, 
                                         Net_interest_Income_annual_10_unpacked,Net_interest_Income_annual_10_growth_unpacked,
                                         Net_interest_Income_quarter_10_growth_unpacked
@@ -8855,9 +8860,10 @@ if selected == "Stock Analysis Tool":
                          (average_revenue_annual_ttm,
                     
                          Revenue_growth_10_unpacked,
+                         Revenue_growth_10quarter_unpacked,
                          Revenue_growth_1year,
                          Revenue_growth_3years,
-                         Revenue_growth_5years,Revenue_growth_10quarter_unpacked,Revenue_growth_10years,
+                         Revenue_growth_5years,Revenue_growth_10years,
                          Net_interest_Income_annual_10_unpacked,
                          Net_interest_Income_annual_10_growth_unpacked,
                          Net_interest_Income_quarter_10_growth_unpacked
@@ -9251,7 +9257,11 @@ if selected == "Stock Analysis Tool":
                               try:
                                    # Get the value at index -6 (5 years ago) and the most recent value
                                    value_at_index_6 = FCF_annual_ten_unpacked[-6]
+                                   print("value_at_index_6",value_at_index_6)
+                                   
+
                                    value_at_index_last = FCF_annual_ten_unpacked[-1]
+                                   print("value_at_index_last",value_at_index_last)
                               except Exception as e:
                                    # If there's an error (e.g., insufficient data), set both to 0
                                    value_at_index_6 = 0
@@ -9264,7 +9274,7 @@ if selected == "Stock Analysis Tool":
                                    else:
                                         try:
                                              # Calculate CAGR
-                                             FCF_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
+                                             FCF_5_CAGR = (pow((value_at_index_last / value_at_index_6), 1/5) - 1) * 100
                                              # Handle complex number case
                                              if isinstance(FCF_5_CAGR, complex):
                                                   FCF_5_CAGR = "{:.2f}".format(0.00)
@@ -12655,6 +12665,7 @@ if selected == "Stock Analysis Tool":
 
                          # Discounted Cash Flow function with reverse DCF logic
                          @st.cache_data(show_spinner=False, ttl=3600) 
+                         
                          def present_value(g, fcf, r, t, years):
                               pv = 0
                               for i in range(1, years + 1):
@@ -13101,6 +13112,7 @@ if selected == "Stock Analysis Tool":
 
                                                        # Create a DataFrame for the metrics
                                                        metrics = [
+
                                                        ('Revenue growth ', Revenue_growth_10quarter_unpacked),
                                                        ('Net Income growth', NetIncome_growth_quarter_10_unpacked),
                                                        ('Net Interest Income growth', Net_interest_Income_quarter_10_growth_unpacked),
