@@ -14118,7 +14118,9 @@ if selected == "Stock Analysis Tool":
 
                                    with col3:
                                         st.write(f"""
-                                        <b>5YR Price/FCF {pfcf_funf}:  Current Price/FCF: {pfcf_ttm}
+                    
+                                        <b><span style='color:dodgerblue'>10YR Price/FCF:</span>  {pfcf_ten}  <span style='color:dodgerblue'>5YR Price/FCF:  </span> {pfcf_funf}  <span style='color:dodgerblue'>Current Price/FCF:</span>  {pfcf_ttm}
+
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig22,use_container_width=True,config=config)
 
