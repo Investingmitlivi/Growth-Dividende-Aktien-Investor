@@ -10459,7 +10459,8 @@ if selected == "Stock Analysis Tool":
                          'ROCE': [ "{:.2f}%".format(One_YR_ROCE)],
                          f'ATH ({format_date(st.session_state.all_time_high_date)})': f"$ {st.session_state.all_time_high_price:.2f}",
                          f'52WK LOW ({format_date(st.session_state.fifty_two_week_low_date)})': f"$ {st.session_state.fifty_two_week_low:.2f}",
-                         'Analyst Target Price': [f"$ {Target_Price}"]
+                         'Analyst Target Price': [f"$ {Target_Price}"],
+                         'Current price': ["$ {:.2f}".format(amount)] 
                          }
           
 
@@ -10468,7 +10469,8 @@ if selected == "Stock Analysis Tool":
                          'EPS Estimate this YR': f"{Earnings_this_yr}",
                          'EPS Estimate next YR': f" {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
                          'EPS Estimate 5 YR (per annum)': [Earnings_next_5_yrs],
-                         'EPS past 5 YR': f"{EPS_5_CAGR}% ",
+                         'EPS CAGR 10 YR': f"{EPS_Cagr_10}%",
+                         'EPS CAGR 5 YR': f"{EPS_5_CAGR}% ",
                          'Revenue CAGR 10 YR': f"{Revenue_Cagr_10}%",
                          'Revenue CAGR 5 YR': f"{Revenue_5_CAGR}%",
                          'FCF CAGR 10 YR': f"{FCF_Cagr_10}%",
@@ -10477,8 +10479,8 @@ if selected == "Stock Analysis Tool":
                          'Net Interest Income CAGR 5 YR': f"{Net_interest_Income_annual_Cagr_5 }%",
                          'RSI (14)': [RSI],
                          '50 SMA': [Moving_50],
-                         '200 SMA': [Moving_200],
-                         'Current price': ["$ {:.2f}".format(amount)] 
+                         '200 SMA': [Moving_200]
+                         
                          }
 
                          # Convert data into styled DataFrames
