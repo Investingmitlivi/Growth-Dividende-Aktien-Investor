@@ -7639,7 +7639,8 @@ if selected == "Stock Analysis Tool":
                          'ZYXI':'Zynex Inc. ',
                          'NPSNY':'Naspers Ltd.',
                          'EHMEF':'goeasy Ltd',
-                         'CNSWF':'Constellation Software Inc.'
+                         'CNSWF':'Constellation Software Inc.',
+                         'SDZNY':'Sandoz Group AG'
                     }
 
 
@@ -7717,7 +7718,8 @@ if selected == "Stock Analysis Tool":
                Dividend_ttm = Financial_data['ttm']['cff_dividend_paid'] 
                Dividend_current_dividend= Financial_data['ttm']['dividends'] 
                fcf_ttm = Financial_data['ttm']['fcf']/1000000000 
-               ROE_TTM =Financial_data['ttm']['roe']*100         
+               ROE_TTM =Financial_data['ttm']['roe']*100  
+               ROIC_TTM =Financial_data['ttm']['roic']*100          
                netincome_ttm = Financial_data['ttm']['net_income']/1000000000
                revenue_ttm = Financial_data['ttm']['revenue']/1000000000
                shares_diluted_ttm = (Financial_data['ttm']['shares_diluted'])/1000000000
@@ -7741,7 +7743,7 @@ if selected == "Stock Analysis Tool":
 
               
                
-               
+               print(ROIC_TTM)
                
           
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
@@ -10190,9 +10192,11 @@ if selected == "Stock Analysis Tool":
                               ROE_ttm_ohne = (ROE_TTM)
                               ROE_ttm="{:.2f}%".format(ROE_ttm_ohne)
                               fcf_yield_ttm = "{:.2f}%".format((fcf_per_share/amount)*100)
+                              ROIC_TTM=ROIC_TTM
                          except Exception as e: 
                               ROE_ttm  ="{:.2f}%".format(0.00)
                               fcf_yield_ttm ="{:.2f}%".format(0.00)
+                              ROIC_TTM = ROIC_annual_one
 
           #######################################################################################################################
                          #print("ROE_TTM",ROE_TTM)
@@ -10454,7 +10458,7 @@ if selected == "Stock Analysis Tool":
                          '5 YR ROE': ["{:.5}%".format(five_ROE)],
                          'ROE': [ROE_ttm],
                          '5 YR ROIC': [Average_ROIC_funf],
-                         'ROIC': [ROIC_annual_one],
+                         'ROIC': ["{:.5}%".format(ROIC_TTM)],
                          '5 YR ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
                          'ROCE': [ "{:.2f}%".format(One_YR_ROCE)],
                          f'ATH ({format_date(st.session_state.all_time_high_date)})': f"$ {st.session_state.all_time_high_price:.2f}",
@@ -13501,9 +13505,9 @@ if selected == "Stock Analysis Tool":
                                    
                                    #Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
                                    data = pd.DataFrame({
-                                   'Date': date_annual_20yrs,
-                                   'Dividends': dividendPaidInTheLast21Years_unpacked,
-                                   'Free Cash Flow': Free_cash_flow_annual_21_unpacked,
+                                   'Date': date_annual,
+                                   'Dividends': [round(abs(x), 2) for x in Cash_Dividends_paid_Total_annual_10_unpacked],
+                                   'Free Cash Flow': FCF_annual_ten_unpacked,
                                    })
 
                                    fig = go.Figure()
@@ -13758,7 +13762,7 @@ if selected == "Stock Analysis Tool":
                                    with col1:
                                         st.write(f"""
                                         <b>5 YR ROIC Y/Y: {Average_ROIC_funf}</b>
-                                        <b> Current ROIC: {ROIC_annual_one}</b><br>
+                                        <b> Current ROIC: {ROIC_TTM}%</b><br>
                                         <span style='font-family: Calibri; font-style: italic;'>
                                         Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.<br>(Investiertes Kapital = Summe von Eigenkapital und Fremdkapital)
                                         </span>
