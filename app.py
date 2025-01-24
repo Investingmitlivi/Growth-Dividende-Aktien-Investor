@@ -10135,14 +10135,8 @@ if selected == "Stock Analysis Tool":
                                    pfcf_funf = "{:.2f}".format(
                                         Marketcap / (rounded_fcf_Annual_five / 1_000_000_000)
                                    )
-                                   P_OCF_5 = "{:.2f}".format(
-                                        Marketcap
-                                        / (
-                                             sum(Net_Operating_CashFlow_annual_5_unpacked)
-                                             / len(Net_Operating_CashFlow_annual_5_unpacked)
-                                        )
-                                        / 1_000_000_000
-                                   )
+                                   P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5_unpacked)/len(Net_Operating_CashFlow_annual_5_unpacked))/1000000000))
+
                                    KCV = pfcf_funf
                                    KGV = pe_five_
                                    five_Yrs_ROE = "{:.2f}".format(
