@@ -6554,7 +6554,7 @@ if selected == "Stock Analysis Tool":
                          'SPWR':'SunPower Corporation ',
                          'SPXC':'SPX Technologies Inc. ',
                          'SPXX':'Nuveen S&P 500 Dynamic Overwrite Fund',
-                         'SQ':'Block Inc.  ',
+                         'XYZ':'Block Inc.  ',
                          'SQFT':'Presidio Property Trust Inc.  ',
                          'SQL':'SeqLL Inc. ',
                          'SQLLW':'SeqLL Inc. ',
@@ -7640,7 +7640,8 @@ if selected == "Stock Analysis Tool":
                          'NPSNY':'Naspers Ltd.',
                          'EHMEF':'goeasy Ltd',
                          'CNSWF':'Constellation Software Inc.',
-                         'SDZNY':'Sandoz Group AG'
+                         'SDZNY':'Sandoz Group AG',
+                         'EVVTY':'Evolution AB (Publ)',
                     }
 
 
@@ -7719,7 +7720,8 @@ if selected == "Stock Analysis Tool":
                Dividend_current_dividend= Financial_data['ttm']['dividends'] 
                fcf_ttm = Financial_data['ttm']['fcf']/1000000000 
                ROE_TTM =Financial_data['ttm']['roe']*100  
-               ROIC_TTM =Financial_data['ttm']['roic']*100          
+               ROIC_TTM =Financial_data['ttm']['roic']*100   
+               ROA_TTM =Financial_data['ttm']['roa']*100          
                netincome_ttm = Financial_data['ttm']['net_income']/1000000000
                revenue_ttm = Financial_data['ttm']['revenue']/1000000000
                shares_diluted_ttm = (Financial_data['ttm']['shares_diluted'])/1000000000
@@ -7743,7 +7745,7 @@ if selected == "Stock Analysis Tool":
 
               
                
-               print(ROIC_TTM)
+               print(ROA_TTM)
                
           
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
@@ -10114,40 +10116,106 @@ if selected == "Stock Analysis Tool":
                          else:
                                    
                               Dividend_yield_average ="{:.2f}%".format(0.00)
-                         
-                         if len(Revenue_annual_5_unpacked) >= 5:
-                              Average_ROIC_funf = "{:.2f}%".format((Average_ROIC_funf))
-                              average_FCF_annual_five_we ="{:.2f}B".format(rounded_fcf_Annual_five/ 1000000000) if abs(rounded_fcf_Annual_five) >= 1000000000 else "{:,.1f}M".format(rounded_fcf_Annual_five / 1000000)
-                              five_ROE="{:.2f}".format(((sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked))*100))
-                              pe_five_ = "{:.2f}".format(float(Marketcap)/(Average_net_income_annual_funf/1000000000))
-                              #print(pe_five_)
-                              pfcf_funf="{:.2f}".format(Marketcap/(rounded_fcf_Annual_five/1000000000))
-                              P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5_unpacked)/len(Net_Operating_CashFlow_annual_5_unpacked))/1000000000))
-                              KCV =  pfcf_funf
-                              KGV = pe_five_
-                              five_Yrs_ROE="{:.2f}".format(((sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked))*100))
-                              Average_fcf_growth_five =  "{:.2f}%".format(((sum(fcf_growth_annual_5_unpacked) / len(fcf_growth_annual_5_unpacked)))*100)
-                              Average_pe_five =  "{:.2f}".format(((sum(pe_annual_5_unpacked) /len(pe_annual_5_unpacked)))) 
-                              five_yrs_Nettomarge = "{:.2f}".format((Net_income_margin_annual5)*100)
-                              FCF_Margin_5 = "{:.2f}".format((FCF_Margin_5)*100)
-                              P_sales_5="{:.2f}".format(Marketcap/((sum(Revenue_annual_5_unpacked)/len(Revenue_annual_5_unpacked))/1000000000))
 
-                         else:
-                              Average_ROIC_funf ="NA"
-                              average_FCF_annual_five_we="{:.2f}".format(0.0)
-                              five_yrs_Nettomarge ="0.00"
-                              five_ROE="0.00"
-                              pfcf_funf="-"
-                              pe_five_="-"
-                              average_PE_historical="-"
+
+                         try:
+                              if len(Revenue_annual_5_unpacked) >= 5:
+                                   Average_ROIC_funf = "{:.2f}%".format(Average_ROIC_funf)
+                                   average_FCF_annual_five_we = (
+                                        "{:.2f}B".format(rounded_fcf_Annual_five / 1_000_000_000)
+                                        if abs(rounded_fcf_Annual_five) >= 1_000_000_000
+                                        else "{:,.1f}M".format(rounded_fcf_Annual_five / 1_000_000)
+                                   )
+                                   five_ROE = "{:.2f}".format(
+                                        (sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked)) * 100
+                                   )
+                                   pe_five_ = "{:.2f}".format(
+                                        float(Marketcap) / (Average_net_income_annual_funf / 1_000_000_000)
+                                   )
+                                   pfcf_funf = "{:.2f}".format(
+                                        Marketcap / (rounded_fcf_Annual_five / 1_000_000_000)
+                                   )
+                                   P_OCF_5 = "{:.2f}".format(
+                                        Marketcap
+                                        / (
+                                             sum(Net_Operating_CashFlow_annual_5_unpacked)
+                                             / len(Net_Operating_CashFlow_annual_5_unpacked)
+                                        )
+                                        / 1_000_000_000
+                                   )
+                                   KCV = pfcf_funf
+                                   KGV = pe_five_
+                                   five_Yrs_ROE = "{:.2f}".format(
+                                        (sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked)) * 100
+                                   )
+                                   Average_fcf_growth_five = "{:.2f}%".format(
+                                        (sum(fcf_growth_annual_5_unpacked) / len(fcf_growth_annual_5_unpacked)) * 100
+                                   )
+                                   Average_pe_five = "{:.2f}".format(
+                                        sum(pe_annual_5_unpacked) / len(pe_annual_5_unpacked)
+                                   )
+                                   five_yrs_Nettomarge = "{:.2f}".format(Net_income_margin_annual5 * 100)
+                                   FCF_Margin_5 = "{:.2f}".format(FCF_Margin_5 * 100)
+                                   P_sales_5 = "{:.2f}".format(
+                                        Marketcap
+                                        / (sum(Revenue_annual_5_unpacked) / len(Revenue_annual_5_unpacked))
+                                        / 1_000_000_000
+                                   )
+                              else:
+                                   raise ValueError(" ")
+
+                         except Exception as e:
+
+                              # Set fallback/default values
+                              Average_ROIC_funf = "NA"
+                              average_FCF_annual_five_we = "{:.2f}".format(0.0)
+                              five_yrs_Nettomarge = "0.00"
+                              five_ROE = "0.00"
+                              pfcf_funf = "-"
+                              pe_five_ = "-"
+                              average_PE_historical = "-"
                               P_OCF_5 = "-"
-                              KGV=0.0
-                              KCV=0.0
-                              five_Yrs_ROE=0.0
+                              KGV = 0.0
+                              KCV = 0.0
+                              five_Yrs_ROE = 0.0
                               Average_fcf_growth_five = "0.00"
                               Average_pe_five = "0.00"
-                              FCF_Margin_5 ="-"
+                              FCF_Margin_5 = "-"
                               P_sales_5 = "-"
+                         
+                         # if len(Revenue_annual_5_unpacked) >= 5:
+                         #      Average_ROIC_funf = "{:.2f}%".format((Average_ROIC_funf))
+                         #      average_FCF_annual_five_we ="{:.2f}B".format(rounded_fcf_Annual_five/ 1000000000) if abs(rounded_fcf_Annual_five) >= 1000000000 else "{:,.1f}M".format(rounded_fcf_Annual_five / 1000000)
+                         #      five_ROE="{:.2f}".format(((sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked))*100))
+                         #      pe_five_ = "{:.2f}".format(float(Marketcap)/(Average_net_income_annual_funf/1000000000))
+                         #      #print(pe_five_)
+                         #      pfcf_funf="{:.2f}".format(Marketcap/(rounded_fcf_Annual_five/1000000000))
+                         #      P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5_unpacked)/len(Net_Operating_CashFlow_annual_5_unpacked))/1000000000))
+                         #      KCV =  pfcf_funf
+                         #      KGV = pe_five_
+                         #      five_Yrs_ROE="{:.2f}".format(((sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked))*100))
+                         #      Average_fcf_growth_five =  "{:.2f}%".format(((sum(fcf_growth_annual_5_unpacked) / len(fcf_growth_annual_5_unpacked)))*100)
+                         #      Average_pe_five =  "{:.2f}".format(((sum(pe_annual_5_unpacked) /len(pe_annual_5_unpacked)))) 
+                         #      five_yrs_Nettomarge = "{:.2f}".format((Net_income_margin_annual5)*100)
+                         #      FCF_Margin_5 = "{:.2f}".format((FCF_Margin_5)*100)
+                         #      P_sales_5="{:.2f}".format(Marketcap/((sum(Revenue_annual_5_unpacked)/len(Revenue_annual_5_unpacked))/1000000000))
+
+                         # else:
+                         #      Average_ROIC_funf ="NA"
+                         #      average_FCF_annual_five_we="{:.2f}".format(0.0)
+                         #      five_yrs_Nettomarge ="0.00"
+                         #      five_ROE="0.00"
+                         #      pfcf_funf="-"
+                         #      pe_five_="-"
+                         #      average_PE_historical="-"
+                         #      P_OCF_5 = "-"
+                         #      KGV=0.0
+                         #      KCV=0.0
+                         #      five_Yrs_ROE=0.0
+                         #      Average_fcf_growth_five = "0.00"
+                         #      Average_pe_five = "0.00"
+                         #      FCF_Margin_5 ="-"
+                         #      P_sales_5 = "-"
 
                          
                          Dividend_per_share_yield_no_percentage =abs((Divdend_per_share_ttm)/current_price)*100
@@ -10193,10 +10261,12 @@ if selected == "Stock Analysis Tool":
                               ROE_ttm="{:.2f}%".format(ROE_ttm_ohne)
                               fcf_yield_ttm = "{:.2f}%".format((fcf_per_share/amount)*100)
                               ROIC_TTM=ROIC_TTM
+                              ROA_TTM =ROA_TTM
                          except Exception as e: 
                               ROE_ttm  ="{:.2f}%".format(0.00)
                               fcf_yield_ttm ="{:.2f}%".format(0.00)
                               ROIC_TTM = ROIC_annual_one
+                              ROA_TTM =average_ROA_annual_ttm
 
           #######################################################################################################################
                          #print("ROE_TTM",ROE_TTM)
@@ -10454,7 +10524,7 @@ if selected == "Stock Analysis Tool":
                          'P/B': '{:.2f}'.format(PBVPS),
                          '5 YR P/B': [average_price_to_book_annual_5],
                          '10 YR P/B':[average_price_to_book],
-                         'ROA': [average_ROA_annual_ttm],
+                         'ROA': ["{:.5}%".format(ROA_TTM)],
                          '5 YR ROE': ["{:.5}%".format(five_ROE)],
                          'ROE': [ROE_ttm],
                          '5 YR ROIC': [Average_ROIC_funf],
