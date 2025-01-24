@@ -10150,11 +10150,7 @@ if selected == "Stock Analysis Tool":
                                    )
                                    five_yrs_Nettomarge = "{:.2f}".format(Net_income_margin_annual5 * 100)
                                    FCF_Margin_5 = "{:.2f}".format(FCF_Margin_5 * 100)
-                                   P_sales_5 = "{:.2f}".format(
-                                        Marketcap
-                                        / (sum(Revenue_annual_5_unpacked) / len(Revenue_annual_5_unpacked))
-                                        / 1_000_000_000
-                                   )
+                                   P_sales_5="{:.2f}".format(Marketcap/((sum(Revenue_annual_5_unpacked)/len(Revenue_annual_5_unpacked))/1000000000))
                               else:
                                    raise ValueError(" ")
 
