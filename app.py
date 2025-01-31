@@ -7642,6 +7642,7 @@ if selected == "Stock Analysis Tool":
                          'CNSWF':'Constellation Software Inc.',
                          'SDZNY':'Sandoz Group AG',
                          'EVVTY':'Evolution AB (Publ)',
+                         'RHHBY':'Roche Holding AG',
                     }
 
 
