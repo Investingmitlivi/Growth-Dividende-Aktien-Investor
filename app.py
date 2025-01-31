@@ -7717,35 +7717,36 @@ if selected == "Stock Analysis Tool":
                eps_diluted_ttm = Financial_data['ttm']['eps_diluted']
                fcf_per_share = Financial_data['ttm']['fcf_per_share']
                Dividend_ttm = Financial_data['ttm']['cff_dividend_paid'] 
-               Dividend_current_dividend= Financial_data['ttm']['dividends'] 
+               #Dividend_current_dividend= Financial_data['ttm']['dividends'] 
                fcf_ttm = Financial_data['ttm']['fcf']/1000000000 
                ROE_TTM =Financial_data['ttm']['roe']*100  
                ROIC_TTM =Financial_data['ttm']['roic']*100   
                ROA_TTM =Financial_data['ttm']['roa']*100          
                netincome_ttm = Financial_data['ttm']['net_income']/1000000000
                revenue_ttm = Financial_data['ttm']['revenue']/1000000000
-               shares_diluted_ttm = (Financial_data['ttm']['shares_diluted'])/1000000000
-               shares_basic_ttm = (Financial_data['ttm']['shares_basic'])/1000000000
+               #shares_diluted_ttm = (Financial_data['ttm']['shares_diluted'])/1000000000
+               #shares_basic_ttm = (Financial_data['ttm']['shares_basic'])/1000000000
                shares_eop_ttm=(Financial_data['ttm']['shares_eop'])/1000000000
-               shares_eop_change_ttm=(Financial_data['ttm']['shares_eop_change'])/1000000000
+               #shares_eop_change_ttm=(Financial_data['ttm']['shares_eop_change'])/1000000000
                current_Operating_cash_Flow =Financial_data['ttm']['cf_cfo']
-               shares_eop_annual=annual_data['shares_eop'][-1:]
-               shares_eop_quarter=quarterly_data['shares_eop'][-1:]
-               period_end_price_ttm = (Financial_data['ttm']['period_end_price'])
+               #shares_eop_annual=annual_data['shares_eop'][-1:]
+              # shares_eop_quarter=quarterly_data['shares_eop'][-1:]
+               #period_end_price_ttm = (Financial_data['ttm']['period_end_price'])
                Revenue_ttm = (Financial_data['ttm']['revenue'])
-               Debt_equity_last_quater = annual_data['debt_to_equity'][-1:]
-               Debt_equity_ttm =(Financial_data['ttm']['debt_to_equity'])
+               #Debt_equity_last_quater = annual_data['debt_to_equity'][-1:]
+               #Debt_equity_ttm =(Financial_data['ttm']['debt_to_equity'])
                date_quarter = quarterly_data['period_end_date'][-10:] 
                date_annual = annual_data['period_end_date'][-10:] 
                Stock_description=data["data"]["metadata"]["description"]
                stock_sector=data["data"]["metadata"]["sector"]
                cik=data["data"]["metadata"]["CIK"]
-               net_debt_quater =quarterly_data['net_debt'][-5:]
-               net_debt_annual=annual_data['net_debt'][-5:]
-
+               #net_debt_quater =quarterly_data['net_debt'][-5:]
+               #net_debt_annual=annual_data['net_debt'][-5:]
+               #Dividend_per_share_ttm =Financial_data['ttm']['dividends']
+               Dividend_per_share_ttm_op = Financial_data['ttm']['dividends']
               
                
-               print(ROA_TTM)
+               #print("Dividend_per_share_ttm_op",Dividend_per_share_ttm_op)
                
           
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
@@ -7756,14 +7757,16 @@ if selected == "Stock Analysis Tool":
 
                Average_shares_basic_annual_one = (sum(shares_basic_annual_one) / len(shares_basic_annual_one)) / 1000000000
                #EPS_growth_annual_unpacked= annual_data['eps_diluted_growth'][-10:]
-               Dividend_per_share = Financial_data['ttm']['dividends']
+               
                #---------------------------pyfinanz-----------------------------------
                try:
 
                     quote = Quote(ticker)
+                  
 
                except Exception:
                     st.write()
+                  
                
                #--------------------------10K-----------------------------------
 
@@ -8993,6 +8996,8 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_Price_to_earnings_annual_10'] ,
                                              st.session_state[f'{ticker}_shares_diluted_growth_annual_10'] ,
                                              st.session_state[f'{ticker}_FCF_Margin_quarter_10'],
+                                             st.session_state[f'{ticker}_ebitda_Margin_quarter_10'],
+                                             st.session_state[f'{ticker}_ebitda_Margin_annual_10'],
                                              st.session_state[f'{ticker}_debt_equity_quarter_10'] ,
                                              st.session_state[f'{ticker}_EBITDA_growth_quarter_10'] ,
                                              st.session_state[f'{ticker}_Price_to_book_quarter_10'] ,
@@ -9068,6 +9073,8 @@ if selected == "Stock Analysis Tool":
 
                               # Calculate the financial ratios (quarterly data)
                               FCF_Margin_quarter_10_unpacked = quarterly_data['fcf_margin'][-10:]
+                              ebitda_Margin_quarter_10_unpacked = quarterly_data['ebitda_margin'][-10:]
+                              ebitda_Margin_annual_10_unpacked = annual_data['ebitda_margin'][-10:]
                               debt_equity_quarter_10_unpacked = quarterly_data['debt_to_equity'][-10:]
                               EBITDA_growth_quarter_10_unpacked = quarterly_data['ebitda_growth'][-10:]
                               Price_to_book_quarter_10_unpacked = quarterly_data['price_to_book'][-10:]
@@ -9122,6 +9129,8 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_shares_diluted_growth_annual_10'] = shares_diluted_annual_growth_10_unpacked
 
                               st.session_state[f'{ticker}_FCF_Margin_quarter_10'] = FCF_Margin_quarter_10_unpacked
+                              st.session_state[f'{ticker}_ebitda_Margin_quarter_10']= ebitda_Margin_quarter_10_unpacked
+                              st.session_state[f'{ticker}_ebitda_Margin_annual_10']= ebitda_Margin_annual_10_unpacked
                               st.session_state[f'{ticker}_debt_equity_quarter_10'] = debt_equity_quarter_10_unpacked
                               st.session_state[f'{ticker}_EBITDA_growth_quarter_10'] = EBITDA_growth_quarter_10_unpacked
                               st.session_state[f'{ticker}_Price_to_book_quarter_10'] = Price_to_book_quarter_10_unpacked
@@ -9152,7 +9161,8 @@ if selected == "Stock Analysis Tool":
                                    Payout_ratio_annual_10_unpacked, NetIncome_growth_annual_10_unpacked,
                                    Book_Value_growth_annual_10_unpacked, Price_to_sales_annual_10_unpacked,
                                    Price_to_earnings_annual_10_unpacked, shares_diluted_annual_growth_10_unpacked,
-                                   FCF_Margin_quarter_10_unpacked, debt_equity_quarter_10_unpacked, EBITDA_growth_quarter_10_unpacked,
+                                   FCF_Margin_quarter_10_unpacked, ebitda_Margin_quarter_10_unpacked,
+                                   ebitda_Margin_annual_10_unpacked,debt_equity_quarter_10_unpacked, EBITDA_growth_quarter_10_unpacked,
                                    Price_to_book_quarter_10_unpacked, Dividend_per_share_quarter_10_unpacked,
                                    fcf_per_share_quarter_10_unpacked, revenue_per_share_quarter_10_unpacked,
                                    ROE_quarter_10_unpacked, Payout_ratio_quarter_10_unpacked, NetIncome_growth_quarter_10_unpacked,
@@ -9173,7 +9183,8 @@ if selected == "Stock Analysis Tool":
                          Payout_ratio_annual_10_unpacked, NetIncome_growth_annual_10_unpacked,
                          Book_Value_growth_annual_10_unpacked, Price_to_sales_annual_10_unpacked,
                          Price_to_earnings_annual_10_unpacked, shares_diluted_annual_growth_10_unpacked,
-                         FCF_Margin_quarter_10_unpacked, debt_equity_quarter_10_unpacked, EBITDA_growth_quarter_10_unpacked,
+                         FCF_Margin_quarter_10_unpacked,ebitda_Margin_quarter_10_unpacked,
+                         ebitda_Margin_annual_10_unpacked,debt_equity_quarter_10_unpacked, EBITDA_growth_quarter_10_unpacked,
                          Price_to_book_quarter_10_unpacked, Dividend_per_share_quarter_10_unpacked,
                          fcf_per_share_quarter_10_unpacked, revenue_per_share_quarter_10_unpacked,
                          ROE_quarter_10_unpacked, Payout_ratio_quarter_10_unpacked, NetIncome_growth_quarter_10_unpacked,
@@ -10018,7 +10029,7 @@ if selected == "Stock Analysis Tool":
           ###################################################################################################
 
 
-
+ 
 
           
                          if Revenue_ttm!=0 and average_revenue_annual_ttm !=0 :
@@ -10456,6 +10467,11 @@ if selected == "Stock Analysis Tool":
                               return styled_df
 
           #################################################################################
+
+
+
+ 
+
                          def display_dataframes(dfs, cols):
                               for df, col in zip(dfs, cols):
                                    with col:
@@ -13070,6 +13086,7 @@ if selected == "Stock Analysis Tool":
                                    'FCF growth': fcf_growth_annual_10_unpacked ,
                                    'EPS growth':EPS_growth_annual_10yrs_unpacked,
                                    'FCF Margin':FCF_Margin_annual_10unpacked,
+                                   'EBITDA Margin': ebitda_Margin_annual_10_unpacked,
                                    'Shares diluted':shares_diluted_annual_growth_10_unpacked,
                                    'Operating Margin':operating_margin_annual10_unpacked,
                                    'Gross Margin':gross_margin_annual10_unpacked, 
@@ -13099,6 +13116,7 @@ if selected == "Stock Analysis Tool":
                                    ('FCF growth', fcf_growth_annual_10_unpacked ),
                                    ('EPS growth',EPS_growth_annual_10yrs_unpacked),
                                    ('FCF Margin',FCF_Margin_annual_10unpacked), 
+                                   ('EBITDA Margin', ebitda_Margin_annual_10_unpacked),
                                    ('Shares diluted',shares_diluted_annual_growth_10_unpacked),
                                    ('Operating Margin',operating_margin_annual10_unpacked),
                                    ('Gross Margin',gross_margin_annual10_unpacked), 
@@ -13125,7 +13143,7 @@ if selected == "Stock Analysis Tool":
                                         if not isinstance(metric_data, list):
                                              metric_data = [metric_data]  # Convert non-iterable values to lists
 
-                                        if metric_name in ('Revenue growth', 'Net Income growth','Net Interest Income growth','FCF growth', 'EPS growth','FCF Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
+                                        if metric_name in ('Revenue growth', 'Net Income growth','Net Interest Income growth','FCF growth', 'EPS growth','FCF Margin','EBITDA Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
                                              formatted_data = ["{:.2f}%".format(data * 100) for data in metric_data]
                                         elif metric_name == 'Book Value':
                                              formatted_data = ["{:.2f}B".format(data / 1_000_000_000) for data in metric_data]
@@ -13157,6 +13175,7 @@ if selected == "Stock Analysis Tool":
                                                        'FCF growth': FCF_growth_quarter_10_unpacked,
                                                        'EPS growth':EPS_growth_quarter_10_unpacked,
                                                        'FCF Margin':FCF_Margin_quarter_10_unpacked,
+                                                       'EBITDA Margin':ebitda_Margin_quarter_10_unpacked,
                                                        'Shares diluted':shares_diluted_quarter_growth_10_unpacked,
                                                        'Operating Margin':operating_margin_quater10_unpacked,
                                                        'Gross Margin':gross_margin_quarter10_unpacked, 
@@ -13185,6 +13204,7 @@ if selected == "Stock Analysis Tool":
                                                        ('FCF growth', FCF_growth_quarter_10_unpacked),
                                                        ('EPS growth',EPS_growth_quarter_10_unpacked),
                                                        ('FCF Margin',FCF_Margin_quarter_10_unpacked), 
+                                                       ('EBITDA Margin', ebitda_Margin_quarter_10_unpacked),
                                                        ('Shares diluted',shares_diluted_quarter_growth_10_unpacked),
                                                        ('Operating Margin',operating_margin_quater10_unpacked),
                                                        ('Gross Margin',gross_margin_quarter10_unpacked), 
@@ -13211,7 +13231,7 @@ if selected == "Stock Analysis Tool":
                                                             if not isinstance(metric_data, list):
                                                                  metric_data = [metric_data]  # Convert non-iterable values to lists
 
-                                                            if metric_name in ('Revenue growth', 'Net Income growth','Net Interest Income growth', 'FCF growth', 'EPS growth','FCF Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
+                                                            if metric_name in ('Revenue growth', 'Net Income growth','Net Interest Income growth', 'FCF growth', 'EPS growth','FCF Margin','EBITDA Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
                                                                  formatted_data = ["{:.2f}%".format(data * 100) for data in metric_data]
                                                                
                                                             elif metric_name == 'Book Value':
@@ -13568,6 +13588,7 @@ if selected == "Stock Analysis Tool":
                                    'Date': date_annual,
                                    'Dividends': [round(abs(x), 2) for x in Cash_Dividends_paid_Total_annual_10_unpacked],
                                    'Free Cash Flow': FCF_annual_ten_unpacked,
+                                   'Capex': [round(abs(x), 2) for x in Capex_annual_10_unpacked ] # Adding Capex data
                                    })
 
                                    fig = go.Figure()
@@ -13579,24 +13600,14 @@ if selected == "Stock Analysis Tool":
                                    xaxis_type='category' 
                                    )
                                    # Add the Dividends bar plot
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'],marker_color='black',  name='Dividends Paid'))
+                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'],marker_color='green',  name='Dividends Paid'))
                                    
+                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Capex'], marker_color='black', name='Capex'))
 
-                                   # Add the Free Cash Flow bar plot
-                                   
-
-                                   # Update layout
-                                   #title_text = f"10YR Dividend: {Dividend_10_CAGR}%     5YR Dividend: {Dividend_5_CAGR}%       <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {FCF_5_CAGR}%</span> "  
-
-
-                                   #title_text = f"<span style='color:dodgerblue'>20YR Dividend CAGR: {Dividend_20_CAGR}%</span>"
-
-                                   
-
-                                   #title_text = f"Dividend 20 CAGR: {Dividend_20_CAGR}% Dividend 10 CAGR: {Dividend_10_CAGR}%  Dividend 5 CAGR: {Dividend_5_CAGR}%"
+                           
                                    fig.update_layout(
                                         barmode='group', xaxis_title='Date',
-                                        yaxis_title='FCF / Dividends Paid in Billion USD',
+                                        #yaxis_title='FCF / Dividends Paid / Capex in Billion USD',
                                                   #title=title_text
                                                   )
                                                        # Update legend placement
@@ -13616,26 +13627,7 @@ if selected == "Stock Analysis Tool":
                                    dragmode=False,  # Disable dragging for zooming
                                    )
                                                                  
-                                   #Free_cash_flow_per_share_annual_2003 =annual_data['fcf_per_share'][-21:]
-                                   #Free_cash_flow_per_share_annual_2003 = ["{:.2f}".format(value) for value in Free_cash_flow_per_share_annual_2003]
 
-               #                    data = pd.DataFrame({
-               #                   'Date': date_annual_20yrs,
-               #                  'Free Cash Flow per share': Free_cash_flow_per_share_annual_2003,
-               #                 })
-
-                                   # Titel und Plot anzeigen
-                                   #st.title('Annual Free Cash Flow')
-               #                    fig2 = px.bar(data, x='Date', y='Free Cash Flow per share',
-               #                             text='Free Cash Flow per share',  # Display the value on top of each bar
-               #                            labels={'value': 'Amount()'},  # Include the percentage sign in the label
-               #                           title='Free Cash Flow per share')
-               #                fig2.update_traces(texttemplate='%{y}', textposition='outside')
-
-
-                                   # Diagramm anzeigen
-                                   #col1,col2=st.columns(2)
-                                   #with col1:
                                    st.write(f"""
                                         <b>10YR Dividend: {Dividend_10_CAGR}%     5YR Dividend: {Dividend_5_CAGR}%       <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {FCF_5_CAGR}%
                                         """, unsafe_allow_html=True)
