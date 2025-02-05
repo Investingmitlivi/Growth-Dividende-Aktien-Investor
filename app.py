@@ -13347,17 +13347,25 @@ if selected == "Stock Analysis Tool":
 
                                    col1,col2 = st.columns(2)
 
+                                   
+
                                    with col1:
                                         st.write(f"""
+                                        <div style='text-align: center;'>
                                         <b>Revenue : 10 YR: {Revenue_Cagr_10}%
                                         <b>  5 YR: {Revenue_5_CAGR}%
+                                        </div>
                                         """, unsafe_allow_html=True)
+
                                         st.plotly_chart(fig1,use_container_width=True, config=config)
 
                                    with col2:
                                         st.write(f"""
+                                                  <div style='text-align: center;'>
                                         <b>5 YR Revenue Y/Y: {Revenue_growth_5years:.2f}%  1 YR Revenue: {Revenue_growth_1year:.2f}%
+                                        </div>
                                         """, unsafe_allow_html=True)
+
                                         st.plotly_chart(fig2,use_container_width=True, config=config)
                               
 
@@ -13461,13 +13469,20 @@ if selected == "Stock Analysis Tool":
 
                                    with col1:
                                         st.write(f"""
+                                        <div style='text-align: center;'>
                                         <b>10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(ttm):  {eps_diluted_ttm}    Next YR: {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})
+                                        </div>
                                         """, unsafe_allow_html=True)
+
                                         st.plotly_chart(fig1,use_container_width=True,config=config)
+
                                    with col2:
                                         st.write(f"""
-                                        <b>Share Buyback/dilution past 5 YR: {Shares_outstanding_funf_growth:.2f}%  
+                                        <div style='text-align: center;'>
+                                        <b>Share Buyback/dilution past 5 YR: {Shares_outstanding_funf_growth:.2f}% 
+                                        </div> 
                                         """, unsafe_allow_html=True)
+
                                         st.plotly_chart(fig2,use_container_width=True,config=config)
                          #-------------------------------------------------------------------------------------------------
                          # Create a DataFrame for the data
@@ -13638,9 +13653,14 @@ if selected == "Stock Analysis Tool":
                                    )
                                                                  
 
+
+
                                    st.write(f"""
-                                        <b>10YR Dividend: {Dividend_10_CAGR}%     5YR Dividend: {Dividend_5_CAGR}%       <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {FCF_5_CAGR}%
+                                        <div style='text-align: center;'>
+                                             <b>10YR Dividend: {Dividend_10_CAGR}%     5YR Dividend: {Dividend_5_CAGR}%       <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {FCF_5_CAGR}%
+                                        </div>
                                         """, unsafe_allow_html=True)
+                                   
                                    st.plotly_chart(fig,use_container_width=True,config=config)
                                    #with col2:
                                    #st.plotly_chart(fig2,use_container_width=True,config=config)
@@ -13721,12 +13741,17 @@ if selected == "Stock Analysis Tool":
                                    col1, col2 =st.columns(2)
                                    with col1:
                                         st.write(f"""
+                                         <div style='text-align: center;'>
                                         <b>5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}
+                                        </div>
                                         """, unsafe_allow_html=True)
+
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
                                    with col2:
                                         st.write(f"""
+                                        <div style='text-align: center;'>
                                         <b>Dividend per Share growth
+                                        </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2, use_container_width=True,config=config)
 
@@ -13823,21 +13848,25 @@ if selected == "Stock Analysis Tool":
                                    col1, col2 = st.columns(2)
                                    with col1:
                                         st.write(f"""
+                                         <div style='text-align: center;'>
                                         <b>5 YR ROIC Y/Y: {Average_ROIC_funf}</b>
                                         <b> Current ROIC: {ROIC_TTM}%</b><br>
                                         <span style='font-family: Calibri; font-style: italic;'>
-                                        Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.<br>(Investiertes Kapital = Summe von Eigenkapital und Fremdkapital)
+                                        Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.(Investiertes Kapital = Summe von Eigenkapital und Fremdkapital)
                                         </span>
+                                        </div>
                                              """, unsafe_allow_html=True)
 
                                         st.plotly_chart(fig1,use_container_width=True,config=config)
 
                                    with col2:
                                         st.write(f"""
-                                        <b>5 YR ROE Y/Y: {five_ROE}% Current ROE: {ROE_ttm}</b>   
+                                        <div style='text-align: center;'>
+                                        <b>5 YR ROE Y/Y: {five_ROE}% Current ROE: {ROE_ttm}</b><br>
                                         <span style='font-family: Calibri; font-style: italic;'>
-                                        Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.<br>(Investiertes Kapital = Fremdkapital)
+                                        Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.(Investiertes Kapital = Fremdkapital)
                                         </span>
+                                        </div>
                                              """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2,use_container_width=True,config=config)
                #-------------------------------------------------------------------------------------------------
@@ -13940,11 +13969,13 @@ if selected == "Stock Analysis Tool":
                               #col1, col2 = st.columns(2)
                                    with col1:
                                         st.write(f"""
+                                         <div style='text-align: center;'>
                                         <b>5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}</b>
                                         <b> Current Gross Margin: {average_gross_margin_quater1}</b><br>
                                         <span style='font-family: Calibri; font-style: italic;'>
                                         Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) vom Umsatz übrig bleibt.
                                         </span>
+                                        </div>
                                              """, unsafe_allow_html=True)
 
                                         st.plotly_chart(fig1,use_container_width=True,config=config)      
@@ -13952,6 +13983,7 @@ if selected == "Stock Analysis Tool":
 
                                    with col2:
                                         st.write(f"""
+                                        <div style='text-align: center;'>
                                         <b>5 YR Operating Margin Y/Y: {five_yrs_average_operating_margin}</b>
                                         <b> Current Operating Margin: {average_operating_margin1_quarter}</b><br>
                                         <span style='font-family: Calibri; font-style: italic;'>
@@ -13959,6 +13991,7 @@ if selected == "Stock Analysis Tool":
                                         und der Betriebskosten (wie Material-, Produktions-, Verwaltungs- und 
                                         Vertriebskosten) vom Umsatz übrig bleibt.
                                         </span>
+                                        </div>
                                              """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2,use_container_width=True,config=config)
 
@@ -14055,21 +14088,25 @@ if selected == "Stock Analysis Tool":
                                    col1, col2 = st.columns(2)
                                    with col1:
                                         st.write(f"""
+                                        <div style='text-align: center;'>
                                         <b>5 YR FCF Margin Y/Y: {FCF_Margin_5}%</b>
                                         <b> Current FCF Margin: {FCF_Margin_1:.2f}%</b><br>
                                         <span style='font-family: Calibri; font-style: italic;'>
                                         Die FCF-Marge (freier Cashflow) ist ein Indikator dafür, wie effizient ein Unternehmen seinen Umsatz in freien Cashflow umwandelt.
                                         </span>
+                                        </div>
                                              """, unsafe_allow_html=True)
 
                                         st.plotly_chart(fig2,use_container_width=True,config=config)
 
                                    with col2:
                                         st.write(f"""
+                                        <div style='text-align: center;'>
                                         <b>5 YR Net Profit Margin Y/Y: {five_yrs_Nettomarge}% </b>
                                         <b> Current Net Profit Margin: {Net_margin_ttm}</b><br>
                                         <span style='font-family: Calibri; font-style: italic;'>
                                         Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS), Betriebskosten, Zinsen, Steuern und außerordentlichen Posten vom Umsatz übrig bleibt.</span>
+                                        </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1,use_container_width=True,config=config)
                
@@ -14178,15 +14215,17 @@ if selected == "Stock Analysis Tool":
                                    col2, col3 =st.columns(2)
                                    with col2:
                                         st.write(f"""
+                                        <div style='text-align: center;'>
                                         <b><span style='color:dodgerblue'>10 YR PE:</span> {average_PE_historical}  <span style='color:dodgerblue'>5 YR PE: </span> {pe_five_}  <span style='color:dodgerblue'>Current PE: </span> {pe_ttm}  <span style='color:dodgerblue'>Forward P/E:</span>  {forwardPE}
+                                        </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig21,use_container_width=True,config=config)
 
                                    with col3:
                                         st.write(f"""
-                    
+                                        <div style='text-align: center;'>
                                         <b><span style='color:dodgerblue'>10YR Price/FCF:</span>  {pfcf_ten}  <span style='color:dodgerblue'>5YR Price/FCF:  </span> {pfcf_funf}  <span style='color:dodgerblue'>Current Price/FCF:</span>  {pfcf_ttm}
-
+                                        </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig22,use_container_width=True,config=config)
 
@@ -14303,13 +14342,17 @@ if selected == "Stock Analysis Tool":
                                    col1, col2 =st.columns(2)
                                    with col1:
                                         st.write(f"""
+                                        <div style='text-align: center;'>
                                         <b>10 P/TBV: {Average_Price_to_tangible_book}  Current P/TBV: {PTBVPS:.2f}
+                                        </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig11,use_container_width=True,config=config)
                                         
                                    with col2:
                                         st.write(f"""
+                                        <div style='text-align: center;'>
                                         <b>10 P/BV: {average_price_to_book}  Current P/B: {PBVPS:.2f}
+                                        </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig12,use_container_width=True,config=config)
                #.........
