@@ -5,6 +5,7 @@ import streamlit as st, pandas as pd, numpy as np, yfinance as yf
 import plotly.express as px
 import plotly.graph_objs as go
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import time
 import firebase_admin
 import os
@@ -13263,6 +13264,8 @@ if selected == "Stock Analysis Tool":
                                    #date_annual = annual_data['period_end_date'][-10:] 
                     #revenue_2003 = [round(value, 2) for value in revenue_2003]
                                    revenue_annual21 = ["{:.2f}".format(value/1e9) for value in revenue_annual21_unpacked]
+                                   revenue_growth_annual21 = ["{:.2f} %".format(value*100) for value in revenue_growth_annual21_unpacked]
+
 
                                    #revenue_2003 = [(value) for value in annual_data['revenue'][-21:]]
 
@@ -13274,6 +13277,8 @@ if selected == "Stock Analysis Tool":
                                    #'Free Cash Flow': Free_cash_flow_annual_2003,
                                    'Revenue in Billion USD':revenue_annual21,
                                    })
+
+
 
                                    fig1 = px.bar(data, x='Date', y='Revenue in Billion USD',
                                              text='Revenue in Billion USD',    
@@ -13306,8 +13311,6 @@ if selected == "Stock Analysis Tool":
                                    
                                                        
                                    #revenue_2003 = [round(value, 2) for value in revenue_2003]
-                                   revenue_growth_annual21 = ["{:.2f} %".format(value*100) for value in revenue_growth_annual21_unpacked]
-
 
 
                               # Create a DataFrame for the data
@@ -13590,24 +13593,25 @@ if selected == "Stock Analysis Tool":
                                    'Dividends': [round(abs(x), 2) for x in Cash_Dividends_paid_Total_annual_10_unpacked],
                                    'Free Cash Flow': FCF_annual_ten_unpacked,
                                    'Capex': [round(abs(x), 2) for x in Capex_annual_10_unpacked ],
-                                   'Net Income': net_income_annual_10_unpacked# Adding Capex data
+                                   'Net Income': net_income_annual_10_unpacked,
+                                   'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked
                                    })
 
                                    fig = go.Figure()
 
+                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Operating Cash Flow'], name='Operating Cash Flow'))
 
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Free Cash Flow'], name='Free Cash Flow'))
 
-                                   fig.update_layout(
-                                   xaxis_type='category' 
-                                   )
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Net Income'],name='Net Income'))
                                    # Add the Dividends bar plot
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'],marker_color='green',  name='Dividends Paid'))
                                    
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Capex'], marker_color='black', name='Capex'))
                                    
-                                  
+                                   fig.update_layout(
+                                   xaxis_type='category' 
+                                   )
                                    
 
                            
