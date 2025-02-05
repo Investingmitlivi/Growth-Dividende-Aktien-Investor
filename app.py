@@ -12209,6 +12209,7 @@ if selected == "Stock Analysis Tool":
                          #@st.cache_data(show_spinner=False)
                          def display_metrics():
                               st.markdown("""
+                              <div style='text-align: center;'>
                               <style>
                               .metric-table {
                                    width: 100%;
@@ -12227,111 +12228,114 @@ if selected == "Stock Analysis Tool":
                                    font-weight: bold;
                               }
                               </style>
+                              </div>
                               """, unsafe_allow_html=True)
 
                               st.markdown("""
-                              <table class="metric-table">
-                                   <tr>
-                                        <td>
-                                             <table class="metric-table">
-                                                  <tr>
-                                                  <td class="section-header">Earnings Multiples</td>
-                                                  <th>Value</th>
-                                                  <th>Change</th>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>5 YR P/E < 23</td>
-                                                  <td><b>{KGV}</b></td>
-                                                  <td>{pe}</td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>5 YR P/FCF < 23</td>
-                                                  <td><b>{KCV}</b></td>
-                                                  <td>{pcf}</td>
-                                                  </tr>
-                                             </table>
-                                        </td>
-                                        <td>
-                                             <table class="metric-table">
-                                                  <tr>
-                                                  <td class="section-header">Leverage ratio/Bilanzkennzahl</td>
-                                                  <th>Value</th>
-                                                  <th>Change</th>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>5 YR FCF / DEBT < 5</td>
-                                                  <td><b>{Schuldentillgung}</b></td>
-                                                  <td>{schuld}</td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>DEBT / EQUITY < 2</td>
-                                                  <td><b>{Average_debt_equity_one}</b></td>
-                                                  <td>{dt_equt}</td>
-                                                  </tr>
-                                             </table>
-                                        </td>
-                                   </tr>
-                                   <tr>
-                                        <td>
-                                             <table class="metric-table">
-                                                  <tr>
-                                                  <td class="section-header">Gewinnkennzahl/Ausschüttungsquote</td>
-                                                  <th>Value</th>
-                                                  <th>Change</th>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>5 YR ROIC > 9%</td>
-                                                  <td><b>{Average_ROIC_funf}</b></td>
-                                                  <td>{roic}</td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>5 YR ROE > 14%</td>
-                                                  <td><b>{five_Yrs_ROE}%</b></td>
-                                                  <td>{roe}</td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>5 YR NET MARGIN > 5%</td>
-                                                  <td><b>{five_yrs_Nettomarge}%</b></td>
-                                                  <td>{netmarge}</td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>FCF PAYOUT RATIO < 60 %</td>
-                                                  <td><b>{one_FCF_annual_payout}%</b></td>
-                                                  <td>{payout}</td>
-                                                  </tr>
-                                             </table>
-                                        </td>
-                                        <td>
-                                             <table class="metric-table">
-                                                  <tr>
-                                                  <td class="section-header">Wachstum/Aktienrückkauf</td>
-                                                  <th>Value</th>
-                                                  <th>Change</th>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>Revenue Growth 5 YR</td>
-                                                  <td><b>{revenue_annual_funf_Growth:.2f}%</b></td>
-                                                  <td>{rev}</td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>Net Income Growth 5 YR</td>
-                                                  <td><b>{netincome_annual_funf_growth_:.2f}%</b></td>
-                                                  <td>{netincome}</td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>FCF Growth 5 YR</td>
-                                                  <td><b>{FCF_funf_growth:.2f}%</b></td>
-                                                  <td>{fcf}</td>
-                                                  </tr>
-                                                  <tr>
-                                                  <td>Shares Outstanding 5 YR</td>
-                                                  <td><b>{Shares_outstanding_funf_growth:.2f}%</b></td>
-                                                  <td>{share}</td>
-                                                  </tr>
-                                             </table>
-                                        </td>
-                                   </tr>
-                              </table>
+                              <div style='text-align: center;'>
+                                   <table class="metric-table">
+                                        <tr>
+                                             <td>
+                                                  <table class="metric-table">
+                                                       <tr>
+                                                       <td class="section-header">Earnings Multiples</td>
+                                                       <th>Value</th>
+                                                       <th>Change</th>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>5 YR P/E < 23</td>
+                                                       <td><b>{KGV}</b></td>
+                                                       <td>{pe}</td>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>5 YR P/FCF < 23</td>
+                                                       <td><b>{KCV}</b></td>
+                                                       <td>{pcf}</td>
+                                                       </tr>
+                                                  </table>
+                                             </td>
+                                             <td>
+                                                  <table class="metric-table">
+                                                       <tr>
+                                                       <td class="section-header">Leverage ratio/Bilanzkennzahl</td>
+                                                       <th>Value</th>
+                                                       <th>Change</th>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>5 YR FCF / DEBT < 5</td>
+                                                       <td><b>{Schuldentillgung}</b></td>
+                                                       <td>{schuld}</td>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>DEBT / EQUITY < 2</td>
+                                                       <td><b>{Average_debt_equity_one}</b></td>
+                                                       <td>{dt_equt}</td>
+                                                       </tr>
+                                                  </table>
+                                             </td>
+                                        </tr>
+                                        <tr>
+                                             <td>
+                                                  <table class="metric-table">
+                                                       <tr>
+                                                       <td class="section-header">Gewinnkennzahl/Ausschüttungsquote</td>
+                                                       <th>Value</th>
+                                                       <th>Change</th>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>5 YR ROIC > 9%</td>
+                                                       <td><b>{Average_ROIC_funf}</b></td>
+                                                       <td>{roic}</td>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>5 YR ROE > 14%</td>
+                                                       <td><b>{five_Yrs_ROE}%</b></td>
+                                                       <td>{roe}</td>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>5 YR NET MARGIN > 5%</td>
+                                                       <td><b>{five_yrs_Nettomarge}%</b></td>
+                                                       <td>{netmarge}</td>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>FCF PAYOUT RATIO < 60 %</td>
+                                                       <td><b>{one_FCF_annual_payout}%</b></td>
+                                                       <td>{payout}</td>
+                                                       </tr>
+                                                  </table>
+                                             </td>
+                                             <td>
+                                                  <table class="metric-table">
+                                                       <tr>
+                                                       <td class="section-header">Wachstum/Aktienrückkauf</td>
+                                                       <th>Value</th>
+                                                       <th>Change</th>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>Revenue Growth 5 YR</td>
+                                                       <td><b>{revenue_annual_funf_Growth:.2f}%</b></td>
+                                                       <td>{rev}</td>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>Net Income Growth 5 YR</td>
+                                                       <td><b>{netincome_annual_funf_growth_:.2f}%</b></td>
+                                                       <td>{netincome}</td>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>FCF Growth 5 YR</td>
+                                                       <td><b>{FCF_funf_growth:.2f}%</b></td>
+                                                       <td>{fcf}</td>
+                                                       </tr>
+                                                       <tr>
+                                                       <td>Shares Outstanding 5 YR</td>
+                                                       <td><b>{Shares_outstanding_funf_growth:.2f}%</b></td>
+                                                       <td>{share}</td>
+                                                       </tr>
+                                                  </table>
+                                             </td>
+                                        </tr>
+                                   </table>
+                              </div>
                               """.format(
                                    KGV=KGV, pe=pe,
                                    KCV=KCV, pcf=pcf,
