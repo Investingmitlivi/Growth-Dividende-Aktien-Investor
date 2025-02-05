@@ -12209,11 +12209,18 @@ if selected == "Stock Analysis Tool":
                          #@st.cache_data(show_spinner=False)
                          def display_metrics():
                               st.markdown("""
-                              <div style='text-align: center;'>
                               <style>
+                              .metrics-container {
+                                   display: flex;
+                                   justify-content: center;
+                                   width: 100%;
+                                   margin: 0 auto;
+                              }            
                               .metric-table {
                                    width: 100%;
+                                   max-width: 1200px;
                                    border-collapse: collapse;
+                                   margin: 0 auto;
                               }
                               .metric-table th, .metric-table td {
                                    border: 1px solid #ddd;
@@ -12221,14 +12228,16 @@ if selected == "Stock Analysis Tool":
                                    text-align: left;
                               }
                               .metric-table th {
-                                   background-color: #f00ff00;
+                                 
+                                   background-color: #f0f0f0; /* Hier war #f00ff00, was nicht gültig ist */
+
                               }
                               .metric-table .section-header {
                                    color: green;
                                    font-weight: bold;
                               }
                               </style>
-                              </div>
+                              
                               """, unsafe_allow_html=True)
 
                               st.markdown("""
@@ -12351,7 +12360,6 @@ if selected == "Stock Analysis Tool":
                                    Shares_outstanding_funf_growth=Shares_outstanding_funf_growth, share=share
                               ), unsafe_allow_html=True)
 
-          # Call the function to display the metrics
 
                          display_metrics()
 
