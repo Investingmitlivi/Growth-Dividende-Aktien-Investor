@@ -12987,8 +12987,8 @@ if selected == "Stock Analysis Tool":
 
                                    #except Exception as e:
                                    #    st.error("Please use a dot instead of a comma for decimal values.")
-
-                                   submit_button = st.form_submit_button(label='Calculate')
+                                   with col1:
+                                        submit_button = st.form_submit_button(label='Calculate')
                               if submit_button:
                                    st.session_state.converted_amount = converted_amount
 
