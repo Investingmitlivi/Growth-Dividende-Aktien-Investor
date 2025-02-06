@@ -13619,7 +13619,7 @@ if selected == "Stock Analysis Tool":
                                    'Date': date_annual,
                                    'Dividends': [round(abs(x), 2) for x in Cash_Dividends_paid_Total_annual_10_unpacked],
                                    'Free Cash Flow': FCF_annual_ten_unpacked,
-                                   'Capex': [round(abs(x), 2) for x in Capex_annual_10_unpacked ],
+                                   'CapEx': [round(abs(x), 2) for x in Capex_annual_10_unpacked ],
                                    'Net Income': net_income_annual_10_unpacked,
                                    'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked
                                    })
@@ -13627,6 +13627,8 @@ if selected == "Stock Analysis Tool":
                                    fig = go.Figure()
 
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Operating Cash Flow'], name='Operating Cash Flow'))
+                                   
+                                   fig.add_trace(go.Bar(x=data['Date'], y=data['CapEx'], marker_color='black', name='CapEx'))
 
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Free Cash Flow'], name='Free Cash Flow'))
 
@@ -13634,7 +13636,7 @@ if selected == "Stock Analysis Tool":
                                    # Add the Dividends bar plot
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'],marker_color='green',  name='Dividends Paid'))
                                    
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Capex'], marker_color='black', name='Capex'))
+                                   
                                    
                                    fig.update_layout(
                                    xaxis_type='category' 
