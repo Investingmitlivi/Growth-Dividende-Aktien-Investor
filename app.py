@@ -570,7 +570,7 @@ if selected == "Stock Analysis Tool":
 
           if 'login_token' in st.session_state:
                try:
-                    user_data = serializer.loads(st.session_state.login_token, max_age=18000)  # 5 hour expiry expiry
+                    user_data = serializer.loads(st.session_state.login_token, max_age=86400)  # 12 hour expiry expiry
                     st.session_state.username = user_data['username']
                     st.session_state.useremail = user_data['email']
                     st.session_state.is_logged_in = True
