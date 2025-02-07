@@ -7750,8 +7750,9 @@ if selected == "Stock Analysis Tool":
                #Net_Issuance_of_Debt=quarterly_data['cff_debt_net'][-2:]
                #Net_Debt=annual_data['net_debt'][-2:]
               
-               
-               #print("ppe_net",Net_Purchases_of_Property_Equipment)
+               Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
+               Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
+               print("ppe_net",Net_Purchases_of_Property_Equipment)
                #print("Net_Debt",net_debt_annual)
                #print("Net_Issuance_of_Debt",Net_Issuance_of_Debt)
           
@@ -9493,7 +9494,7 @@ if selected == "Stock Analysis Tool":
      
                               Changes_in_working_capital_annual_10_unpacked = annual_data['cfo_change_in_working_capital'][-10:]
                               Net_Operating_CashFlow_annual_10_unpacked = annual_data['cf_cfo'][-10:]
-                              Capex_annual_10_unpacked = annual_data['capex'][-10:]
+                              Capex_annual_10_unpacked = annual_data['cfi_ppe_purchases'][-10:]
                               Purchase_of_Investment_annual_10_unpacked = annual_data['cfi_investment_purchases'][-10:]
                               Sale_maturity_of_Investments_annual_10_unpacked = annual_data['cfi_investment_sales'][-10:]
                               Net_investing_CashFlow_annual_10_unpacked = annual_data['cf_cfi'][-10:]
@@ -9520,7 +9521,7 @@ if selected == "Stock Analysis Tool":
                               # Unpacking quarterly data (last 10 quarters)
                               Net_Operating_CashFlow_quarter_10_unpacked = quarterly_data['cf_cfo'][-10:]
                               changes_in_working_capital_quarter_10_unpacked = quarterly_data['cfo_change_in_working_capital'][-10:]
-                              Capex_quarter_10_unpacked = quarterly_data['capex'][-10:]
+                              Capex_quarter_10_unpacked = quarterly_data['cfi_ppe_purchases'][-10:]
                               Purchase_of_Investment_quarter_10_unpacked = quarterly_data['cfi_investment_purchases'][-10:]
                               Sale_maturity_of_Investments_quarter_10_unpacked = quarterly_data['cfi_investment_sales'][-10:]
                               Net_investing_CashFlow_quarter_10_unpacked = quarterly_data['cf_cfi'][-10:]
