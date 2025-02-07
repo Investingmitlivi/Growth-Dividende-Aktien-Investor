@@ -7743,13 +7743,17 @@ if selected == "Stock Analysis Tool":
                stock_sector=data["data"]["metadata"]["sector"]
                cik=data["data"]["metadata"]["CIK"]
                #net_debt_quater =quarterly_data['net_debt'][-5:]
-               #net_debt_annual=annual_data['net_debt'][-5:]
+               #net_debt_annual=quarterly_data['net_debt'][-5:]
                #Dividend_per_share_ttm =Financial_data['ttm']['dividends']
-               Dividend_per_share_ttm_op = Financial_data['ttm']['dividends']
+               #Dividend_per_share_ttm_op = Financial_data['ttm']['dividends']
+               
+               #Net_Issuance_of_Debt=quarterly_data['cff_debt_net'][-2:]
+               #Net_Debt=annual_data['net_debt'][-2:]
               
                
-               #print("Dividend_per_share_ttm_op",Dividend_per_share_ttm_op)
-               
+               #print("ppe_net",Net_Purchases_of_Property_Equipment)
+               #print("Net_Debt",net_debt_annual)
+               #print("Net_Issuance_of_Debt",Net_Issuance_of_Debt)
           
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
                date_list_annual = [period_end_date for period_end_date in date_annual]
@@ -12793,14 +12797,14 @@ if selected == "Stock Analysis Tool":
                               col1, col2 = st.columns(2)
 
                               with col1:
-                                   fcf = st.number_input("Current FCF ($):", value=0.00, key="fcf_input",help="Enter Free Cash Flow value")
+                                   fcf = st.number_input("Current FCF in Billion USD:", value=0.00, key="fcf_input",help="Enter Free Cash Flow value")
 
                                    r = st.number_input("Discount rate WACC (%):", value=8.0, format="%.1f")
                              
                                    years =10
                               with col2:
                                    t = st.number_input("Terminal Growth Rate (%):", value=2.5, format="%.1f")
-                                   current_price = st.number_input("Marketcap.($):", value=0.00, format="%.2f")
+                                   current_price = st.number_input("Marketcap.in Billion USD:", value=0.00, format="%.2f")
                                  
 
                               submitted = st.form_submit_button("Calculate")
@@ -13627,7 +13631,7 @@ if selected == "Stock Analysis Tool":
                                    fig = go.Figure()
 
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Operating Cash Flow'], name='Operating Cash Flow'))
-                                   
+
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['CapEx'], marker_color='black', name='CapEx'))
 
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Free Cash Flow'], name='Free Cash Flow'))
