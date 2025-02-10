@@ -13502,28 +13502,125 @@ if selected == "Stock Analysis Tool":
 
                                         st.plotly_chart(fig2,use_container_width=True,config=config)
                          #-------------------------------------------------------------------------------------------------
-                         # Create a DataFrame for the data
-                                   #Free_cash_flow_annual_2003 = [round(value, 2) for value in Free_cash_flow_annual_2003]
-                                        
-                                   #dividendPaidInTheLast21Years = abs(annual_data['cff_dividend_paid'][-21:])
+    #-------------------------------------------------------------------------------------------------
+                              
 
+                                   #Dividend_per_share = ["${:.2f}".format(value * 1) for value in Dividend_per_share_annual10_unpacked]
                                    
+                                        #Price_to_earnings=annual_data['price_to_earnings'][-10:]
+                                   data = pd.DataFrame({
+                                   'Date': date_annual,
+                                   'Revenue per Share': revenue_per_share_annual_10_unpacked,
+                                   })
+
+                                   # Create a Streamlit app
+                                   #st.title('Free Cash Flow and Revenue Data')                                    
                                    
-
-                                   #Free_cash_flow_annual_2003 = annual_data['fcf'][-21:]
-
-                         #.................................5  Dividend CAGR............................................
-                                        #dividendPaidInTheLast21Years = [abs(value) for value in annual_data['cff_dividend_paid'][-21:]]
-
-                                   # Wert an der 6. Position von hinten erhalten
-                                   #value_at_index_6 = dividendPaidInTheLast21Years[-6]
-                                   #value_at_index_11  = dividendPaidInTheLast21Years[-11]
-                                   #value_at_index_last  = dividendPaidInTheLast21Years[-1]
+                                   # Create a Plotly Express bar chart with side-by-side bars
                                    
+                                   fig1 = px.bar(data, x='Date', y='Revenue per Share',
+                                                  text='Revenue per Share',  # Display the value on top of each bar
+                                                  labels={'value': 'Amount()'},  # Include the percentage sign in the label
+                                                  #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
+                                                  )
 
-                                   #print("Wert an der 6. Position von hinten in der Liste:", value_at_sixth_from_last)
-                                   #print("Wert an der 11. Position von hinten in der Liste:", value_at_eleven_from_last)
-                                   #print("Wert an der last Position :", value_at_last_position)
+                                   fig1.add_trace(
+                                   go.Scatter(
+                                        x=data['Date'],
+                                        y=data['Revenue per Share'],
+                                        mode='lines+markers',  # Line with markers
+                                        name='Trend Line',  # Legend name for the line
+                                        line=dict(color='red', width=2),  # Customize line appearance
+                                        marker=dict(size=8),
+                                        showlegend=False,  # Hide the legend for the line,
+                                   )    
+                                   )     
+ 
+
+                                   fig1.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+                                   fig1.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
+                         
+                              # Extract the last 21 years of dividends per share growth data
+                                   
+                 
+
+                                   col1, col2 =st.columns(2)
+                                   with col1:
+                                        st.write(f"""
+                                        <div style='text-align: center;'>
+                                        <span style='font-family: Calibri; font-style: italic;'>
+                                        Revenue per Share (Umsatz pro Aktie) zeigt, wie viel Umsatz pro ausgegebener Aktie erzielt wird                                        </div>
+                                             """, unsafe_allow_html=True)
+
+                                        st.plotly_chart(fig1, use_container_width=True,config=config)
+
+
+                          #-------------------------------------------------------------------------------------------------
+                                   try:
+                                        ebitda_Margin_annual_10_unpacked = ["{:.2f}%".format(ebitda_Margin_annual_10_unpacked * 100) for ebitda_Margin_annual_10_unpacked in ebitda_Margin_annual_10_unpacked]
+                                   except Exception as e:
+                                        ebitda_Margin_annual_10_unpacked = 0.0
+                                        #Price_to_earnings=annual_data['price_to_earnings'][-10:]
+                                   data = pd.DataFrame({
+                                   'Date': date_annual,
+                                   'EBITDA Margin': ebitda_Margin_annual_10_unpacked,
+                                   })
+
+                                   # Create a Streamlit app
+                                   #st.title('Free Cash Flow and Revenue Data')                                    
+                                   
+                                   # Create a Plotly Express bar chart with side-by-side bars
+                                   
+                                   fig1 = px.bar(data, x='Date', y='EBITDA Margin',
+                                                  text='EBITDA Margin',  # Display the value on top of each bar
+                                                  labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                                  #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
+                                                  )
+
+                                   fig1.add_trace(
+                                   go.Scatter(
+                                        x=data['Date'],
+                                        y=data['EBITDA Margin'],
+                                        mode='lines+markers',  # Line with markers
+                                        name='Trend Line',  # Legend name for the line
+                                        line=dict(color='red', width=2),  # Customize line appearance
+                                        marker=dict(size=8),
+                                        showlegend=False,  # Hide the legend for the line,
+                                   )    
+                                   )     
+ 
+
+                                   fig1.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+                                   fig1.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
+                         
+                              # Extract the last 21 years of dividends per share growth data
+                                   
+                 
+
+                                   with col2:
+                                        st.write(f"""
+                                         <div style='text-align: center;'>
+                                        <span style='font-family: Calibri; font-style: italic;'>
+                                        Die EBITDA-Marge zeigt, wie effizient ein Unternehmen Umsatz in operativen Gewinn umwandelt, bevor Zinsen, Steuern, Abschreibungen und Amortisationen berücksichtigt werden.                                        </span>
+                                        </div>
+                                             """, unsafe_allow_html=True)
+                                        st.plotly_chart(fig1, use_container_width=True,config=config)
+         
+         
+
+
+
+
                     
 
                                    try:
