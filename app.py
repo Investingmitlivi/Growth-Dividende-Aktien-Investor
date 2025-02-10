@@ -13306,17 +13306,17 @@ if selected == "Stock Analysis Tool":
                                    # 
                                    # 
                                    # 
-                                   fig1.add_trace(
-                                   go.Scatter(
-                                        x=data['Date'],
-                                        y=data['Revenue in Billion USD'],
-                                        mode='lines+markers',  # Line with markers
-                                        name='Trend Line',  # Legend name for the line
-                                        line=dict(color='red', width=2),  # Customize line appearance
-                                        marker=dict(size=8),
-                                        showlegend=False,  # Hide the legend for the line,
-                                   )    
-                                   )     
+                                   # fig1.add_trace(
+                                   # go.Scatter(
+                                   #      x=data['Date'],
+                                   #      y=data['Revenue in Billion USD'],
+                                   #      mode='lines+markers',  # Line with markers
+                                   #      name='Trend Line',  # Legend name for the line
+                                   #      line=dict(color='red', width=2),  # Customize line appearance
+                                   #      marker=dict(size=8),
+                                   #      showlegend=False,  # Hide the legend for the line,
+                                   # )    
+                                   # )     
  
                                    fig1.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -13437,17 +13437,19 @@ if selected == "Stock Analysis Tool":
 
 
 
-                                   fig1.add_trace(
-                                   go.Scatter(
-                                        x=data['Date'],
-                                        y=data['EPS'],
-                                        mode='lines+markers',  # Line with markers
-                                        name='Trend Line',  # Legend name for the line
-                                        line=dict(color='red', width=2),  # Customize line appearance
-                                        marker=dict(size=8),
-                                        showlegend=False,  # Hide the legend for the line,
-                                   )    
-                                   )  
+                                   # fig1.add_trace(
+                                   # go.Scatter(
+                                   #      x=data['Date'],
+                                   #      y=data['EPS'],
+                                   #      mode='lines+markers',  # Line with markers
+                                   #      name='Trend Line',  # Legend name for the line
+                                   #      line=dict(color='red', width=2),  # Customize line appearance
+                                   #      marker=dict(size=8),
+                                   #      showlegend=False,  # Hide the legend for the line,
+                                   # )  
+
+
+                                   #)  
                                    # Display the chart using Streamlit
                                    fig1.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -13524,17 +13526,17 @@ if selected == "Stock Analysis Tool":
                                                   #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
                                                   )
 
-                                   fig1.add_trace(
-                                   go.Scatter(
-                                        x=data['Date'],
-                                        y=data['Revenue per Share'],
-                                        mode='lines+markers',  # Line with markers
-                                        name='Trend Line',  # Legend name for the line
-                                        line=dict(color='red', width=2),  # Customize line appearance
-                                        marker=dict(size=8),
-                                        showlegend=False,  # Hide the legend for the line,
-                                   )    
-                                   )     
+                                   # fig1.add_trace(
+                                   # go.Scatter(
+                                   #      x=data['Date'],
+                                   #      y=data['Revenue per Share'],
+                                   #      mode='lines+markers',  # Line with markers
+                                   #      name='Trend Line',  # Legend name for the line
+                                   #      line=dict(color='red', width=2),  # Customize line appearance
+                                   #      marker=dict(size=8),
+                                   #      showlegend=False,  # Hide the legend for the line,
+                                   # )    
+                                   # )     
  
 
                                    fig1.update_layout(
@@ -13582,17 +13584,17 @@ if selected == "Stock Analysis Tool":
                                                   #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
                                                   )
 
-                                   fig1.add_trace(
-                                   go.Scatter(
-                                        x=data['Date'],
-                                        y=data['EBITDA Margin'],
-                                        mode='lines+markers',  # Line with markers
-                                        name='Trend Line',  # Legend name for the line
-                                        line=dict(color='red', width=2),  # Customize line appearance
-                                        marker=dict(size=8),
-                                        showlegend=False,  # Hide the legend for the line,
-                                   )    
-                                   )     
+                                   #fig1.add_trace(
+                                   #go.Scatter(
+                                       # x=data['Date'],
+                                       # y=data['EBITDA Margin'],
+                                        #mode='lines+markers',  # Line with markers
+                                        #name='Trend Line',  # Legend name for the line
+                                        #line=dict(color='red', width=2),  # Customize line appearance
+                                        #marker=dict(size=8),
+                                        #showlegend=False,  # Hide the legend for the line,
+                                  # )    
+                                  # )     
  
 
                                    fig1.update_layout(
@@ -13806,17 +13808,17 @@ if selected == "Stock Analysis Tool":
                                                   #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
                                                   )
 
-                                   fig1.add_trace(
-                                   go.Scatter(
-                                        x=data['Date'],
-                                        y=data['Dividend per Share'],
-                                        mode='lines+markers',  # Line with markers
-                                        name='Trend Line',  # Legend name for the line
-                                        line=dict(color='red', width=2),  # Customize line appearance
-                                        marker=dict(size=8),
-                                        showlegend=False,  # Hide the legend for the line,
-                                   )    
-                                   )     
+                                   # fig1.add_trace(
+                                   # go.Scatter(
+                                   #      x=data['Date'],
+                                   #      y=data['Dividend per Share'],
+                                   #      mode='lines+markers',  # Line with markers
+                                   #      name='Trend Line',  # Legend name for the line
+                                   #      line=dict(color='red', width=2),  # Customize line appearance
+                                   #      marker=dict(size=8),
+                                   #      showlegend=False,  # Hide the legend for the line,
+                                   # )    
+                                   # )     
  
 
                                    fig1.update_layout(
@@ -13896,17 +13898,17 @@ if selected == "Stock Analysis Tool":
                                         # "<span style='font-family: Calibri; font-style: italic;'>Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu <br>erwirtschaften.</span>"
                                              ) 
                                    
-                                   fig1.add_trace(
-                                   go.Scatter(
-                                        x=data['Date'],
-                                        y=data['ROIC'],
-                                        mode='lines+markers',  # Line with markers
-                                        name='Trend Line',  # Legend name for the line
-                                        line=dict(color='red', width=2),  # Customize line appearance
-                                        marker=dict(size=8),
-                                        showlegend=False,  # Hide the legend for the line,
-                                   )    
-                                   )     
+                                   # fig1.add_trace(
+                                   # go.Scatter(
+                                   #      x=data['Date'],
+                                   #      y=data['ROIC'],
+                                   #      mode='lines+markers',  # Line with markers
+                                   #      name='Trend Line',  # Legend name for the line
+                                   #      line=dict(color='red', width=2),  # Customize line appearance
+                                   #      marker=dict(size=8),
+                                   #      showlegend=False,  # Hide the legend for the line,
+                                   # )    
+                                   # )     
 
 
                                    fig1.update_layout(
@@ -13941,17 +13943,17 @@ if selected == "Stock Analysis Tool":
                                              ) 
                                    
 
-                                   fig2.add_trace(
-                                   go.Scatter(
-                                        x=data['Date'],
-                                        y=data['ROE'],
-                                        mode='lines+markers',  # Line with markers
-                                        name='Trend Line',  # Legend name for the line
-                                        line=dict(color='red', width=2),  # Customize line appearance
-                                        marker=dict(size=8),
-                                        showlegend=False,  # Hide the legend for the line,
-                                   )    
-                                   )     
+                                   # fig2.add_trace(
+                                   # go.Scatter(
+                                   #      x=data['Date'],
+                                   #      y=data['ROE'],
+                                   #      mode='lines+markers',  # Line with markers
+                                   #      name='Trend Line',  # Legend name for the line
+                                   #      line=dict(color='red', width=2),  # Customize line appearance
+                                   #      marker=dict(size=8),
+                                   #      showlegend=False,  # Hide the legend for the line,
+                                   # )    
+                                   # )     
 
                                    fig2.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -14015,18 +14017,18 @@ if selected == "Stock Analysis Tool":
                                              ) 
 
                                    # Add a line to the bar chart using Plotly Graph Objects
-                                   fig1.add_trace(
-                                   go.Scatter(
-                                        x=data['Date'],
-                                        y=data['Gross Margin'],
-                                        mode='lines+markers',  # Line with markers
-                                        name='Trend Line',  # Legend name for the line
-                                        line=dict(color='red', width=2),  # Customize line appearance
-                                        marker=dict(size=8),
-                                        showlegend=False,  # Hide the legend for the line,
-                                   )
+                                   # fig1.add_trace(
+                                   # go.Scatter(
+                                   #      x=data['Date'],
+                                   #      y=data['Gross Margin'],
+                                   #      mode='lines+markers',  # Line with markers
+                                   #      name='Trend Line',  # Legend name for the line
+                                   #      line=dict(color='red', width=2),  # Customize line appearance
+                                   #      marker=dict(size=8),
+                                   #      showlegend=False,  # Hide the legend for the line,
+                                   # )
 
-                                   )
+                                   # )
                                    fig1.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
                                    )
@@ -14062,17 +14064,17 @@ if selected == "Stock Analysis Tool":
                                              labels={'value': 'Amount(%)'}  # Include the percentage sign in the label
                                              )
 
-                                   fig2.add_trace(
-                                   go.Scatter(
-                                        x=data['Date'],
-                                        y=data['Operating Margin'],
-                                        mode='lines+markers',  # Line with markers
-                                        name='Trend Line',  # Legend name for the line
-                                        line=dict(color='red', width=2),  # Customize line appearance
-                                        marker=dict(size=8),
-                                        showlegend=False,  # Hide the legend for the line,
-                                   )    
-                                   )     
+                                   # fig2.add_trace(
+                                   # go.Scatter(
+                                   #      x=data['Date'],
+                                   #      y=data['Operating Margin'],
+                                   #      mode='lines+markers',  # Line with markers
+                                   #      name='Trend Line',  # Legend name for the line
+                                   #      line=dict(color='red', width=2),  # Customize line appearance
+                                   #      marker=dict(size=8),
+                                   #      showlegend=False,  # Hide the legend for the line,
+                                   # )    
+                                   # )     
 
                                    fig2.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -14137,17 +14139,17 @@ if selected == "Stock Analysis Tool":
                                              )
 
 
-                                   fig1.add_trace(
-                                   go.Scatter(
-                                        x=data['Date'],
-                                        y=data['Net Profit Margin'],
-                                        mode='lines+markers',  # Line with markers
-                                        name='Trend Line',  # Legend name for the line
-                                        line=dict(color='red', width=2),  # Customize line appearance
-                                        marker=dict(size=8),
-                                        showlegend=False,  # Hide the legend for the line,
-                                   )    
-                                   )   
+                                   # fig1.add_trace(
+                                   # go.Scatter(
+                                   #      x=data['Date'],
+                                   #      y=data['Net Profit Margin'],
+                                   #      mode='lines+markers',  # Line with markers
+                                   #      name='Trend Line',  # Legend name for the line
+                                   #      line=dict(color='red', width=2),  # Customize line appearance
+                                   #      marker=dict(size=8),
+                                   #      showlegend=False,  # Hide the legend for the line,
+                                   # )    
+                                   # )   
 
                                    fig1.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -14181,17 +14183,17 @@ if selected == "Stock Analysis Tool":
                                              ) 
                                    
 
-                                   fig2.add_trace(
-                                   go.Scatter(
-                                        x=data['Date'],
-                                        y=data['FCF Margin'],
-                                        mode='lines+markers',  # Line with markers
-                                        name='Trend Line',  # Legend name for the line
-                                        line=dict(color='red', width=2),  # Customize line appearance
-                                        marker=dict(size=8),
-                                        showlegend=False,  # Hide the legend for the line,
-                                   )    
-                                   )  
+                                   # fig2.add_trace(
+                                   # go.Scatter(
+                                   #      x=data['Date'],
+                                   #      y=data['FCF Margin'],
+                                   #      mode='lines+markers',  # Line with markers
+                                   #      name='Trend Line',  # Legend name for the line
+                                   #      line=dict(color='red', width=2),  # Customize line appearance
+                                   #      marker=dict(size=8),
+                                   #      showlegend=False,  # Hide the legend for the line,
+                                   # )    
+                                   # )  
 
                                    fig2.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
