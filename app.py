@@ -7712,58 +7712,36 @@ if selected == "Stock Analysis Tool":
                #response.json()
                
                #--------------------------------------------------------------
-               #Financial_data = data.get('data', {}).get('financials', {})
                Financial_data = data['data']['financials']
                annual_data = Financial_data['annual']
                quarterly_data = Financial_data['quarterly']
                eps_diluted_ttm = Financial_data['ttm']['eps_diluted']
                fcf_per_share = Financial_data['ttm']['fcf_per_share']
                Dividend_ttm = Financial_data['ttm']['cff_dividend_paid'] 
-               #Dividend_current_dividend= Financial_data['ttm']['dividends'] 
                fcf_ttm = Financial_data['ttm']['fcf']/1000000000 
                ROE_TTM =Financial_data['ttm']['roe']*100  
                ROIC_TTM =Financial_data['ttm']['roic']*100   
+               EBITDA_MARGIN_TTM =Financial_data['ttm']['ebitda_margin']*100   
                ROA_TTM =Financial_data['ttm']['roa']*100          
                netincome_ttm = Financial_data['ttm']['net_income']/1000000000
                revenue_ttm = Financial_data['ttm']['revenue']/1000000000
-               #shares_diluted_ttm = (Financial_data['ttm']['shares_diluted'])/1000000000
-               #shares_basic_ttm = (Financial_data['ttm']['shares_basic'])/1000000000
                shares_eop_ttm=(Financial_data['ttm']['shares_eop'])/1000000000
-               #shares_eop_change_ttm=(Financial_data['ttm']['shares_eop_change'])/1000000000
                current_Operating_cash_Flow =Financial_data['ttm']['cf_cfo']
-               #shares_eop_annual=annual_data['shares_eop'][-1:]
-              # shares_eop_quarter=quarterly_data['shares_eop'][-1:]
-               #period_end_price_ttm = (Financial_data['ttm']['period_end_price'])
                Revenue_ttm = (Financial_data['ttm']['revenue'])
-               #Debt_equity_last_quater = annual_data['debt_to_equity'][-1:]
-               #Debt_equity_ttm =(Financial_data['ttm']['debt_to_equity'])
                date_quarter = quarterly_data['period_end_date'][-10:] 
                date_annual = annual_data['period_end_date'][-10:] 
                Stock_description=data["data"]["metadata"]["description"]
                stock_sector=data["data"]["metadata"]["sector"]
                cik=data["data"]["metadata"]["CIK"]
-               #net_debt_quater =quarterly_data['net_debt'][-5:]
-               #net_debt_annual=quarterly_data['net_debt'][-5:]
-               #Dividend_per_share_ttm =Financial_data['ttm']['dividends']
-               #Dividend_per_share_ttm_op = Financial_data['ttm']['dividends']
-               
-               #Net_Issuance_of_Debt=quarterly_data['cff_debt_net'][-2:]
-               #Net_Debt=annual_data['net_debt'][-2:]
-              
                Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
                Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
                print("ppe_net",Net_Purchases_of_Property_Equipment)
-               #print("Net_Debt",net_debt_annual)
-               #print("Net_Issuance_of_Debt",Net_Issuance_of_Debt)
-          
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
                date_list_annual = [period_end_date for period_end_date in date_annual]
 
                shares_basic_annual_one = annual_data['shares_basic'][-1:]
                shares_basic_annual_funf_unpacked = annual_data['shares_basic'][-5:]
-
                Average_shares_basic_annual_one = (sum(shares_basic_annual_one) / len(shares_basic_annual_one)) / 1000000000
-               #EPS_growth_annual_unpacked= annual_data['eps_diluted_growth'][-10:]
                
                #---------------------------pyfinanz-----------------------------------
                try:
@@ -7795,19 +7773,6 @@ if selected == "Stock Analysis Tool":
                with left:
                     st.write(styled_link, unsafe_allow_html=True)
                #.............................................................................................
-
-               # if ticker == 'ADS:DE':
-               #      ticker = 'ADS.DE'
-
-               # if ticker == 'BRK.A':
-               #      ticker ='BRK-A'
-
-               # if ticker == 'BRK.B':
-               #      ticker ='BRK-B'
-
-               # else:
-               
-               #      ticker = ticker
                
                ticker_mapping = {
                'ADS:DE': 'ADS.DE',
@@ -7822,32 +7787,6 @@ if selected == "Stock Analysis Tool":
 
 
           ###########################################################################################################
-
-               # #@st.cache_data
-               # #@st.fragment
-               # @st.cache_data(show_spinner=False)
-               # def get_current_price():
-          
-               #      try:
-               #           current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
-                    
-               #           #current_price = stock_info.history(period="1d")["Close"].iloc[-1]
-
-               #      except Exception as e: #except all errors
-               #           try:
-               #                current_price = quote.fundamental_df.at[0, "Price"]
-               #           #current_price = 23
-               #           except Exception as e:
-               #                current_price = 23  
-
-               #      return current_price 
-
-               # current_price = get_current_price()
-               # amount = current_price 
-               # converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
-
-
-               ######################################################################################################
 
                #@st.cache_data(show_spinner=False)
                def get_current_price(ticker):
@@ -7873,6 +7812,33 @@ if selected == "Stock Analysis Tool":
 
 
                     return current_price
+#--------------------------------------------------percentage_difference-----------------------------
+
+               start_date = datetime.now() - timedelta(days=39 * 365)
+               end_date=datetime.now() 
+               # Function to format date
+               def format_date(date):
+                    return date.strftime('%Y/%m/%d')
+
+
+               def get_price_data(ticker, current_price, usd_to_eur_rate):
+                    start_date = datetime.now() - timedelta(days=39 * 365)
+                    end_date=datetime.now() 
+               
+                    try:
+                         data = yf.download(ticker, start=start_date, end=end_date)
+                         close_price = round(data['Close'][-2], 2)
+                         percentage_difference =round(((float(round(current_price,2))) - (float((close_price)))) / (float((close_price))) * 100,2)
+                         
+                         converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+                    except Exception as e:
+                         close_price = None
+                         percentage_difference = None
+                         converted_amount = None
+                    
+                    return close_price, percentage_difference, converted_amount
+   #-------------------------------------------------------------------------------
+                 
 
                def convert_to_eur(usd_price, conversion_rate=usd_to_eur_rate):
                     return float(usd_price) * float(conversion_rate)
@@ -7895,42 +7861,32 @@ if selected == "Stock Analysis Tool":
 
                current_price = st.session_state.current_price
                amount = current_price 
-               #current_price____ = quote.fundamental_df.at[0, "Price"]
-               #print("current_price____",current_price____)
                
           ########################################################################################################     
 
-               start_date = datetime.now() - timedelta(days=39 * 365)
-               end_date=datetime.now() 
-               # Function to format date
-               def format_date(date):
-                    return date.strftime('%Y/%m/%d')
+               # start_date = datetime.now() - timedelta(days=39 * 365)
+               # end_date=datetime.now() 
+               # # Function to format date
+               # def format_date(date):
+               #      return date.strftime('%Y/%m/%d')
 
 
-               def get_price_data(ticker, current_price, usd_to_eur_rate):
-                    start_date = datetime.now() - timedelta(days=39 * 365)
-                    end_date=datetime.now() 
-
-                    #start_date = datetime.now() - timedelta(days=39 * 365)
-                    #end_date = datetime.now()
-
-                    #data = yf.download(ticker, start=start_date, end=end_date)
+               # def get_price_data(ticker, current_price, usd_to_eur_rate):
+               #      start_date = datetime.now() - timedelta(days=39 * 365)
+               #      end_date=datetime.now() 
                
-                    try:
-                         data = yf.download(ticker, start=start_date, end=end_date)
-                         close_price = round(data['Close'][-2], 2)
-                         percentage_difference =round(((float(round(current_price,2))) - (float((close_price)))) / (float((close_price))) * 100,2)
-                         #st.write(percentage_difference)
-                         #st.write(close_price)
+               #      try:
+               #           data = yf.download(ticker, start=start_date, end=end_date)
+               #           close_price = round(data['Close'][-2], 2)
+               #           percentage_difference =round(((float(round(current_price,2))) - (float((close_price)))) / (float((close_price))) * 100,2)
                          
-                         
-                         converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
-                    except Exception as e:
-                         close_price = None
-                         percentage_difference = None
-                         converted_amount = None
+               #           converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+               #      except Exception as e:
+               #           close_price = None
+               #           percentage_difference = None
+               #           converted_amount = None
                     
-                    return close_price, percentage_difference, converted_amount
+               #      return close_price, percentage_difference, converted_amount
                
 
 
@@ -7938,10 +7894,7 @@ if selected == "Stock Analysis Tool":
 
                # Main function to run the app
                def main():
-                    #ticker = st.text_input("Enter Ticker Symbol", "AAPL")  # Example ticker input
-                    #usd_to_eur_rate = 0.85  # Example conversion rate
 
-                    # Check if ticker has changed
                     if ticker not in st.session_state or st.session_state.ticker != ticker:
                          st.session_state.ticker = ticker
                          st.session_state.current_price = get_current_price(ticker)  # Define this function as needed
@@ -7954,32 +7907,17 @@ if selected == "Stock Analysis Tool":
                     green_style = "color: green;"
                     red_style = "color: red;"
 
-                    #formatted_value = f"{current_price:.2f} $"
-                    #formatted_price_with_color = f"<span style='{green_style}'>{formatted_value}</span>"
-
-                    #formatted_value2 = f"{converted_amount} €"
-                    #formatted_price_with_color2 = f"<span style='{green_style}'>{formatted_value2}</span>"
-
-                        # Format values
                     formatted_price_usd = f"{current_price:.2f} $"
                     formatted_price_eur = f"{converted_amount} €"
-                    #arrow_text = ""
-                    #percentage_text = ""
-                    # Default value for percentage_text
+
                     percentage_text = ""
-                        # Handle percentage difference rendering
                     if percentage_difference is not None:
                          if percentage_difference > 0:
-                              #arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
-                              #percentage_text = f"(<span style='{green_style}'>{percentage_difference}%</span>)"
+
                               percentage_text = f"(<span style='{green_style}'>+{percentage_difference}%</span>)"
-                              #st.write(percentage_difference)
 
                          elif percentage_difference < 0:
-                              #arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
-                              #percentage_text = f"<span style='{red_style}'>{percentage_difference:.2f}%</span>"
                               percentage_text = f"(<span style='{red_style}'>{percentage_difference}%</span>)"
-                              #st.write(percentage_difference)
 
                          else:
                                    percentage_text = "(0%)"  # In case of zero percentage difference
@@ -7988,40 +7926,7 @@ if selected == "Stock Analysis Tool":
                     with st.container():
 
                          with middle:
-                              # try:
-                              #      # Set arrow text and color based on percentage_difference
-                              #      if percentage_difference > 0:
-                              #           arrow_text = '<span style="color: green; font-size: 24px;">↗</span>'
-                              #      else:
-                              #           arrow_text = '<span style="color: red; font-size: 24px;">↘</span>'
-
-                              #      st.markdown(
-                              #           f"<div style='text-align: center; width: 100%;'>"
-                              #           f"Current Price: {formatted_price_with_color} &nbsp;&nbsp;"
-                              #           f"Aktueller Preis: {formatted_price_with_color2} &nbsp;&nbsp;"
-                              #           f"{arrow_text} <span style='color:{'green' if percentage_difference > 0.1 else 'red'};'>{percentage_difference:.2f}%</span>"
-                              #           f"</div>",
-                              #           unsafe_allow_html=True
-                              #      )
-                              # except Exception as e:
-                              #      st.markdown(
-                              #           f"<div style='text-align: center; width: 100%;'>Current Price: {formatted_price_with_color} "
-                              #           f"Aktueller Preis: {formatted_price_with_color2}</div>",
-                              #           unsafe_allow_html=True
-                              #      )
-
-                                      # Display current price and percentage difference
-                              # st.markdown(
-                              #      f"""
-                              #      <div style="text-align: center; width: 100%;">
-                              #           Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
-                              #           Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
-                              #           {arrow_text} {percentage_text}
-                              #      </div>
-                              #      """,
-                              #      unsafe_allow_html=True,
-                              # )
-
+ 
                               st.markdown(
                               f"""
                               <div style="text-align: center; width: 100%;">
@@ -8031,9 +7936,7 @@ if selected == "Stock Analysis Tool":
                               </div>
                               """,
                               unsafe_allow_html=True,
-                              #st.write(percentage_difference)
                          )
-                    #st.write(percentage_difference)
 
 
                if __name__ == "__main__":
@@ -8044,7 +7947,6 @@ if selected == "Stock Analysis Tool":
 
 
                ########################
-               # Function to format date without time
           
                def format_date(date):
                     return date.strftime('%Y/%m/%d')
@@ -8214,14 +8116,6 @@ if selected == "Stock Analysis Tool":
                     showlegend=False  # Hide legend
                     )
 
-                    # Format hover text to include dollar sign
-                    # fig.update_traces(
-                    # hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
-                    # )
-                    # fig.update_layout(
-                    # dragmode=False,  # Disable dragging for zooming
-                    # )
-
                     fig.update_traces(
                     hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
                     )
@@ -8236,12 +8130,6 @@ if selected == "Stock Analysis Tool":
 
                     return fig
 
-                    # Display the chart in Streamlit
-                    #st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-               #@st.cache_data
-               #@st.fragment
-               #@st.fragment
-               #@st.cache_data(show_spinner=False)
                def display_stock_chart():
                     if 'previous_ticker' not in st.session_state or st.session_state.previous_ticker != ticker:
                          st.session_state.selected_period = None
@@ -8257,28 +8145,10 @@ if selected == "Stock Analysis Tool":
 
                          options = [f"{period} ({perf})" for period, perf in performances.items()]
                          
-                         # Set default period
-
-                         #if 'selected_period' not in st.session_state:
-                           #   st.session_state.selected_period = "MAX"
-
                          
                          if 'selected_period' not in st.session_state:
                               st.session_state.selected_period = "5 Years" if "5 Years" in performances else "MAX"
 
-
-                         # selected = option_menu(
-                         #      menu_title=None,  # required
-                         #      options=options,  # using the new options with performance data
-                         #      icons=["None"] * len(options),  # empty icons for each option
-                         #      menu_icon="cast",  # optional
-                         #      #default_index=0,
-                         #      default_index=options.index(f"MAX ({performances['MAX']})") if f"MAX ({performances['MAX']})" in options else 0,
-                         #      orientation="horizontal",
-                         #      key=f"option_menu_{ticker}" 
-                         # )
-
-                         # st.session_state.selected_period = selected.split(" (")[0]
 
                          try:
                               default_index = options.index(f"5 Years ({performances['5 Years']})" 
@@ -8315,8 +8185,7 @@ if selected == "Stock Analysis Tool":
                               "MAX": "max"
                          }
                          
-                         #stock = yf.Ticker(ticker)
-                         #detailed_data = stock_info.history(period=period_mapping[selected_period])
+
                          detailed_data = get_detailed_data(ticker, period_mapping[st.session_state.selected_period])
 
                          fig = create_figure(detailed_data)
@@ -8326,9 +8195,7 @@ if selected == "Stock Analysis Tool":
                #@st.cache_data
                #@st.fragment
                def main():
-                    #st.title("Stock Performance Chart")
-                    #global ticker
-                    #global ticker, name, symbol          
+         
                     if ticker:
                          display_stock_chart()          
                # Run the app
@@ -8380,6 +8247,8 @@ if selected == "Stock Analysis Tool":
 
                with st.container():
                     use_container_width=True
+
+
                     with Metric:  
 
                          #@st.cache_data(show_spinner=False)
@@ -9005,6 +8874,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_FCF_Margin_quarter_10'],
                                              st.session_state[f'{ticker}_ebitda_Margin_quarter_10'],
                                              st.session_state[f'{ticker}_ebitda_Margin_annual_10'],
+                                             st.session_state[f'{ticker}_ebitda_Margin_annual_5'],
                                              st.session_state[f'{ticker}_debt_equity_quarter_10'] ,
                                              st.session_state[f'{ticker}_EBITDA_growth_quarter_10'] ,
                                              st.session_state[f'{ticker}_Price_to_book_quarter_10'] ,
@@ -9082,6 +8952,7 @@ if selected == "Stock Analysis Tool":
                               FCF_Margin_quarter_10_unpacked = quarterly_data['fcf_margin'][-10:]
                               ebitda_Margin_quarter_10_unpacked = quarterly_data['ebitda_margin'][-10:]
                               ebitda_Margin_annual_10_unpacked = annual_data['ebitda_margin'][-10:]
+                              ebitda_Margin_annual_5_unpacked = annual_data['ebitda_margin'][-5:]
                               debt_equity_quarter_10_unpacked = quarterly_data['debt_to_equity'][-10:]
                               EBITDA_growth_quarter_10_unpacked = quarterly_data['ebitda_growth'][-10:]
                               Price_to_book_quarter_10_unpacked = quarterly_data['price_to_book'][-10:]
@@ -9138,6 +9009,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_FCF_Margin_quarter_10'] = FCF_Margin_quarter_10_unpacked
                               st.session_state[f'{ticker}_ebitda_Margin_quarter_10']= ebitda_Margin_quarter_10_unpacked
                               st.session_state[f'{ticker}_ebitda_Margin_annual_10']= ebitda_Margin_annual_10_unpacked
+                              st.session_state[f'{ticker}_ebitda_Margin_annual_5']= ebitda_Margin_annual_5_unpacked
                               st.session_state[f'{ticker}_debt_equity_quarter_10'] = debt_equity_quarter_10_unpacked
                               st.session_state[f'{ticker}_EBITDA_growth_quarter_10'] = EBITDA_growth_quarter_10_unpacked
                               st.session_state[f'{ticker}_Price_to_book_quarter_10'] = Price_to_book_quarter_10_unpacked
@@ -9169,7 +9041,8 @@ if selected == "Stock Analysis Tool":
                                    Book_Value_growth_annual_10_unpacked, Price_to_sales_annual_10_unpacked,
                                    Price_to_earnings_annual_10_unpacked, shares_diluted_annual_growth_10_unpacked,
                                    FCF_Margin_quarter_10_unpacked, ebitda_Margin_quarter_10_unpacked,
-                                   ebitda_Margin_annual_10_unpacked,debt_equity_quarter_10_unpacked, EBITDA_growth_quarter_10_unpacked,
+                                   ebitda_Margin_annual_10_unpacked,ebitda_Margin_annual_5_unpacked,
+                                   debt_equity_quarter_10_unpacked,EBITDA_growth_quarter_10_unpacked,
                                    Price_to_book_quarter_10_unpacked, Dividend_per_share_quarter_10_unpacked,
                                    fcf_per_share_quarter_10_unpacked, revenue_per_share_quarter_10_unpacked,
                                    ROE_quarter_10_unpacked, Payout_ratio_quarter_10_unpacked, NetIncome_growth_quarter_10_unpacked,
@@ -9191,7 +9064,8 @@ if selected == "Stock Analysis Tool":
                          Book_Value_growth_annual_10_unpacked, Price_to_sales_annual_10_unpacked,
                          Price_to_earnings_annual_10_unpacked, shares_diluted_annual_growth_10_unpacked,
                          FCF_Margin_quarter_10_unpacked,ebitda_Margin_quarter_10_unpacked,
-                         ebitda_Margin_annual_10_unpacked,debt_equity_quarter_10_unpacked, EBITDA_growth_quarter_10_unpacked,
+                         ebitda_Margin_annual_10_unpacked,ebitda_Margin_annual_5_unpacked,
+                         debt_equity_quarter_10_unpacked, EBITDA_growth_quarter_10_unpacked,
                          Price_to_book_quarter_10_unpacked, Dividend_per_share_quarter_10_unpacked,
                          fcf_per_share_quarter_10_unpacked, revenue_per_share_quarter_10_unpacked,
                          ROE_quarter_10_unpacked, Payout_ratio_quarter_10_unpacked, NetIncome_growth_quarter_10_unpacked,
@@ -9206,6 +9080,8 @@ if selected == "Stock Analysis Tool":
 
                          Net_income_margin_10years = sum(Net_income_margin_10_unpacked)/len(Net_income_margin_10_unpacked)
                          Net_income_margin_annual5 = sum(Net_income_margin_annual5_unpacked)/len(Net_income_margin_annual5_unpacked)
+
+                         ebitda_Margin_annual_5_average = sum(ebitda_Margin_annual_5_unpacked)/len(ebitda_Margin_annual_5_unpacked)
 
                          BVPS_quater1=sum(BVPS_quater1_unpacked)/len(BVPS_quater1_unpacked)
                          PBVPS=amount/BVPS_quater1
@@ -9279,11 +9155,9 @@ if selected == "Stock Analysis Tool":
                               try:
                                    # Get the value at index -6 (5 years ago) and the most recent value
                                    value_at_index_6 = FCF_annual_ten_unpacked[-6]
-                                   print("value_at_index_6",value_at_index_6)
                                    
 
                                    value_at_index_last = FCF_annual_ten_unpacked[-1]
-                                   print("value_at_index_last",value_at_index_last)
                               except Exception as e:
                                    # If there's an error (e.g., insufficient data), set both to 0
                                    value_at_index_6 = 0
@@ -9446,9 +9320,67 @@ if selected == "Stock Analysis Tool":
 
 
                          Net_interest_Income_annual_Cagr_5 = calculate_Net_interest_Income_CAGR_5(Net_interest_Income_annual_10_unpacked, ticker)
-          
-                              
 
+#--------------------------------------------------------------------------------------------
+
+                         def calculate_Revenue_per_share_5_cagr(revenue_per_share_annual_10_unpacked, ticker):
+                         # Check if the result is already in session state
+                              if f'{ticker}_Revenue_per_share_5_cagr(' in st.session_state:
+                                   return st.session_state[f'{ticker}_Revenue_per_share_5_cagr(']
+
+                              try:
+                                   # Get the value at index -6 (5 years ago) and the most recent value
+                                   value_at_index_6 = revenue_per_share_annual_10_unpacked[-6]
+
+                                   value_at_index_last = revenue_per_share_annual_10_unpacked[-1]
+                              except Exception as e:
+                                   # If there's an error (e.g., insufficient data), set both to 0
+                                   value_at_index_6 = 0
+                                   value_at_index_last = 0
+
+                              try:
+                                   if value_at_index_6 == 0:
+                                        # If value at index -6 is 0, CAGR is 0
+                                        Revenue_per_share_5_cagr = "{:.2f}".format(0.00)
+                                   else:
+                                        try:
+                                             # Calculate CAGR
+                                             Revenue_per_share_5_cagr = (pow((value_at_index_last / value_at_index_6), 1/5) - 1) * 100
+                                             # Handle complex number case
+                                             if isinstance(Revenue_per_share_5_cagr, complex):
+                                                  Revenue_per_share_5_cagr = "{:.2f}".format(0.00)
+                                             else:
+                                                  Revenue_per_share_5_cagr = "{:.2f}".format(Revenue_per_share_5_cagr)
+                                        except Exception as e:
+                                             Revenue_per_share_5_cagr = "{:.2f}".format(0.00)
+                              except Exception as e:
+                                   Revenue_per_share_5_cagr = "{:.2f}".format(0.00)
+
+                              # Store the result in session state
+                              st.session_state[f'{ticker}_Revenue_per_share_5_cagr'] = Revenue_per_share_5_cagr
+
+                              return Revenue_per_share_5_cagr
+                         
+                    
+
+                              # Usage example:
+                         
+                         Revenue_per_share_5_cagr = calculate_Revenue_per_share_5_cagr(revenue_per_share_annual_10_unpacked, ticker)
+                    ###################################################################################################
+
+                         try:
+                              value_at_index_2 = revenue_per_share_annual_10_unpacked[-2]
+                              value_at_index_last = revenue_per_share_annual_10_unpacked[-1]
+
+                              # Calculate percentage increase
+                              if value_at_index_2 != 0:  # Avoid division by zero
+                                   percentage_increase = ((value_at_index_last - value_at_index_2) / value_at_index_2) * 100
+                                   formatted_percentage = f"{percentage_increase:.2f}%"
+                              else:
+                                   formatted_percentage = 0.0
+
+                         except Exception as e:
+                              formatted_percentage = 0.0
 
           ###################################################################################################
 
@@ -10191,39 +10123,7 @@ if selected == "Stock Analysis Tool":
                               FCF_Margin_5 = "-"
                               P_sales_5 = "-"
                          
-                         # if len(Revenue_annual_5_unpacked) >= 5:
-                         #      Average_ROIC_funf = "{:.2f}%".format((Average_ROIC_funf))
-                         #      average_FCF_annual_five_we ="{:.2f}B".format(rounded_fcf_Annual_five/ 1000000000) if abs(rounded_fcf_Annual_five) >= 1000000000 else "{:,.1f}M".format(rounded_fcf_Annual_five / 1000000)
-                         #      five_ROE="{:.2f}".format(((sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked))*100))
-                         #      pe_five_ = "{:.2f}".format(float(Marketcap)/(Average_net_income_annual_funf/1000000000))
-                         #      #print(pe_five_)
-                         #      pfcf_funf="{:.2f}".format(Marketcap/(rounded_fcf_Annual_five/1000000000))
-                         #      P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5_unpacked)/len(Net_Operating_CashFlow_annual_5_unpacked))/1000000000))
-                         #      KCV =  pfcf_funf
-                         #      KGV = pe_five_
-                         #      five_Yrs_ROE="{:.2f}".format(((sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked))*100))
-                         #      Average_fcf_growth_five =  "{:.2f}%".format(((sum(fcf_growth_annual_5_unpacked) / len(fcf_growth_annual_5_unpacked)))*100)
-                         #      Average_pe_five =  "{:.2f}".format(((sum(pe_annual_5_unpacked) /len(pe_annual_5_unpacked)))) 
-                         #      five_yrs_Nettomarge = "{:.2f}".format((Net_income_margin_annual5)*100)
-                         #      FCF_Margin_5 = "{:.2f}".format((FCF_Margin_5)*100)
-                         #      P_sales_5="{:.2f}".format(Marketcap/((sum(Revenue_annual_5_unpacked)/len(Revenue_annual_5_unpacked))/1000000000))
-
-                         # else:
-                         #      Average_ROIC_funf ="NA"
-                         #      average_FCF_annual_five_we="{:.2f}".format(0.0)
-                         #      five_yrs_Nettomarge ="0.00"
-                         #      five_ROE="0.00"
-                         #      pfcf_funf="-"
-                         #      pe_five_="-"
-                         #      average_PE_historical="-"
-                         #      P_OCF_5 = "-"
-                         #      KGV=0.0
-                         #      KCV=0.0
-                         #      five_Yrs_ROE=0.0
-                         #      Average_fcf_growth_five = "0.00"
-                         #      Average_pe_five = "0.00"
-                         #      FCF_Margin_5 ="-"
-                         #      P_sales_5 = "-"
+ 
 
                          
                          Dividend_per_share_yield_no_percentage =abs((Divdend_per_share_ttm)/current_price)*100
@@ -10310,9 +10210,6 @@ if selected == "Stock Analysis Tool":
                                    df['other_current_liabilities'] + df['current_deferred_revenue']
                               )
 
-                              #df['Total add'] = df['noncurrent_capital_leases'] + df['current_capital_leases'] + df['lt_debt']
-                              #df['Total Debt'] = df['Total Difference'] + df['Total add']
-
                               df['Total add'] = df['noncurrent_capital_leases'] + df['lt_debt']
                               df['Total Debt'] = df['Total Difference'] + df['Total add']
 
@@ -10322,11 +10219,6 @@ if selected == "Stock Analysis Tool":
                               total = total[1:]
                               total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
 
-                              #total = total.apply(lambda row: row.apply(lambda x: "{:,.0f}".format(x / 1000000)))
-
-                              ###
-
-                              # Extract the last value from the 'Total Debt' column
                               total_debt_column = df['Total Debt']
                               last_value_total_debt = total_debt_column.iloc[-1]
 
@@ -10375,8 +10267,7 @@ if selected == "Stock Analysis Tool":
                                    Enterprise_value_in_Billion = "N/A"
                                    Debt_to_EBITDA = "{:.2f}".format(0.00)
                                    Ebita_ttm_Billion = "{:.2f}".format(0.00)
-                              #print("enterprice",((Marketcap) + (Total_Debt_from_all_calc / 1000000000) - Total_cash_last_years))
-                              # Scaling revenue and dividend values
+
                               revenue_ttm *= 1000000000
                               if revenue_ttm != 0.00 or Dividend_ttm > 0:
                                    Dividend_ttm = "{:.2f}B".format(abs(Dividend_ttm / 1000000000)) if abs(Dividend_ttm) >= 1000000000 else "{:,.1f}M".format(abs(Dividend_ttm / 1000000))
@@ -11980,13 +11871,6 @@ if selected == "Stock Analysis Tool":
 
                     #................................................................................................................................................
 
-                                                       
-
-          
-                    #pillar_analysis_width = 1  # Adjust this value as needed
-
-                    # Apply custom CSS style to control the width of the content
-                    #pillar_analysis_style = f"width: {pillar_analysis_width * 100}%;"
 
                #def display_pillar_analysis():
                with st.container():
@@ -12092,10 +11976,7 @@ if selected == "Stock Analysis Tool":
                                    Schuldentillgung = abs(Schuldentillgung)
                               except Exception as e:
                                    Schuldentillgung = 0
-                         #Schuldentillgung=round(1/(average_fcf_Annual_funf/Total_debt),1)
-                         #print("Total_Debt_from_all_calc",Total_Debt_from_all_calc)
-                         #print("rounded_fcf_Annual_five",rounded_fcf_Annual_five)
-                         
+
                          try:
                               if float(KGV) > 23.00:
                                         pe = "🔴"  # Red X for KCV greater than 23
@@ -12394,17 +12275,6 @@ if selected == "Stock Analysis Tool":
                          def display_growth_rate_formexer():
 
                               with st.form(key='growth_rate_formex'):
-                              
-                                   # treasury = "^TNX"
-                                   # treasury_yield_data = yf.download(treasury, period='1d')
-                                   # #treasury_yield_data = yf.download(treasury)
-                                   # #print("treasury_yield_data",treasury_yield_data)
-
-                                   # if not treasury_yield_data.empty:
-                                   #      treasury_yield = treasury_yield_data['Close'].iloc[-1]
-                                   #      st.session_state['Average_10years_treasury_rate'] = round(treasury_yield,2)
-                                   #      print("treasury_yield_data",treasury_yield)
-                                   # else:
 
                                    if "Average_10years_treasury_rate" not in st.session_state:
                                         st.session_state["Average_10years_treasury_rate"] = 4.25
@@ -12503,25 +12373,11 @@ if selected == "Stock Analysis Tool":
 
                                              print(average_fcf_Annual_DCF1)
 
-                                        #sum_discounted_values = sum(discounted_values)
-                                        #print("summe discounted FCF",sum_discounted_values) 
-
-                                        #for i, value in enumerate(discounted_values):
                                              if i == FCF_discount_in_years - 1:
 
-                                        #Terminal_Value = calculate_terminal_value(discounted_values[-1], st.session_state["Pepetual_growth_rate"], WACC)
                                                   Terminal_Value = discounted_value * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
                                                   #discounted_values[-1] = Terminal_Value + discounted_values
                                                   discounted_values[-1] = round(discounted_value + Terminal_Value, 2)
-
-
-                                                  #Sum_terminal_fcf = Terminal_Value + discounted_values[i]
-                                                  #print("summe discounted FCF + terminal",Sum_terminal_fcf) 
-                                                       
-
-                                   
-                                        #discounted_values[-1] = round(Sum_terminal_fcf,2)
-                                        
 
                                         
                                         #npv_result = npv(WACC/100, discounted_values)
@@ -12559,19 +12415,10 @@ if selected == "Stock Analysis Tool":
                                         #    if j == len(discounted_values2) - 1:
                                              if j == FCF_discount_in_years - 1:
                                                   Terminal_Value2 = discounted_value2 * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
-                                                  #Terminal_Value2 = calculate_terminal_value(discounted_values2[-1], st.session_state["Pepetual_growth_rate"], WACC)
-
-                                                  #Sum_terminal_fcf2 = discounted_value2 + Terminal_Value2
 
                                              
                                                   discounted_values2[-1] = discounted_value2 + Terminal_Value2
-                                                  #discounted_values2[-1] = Terminal_Value2 + discounted_values2[-1]
 
-
-                                        #Sum_terminal_fcf2 = Terminal_Value2 + discounted_values2[4]
-
-                                        #discounted_values2[-1] = round(Sum_terminal_fcf2,2)
-                                        #npv_result2 = npv(WACC/100,discounted_values2) 
                                         npv_result2 = calculate_npv(WACC, discounted_values2)
 
                                         #rounded_npv_result2 = round(npv_result2, 2)  
@@ -12609,44 +12456,6 @@ if selected == "Stock Analysis Tool":
 
                                    #........................................................................................
 
-                                        # def is_negative(value):
-                                        #      if isinstance(value, (pd.Series, pd.DataFrame)):
-                                        #           return (value < 0.0).any()
-                                        #      return value < 0.0
-
-                                        #      # Your existing code...
-
-                                        # if is_negative(Euro_equivalent_graham_valuation):
-                                        #      Euro_equivalent_graham_valuation = Euro_equivalent
-
-                                        # if is_negative(Euro_equivalent):
-                                        #      Euro_equivalent = Euro_equivalent_graham_valuation
-
-
-                                   
-                                        # if (Euro_equivalent_graham_valuation < 0.0).any():
-
-                                        #      Euro_equivalent_graham_valuation = Euro_equivalent
-
-                                        # elif (Euro_equivalent < 0.0).any():
-                                             
-                                        #      Euro_equivalent=Euro_equivalent_graham_valuation
-
-
-                                        # # if is_negative(Euro_equivalent_graham_valuation2):
-                                        # #      Euro_equivalent_graham_valuation2 = Euro_equivalent2
-
-                                        # # if is_negative(Euro_equivalent2):
-                                        # #      Euro_equivalent2=Euro_equivalent_graham_valuation2
-
-
-
-                                        # if (Euro_equivalent_graham_valuation2 < 0.0).any():
-
-                                        #      Euro_equivalent_graham_valuation2 = Euro_equivalent2
-
-                                        # elif (Euro_equivalent2 < 0.0).any():
-                                        #      Euro_equivalent2=Euro_equivalent_graham_valuation2
 
                                         Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
                                    
@@ -12685,9 +12494,6 @@ if selected == "Stock Analysis Tool":
 
                                         col15.write(f" Benjamin Graham + DCF:  ")
                                         # Adding a help expander below
-                                       # with col15.expander("What is Benjamin Graham + DCF?"):
-                                        #     st.write("Benjamin Graham's valuation formula combines his principles with a Discounted Cash Flow (DCF) approach.")
-
 
                                              
                                         if float(average_sum_both1) > float(converted_amount):
@@ -12885,14 +12691,9 @@ if selected == "Stock Analysis Tool":
                     with Multiple_Valuation:        
                     #@st.experimental_fragment
                          
-                         #@st.experimental_fragment
 
-                         #@st.fragment
-                         #@st.cache_data
                     
                          def display_growth_rate_form():
-                              #current_price = get_current_price(ticker)  # Get current price
-                              #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
                               with st.form(key='growth_rate_form31'):
                               
@@ -13277,16 +13078,9 @@ if selected == "Stock Analysis Tool":
                               Annual, Quarter = st.tabs(["Annual", "Quarterly"])
                               with Annual:
                                    
-                                   #date_annual_20yrs = annual_data['period_end_date'][-21:] 
-                                   #date_annual = annual_data['period_end_date'][-10:] 
-                    #revenue_2003 = [round(value, 2) for value in revenue_2003]
                                    revenue_annual21 = ["{:.2f}".format(value/1e9) for value in revenue_annual21_unpacked]
                                    revenue_growth_annual21 = ["{:.2f} %".format(value*100) for value in revenue_growth_annual21_unpacked]
 
-
-                                   #revenue_2003 = [(value) for value in annual_data['revenue'][-21:]]
-
-                                   #dividendPaidInTheLast21Years = [abs(value) for value in annual_data['cff_dividend_paid'][-21:]]
 
                                    # Create a DataFrame for the data
                                    data = pd.DataFrame({
@@ -13302,21 +13096,7 @@ if selected == "Stock Analysis Tool":
                                              labels={'value': 'Amount()'},
                                         # title=f"Revenue : 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%"
                                              ) 
-                                   #fig1.update_layout(title_x=0.05)    
-                                   # 
-                                   # 
-                                   # 
-                                   # fig1.add_trace(
-                                   # go.Scatter(
-                                   #      x=data['Date'],
-                                   #      y=data['Revenue in Billion USD'],
-                                   #      mode='lines+markers',  # Line with markers
-                                   #      name='Trend Line',  # Legend name for the line
-                                   #      line=dict(color='red', width=2),  # Customize line appearance
-                                   #      marker=dict(size=8),
-                                   #      showlegend=False,  # Hide the legend for the line,
-                                   # )    
-                                   # )     
+    
  
                                    fig1.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -13326,9 +13106,6 @@ if selected == "Stock Analysis Tool":
                                    xaxis_type='category' 
                                    )
                                    
-                                                       
-                                   #revenue_2003 = [round(value, 2) for value in revenue_2003]
-
 
                               # Create a DataFrame for the data
                                    data = pd.DataFrame({
@@ -13337,14 +13114,9 @@ if selected == "Stock Analysis Tool":
                                    'Revenue Growth':revenue_growth_annual21,
                                    })
 
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')
-
-                                   # Create a Plotly Express bar chart with side-by-side bars
                                    fig2 = px.bar(data, x='Date', y='Revenue Growth',
                                              text='Revenue Growth', 
                                              labels={'value': 'Amount'},
-                                             #title=f"5 YR Revenue Y/Y: {Revenue_growth_5years:.2f}%    1 YR Revenue: {Revenue_growth_1year:.2f}%"
                                              ) 
                                    
                                    fig2.update_layout(
@@ -13354,13 +13126,7 @@ if selected == "Stock Analysis Tool":
                                    fig2.update_layout(
                                    xaxis_type='category' 
                                    )
-                         
-                         #colr3.info(f"Revenue Growth: {Revenue_growth_10years}")
-                                                       #barmode='group')  # Use 'group' to display bars side by side
-                                   #fig2.update_layout(title_x=0.05)
-                                             
-                                   #fig.update_traces(marker_color='royalblue')
-                                   # Display the chart using Streamlit
+
 
                                    col1,col2 = st.columns(2)
 
@@ -13414,11 +13180,8 @@ if selected == "Stock Analysis Tool":
                                    fig1 = px.bar(data, x='Date', y='EPS',
                                              text='EPS',  # Display the value on top of each bar
                                              labels={'value': 'EPS ($)'},  # Include the percentage sign in the label
-                                             #title= f"10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(TTM): $ {eps_diluted_ttm}  Next YR: $ {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})"
                                              ) 
 
-                                   # Customize the chart
-                                   #fig1.update_traces(textposition='outside')
                                    fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
 
                                    #streamlit_blue = '#1f77b4'  # This is Streamlit's default blue color
@@ -13435,22 +13198,6 @@ if selected == "Stock Analysis Tool":
                                    xaxis_type='category' 
                                    )
 
-
-
-                                   # fig1.add_trace(
-                                   # go.Scatter(
-                                   #      x=data['Date'],
-                                   #      y=data['EPS'],
-                                   #      mode='lines+markers',  # Line with markers
-                                   #      name='Trend Line',  # Legend name for the line
-                                   #      line=dict(color='red', width=2),  # Customize line appearance
-                                   #      marker=dict(size=8),
-                                   #      showlegend=False,  # Hide the legend for the line,
-                                   # )  
-
-
-                                   #)  
-                                   # Display the chart using Streamlit
                                    fig1.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
                                    )
@@ -13463,15 +13210,10 @@ if selected == "Stock Analysis Tool":
                                    'Shares Outstanding in Billion USD': shares_diluted_annual21,
                                    })
 
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')
-
-                                   # Create a Plotly Express bar chart with side-by-side bars
                                    
                                    fig2 = px.bar(data, x='Date', y='Shares Outstanding in Billion USD',
                                              text='Shares Outstanding in Billion USD',  # Display the value on top of each bar
                                              labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                                             #title=f" Share Buyback/dilution past 5 YR: {Shares_outstanding_funf_growth:.2f}%  "
                                              )
 
                                    fig2.update_layout(
@@ -13481,9 +13223,7 @@ if selected == "Stock Analysis Tool":
                                    fig2.update_layout(
                                    xaxis_type='category' 
                                    )
-                                   #fig2.update_traces(texttemplate='%{y}', textposition='outside')
-                                   #fig2.update_layout(title_x=0.05)
-                                   # Display the chart using Streamlit
+
                                    col1,col2 = st.columns(2)
 
                                    with col1:
@@ -13507,7 +13247,6 @@ if selected == "Stock Analysis Tool":
     #-------------------------------------------------------------------------------------------------
                               
 
-                                   #Dividend_per_share = ["${:.2f}".format(value * 1) for value in Dividend_per_share_annual10_unpacked]
                                    
                                         #Price_to_earnings=annual_data['price_to_earnings'][-10:]
                                    data = pd.DataFrame({
@@ -13515,28 +13254,12 @@ if selected == "Stock Analysis Tool":
                                    'Revenue per Share': revenue_per_share_annual_10_unpacked,
                                    })
 
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')                                    
-                                   
-                                   # Create a Plotly Express bar chart with side-by-side bars
+
                                    
                                    fig1 = px.bar(data, x='Date', y='Revenue per Share',
                                                   text='Revenue per Share',  # Display the value on top of each bar
                                                   labels={'value': 'Amount()'},  # Include the percentage sign in the label
-                                                  #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
                                                   )
-
-                                   # fig1.add_trace(
-                                   # go.Scatter(
-                                   #      x=data['Date'],
-                                   #      y=data['Revenue per Share'],
-                                   #      mode='lines+markers',  # Line with markers
-                                   #      name='Trend Line',  # Legend name for the line
-                                   #      line=dict(color='red', width=2),  # Customize line appearance
-                                   #      marker=dict(size=8),
-                                   #      showlegend=False,  # Hide the legend for the line,
-                                   # )    
-                                   # )     
  
 
                                    fig1.update_layout(
@@ -13551,10 +13274,14 @@ if selected == "Stock Analysis Tool":
                                    
                  
 
+                                 
+
                                    col1, col2 =st.columns(2)
                                    with col1:
                                         st.write(f"""
                                         <div style='text-align: center;'>
+                                        <b>Revenue per Share CAGR 5 YR: {Revenue_per_share_5_cagr}%</b>
+                                        <b> Current Revenue per Share: {formatted_percentage}</b><br>
                                         <span style='font-family: Calibri; font-style: italic;'>
                                         Revenue per Share (Umsatz pro Aktie) zeigt, wie viel Umsatz pro ausgegebener Aktie erzielt wird                                        </div>
                                              """, unsafe_allow_html=True)
@@ -13565,36 +13292,24 @@ if selected == "Stock Analysis Tool":
                           #-------------------------------------------------------------------------------------------------
                                    try:
                                         ebitda_Margin_annual_10_unpacked = ["{:.2f}%".format(ebitda_Margin_annual_10_unpacked * 100) for ebitda_Margin_annual_10_unpacked in ebitda_Margin_annual_10_unpacked]
+                                        ebitda_Margin_annual_5_average = "{:.2f}".format((ebitda_Margin_annual_5_average)*100)
+                                        EBITDA_MARGIN_TTM ="{:.2f}".format(EBITDA_MARGIN_TTM)
                                    except Exception as e:
                                         ebitda_Margin_annual_10_unpacked = 0.0
-                                        #Price_to_earnings=annual_data['price_to_earnings'][-10:]
+                                        ebitda_Margin_annual_5_average = 0.0
+                                        EBITDA_MARGIN_TTM = 0.0
                                    data = pd.DataFrame({
                                    'Date': date_annual,
                                    'EBITDA Margin': ebitda_Margin_annual_10_unpacked,
                                    })
 
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')                                    
-                                   
-                                   # Create a Plotly Express bar chart with side-by-side bars
                                    
                                    fig1 = px.bar(data, x='Date', y='EBITDA Margin',
                                                   text='EBITDA Margin',  # Display the value on top of each bar
                                                   labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                                                   #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
                                                   )
-
-                                   #fig1.add_trace(
-                                   #go.Scatter(
-                                       # x=data['Date'],
-                                       # y=data['EBITDA Margin'],
-                                        #mode='lines+markers',  # Line with markers
-                                        #name='Trend Line',  # Legend name for the line
-                                        #line=dict(color='red', width=2),  # Customize line appearance
-                                        #marker=dict(size=8),
-                                        #showlegend=False,  # Hide the legend for the line,
-                                  # )    
-                                  # )     
+ 
  
 
                                    fig1.update_layout(
@@ -13605,13 +13320,14 @@ if selected == "Stock Analysis Tool":
                                    )
 
                          
-                              # Extract the last 21 years of dividends per share growth data
                                    
                  
 
                                    with col2:
                                         st.write(f"""
                                          <div style='text-align: center;'>
+                                        <b>5 YR EBITDA-Marge Y/Y: {ebitda_Margin_annual_5_average}%</b>
+                                        <b> Current EBITDA-Marge: {EBITDA_MARGIN_TTM}%</b><br>
                                         <span style='font-family: Calibri; font-style: italic;'>
                                         Die EBITDA-Marge zeigt, wie effizient ein Unternehmen Umsatz in operativen Gewinn umwandelt, bevor Zinsen, Steuern, Abschreibungen und Amortisationen berücksichtigt werden.                                        </span>
                                         </div>
@@ -13657,9 +13373,6 @@ if selected == "Stock Analysis Tool":
 
                                    try:
                                         value_at_index_11  = dividendPaidInTheLast21Years_unpacked[-11]
-                                        #st.write(value_at_index_10)
-                                        #st.write(value_at_index_20)
-                                        #value_at_index_20 = dividendPaidInTheLast21Years[20]
 
                                    except Exception as e:
                                         value_at_index_11 = 0
@@ -13687,38 +13400,7 @@ if selected == "Stock Analysis Tool":
                                         Dividend_10_CAGR =0; 
                                    
                #.................................20  Dividend CAGR............................................                    
-
-                                   # try:
-                                   #      value_at_index_0 = dividendPaidInTheLast21Years[0]
-                                   #      #value_at_index_20 = dividendPaidInTheLast21Years[20]
-
-                                   # except Exception as e:
-                                   #      value_at_index_0 = 0
-                                   #      value_at_index_20 = 0
-                                   # try:
-                                        
-                                   #      if value_at_index_0 == 0:
-                                   #           Dividend_20_CAGR = 0
-
-                                   #      else:
-                                   #                try:
-                                   #                     Dividend_20_CAGR = (pow((value_at_index_20 / value_at_index_0), 0.05) - 1) * 100
-                                   #                     #CAGR = round(CAGR, 2)
-
-                                   #                     if isinstance(Dividend_20_CAGR, complex):
-                                   #                               Dividend_20_CAGR = 0  # Set CAGR to 0 if it's a complex number
-                                   #                     else:
-                                   #                          Dividend_20_CAGR = round(Dividend_20_CAGR, 2)
-
-                                   #                except Exception as e:
-                                   #                     Dividend_20_CAGR = 0
-
-                                   # except Exception as e:  
-
-                                   #      Dividend_20_CAGR =0; 
-
                                    
-                                   #Free_cash_flow_annual_2003 = ["{:.2f}".format(value/1e9) for value in Free_cash_flow_annual_2003]
                                    data = pd.DataFrame({
                                    'Date': date_annual,
                                    'Dividends': [round(abs(x), 2) for x in Cash_Dividends_paid_Total_annual_10_unpacked],
@@ -13750,7 +13432,6 @@ if selected == "Stock Analysis Tool":
                            
                                    fig.update_layout(
                                         barmode='group', xaxis_title='Date',
-                                        #yaxis_title='FCF / Dividends Paid / Capex in Billion USD',
                                                   #title=title_text
                                                   )
                                                        # Update legend placement
@@ -13781,7 +13462,6 @@ if selected == "Stock Analysis Tool":
                                    
                                    st.plotly_chart(fig,use_container_width=True,config=config)
                                    #with col2:
-                                   #st.plotly_chart(fig2,use_container_width=True,config=config)
                #------------------------------------------------------------------------------------------------------------------------------------
                                         
                
@@ -13791,35 +13471,17 @@ if selected == "Stock Analysis Tool":
 
                                    Dividend_per_share = ["${:.2f}".format(value * 1) for value in Dividend_per_share_annual10_unpacked]
                                    
-                                        #Price_to_earnings=annual_data['price_to_earnings'][-10:]
                                    data = pd.DataFrame({
                                    'Date': date_annual,
                                    'Dividend per Share': Dividend_per_share,
                                    })
 
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')                                    
-                                   
-                                   # Create a Plotly Express bar chart with side-by-side bars
                                    
                                    fig1 = px.bar(data, x='Date', y='Dividend per Share',
                                                   text='Dividend per Share',  # Display the value on top of each bar
                                                   labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                                                  #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
                                                   )
 
-                                   # fig1.add_trace(
-                                   # go.Scatter(
-                                   #      x=data['Date'],
-                                   #      y=data['Dividend per Share'],
-                                   #      mode='lines+markers',  # Line with markers
-                                   #      name='Trend Line',  # Legend name for the line
-                                   #      line=dict(color='red', width=2),  # Customize line appearance
-                                   #      marker=dict(size=8),
-                                   #      showlegend=False,  # Hide the legend for the line,
-                                   # )    
-                                   # )     
- 
 
                                    fig1.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -13829,7 +13491,6 @@ if selected == "Stock Analysis Tool":
                                    )
 
                          
-                              # Extract the last 21 years of dividends per share growth data
                                    
                                    Dividends_per_share_growth_annual_10 = ["{:.2f}%".format(value * 100) for value in Dividends_per_share_growth_annual10_unpacked]
 
@@ -13845,7 +13506,6 @@ if selected == "Stock Analysis Tool":
                                    fig2 = px.bar(data, x='Date', y='Dividend per Share growth',
                                              text='Dividend per Share growth',  # Corrected the column name
                                              labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                        # title='Dividend per Share growth'
                                              )
 
                                    fig2.update_layout(
@@ -13894,22 +13554,9 @@ if selected == "Stock Analysis Tool":
                                    fig1 = px.bar(data, x='Date', y='ROIC',
                                              text='ROIC',  # Display the value on top of each bar
                                              labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                        # title= f"5 YR ROIC Y/Y: {Average_ROIC_funf}    Current ROIC: {ROIC_annual_one}<br>"
-                                        # "<span style='font-family: Calibri; font-style: italic;'>Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu <br>erwirtschaften.</span>"
                                              ) 
                                    
-                                   # fig1.add_trace(
-                                   # go.Scatter(
-                                   #      x=data['Date'],
-                                   #      y=data['ROIC'],
-                                   #      mode='lines+markers',  # Line with markers
-                                   #      name='Trend Line',  # Legend name for the line
-                                   #      line=dict(color='red', width=2),  # Customize line appearance
-                                   #      marker=dict(size=8),
-                                   #      showlegend=False,  # Hide the legend for the line,
-                                   # )    
-                                   # )     
-
+                           
 
                                    fig1.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -13930,30 +13577,14 @@ if selected == "Stock Analysis Tool":
                                    'ROE': ROE_annual_10years,
                                    })
 
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')                                    
-                                   
-                                   # Create a Plotly Express bar chart with side-by-side bars
-                                   
+
                               
                                    fig2 = px.bar(data, x='Date', y='ROE',
                                              text='ROE',  # Display the value on top of each bar
                                              labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                             #title=f"5 YR ROE Y/Y: {five_ROE}%    Current ROE: {ROE_ttm}"
                                              ) 
                                    
-
-                                   # fig2.add_trace(
-                                   # go.Scatter(
-                                   #      x=data['Date'],
-                                   #      y=data['ROE'],
-                                   #      mode='lines+markers',  # Line with markers
-                                   #      name='Trend Line',  # Legend name for the line
-                                   #      line=dict(color='red', width=2),  # Customize line appearance
-                                   #      marker=dict(size=8),
-                                   #      showlegend=False,  # Hide the legend for the line,
-                                   # )    
-                                   # )     
+   
 
                                    fig2.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -13992,43 +13623,18 @@ if selected == "Stock Analysis Tool":
           
                                    
                                    gross_margin_annual10 = ["{:.2f}%".format(gross_margin_annual10_unpacked * 100) for gross_margin_annual10_unpacked in gross_margin_annual10_unpacked]
-                              
-
-
-                              # title_text = (
-                                   #f"5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}    Current Gross Margin: {rounded_gross_margin} <br>"
-                                   #"<span style='font-family: Calibri; font-style: italic;'>Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>vom Umsatz übrig bleibt.</span>")          
-                              
                                    data = pd.DataFrame({
                                    'Date': date_annual,
                                    'Gross Margin': gross_margin_annual10,
                                    })
 
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')                                    
-                                   
-                                   # Create a Plotly Express bar chart with side-by-side bars
-                                   
-                              
                                    fig1 = px.bar(data, x='Date', y='Gross Margin',
                                              text='Gross Margin',  # Display the value on top of each bar
                                              labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                                              #title=title_text
                                              ) 
 
-                                   # Add a line to the bar chart using Plotly Graph Objects
-                                   # fig1.add_trace(
-                                   # go.Scatter(
-                                   #      x=data['Date'],
-                                   #      y=data['Gross Margin'],
-                                   #      mode='lines+markers',  # Line with markers
-                                   #      name='Trend Line',  # Legend name for the line
-                                   #      line=dict(color='red', width=2),  # Customize line appearance
-                                   #      marker=dict(size=8),
-                                   #      showlegend=False,  # Hide the legend for the line,
-                                   # )
 
-                                   # )
                                    fig1.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
                                    )
@@ -14045,36 +13651,13 @@ if selected == "Stock Analysis Tool":
                                    'Date': date_annual,
                                    'Operating Margin': Operating_Margin_10_annual,
                                    })
-
-
-                              
-                                   #fig2 = px.bar(data, x='Date', y='Operating Margin',
-                                   #         text='Operating Margin',  # Display the value on top of each bar
-                                   #        labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                   #       title=f"5 YR Operating Margin Y/Y: {rounded_operating_margin_five}    Current Operating Margin: {rounded_operating_margin}<br>"
-                                   #      "<span style='font-family: Calibri; font-style: italic;'>Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) <br>und der Betriebskosten(wie Material-, Produktions-, Verwaltungs- und <br>Vertriebskosten) vom Umsatz übrig bleibt.</span>"
-                                        #     ) 
-                              
-                                   #fig2.update_layout(title_x=0.05)
-
                                    col1, col2 = st.columns(2)
                                    # Create the figure without a title
                                    fig2 = px.bar(data, x='Date', y='Operating Margin',
                                              text='Operating Margin',  # Display the value on top of each bar
                                              labels={'value': 'Amount(%)'}  # Include the percentage sign in the label
                                              )
-
-                                   # fig2.add_trace(
-                                   # go.Scatter(
-                                   #      x=data['Date'],
-                                   #      y=data['Operating Margin'],
-                                   #      mode='lines+markers',  # Line with markers
-                                   #      name='Trend Line',  # Legend name for the line
-                                   #      line=dict(color='red', width=2),  # Customize line appearance
-                                   #      marker=dict(size=8),
-                                   #      showlegend=False,  # Hide the legend for the line,
-                                   # )    
-                                   # )     
+ 
 
                                    fig2.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -14125,31 +13708,12 @@ if selected == "Stock Analysis Tool":
                                    'Net Profit Margin': Net_income_margin_annual10_,
                                    })
 
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')                                    
-                                   
-                                   # Create a Plotly Express bar chart with side-by-side bars
-
-                                   #wrapped_title = "<br>".join(textwrap.wrap(title_text))
 
                                    fig1 = px.bar(data, x='Date', y='Net Profit Margin',
                                              text='Net Profit Margin',  # Display the value on top of each bar
                                              labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
                                              #title=title_text
                                              )
-
-
-                                   # fig1.add_trace(
-                                   # go.Scatter(
-                                   #      x=data['Date'],
-                                   #      y=data['Net Profit Margin'],
-                                   #      mode='lines+markers',  # Line with markers
-                                   #      name='Trend Line',  # Legend name for the line
-                                   #      line=dict(color='red', width=2),  # Customize line appearance
-                                   #      marker=dict(size=8),
-                                   #      showlegend=False,  # Hide the legend for the line,
-                                   # )    
-                                   # )   
 
                                    fig1.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -14169,31 +13733,13 @@ if selected == "Stock Analysis Tool":
                                    'FCF Margin': FCF_Margin_annual10,
                                    })
 
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')                                    
-                                   
-                                   # Create a Plotly Express bar chart with side-by-side bars
                                    
                               
                                    fig2 = px.bar(data, x='Date', y='FCF Margin',
                                              text='FCF Margin',  # Display the value on top of each bar
                                              labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                             #title=f"5 YR FCF Margin Y/Y: {FCF_Margin_5}%    Current FCF Margin: {FCF_Margin_1:.2f}%<br>"
-                                             #" <span style='font-family: Calibri; font-style: italic;'>Die FCF-Marge (freier Cashflow) ist ein Indikator dafür, <br>wie effizient ein Unternehmen seinen Umsatz in freien Cashflow umwandelt.</span>"
                                              ) 
-                                   
-
-                                   # fig2.add_trace(
-                                   # go.Scatter(
-                                   #      x=data['Date'],
-                                   #      y=data['FCF Margin'],
-                                   #      mode='lines+markers',  # Line with markers
-                                   #      name='Trend Line',  # Legend name for the line
-                                   #      line=dict(color='red', width=2),  # Customize line appearance
-                                   #      marker=dict(size=8),
-                                   #      showlegend=False,  # Hide the legend for the line,
-                                   # )    
-                                   # )  
+                               
 
                                    fig2.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -14236,16 +13782,10 @@ if selected == "Stock Analysis Tool":
                                    'Date': date_annual,
                                    'PE Ratio': Price_to_earnings,
                                    })
-
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')                                    
-                                   
-                                   # Create a Plotly Express bar chart with side-by-side bars
                                    
                                    fig21 = px.bar(data, x='Date', y='PE Ratio',
                                              text ='PE Ratio',
                                              labels={'value': 'Ratio'},
-                                             #title=f"-><span style='color:dodgerblue'>10 YR PE:</span> {average_PE_historical}  -><span style='color:dodgerblue'>5 YR PE: </span> {pe_five_}  -><span style='color:dodgerblue'>Current PE: </span> {pe_ttm}  -><span style='color:dodgerblue'>Forward P/E:</span>  {forwardPE}"
                                              )  # Use 'group' to display bars side by side
 
                                                                                                                                             
@@ -14267,11 +13807,7 @@ if selected == "Stock Analysis Tool":
                                    y=0.7,  # Adjust to center vertically
                                    showarrow=False,  # Remove the arrow
                                    font=dict(color='red'),  # Set font color to red
-                                   )          
-
-                                   # Display the chart using Streamlit
-                                   #st.plotly_chart(fig21,use_container_width=True,config=config)
-          
+                                   )                    
 
                                    fig21.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
@@ -14289,12 +13825,7 @@ if selected == "Stock Analysis Tool":
                                    'Price/FCF': price_to_fcf_annual21_unpacked,
                                    })
 
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')                                    
-                                   
-                                   # Create a Plotly Express bar chart with side-by-side bars
-                                   
-                                                                                                                                            
+                                         
                                    fig22 = px.bar(data, x='Date', y='Price/FCF',
                                              text ='Price/FCF',
                                              labels={'value': 'ratio'},
@@ -14353,23 +13884,16 @@ if selected == "Stock Analysis Tool":
                                    
                                    TBVPS_quater1 =sum(TBVPS_quater1_unpacked)/len(TBVPS_quater1_unpacked)
                                    PTBVPS=amount/TBVPS_quater1
-                                   #PTBVPS = PTBVPS)/len(PTBVPS)
-                                   #st.write("TBVPS",TBVPS)
-                                   #st.write("PTBVPS",PTBVPS)
                                    data = pd.DataFrame({
                                    'Date': date_annual,
                                    'Price/Tangible Book Value': Price_to_tangible_book_annual_10_unpacked,
                                    })
 
-                                                       
-
 
                                    # Create a Plotly Express bar chart with side-by-side bars
-                                   
                                    fig11 = px.bar(data, x='Date', y='Price/Tangible Book Value', 
                                              text ='Price/Tangible Book Value',              
                                              labels={'value': 'Ratio'},
-                                             #title=f'10 P/TBV: {Average_Price_to_tangible_book:.2f}  Current P/TBV: {PTBVPS:.2f}'
                                              )  # Use 'group' to display bars side by side
                                    
                                    fig11.add_shape(
@@ -14401,12 +13925,7 @@ if selected == "Stock Analysis Tool":
                                    )
 
                                    #-------------------------------------------------------------------------------------------------
-                              
-
-                              
-                                   #PBVPS=sum(PBVPS)/len(PBVPS)
-                                   #st.write("BVPS",BVPS)
-                                   #st.write("PBVPS",PBVPS)
+ 
                                    data = pd.DataFrame({
                                    'Date': list(date_annual),
                                    'Price/Book Value': Price_to_book_10_annual_unpacked,
@@ -14420,8 +13939,7 @@ if selected == "Stock Analysis Tool":
                                    fig12 = px.bar(data, x='Date', y='Price/Book Value',
                                              text ='Price/Book Value',  
                                              labels={'value': 'Ratio'},
-                                             #title='Price to Book Value,{average_price_to_book:.2f}')
-                                             #title=f'10 P/BV: {average_price_to_book:.2f}  Current P/B: {PBVPS:.2f}'
+
                                              )
                                    
 
@@ -14530,36 +14048,6 @@ if selected == "Stock Analysis Tool":
 
                          st.write(short_description)
 
-                    
-
-
-                         #st.write(f"1 USD is equivalent to {usd_to_eur_rate} EUR")
-
-
-
-
-
-                         # if isinstance(eps_diluted_ttm, float):
-                         #      eps_diluted_ttm = [eps_diluted_ttm]
-
-                         # data = pd.DataFrame({
-                         # 'Date': ['TTM'] * len(eps_diluted_ttm) + list(date_annual_20yrs),
-                         # 'EPS': [eps_diluted_ttm[0]] * len(eps_diluted_ttm) + eps_diluted_annual_2003
-                         # })
-                         
-
-                    
-                         # fig11 = px.bar(data, x='Date', y='EPS', text='EPS',
-                         #           labels={'value': 'EPS'},
-                         #           title='EPS Diluted TTM vs EPS Diluted Annual 2003',
-                         #           hover_data={'EPS': True},
-                         #           color='Date')
-                         # # Show the plot
-                         # st.plotly_chart(fig11, use_container_width=True, config=config)
-
-
-
-               
                     
                                         
 
@@ -14694,14 +14182,7 @@ def display_disclaimer():
      disclaimer = """
                The information provided on this website is intended for informational purposes only and does not constitute financial advice, investment recommendations, or a solicitation to buy or sell any securities. The content and data presented on this website are not tailored to your specific investment goals, financial situation, or risk tolerance. You should always consult with a qualified financial advisor before making investment decisions.
                """
-               # The stock and financial data provided on this website may be delayed, inaccurate, or subject to errors. We make no representations or warranties about the accuracy, completeness, or reliability of the information presented. Any reliance you place on such information is strictly at your own risk.
-               # Past performance is not indicative of future results. Investments in stocks, securities, and financial instruments involve risks, including the loss of your invested capital. Market conditions can change rapidly, and investment values can fluctuate.
-               # This website may contain links to third-party websites or content. We do not endorse or control the content of these external sites and are not responsible for their accuracy, legality, or availability.
-               # We are not licensed financial advisors, and the content provided on this website should not be construed as professional financial advice. You are solely responsible for evaluating the suitability of any investment decisions based on your individual circumstances and objectives.
-               # By using this website, you agree to hold us harmless from any and all claims, losses, liabilities, or damages resulting from your reliance on the information presented herein. We reserve the right to modify or discontinue the content and services offered on this website at any time.
-               # Please consult with a qualified financial professional and conduct your own research before making any investment decisions. We encourage you to review the terms of use and privacy policy of this website for more information about your use of this site.
-               # For specific legal, tax, and financial advice, you should contact your own attorney, accountant, or other professional advisors..
-     #
+
 
      custom_css = """
      <style>
