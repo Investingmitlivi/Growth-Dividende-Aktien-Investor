@@ -13185,7 +13185,7 @@ if selected == "Stock Analysis Tool":
                                    fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
 
                                    #streamlit_blue = '#1f77b4'  # This is Streamlit's default blue color
-                                   colors = ['#4b71ff'] * len(date_annual) + ['#4b71ff', 'grey']
+                                   colors = len(date_annual) 
                                    fig1.update_traces(marker_color=colors)
 
                                    # Update layout for better readability
