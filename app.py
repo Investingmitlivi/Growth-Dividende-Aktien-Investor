@@ -7794,21 +7794,23 @@ if selected == "Stock Analysis Tool":
                     #quote = Quote(ticker)
                     try:
                          current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
-                         #current_price = float(quote.fundamental_df.at[0, "Price"])
+                         #fundamental_df = quote.fundamental_df
+                         
                     except Exception:
                          try:
+                              # Fallback to previous close
                               current_price = float(stock_info.info["previousClose"])
                               
                          except Exception:
                               try:
                                    current_price = stock_info.history(period="2d", interval="1d")["Close"].iloc[-1]
 
-                              except AttributeError:
-
+                              except Exception:
+                                   
                                    current_price = float(quote.fundamental_df.at[0, "Price"])
                                    current_price = float(current_price.replace(',', ''))
                               except Exception:
-                                   current_price =  0.1 
+                                   current_price =  None
 
 
                     return current_price
@@ -8273,8 +8275,9 @@ if selected == "Stock Analysis Tool":
                               except Exception as e:
 
                                    try:
-                                   
-                                        fundamental_df = quote.fundamental_df
+
+                             # fundamental_df = quote.fundamental_df
+                                        
                                         market_cap_original = quote.fundamental_df.at[0, "Market Cap"] 
                                         #print("market_cap",market_cap_original)
 
@@ -13150,7 +13153,6 @@ if selected == "Stock Analysis Tool":
                                         """, unsafe_allow_html=True)
 
                                         st.plotly_chart(fig2,use_container_width=True, config=config)
-                              
 
                          #-------------------------------------------------------------------------------------------------
                          # Get the current year and calculate next year
@@ -14197,6 +14199,8 @@ def display_disclaimer():
 #####################################################################
 if selected == "Contacts":
      st.write("You can reach us at: verstehdieaktie@gmail.com")
+
+
      # #st.title('Welcome to :violet[Pondering] :sunglasses:')
 
      # def app():
