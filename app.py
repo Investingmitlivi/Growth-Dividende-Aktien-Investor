@@ -562,9 +562,9 @@ if selected == "Stock Analysis Tool":
                # Save the token to session state and remove it from the URL
                st.session_state.login_token = query_params['login_token'][0]
                
-               # Remove 'login_token' from the URL by updating query parameters
-               #del query_params['login_token']
-               #st.query_params = query_params
+          #Remove 'login_token' from the URL by updating query parameters
+               del query_params['login_token']
+               st.query_params = query_params
 
 
 
@@ -8243,13 +8243,28 @@ if selected == "Stock Analysis Tool":
 
 
                #Metric, Financials,Pillar_Analysis,Stock_Analyser,Reversed_DCF,Multiple_Valuation,Dividend_Discount_Model,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow (DCF)","Reversed DCF","Multiple of Earnings Valuation","Dividend Discount Model","Charts","Key Ratios","Calculator","Top 10 News"])
-               Metric, Financials,Pillar_Analysis,Stock_Analyser,Reversed_DCF,Multiple_Valuation,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Stock Screener","Discounted Cash Flow (DCF)","Reversed DCF","Multiple of Earnings Valuation","Charts","Key Ratios","Calculator","Top 10 News"])
+               #Metric, Financials,Pillar_Analysis,Stock_Analyser,Reversed_DCF,Multiple_Valuation,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Stock Screener","Discounted Cash Flow (DCF)","Reversed DCF","Multiple of Earnings Valuation","Charts","Key Ratios","Calculator","Top 10 News"])
+               
+               st.markdown(
+                    """
+                    <style>
+                    .stTabs > div > div > div > button {
+                         flex: 1;
+                         text-align: center;
+                    }
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                    )
+                                   
+               tabs = ["Key Statistics", "Financials", "12 Pillar Stock Screener", "Discounted Cash Flow (DCF)", 
+                    "Reversed DCF", "Multiple of Earnings Valuation", "Charts", "Key Ratios", "Calculator", "Top 10 News"]
 
-          
+               # Create tabs
+               Metric, Financials, Pillar_Analysis, Stock_Analyser, Reversed_DCF, Multiple_Valuation, Charts, Key_ratios, Retirement_Calculator, news = st.tabs(tabs)
+                         
 
                with st.container():
-                    use_container_width=True
-
 
                     with Metric:  
 
@@ -14054,7 +14069,6 @@ if selected == "Stock Analysis Tool":
                                         
 
                with st.container():
-                    use_container_width=True
                     with news:
                          def fetch_stock_news(stock_info):
                
@@ -14075,7 +14089,6 @@ if selected == "Stock Analysis Tool":
                               try:
                                    if news:
                                         with st.container():
-                                             use_container_width = True  # Set to true if you want to use the full width
                                              for i, item in enumerate(news, 1):
                                                   headline = item['title'] #december
                                                   link = item['link']
@@ -14086,26 +14099,6 @@ if selected == "Stock Analysis Tool":
                               except Exception as e:
                                    st.error("No news available for this stock.")
 
-
-                              # if news:
-                              #      with st.container():
-                              #           use_container_width = True
-                              #           for i, item in enumerate(news, 1):
-                              #                # Use .get() to handle missing keys
-                              #                headline = item.get('title', 'No title available')
-                              #                link = item.get('link', '#')
-                              #                st.write(f"Headline {i}: {headline}")
-                              #                st.write(f"[Read more]({link})")
-                              # else:
-                              #      st.error("No news available for this stock.")
-
-
-
-                                   
-
-                         # Example usage
-                         #ticker = "AAPL"  # Replace with the desired ticker symbol
-                         stock_info = yf.Ticker(ticker)
 
                          # Display the news
                          display_news(stock_info)
