@@ -12715,27 +12715,20 @@ if selected == "Stock Analysis Tool":
 
                               with st.form(key='growth_rate_form31'):
                               
-                                   col1,col2 = st.columns(2)
+                                   col1,col2= st.columns(2)
 
                                    with col1:
-                                        st.write(f"Historical:")
+                                        st.markdown("<div style='text-align: center;'>Historical:</div>", unsafe_allow_html=True)
 
                                    with col2:
                                         My_assumption = int(st.text_input("My Assumptions in Years:", value=int(10), key="My_assumption12"))
 
-                                   col1,col2,col3,col4,col5,col6 = st.columns(6)
-                                   with col1:
-                                        st.write(f"1YR:")
-                                   with col2:
-                                        st.write(f"5YR:") 
-                                   with col3:
-                                        st.write(f"10YR:")
-                                   with col4:
-                                        st.write(f"LOW")
-                                   with col5:
-                                        st.write(f"MID") 
-                                   with col6:
-                                        st.write(f"HIGH")
+
+                                   col1, col2, col3, col4, col5, col6 = st.columns(6)
+
+                                   for col, label in zip([col1, col2, col3, col4, col5, col6], ["1YR:", "5YR:", "10YR:", "LOW", "MID", "HIGH"]):
+                                        with col:
+                                             st.markdown(f"<div style='text-align: center;'>{label}</div>", unsafe_allow_html=True)
 
                                    
                                    colr1,colr2,colr3,colr9,colr10,colr11 = st.columns(6)
