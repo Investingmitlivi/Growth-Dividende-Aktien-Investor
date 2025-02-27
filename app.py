@@ -10,6 +10,8 @@ import time
 import firebase_admin
 import os
 import secrets
+import math
+
 
 
 
@@ -7644,6 +7646,7 @@ if selected == "Stock Analysis Tool":
                          'SDZNY':'Sandoz Group AG',
                          'EVVTY':'Evolution AB (Publ)',
                          'RHHBY':'Roche Holding AG',
+                         'WOLTF':'Wolters Kluwer N.V',
                     }
 
 
@@ -8242,12 +8245,30 @@ if selected == "Stock Analysis Tool":
           ############################################################################################################
 
 
-               #Metric, Financials,Pillar_Analysis,Stock_Analyser,Reversed_DCF,Multiple_Valuation,Dividend_Discount_Model,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Process","Discounted Cash Flow (DCF)","Reversed DCF","Multiple of Earnings Valuation","Dividend Discount Model","Charts","Key Ratios","Calculator","Top 10 News"])
-               #Metric, Financials,Pillar_Analysis,Stock_Analyser,Reversed_DCF,Multiple_Valuation,Charts,Key_ratios,Retirement_Calculator,news = st.tabs(["Key Statistics", "Financials","12 Pillar Stock Screener","Discounted Cash Flow (DCF)","Reversed DCF","Multiple of Earnings Valuation","Charts","Key Ratios","Calculator","Top 10 News"])
-               
+           
+               # st.markdown(
+               #      """
+               #      <style>
+               #      .stTabs > div > div > div > button {
+               #           flex: 1;
+               #           text-align: center;
+               #      }
+               #      </style>
+               #      """,
+               #      unsafe_allow_html=True
+               #      )
+
                st.markdown(
                     """
                     <style>
+                    /* Expand main content area to full width */
+                    .main {
+                         max-width: 100%;
+                         padding-left: 1rem;
+                         padding-right: 1rem;
+                    }
+
+                    /* Make tabs take full width */
                     .stTabs > div > div > div > button {
                          flex: 1;
                          text-align: center;
@@ -8255,10 +8276,10 @@ if selected == "Stock Analysis Tool":
                     </style>
                     """,
                     unsafe_allow_html=True
-                    )
-                                   
+                         )
+                                                            
                tabs = ["Key Statistics", "Financials", "12 Pillar Stock Screener", "Discounted Cash Flow (DCF)", 
-                    "Reversed DCF", "Multiple of Earnings Valuation", "Charts", "Key Ratios", "Calculator", "Top 10 News"]
+                    "Reversed DCF (rDCF)", "Multiple of Earnings Valuation", "Charts", "Key Ratios", "Calculator", "Top 10 News"]
 
                # Create tabs
                Metric, Financials, Pillar_Analysis, Stock_Analyser, Reversed_DCF, Multiple_Valuation, Charts, Key_ratios, Retirement_Calculator, news = st.tabs(tabs)
@@ -9103,6 +9124,8 @@ if selected == "Stock Analysis Tool":
 
                          BVPS_quater1=sum(BVPS_quater1_unpacked)/len(BVPS_quater1_unpacked)
                          PBVPS=amount/BVPS_quater1
+
+                         PBVPS = PBVPS if math.isfinite(PBVPS) and PBVPS > 0 else 0.00
 
                          if len_10_annual == 10:
                               average_price_to_book = "{:.2f}".format(sum(Price_to_book_10_annual_unpacked)/len(Price_to_book_10_annual_unpacked))
@@ -13894,6 +13917,8 @@ if selected == "Stock Analysis Tool":
                                    
                                    TBVPS_quater1 =sum(TBVPS_quater1_unpacked)/len(TBVPS_quater1_unpacked)
                                    PTBVPS=amount/TBVPS_quater1
+                                   PTBVPS = PTBVPS if math.isfinite(PTBVPS) and PTBVPS > 0 else 0.00
+
                                    data = pd.DataFrame({
                                    'Date': date_annual,
                                    'Price/Tangible Book Value': Price_to_tangible_book_annual_10_unpacked,
