@@ -13524,8 +13524,10 @@ if selected == "Stock Analysis Tool":
                                    )
 
                          
-                                   
+                                   Dividends_per_share_growth_average_annual_10 = "{:.2f}%".format((sum(Dividends_per_share_growth_annual10_unpacked)/len(Dividends_per_share_growth_annual10_unpacked)*100))
+                                   Dividends_per_share_growth_last_5_years_growth = "{:.2f}%".format((sum(Dividends_per_share_growth_annual10_unpacked[-5:])/len(Dividends_per_share_growth_annual10_unpacked[-5:])*100))  # Extract last 5 years
                                    Dividends_per_share_growth_annual_10 = ["{:.2f}%".format(value * 100) for value in Dividends_per_share_growth_annual10_unpacked]
+
 
                                    # Create a DataFrame
                                    data = pd.DataFrame({
@@ -13561,7 +13563,7 @@ if selected == "Stock Analysis Tool":
                                    with col2:
                                         st.write(f"""
                                         <div style='text-align: center;'>
-                                        <b>Dividend per Share growth
+                                        <b> 10 YR Dividend per Share growth Y/Y: {Dividends_per_share_growth_average_annual_10} 5 YR Y/Y: {Dividends_per_share_growth_last_5_years_growth}
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2, use_container_width=True,config=config)
