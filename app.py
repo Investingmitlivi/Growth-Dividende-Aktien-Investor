@@ -478,6 +478,7 @@ if selected == "Home":
           )
           st.write("[Superinvestor Portfolios >](https://valuesider.com/)")
           st.write("[Superinvestor Portfolios 13F fillings >](https://dataroma.com/m/home.php)")
+          st.write("[Hedge Fund Manager 13F Portfolio >](https://hedgefollow.com/)")
 
           st.write(
           """
