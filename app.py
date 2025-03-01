@@ -7739,7 +7739,6 @@ if selected == "Stock Analysis Tool":
                cik=data["data"]["metadata"]["CIK"]
                Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
                Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
-               print("ppe_net",Net_Purchases_of_Property_Equipment)
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
                date_list_annual = [period_end_date for period_end_date in date_annual]
 
@@ -9124,9 +9123,22 @@ if selected == "Stock Analysis Tool":
                          ebitda_Margin_annual_5_average = sum(ebitda_Margin_annual_5_unpacked)/len(ebitda_Margin_annual_5_unpacked)
 
                          BVPS_quater1=sum(BVPS_quater1_unpacked)/len(BVPS_quater1_unpacked)
-                         PBVPS=amount/BVPS_quater1
+                                                     
+                         TBVPS_quater1 =sum(TBVPS_quater1_unpacked)/len(TBVPS_quater1_unpacked)
+                                   
+                                   
 
-                         PBVPS = PBVPS if math.isfinite(PBVPS) and PBVPS > 0 else 0.00
+
+                         try:
+                              PBVPS = amount / BVPS_quater1 if BVPS_quater1 > 0 else 0.00
+                              PBVPS = PBVPS if math.isfinite(PBVPS) and PBVPS > 0 else 0.00
+
+                              PTBVPS=amount/TBVPS_quater1 if BVPS_quater1 > 0 else 0.00
+                              PTBVPS = PTBVPS if math.isfinite(PTBVPS) and PTBVPS > 0 else 0.00
+
+                         except Exception as e:
+                              PBVPS = 0.00
+                              PTBVPS = 0.00
 
                          if len_10_annual == 10:
                               average_price_to_book = "{:.2f}".format(sum(Price_to_book_10_annual_unpacked)/len(Price_to_book_10_annual_unpacked))
@@ -9916,7 +9928,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_Earnings_next_yr_in_prozent'],
                                              st.session_state[f'{ticker}_Earnings_next_yr_in_value'],
                                              st.session_state[f'{ticker}_Earnings_next_5_yrs'],
-                                             st.session_state[f'{ticker}_Average_debt_equity_one']
+                                             st.session_state[f'{ticker}_debt_equity_ttm']
                                         )
 
                          
@@ -9939,7 +9951,7 @@ if selected == "Stock Analysis Tool":
                                         Earnings_next_yr_in_prozent = quote.fundamental_df.at[0, "EPS next Y - EPS growth next year"]
                                         Earnings_next_yr_in_value = quote.fundamental_df.at[0, "EPS next Y - EPS estimate for next year"]
                                         Earnings_next_5_yrs = quote.fundamental_df.at[0, "EPS next 5Y"]
-                                        Average_debt_equity_one = quote.fundamental_df.at[0, "Debt/Eq"]
+                                        debt_equity_ttm = quote.fundamental_df.at[0, "Debt/Eq"]
 
                          
 
@@ -9959,11 +9971,6 @@ if selected == "Stock Analysis Tool":
                                         Earnings_next_yr_in_value = "{:.2f}".format(0.00)
                                         Earnings_next_5_yrs = "{:.2f}".format(0.00)
 
-                                        Average_debt_equity_one = round((((sum(debt_equity_annual1_unpacked) / len(debt_equity_annual1_unpacked)))), 2)
-                                        try:
-                                             checking_valid_debt_equity = float(Average_debt_equity_one) > 0.00
-                                        except Exception as e:
-                                             Average_debt_equity_one = Average_debt_equity_one
 
                                    # Store the data in session state
                                    st.session_state[f'{ticker}_forwardPE'] = forwardPE
@@ -9980,15 +9987,15 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_Earnings_next_yr_in_prozent'] = Earnings_next_yr_in_prozent
                                    st.session_state[f'{ticker}_Earnings_next_yr_in_value'] = Earnings_next_yr_in_value
                                    st.session_state[f'{ticker}_Earnings_next_5_yrs'] = Earnings_next_5_yrs
-                                   st.session_state[f'{ticker}_Average_debt_equity_one'] = Average_debt_equity_one
+                                   st.session_state[f'{ticker}_debt_equity_ttm'] = debt_equity_ttm
 
                                    return (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, 
                                         Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, 
                                         Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, 
-                                        Earnings_next_5_yrs, Average_debt_equity_one)
+                                        Earnings_next_5_yrs, debt_equity_ttm)
 
                               (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, Earnings_this_yr, 
-                              Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, Average_debt_equity_one) = unpack_and_store_fundamental_data(quote, ticker)
+                              Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, debt_equity_ttm) = unpack_and_store_fundamental_data(quote, ticker)
 
                          except Exception as e:
                               forwardPE = "{:.2f}".format(00.00)
@@ -10005,12 +10012,18 @@ if selected == "Stock Analysis Tool":
                               Earnings_next_yr_in_prozent = "{:.2f}".format(0.00)
                               Earnings_next_yr_in_value = "{:.2f}".format(0.00)
                               Earnings_next_5_yrs = "{:.2f}".format(0.00)
-                              Average_debt_equity_one = "{:.2f}".format(0.0)
+                              debt_equity_ttm = "{:.2f}".format(0.0)
 
           ###################################################################################################
 
+                         debt_equity_ttm = round((((sum(debt_equity_annual1_unpacked) / len(debt_equity_annual1_unpacked)))), 2)
+                         try:
+                              debt_equity_ttm ="{:.2f}".format(Financial_data['ttm']['debt_to_equity'])
 
- 
+                         except Exception as e:
+                              
+                              debt_equity_ttm =debt_equity_ttm
+                        
 
           
                          if Revenue_ttm!=0 and average_revenue_annual_ttm !=0 :
@@ -12108,10 +12121,10 @@ if selected == "Stock Analysis Tool":
                               roic = "🔴" 
 
                          try:
-                              if float(Average_debt_equity_one) > 2.0:
+                              if float(debt_equity_ttm) > 2.0:
                                         dt_equt = "🔴"  # Red X for KGV less than 23
 
-                              elif float(Average_debt_equity_one) < 0:
+                              elif float(debt_equity_ttm) < 0:
                                    
                                    dt_equt = "🔴"  # Red X for KGV less than 23
 
@@ -12205,7 +12218,7 @@ if selected == "Stock Analysis Tool":
                                                        </tr>
                                                        <tr>
                                                        <td>DEBT / EQUITY < 2</td>
-                                                       <td><b>{Average_debt_equity_one}</b></td>
+                                                       <td><b>{debt_equity_ttm}</b></td>
                                                        <td>{dt_equt}</td>
                                                        </tr>
                                                   </table>
@@ -12277,7 +12290,7 @@ if selected == "Stock Analysis Tool":
                                    KGV=KGV, pe=pe,
                                    KCV=KCV, pcf=pcf,
                                    Schuldentillgung=Schuldentillgung, schuld=schuld,
-                                   Average_debt_equity_one=Average_debt_equity_one, dt_equt=dt_equt,
+                                   debt_equity_ttm=debt_equity_ttm, dt_equt=dt_equt,
                                    Average_ROIC_funf=Average_ROIC_funf, roic=roic,
                                    five_Yrs_ROE=five_Yrs_ROE, roe=roe,
                                    five_yrs_Nettomarge=five_yrs_Nettomarge, netmarge=netmarge,
@@ -13917,10 +13930,6 @@ if selected == "Stock Analysis Tool":
 
                                    #-------------------------------------------------------------------------------------------------
 
-                                   
-                                   TBVPS_quater1 =sum(TBVPS_quater1_unpacked)/len(TBVPS_quater1_unpacked)
-                                   PTBVPS=amount/TBVPS_quater1
-                                   PTBVPS = PTBVPS if math.isfinite(PTBVPS) and PTBVPS > 0 else 0.00
 
                                    data = pd.DataFrame({
                                    'Date': date_annual,
