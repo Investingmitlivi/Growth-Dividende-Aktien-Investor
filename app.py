@@ -1,4 +1,4 @@
-#from google.auth.transport.requests import Request
+
 import google.auth.transport.requests
 import requests, json, time
 import streamlit as st, pandas as pd, numpy as np, yfinance as yf
@@ -35,7 +35,7 @@ from scipy import optimize
 
 
 
-st.set_page_config(page_title="Verstehdieaktie", page_icon = "📖", layout="wide")
+st.set_page_config(page_title="Verstehdieaktie", page_icon="📘", layout="wide")
 
 # favicon = Image.open("")  # Path to your image
 # st.image(favicon, width=50) 
