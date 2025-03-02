@@ -2,6 +2,7 @@
 import google.auth.transport.requests
 import requests, json, time
 import streamlit as st, pandas as pd, numpy as np, yfinance as yf
+from streamlit.components.v1 import html
 import plotly.express as px
 import plotly.graph_objs as go
 import plotly.graph_objects as go
@@ -16,7 +17,7 @@ import math
 
 
 from typing import List, Dict, Union
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
 from numpy_financial import npv
 from firebase_admin import credentials,firestore,auth
 from pandas_datareader import data
@@ -506,32 +507,38 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# def display_login_signup():
-#      if not st.session_state.is_logged_in:
-#           with st.container():
-#             st.markdown('<div class="login-signup">', unsafe_allow_html=True)
-#             choice = st.selectbox('', ['Login', 'Sign up'], key='login_signup_choice')
-#             st.markdown('</div>', unsafe_allow_html=True)
-#           return choice
-#      else:
-#           with st.container():
-#             st.markdown('<div class="login-signup">', unsafe_allow_html=True)
-#             if st.button('Sign out'):
-#                 t()  # Call your logout function
-#             st.markdown('</div>', unsafe_allow_html=True)
-#           return None
-
 if selected == "Stock Analysis Tool":
-     
-
      serializer = URLSafeTimedSerializer("secret_key") 
+     COOKIE_NAME = "login_token"
+     COOKIE_EXPIRY_DAYS = 1  # Token expires in 1 day
+
+     # JavaScript to handle cookies
+     def set_cookie(key, value, expiry_days=1):
+          expiry_date = (datetime.now(timezone.utc) + timedelta(days=expiry_days)).strftime("%a, %d-%b-%Y %H:%M:%S GMT")
+          js_code = f"document.cookie = '{key}={value}; expires={expiry_date}; path=/';"
+          # Removed the line to execute JS code to set the cookie in the browser
+
+     def get_cookie(key):
+          js_code = f"""
+          <script>
+               let cookie = document.cookie;
+               let value = cookie.split('; ').find(row => row.startsWith('{key}=')).split('=')[1];
+               window.parent.postMessage(value, "*");
+          </script>
+          """
+          # Removed the line to execute JS code to retrieve cookie value
+
+     def delete_cookie(key):
+          js_code = f"document.cookie = '{key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';"
+          # Removed the line to execute JS code to delete the cookie
+
 
      def app():
+
 
      # Usernm = []
           #st.title('Welcome to verstehdieaktie')
           
-
           if 'username' not in st.session_state:
                st.session_state.username = ''
           if 'useremail' not in st.session_state:
@@ -541,48 +548,17 @@ if selected == "Stock Analysis Tool":
           if 'needs_rerun' not in st.session_state:
                st.session_state.needs_rerun = False
 
-         # if "signedout" not in st.session_state:
-           #    st.session_state["signedout"] = False
-         # if 'signout' not in st.session_state:
-          #     st.session_state['signout'] = False 
-
-          # Check for login token in query parameters
-
-              
-
-          #     # Check for login token in query parameters or session state
-          # if 'login_token' in st.query_params:
-          #      st.session_state.login_token = st.query_params['login_token']
-
-                   # Retrieve current query parameters
-          # Retrieve current query parameters
-          query_params = st.query_params
-          #query_params = st.experimental_get_query_params()
-
-
-          # Check for 'login_token' in query parameters
-          if 'login_token' in query_params:
-               # Save the token to session state and remove it from the URL
-               st.session_state.login_token = query_params['login_token'][0]
-               
-          #Remove 'login_token' from the URL by updating query parameters
-               del query_params['login_token']
-               st.query_params = query_params
-
-
-
-          if 'login_token' in st.session_state:
+          # Check for login token in cookies
+          cookie_token = get_cookie(COOKIE_NAME)
+          if cookie_token and 'login_token' not in st.session_state:
                try:
-                    user_data = serializer.loads(st.session_state.login_token, max_age=86400)  # 12 hour expiry expiry
+                    user_data = serializer.loads(cookie_token, max_age=86400)  # 24-hour expiry
                     st.session_state.username = user_data['username']
                     st.session_state.useremail = user_data['email']
                     st.session_state.is_logged_in = True
-
+                    st.session_state.login_token = cookie_token
                except Exception:
-                    #st.warning("Login session expired. Please log in again.")
-                    del st.session_state.login_token
-                    #st.session_state.is_logged_in = False
-
+                    delete_cookie(COOKIE_NAME)  # Remove invalid/expired cookie
 
 
           # Function to sign up with email and password
@@ -607,27 +583,39 @@ if selected == "Stock Analysis Tool":
                except Exception as e:
                     st.warning(f'Signup failed: {e}')
 
-          # Function to sign in with email and password
-          def sign_in_with_email_and_password(email=None, password=None, return_secure_token=True):
-               rest_api_url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword"
+          # # Function to sign in with email and password
+          # def sign_in_with_email_and_password(email=None, password=None, return_secure_token=True):
+          #      rest_api_url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword"
 
-               try:
-                    payload = {
-                         "returnSecureToken": return_secure_token,
-                         "email": email,
-                         "password": password
-                    }
-                    payload = json.dumps(payload)
-                    r = requests.post(rest_api_url, params={"key": "AIzaSyApr-etDzcGcsVcmaw7R7rPxx3A09as7uw"}, data=payload)
-                    data = r.json()
-                    user_info = {
-                         'email': data['email'],
-                         'username': data.get('displayName')  # Retrieve username if available
-                    }
-                    return user_info
+          #      try:
+          #           payload = {
+          #                "returnSecureToken": return_secure_token,
+          #                "email": email,
+          #                "password": password
+          #           }
+          #           payload = json.dumps(payload)
+          #           r = requests.post(rest_api_url, params={"key": "AIzaSyApr-etDzcGcsVcmaw7R7rPxx3A09as7uw"}, data=payload)
+          #           data = r.json()
+          #           user_info = {
+          #                'email': data['email'],
+          #                'username': data.get('displayName')  # Retrieve username if available
+          #           }
+          #           return user_info
                   
+          #      except Exception as e:
+          #           st.warning(f'Signin failed: {e}')
+              # Function to sign in with email and password
+          def sign_in_with_email_and_password(email=None, password=None):
+               rest_api_url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword"
+               try:
+                    payload = {"returnSecureToken": True, "email": email, "password": password}
+                    r = requests.post(rest_api_url, params={"key": "AIzaSyApr-etDzcGcsVcmaw7R7rPxx3A09as7uw"}, json=payload)
+                    data = r.json()
+                    if 'email' in data:
+                         return {'email': data['email'], 'username': data.get('displayName')}
                except Exception as e:
-                    st.warning(f'Signin failed: {e}')
+                    st.warning(f'Sign-in failed: {e}')
+               return None
 
 #######################################################################################################
           # Login function
@@ -643,7 +631,9 @@ if selected == "Stock Analysis Tool":
                     login_token = serializer.dumps({'username': userinfo['username'], 'email': userinfo['email']})
                     st.session_state.login_token = login_token
                     # Update query parameters
-                    st.query_params['login_token'] = login_token
+                    #st.query_params['login_token'] = login_token
+                    set_cookie(COOKIE_NAME, login_token, expiry_days=COOKIE_EXPIRY_DAYS)
+
                     st.session_state.needs_rerun = True
                else:
                     st.warning('Login Failed')
@@ -653,7 +643,9 @@ if selected == "Stock Analysis Tool":
                for key in ['username', 'useremail', 'is_logged_in', 'login_token']:
                     if key in st.session_state:
                          del st.session_state[key]
-               st.query_params.clear()
+               #st.query_params.clear()
+               delete_cookie(COOKIE_NAME)  # Remove cookie on logout
+
                #st.rerun()
                st.session_state.needs_rerun = True
 ############################# email reset##########################################################
@@ -685,37 +677,17 @@ if selected == "Stock Analysis Tool":
                
  #############################################################################################################
 
-          right, middle, left = st.columns(3, gap="small")
-                   # Check if we need to rerun the app
-          if st.session_state.needs_rerun:
+          right, middle, left = st.columns(3)
+          # Check if we need to rerun the app
+          if st.session_state.get("needs_rerun"):
                st.session_state.needs_rerun = False
                st.rerun()
-          left_col, center_col, right_col = st.columns([1, 2, 1])
 
-          #with center_col:
-
-               # Main app logic 
           if st.session_state.is_logged_in:
-               # with middle:
-               # #st.success(f"Welcome, {st.session_state.username}!")
-               # #st.text('Email_id: ' + st.session_state.useremail)
-               # #with left:
-               # #st.button('Sign out', on_click=logout)
-               #      message_placeholder = st.empty()
-               
-               # # Display the success message
-               #      with message_placeholder:
-               #           st.success(f"Welcome, {st.session_state.username}!")
-                    
-               #      # Wait for 1 second
-               #      time.sleep(1)
-                    
-               #      # Clear the success message
-               #      message_placeholder.empty()
 
                with left:
+                    #st.success(f"Welcome, {st.session_state.username}!")
                     st.button('Sign out', on_click=logout, key='signout_button')
-
 
                st.markdown("""
                <style>
@@ -724,6 +696,7 @@ if selected == "Stock Analysis Tool":
                }
                </style>
                """, unsafe_allow_html=True)
+
 
                ticker_symbol_name = {
                          'GOOGL':'Alphabet Inc.  ',
@@ -7649,21 +7622,19 @@ if selected == "Stock Analysis Tool":
                          'RHHBY':'Roche Holding AG',
                          'WOLTF':'Wolters Kluwer N.V',
                     }
-
-
-               
+ 
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
 
-               #col1, col2 = st.columns(2)
-               #with col1: 
                with right:   
-                    #selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')  
-                    selected_ticker = st.selectbox(
-                    'Select a ticker',
-                    options=list(ticker_symbol_name.keys()),
-                    key='symbol'
+                    # #selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')  
+                    # selected_ticker = st.selectbox(
+                    # 'Select a ticker',
+                    # options=list(ticker_symbol_name.keys()),
+                    # key='symbol'
+                    selected_ticker = st.selectbox('Select a ticker', options=ticker_symbol_name.keys(), key='symbol')
+
                     #help='Start typing to search for a ticker'
-                    )
+                    #)
   
 
 
@@ -13327,7 +13298,7 @@ if selected == "Stock Analysis Tool":
                                    with col1:
                                         st.write(f"""
                                         <div style='text-align: center;'>
-                                        <b>Revenue per Share CAGR 5 YR: {Revenue_per_share_5_cagr}%</b>
+                                        <b>Revenue per Share 5 YR CAGR : {Revenue_per_share_5_cagr}%</b>
                                         <b> Current Revenue per Share: {formatted_percentage}</b><br>
                                         <span style='font-family: Calibri; font-style: italic;'>
                                         Revenue per Share (Umsatz pro Aktie) zeigt, wie viel Umsatz pro ausgegebener Aktie erzielt wird                                        </div>
