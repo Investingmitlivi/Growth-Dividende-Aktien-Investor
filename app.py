@@ -35,7 +35,9 @@ from scipy import optimize
 
 
 
-st.set_page_config(page_title="Verstehdieaktie", page_icon="📘", layout="wide")
+#st.set_page_config(page_title="Verstehdieaktie", page_icon="📘", layout="wide")
+st.set_page_config(page_title="Verstehdieaktie", page_icon="VA.png", layout="wide")
+
 
 # favicon = Image.open("")  # Path to your image
 # st.image(favicon, width=50) 
