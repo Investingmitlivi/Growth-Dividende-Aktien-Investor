@@ -39,11 +39,7 @@ from scipy import optimize
 st.set_page_config(page_title="Verstehdieaktie", page_icon="VA.png", layout="wide")
 
 
-# favicon = Image.open("")  # Path to your image
-# st.image(favicon, width=50) 
 
-
-# CSS to hide number input spin buttons
 st.markdown("""
 <style>
 /* Target all number inputs in the form */
@@ -10196,7 +10192,7 @@ if selected == "Stock Analysis Tool":
                               ROE_ttm_ohne = (ROE_TTM)
                               ROE_ttm="{:.2f}%".format(ROE_ttm_ohne)
                               fcf_yield_ttm = "{:.2f}%".format((fcf_per_share/amount)*100)
-                              ROIC_TTM=ROIC_TTM
+                              ROIC_TTM="{:.2f}".format(ROIC_TTM)
                               ROA_TTM =ROA_TTM
                          except Exception as e: 
                               ROE_ttm  ="{:.2f}%".format(0.00)
@@ -13887,7 +13883,7 @@ if selected == "Stock Analysis Tool":
                                    with col2:
                                         st.write(f"""
                                         <div style='text-align: center;'>
-                                        <b><span style='color:dodgerblue'>10 YR PE:</span> {average_PE_historical}  <span style='color:dodgerblue'>5 YR PE: </span> {pe_five_}  <span style='color:dodgerblue'>Current PE: </span> {pe_ttm}  <span style='color:dodgerblue'>Forward P/E:</span>  {forwardPE}
+                                        <b><span style='color:dodgerblue'>10 YR P/E:</span> {average_PE_historical}  <span style='color:dodgerblue'>5 YR P/E: </span> {pe_five_}  <span style='color:dodgerblue'>Current P/E: </span> {pe_ttm}  <span style='color:dodgerblue'>Forward P/E:</span>  {forwardPE}
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig21,use_container_width=True,config=config)
