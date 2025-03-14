@@ -10241,7 +10241,9 @@ if selected == "Stock Analysis Tool":
                               total = df.T
                               total.columns = total.iloc[0]  # Use the first row as column names
                               total = total[1:]
-                              total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
+                              #total = total.applymap(lambda x: "{:,.0f}".format(x / 1000000))
+                              total = total.apply(lambda x: x.map(lambda val: "{:,.0f}".format(val / 1000000) if isinstance(val, (int, float)) else val))
+
 
                               total_debt_column = df['Total Debt']
                               last_value_total_debt = total_debt_column.iloc[-1]
