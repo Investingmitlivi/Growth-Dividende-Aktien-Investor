@@ -10359,34 +10359,65 @@ if selected == "Stock Analysis Tool":
           #################################################################################
 
                          def create_dataframe(data):
-                              df = pd.DataFrame(data).transpose()
-                              df = df.rename(columns={i: " " for i in df.columns})  # Remove column headers
-                              return df
+                               df = pd.DataFrame(data).transpose()
+                               df = df.rename(columns={i: " " for i in df.columns})  # Remove column headers
+                               return df
 
+                         # def style_dataframe(df):
+                         #      def highlight_negative(val):
+                         #           """Apply color styles based on the value."""
+                         #           if isinstance(val, (int, float)) and val < 0:
+                         #                return 'color: green'
+                         #           return ''  
+                         #      # Default styling (no additional styling)
+                         #      styled_df = df.style.applymap(highlight_negative) \
+                         #           .set_table_styles(
+
+                         #           [
+                         #                {'selector': 'th.col0',  # Apply to the first column header
+                         #                'props': [('background-color', 'white'),  # Green background for the first header
+                         #                          ('color', 'white'),# White text color for the first header
+                         #                          ('text-align', 'left')]},  # Centered text
+                         #                {'selector': 'th:not(.col0)',  # Apply to other headers
+                         #                'props': [('color', '#2E8B57'), 
+                         #                          # Green text color for other headers
+                         #                          ('text-align', 'left')]},  # Centered text for other headers
+                         #           ],
+                         #           overwrite=False
+                         #      ).hide(axis='index')#.set_caption("")
+                              
+                         #      return styled_df
+                         
+
+                         # def create_dataframe(data):
+                         #      """Erstellt ein DataFrame und entfernt Spaltenüberschriften."""
+                         #      df = pd.DataFrame(data).transpose()
+                         #      df = df.rename(columns={i: " " for i in df.columns})  # Entfernt Spaltenüberschriften
+                         #      return df
+#--------------------------------------------------------------
                          def style_dataframe(df):
+                              """Stylt das DataFrame mit Farben für negative Werte und Kopfzeilenanpassungen."""
+                              
                               def highlight_negative(val):
-                                   """Apply color styles based on the value."""
+                                   """Färbt negative Werte grün."""
                                    if isinstance(val, (int, float)) and val < 0:
                                         return 'color: green'
                                    return ''  
-                              # Default styling (no additional styling)
-                              styled_df = df.style.applymap(highlight_negative) \
-                                   .set_table_styles(
 
-                                   [
-                                        {'selector': 'th.col0',  # Apply to the first column header
-                                        'props': [('background-color', 'white'),  # Green background for the first header
-                                                  ('color', 'white'),# White text color for the first header
-                                                  ('text-align', 'left')]},  # Centered text
-                                        {'selector': 'th:not(.col0)',  # Apply to other headers
+                              # Wendet das Styling an
+                              styled_df = df.style.map(lambda x: highlight_negative(x)) \
+                                   .set_table_styles([
+                                        {'selector': 'th.col0',  # Erste Spaltenüberschrift (Index-Spalte)
+                                        'props': [('background-color', 'white'), 
+                                                  ('color', 'white'),
+                                                  ('text-align', 'left')]},
+                                        {'selector': 'th:not(.col0)',  # Andere Spaltenüberschriften
                                         'props': [('color', '#2E8B57'), 
-                                                  # Green text color for other headers
-                                                  ('text-align', 'left')]},  # Centered text for other headers
-                                   ],
-                                   overwrite=False
-                              ).hide(axis='index')#.set_caption("")
+                                                  ('text-align', 'left')]},
+                                   ], overwrite=False).hide(axis='index')  # Index ausblenden
                               
                               return styled_df
+
 
           #################################################################################
 
@@ -10485,18 +10516,30 @@ if selected == "Stock Analysis Tool":
                          
                          }
 
-                         # Convert data into styled DataFrames
-                         df1 = style_dataframe(create_dataframe(data1).iloc[0:])
-                         df2 = style_dataframe(create_dataframe(data2).iloc[0:])
-                         df3 = style_dataframe(create_dataframe(data3).iloc[0:])
-                         df4 = style_dataframe(create_dataframe(data4).iloc[0:])
+                         # # Convert data into styled DataFrames
+                         # df1 = style_dataframe(create_dataframe(data1).iloc[0:])
+                         # df2 = style_dataframe(create_dataframe(data2).iloc[0:])
+                         # df3 = style_dataframe(create_dataframe(data3).iloc[0:])
+                         # df4 = style_dataframe(create_dataframe(data4).iloc[0:])
 
 
-                         # Create a responsive layout with four columns
-                         col1, col2, col3, col4 = st.columns(4)
+                         # # Create a responsive layout with four columns
+                         # col1, col2, col3, col4 = st.columns(4)
 
                          # Display the dataframes in each column
-                         display_dataframes([df1, df2, df3, df4], [col1, col2, col3, col4])     
+                         #display_dataframes([df1, df2, df3, df4], [col1, col2, col3, col4])  
+
+                         # 🖥 **Daten in DataFrames umwandeln & stylen**
+                         df1 = style_dataframe(create_dataframe(data1))
+                         df2 = style_dataframe(create_dataframe(data2))
+                         df3 = style_dataframe(create_dataframe(data3))
+                         df4 = style_dataframe(create_dataframe(data4))
+
+                         # 📌 **Streamlit Layout mit vier Spalten**
+                         col1, col2, col3, col4 = st.columns(4)
+
+                         # 🔥 **Daten in den Spalten anzeigen**
+                         display_dataframes([df1, df2, df3, df4], [col1, col2, col3, col4])   
 
 
 
@@ -10847,7 +10890,12 @@ if selected == "Stock Analysis Tool":
                                                             eps_diluted_quarterly_df,shares_diluted_quarterly_df,Ebita_quarter_10_unpacked_df])   
 
 
-                                        st.table(merged_df_annual.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                        st.table(merged_df_annual.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'})
+                                             .set_table_styles(
+                                             [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                             axis=1
+                                        )
+                                        )
                                                   
                                         pass
                                              
@@ -11000,7 +11048,11 @@ if selected == "Stock Analysis Tool":
                                                             eps_diluted_quarter_df, shares_diluted_quarter_df,Ebita_quarter_10_unpacked_df
                                                             ])
 
-                                             st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                             st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'})                                             .set_table_styles(
+                                             [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                             axis=1
+                                        )
+                                        )
 
                                              pass
 
@@ -11181,7 +11233,11 @@ if selected == "Stock Analysis Tool":
                                                   ])
 
 
-                                                  st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                                  st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'})                                             .set_table_styles(
+                                             [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                             axis=1
+                                                  )
+                                                  )
 
                                                   pass
                                              except KeyError:
@@ -11189,7 +11245,10 @@ if selected == "Stock Analysis Tool":
                                                   pass      
 
                               with Quarterly:
-                                   st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                   st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'})                                             .set_table_styles(
+                                             [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                             axis=1
+                                        ))
 
  
 
@@ -11382,7 +11441,10 @@ if selected == "Stock Analysis Tool":
                                                                       Other_longterm_liabilities_quarter_df,
                                                                       Retained_earnings_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df])          
 
-                                        st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                        st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'})                                             .set_table_styles(
+                                             [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                             axis=1
+                                        ))
 
                                         pass
                                    except KeyError:
@@ -11531,7 +11593,9 @@ if selected == "Stock Analysis Tool":
                                              total.columns = total.iloc[0]  
                                              total = total[1:]  # Remove the first row
 
-                                             total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6))
+                                             #total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6))
+                                             total_annual = total.apply(lambda col: col.map(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6)))
+
 
                                              ################################ Quarter###############################
 
@@ -11559,7 +11623,9 @@ if selected == "Stock Analysis Tool":
                                              total = total[1:]  # Remove the first row
 
 
-                                             total_quarter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6))
+                                             #total_quarter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6))
+                                             total_quarter = total.apply(lambda col: col.map(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6)))
+
 
 
           
@@ -11622,7 +11688,10 @@ if selected == "Stock Analysis Tool":
                                                                            Retained_earnings_quarter_df,Total_liabilities_quarter_df,Total_Equity_quarter_df]) 
 
 
-                                             st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                             st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'})                                             .set_table_styles(
+                                             [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                             axis=1
+                                        ))
 
                                              pass    
                                                   #else:      
@@ -11768,13 +11837,19 @@ if selected == "Stock Analysis Tool":
                                                                            Total_Equity_quarter_df]) 
                                    
                                                             
-                                             st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                             st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'})                                             .set_table_styles(
+                                             [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                             axis=1
+                                        ))
 
 
 
 
                               with Quarterly:
-                                   st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                   st.table(merged_df_quarter.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'})                                             .set_table_styles(
+                                             [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                             axis=1
+                                        ))
 
 
 
@@ -11799,7 +11874,11 @@ if selected == "Stock Analysis Tool":
                                    total.columns = total.iloc[0]  # Use the first row as column names
                                    total = total[1:]  
 
-                                   total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x)>= 1e9 else "{:,.1f}M".format(x / 1e6))
+                                   #total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x)>= 1e9 else "{:,.1f}M".format(x / 1e6))
+                                   total_annual = total.apply(lambda col: col.map(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6)))
+
+
+
                                    Changes_in_working_capital_annual_df = financials_df(Changes_in_working_capital_annual_10_unpacked, date_annual, "Changes in Working Capital")
                                    Capex_annual_df = financials_df(Capex_annual_10_unpacked, date_annual, "Capital Expenditure")
                                    Purchase_of_Investment_annual_df = financials_df(Purchase_of_Investment_annual_10_unpacked, date_annual, "Purchase of Investments")
@@ -11830,9 +11909,11 @@ if selected == "Stock Analysis Tool":
                                                        Repurchase_of_common_Preferred_stock_annual_df,Net_Financing_cashFlow_annual_df,
                                                        Net_change_in_cash_annual_df,Free_cash_flow_annual_df]) 
 
-                                   st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-
-                                   
+                                   st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}).set_table_styles(
+                                                       [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                                       axis=1
+                                                  ))
+                             
 
 
                                    with Quarterly:
@@ -11853,7 +11934,9 @@ if selected == "Stock Analysis Tool":
                                         total.columns = total.iloc[0]  # Use the first row as column names
                                         total = total[1:]  # Remove the first row
 
-                                        total_quarter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6))
+                                        #total_quarter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6))
+                                        total_quarter = total.apply(lambda col: col.map(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6)))
+
 
 
                                         Net_Operating_CashFlow_quarter_df = financials_df(Net_Operating_CashFlow_quarter_10_unpacked , date_quarter, "Net Operating Cash Flow")
@@ -11889,7 +11972,10 @@ if selected == "Stock Analysis Tool":
                                                             Repurchase_of_common_Preferred_stock_quarter_df,Net_Financing_cashFlow_quarter_df,
                                                             Net_change_in_cash_quarter_df,Free_cash_flow_quarter_df])           
                                         
-                                        st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                        st.table(merged_df.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'})                                             .set_table_styles(
+                                             [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                             axis=1
+                                        ))
 
 
 
@@ -12995,7 +13081,10 @@ if selected == "Stock Analysis Tool":
 
                                    merged_df_key_ratio = pd.DataFrame(merged_data, index=Period_end_dates_annual).transpose()
 
-                                   st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
+                                   st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'})                                             .set_table_styles(
+                                             [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                             axis=1
+                                        ))
 
 
                                    with Quarter:
@@ -13084,8 +13173,12 @@ if selected == "Stock Analysis Tool":
                                                        merged_df_key_ratio = pd.DataFrame(merged_data, index=Period_end_dates_quarter).transpose()
 
                                                   # st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px'}))
-                                                       st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px', 'margin': 'auto'}))
-                                                       
+                                                       st.table(merged_df_key_ratio.style.set_table_attributes('class="fixed-table"').set_properties(**{'max-width': '1000px', 'margin': 'auto'})                                             .set_table_styles(
+                                                            [{'selector': 'thead th', 'props': [('color', 'black')]}],  # Set font color of header (first row) to blue
+                                                            axis=1
+                                                       )
+                                                       )
+                                                                      
 
 
 
@@ -13167,6 +13260,9 @@ if selected == "Stock Analysis Tool":
                                         """, unsafe_allow_html=True)
 
                                         st.plotly_chart(fig2,use_container_width=True, config=config)
+                         #...........................................................................................    
+                         # 
+                         #            
 
                          #-------------------------------------------------------------------------------------------------
                          # Get the current year and calculate next year
