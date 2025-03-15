@@ -12374,13 +12374,18 @@ if selected == "Stock Analysis Tool":
                     with Stock_Analyser:
 
                          # Function to calculate NPV
-                         def calculate_npv(wacc, discounted_values,):
-                              return npv(wacc / 100, discounted_values)
+                         #def calculate_npv(wacc, discounted_values,):
+                          #    return npv(wacc / 100, discounted_values)
+                         
+                         def calculate_pv(fcf, wacc, year):
+                              return fcf/ ((1 + wacc / 100) ** year)
 
                          @st.fragment
-                         def simple_chart(fig, average_fcf_values1, average_fcf_values2, npv_result, npv_result2):
+                         def simple_chart(fig, present_values_df_horizontal,average_fcf_values1, average_fcf_values2, npv_result, npv_result2):
                               if st.form_submit_button(label="Display FCF Estimate"):
                                    st.plotly_chart(fig,use_container_width=True, config=config)
+
+                                   st.dataframe(present_values_df_horizontal,use_container_width=True)
           
 
                          #@st.cache_data(show_spinner=False,ttl=3600) 
@@ -12483,27 +12488,32 @@ if selected == "Stock Analysis Tool":
 
                                              discounted_values.append(discounted_value) 
 
-                                             print(average_fcf_Annual_DCF1)
+                                             # Calculate present values up to the second-to-last year
+                                             present_values_base_case = [calculate_pv(fcf, WACC, year) for year, fcf in enumerate(average_fcf_values1[:-1], start=1)]
+
+                                             #print(average_fcf_Annual_DCF1)
 
                                              if i == FCF_discount_in_years - 1:
+                                                  second_to_last_discounted_value = discounted_values[-2]  # Access second-to-last element
 
-                                                  Terminal_Value = discounted_value * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
-                                                  #discounted_values[-1] = Terminal_Value + discounted_values
-                                                  discounted_values[-1] = round(discounted_value + Terminal_Value, 2)
+                                                  Terminal_Value = second_to_last_discounted_value * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
 
-                                        
-                                        #npv_result = npv(WACC/100, discounted_values)
-                                        npv_result = calculate_npv(WACC, discounted_values)
+                                                  # Discount the Terminal Value to its present value
+                                                  Terminal_Value_pv = Terminal_Value / ((1 + WACC / 100) ** FCF_discount_in_years)
 
-                                        print("NPV",npv_result) 
-                                        #rounded_npv_result = round(npv_result, 2)  
+                                                  # Add the Terminal Value (PV) into the present_values_base_case array
+                                                  present_values_base_case.append(Terminal_Value_pv)
+
+                                                  # Calculate the total sum of present values (including Terminal Value)
+                                                  total_present_value = sum(present_values_base_case)
+
+
+
                                         print("Total_Debt_from_all_calc",(Total_Debt_from_all_calc/1000000000))
                                         print("Total_cash_last_years",Total_cash_last_years)
-                                        Equity_value = npv_result+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
-                                        Intrinsic_value =Equity_value/Average_shares_basic_annual_one
-                                        
+                                        Equity_value_ = total_present_value+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
+                                        Intrinsic_value =Equity_value_/Average_shares_basic_annual_one
                                         print("Average_shares_basic_annual_one",Average_shares_basic_annual_one)
-                                        #st.write(npv_result)
 
                                         Euro_equivalent = Intrinsic_value*usd_to_eur_rate
 
@@ -12522,22 +12532,28 @@ if selected == "Stock Analysis Tool":
 
                                              discounted_values2.append(discounted_value2)  # Add the discounted value to the list
                                         
+                                             present_values_bullish_case = [calculate_pv(fcf, WACC, year) for year, fcf in enumerate(average_fcf_values2[:-1], start=1)]
 
-                                        #for j, value2 in enumerate(discounted_values2):
-                                        #    if j == len(discounted_values2) - 1:
                                              if j == FCF_discount_in_years - 1:
-                                                  Terminal_Value2 = discounted_value2 * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
+                                                  second_to_last_discounted_value2 = discounted_values2[-2]  # Access second-to-last element
 
-                                             
-                                                  discounted_values2[-1] = discounted_value2 + Terminal_Value2
+                                                  Terminal_Value2 = second_to_last_discounted_value2 * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
 
-                                        npv_result2 = calculate_npv(WACC, discounted_values2)
+                                                  # Discount the Terminal Value to its present value
+                                                  Terminal_Value_pv2 = Terminal_Value2 / ((1 + WACC / 100) ** FCF_discount_in_years)
 
+                                                  # Add the Terminal Value (PV) into the present_values_base_case array
+                                                  present_values_bullish_case.append(Terminal_Value_pv2)
+
+                                                  # Calculate the total sum of present values (including Terminal Value)
+                                                  total_present_value2 = sum(present_values_bullish_case)
+
+
+     
                                         #rounded_npv_result2 = round(npv_result2, 2)  
 
-                                        Equity_value2 = npv_result2+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
+                                        Equity_value2 = total_present_value2+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
                                         Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
-                                        #st.write(npv_result)
 
                                         Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
 
@@ -12654,29 +12670,55 @@ if selected == "Stock Analysis Tool":
                                         else:
                                              font_color = "red"
                                         col22.write(f"<span style='color:{font_color}'>{high_DCF:.2f} €</span>", unsafe_allow_html=True)
+
+
+                                        present_values_df = pd.DataFrame({
+                                        #'Year': range(1, FCF_discount_in_years + 1),
+                                        'Year': [str(i) for i in range(1, FCF_discount_in_years)] + ['Terminal Value'],  # Label the last year as "Terminal Value"
+
+                                        'Present Value (Base Case)': present_values_base_case,
+                                        'Present Value (Bullish Case)': present_values_bullish_case
+                                        })
+
+                                        # Transpose the DataFrame to make it horizontal
+                                        present_values_df_horizontal = present_values_df.set_index('Year').T                                        
+
                                         # Save average FCF values to a DataFrame for plotting
                                         fcf_df = pd.DataFrame({
                                              'Year': range(1, FCF_discount_in_years+1),
+                                             #'Year': [str(i) for i in range(1, FCF_discount_in_years)] + ['Terminal Value'],  # Label the last year as "Terminal Value"
                                              'Discounted Cash Flow (Base Case)': average_fcf_values1,
                                              'Discounted Cash Flow (Bullish Case)': average_fcf_values2
+                                             
                                         })
 
-                                        # Plot the chart using Plotly as a bar chart
+
+                                                                  # Plot the chart using Plotly as a bar chart
                                         fig = px.bar(fcf_df, x='Year', y=['Discounted Cash Flow (Base Case)', 'Discounted Cash Flow (Bullish Case)'],
                                                        title='Discounted Cash Flows Comparison in Billion USD',
-                                                       labels={'value': 'Discounted Cash Flow', 'Year': 'Year'})
-                                        fig.update_traces(textposition='auto')  # Automatically position text labels
+                                                       labels={'value': 'Discounted Cash Flow', 'Year': 'Year'},
+                                                       text_auto=True  # Automatically display values on bars
+                                                       )
+                                        fig.update_traces(textposition='inside')  # Automatically position text labels
 
                                         fig.update_layout(
+                                        xaxis_type='category',  # Ensure x-axis is treated as categorical
                                         dragmode=False,  # Disable dragging for zooming
+                                        yaxis_title="Discounted Cash Flow (in Billion USD)",
+                                        xaxis_title="Year",
+                                        barmode='group'  # Grouped bar chart
                                         )
 
                                         # Call the chart display function
-                                        simple_chart(fig, average_fcf_values1, average_fcf_values2,npv_result, npv_result2)
+                                        simple_chart(fig, present_values_df_horizontal,average_fcf_values1, average_fcf_values2,Equity_value_, total_present_value2)
 
 
                                    
                          display_growth_rate_formexer()
+
+
+     #.........................................................
+     
           #################
 
                with st.container():   
