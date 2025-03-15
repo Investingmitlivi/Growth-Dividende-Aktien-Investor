@@ -12382,7 +12382,7 @@ if selected == "Stock Analysis Tool":
 
                          @st.fragment
                          def simple_chart(fig, present_values_df_horizontal,average_fcf_values1, average_fcf_values2, npv_result, npv_result2):
-                              if st.form_submit_button(label="Display FCF Estimate"):
+                              if st.form_submit_button(label="Display FCF Calculation"):
                                    st.plotly_chart(fig,use_container_width=True, config=config)
 
                                    st.dataframe(present_values_df_horizontal,use_container_width=True)
@@ -12620,7 +12620,7 @@ if selected == "Stock Analysis Tool":
                                         col15, col16, col17, col18 = st.columns(4)
 
 
-                                        col15.write(f" Benjamin Graham + DCF:  ")
+                                        col15.write(f" Benjamin Graham Fair Value + DCF:  ")
                                         # Adding a help expander below
 
                                              
@@ -12809,7 +12809,7 @@ if selected == "Stock Analysis Tool":
 #                                   Use `simple_chart` to generate the FCF projections chart
                                    @st.fragment
                                    def simple_chart():
-                                        if st.button(label="Display FCF Estimate"):
+                                        if st.button(label="Display FCF Calculation"):
                                              # Generate FCF chart
                                              years_list = list(range(1, years + 1))
                                              fig = go.Figure()
