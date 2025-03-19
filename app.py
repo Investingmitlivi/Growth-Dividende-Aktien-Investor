@@ -9892,7 +9892,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_Target_Price'],
                                              st.session_state[f'{ticker}_Dividend_TTM'],
                                              st.session_state[f'{ticker}_Dividend_Est'],
-                                             st.session_state[f'{ticker}_Dividend_Ex_Date'],
+                                             #st.session_state[f'{ticker}_Dividend_Ex_Date'],
                                              st.session_state[f'{ticker}_Earnings_this_yr'],
                                              st.session_state[f'{ticker}_Earnings_next_yr_in_prozent'],
                                              st.session_state[f'{ticker}_Earnings_next_yr_in_value'],
@@ -9915,7 +9915,7 @@ if selected == "Stock Analysis Tool":
                                         Target_Price = quote.fundamental_df.at[0, "Target Price"]
                                         Dividend_TTM = quote.fundamental_df.at[0, "Dividend TTM"]
                                         Dividend_Est = quote.fundamental_df.at[0, "Dividend Est."]
-                                        Dividend_Ex_Date = quote.fundamental_df.at[0, "Dividend Ex-Date"]
+                                        #Dividend_Ex_Date = quote.fundamental_df.at[0, "Dividend Ex-Date"]
                                         Earnings_this_yr = quote.fundamental_df.at[0, "EPS this Y"]
                                         Earnings_next_yr_in_prozent = quote.fundamental_df.at[0, "EPS next Y - EPS growth next year"]
                                         Earnings_next_yr_in_value = quote.fundamental_df.at[0, "EPS next Y - EPS estimate for next year"]
@@ -9934,7 +9934,7 @@ if selected == "Stock Analysis Tool":
                                         Target_Price = "{:.2f}".format(0.00)
                                         Dividend_TTM = "{:.2f}".format(0.00)
                                         Dividend_Est = "{:.2f}".format(0.00)
-                                        Dividend_Ex_Date = "{:.2f}".format(0.00)
+                                        #Dividend_Ex_Date = "{:.2f}".format(0.00)
                                         Earnings_this_yr = "{:.2f}".format(0.00)
                                         Earnings_next_yr_in_prozent = "{:.2f}".format(0.00)
                                         Earnings_next_yr_in_value = "{:.2f}".format(0.00)
@@ -9951,7 +9951,7 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_Target_Price'] = Target_Price
                                    st.session_state[f'{ticker}_Dividend_TTM'] = Dividend_TTM
                                    st.session_state[f'{ticker}_Dividend_Est'] = Dividend_Est
-                                   st.session_state[f'{ticker}_Dividend_Ex_Date'] = Dividend_Ex_Date
+                                   #st.session_state[f'{ticker}_Dividend_Ex_Date'] = Dividend_Ex_Date
                                    st.session_state[f'{ticker}_Earnings_this_yr'] = Earnings_this_yr
                                    st.session_state[f'{ticker}_Earnings_next_yr_in_prozent'] = Earnings_next_yr_in_prozent
                                    st.session_state[f'{ticker}_Earnings_next_yr_in_value'] = Earnings_next_yr_in_value
@@ -9959,11 +9959,11 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_debt_equity_ttm'] = debt_equity_ttm
 
                                    return (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, 
-                                        Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, 
+                                        Target_Price, Dividend_TTM, Dividend_Est,
                                         Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, 
                                         Earnings_next_5_yrs, debt_equity_ttm)
 
-                              (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est, Dividend_Ex_Date, Earnings_this_yr, 
+                              (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est,Earnings_this_yr, 
                               Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, debt_equity_ttm) = unpack_and_store_fundamental_data(quote, ticker)
 
                          except Exception as e:
@@ -9976,7 +9976,7 @@ if selected == "Stock Analysis Tool":
                               Target_Price = "{:.2f}".format(0.00)
                               Dividend_TTM = "{:.2f}".format(0.00)
                               Dividend_Est = "{:.2f}".format(0.00)
-                              Dividend_Ex_Date = "{:.2f}".format(0.00)
+                              #Dividend_Ex_Date = "{:.2f}".format(0.00)
                               Earnings_this_yr = "{:.2f}".format(0.00)
                               Earnings_next_yr_in_prozent = "{:.2f}".format(0.00)
                               Earnings_next_yr_in_value = "{:.2f}".format(0.00)
@@ -10462,7 +10462,7 @@ if selected == "Stock Analysis Tool":
                          'Dividend Paid (TTM)': [Dividend_ttm], 
                          'Dividend/Share (TTM)': f"{Dividend_TTM}",
                          'Dividend Estimate': f" {Dividend_Est}",
-                         'Dividend Ex-Date': [Dividend_Ex_Date],
+                         #'Dividend Ex-Date': [Dividend_Ex_Date],
                          '5 YR Avg FCF': [average_FCF_annual_five_we], 
                          'Free Cash Flow (TTM)': [fcf_ttm],
                          'Price/FCF (TTM)': [pfcf_ttm], 
