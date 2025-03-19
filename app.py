@@ -10458,7 +10458,7 @@ if selected == "Stock Analysis Tool":
                          data2 = {
                          '5 YR Dividend Yield': [Dividend_yield_average], 
                          'Dividend Yield': [Dividend_per_share_yield],
-                         'Shareholder Yield': [Share_holder_yield],
+                         'Total Shareholder Return': [Share_holder_yield],
                          'Dividend Paid (TTM)': [Dividend_ttm], 
                          'Dividend/Share (TTM)': f"{Dividend_TTM}",
                          'Dividend Estimate': f" {Dividend_Est}",
