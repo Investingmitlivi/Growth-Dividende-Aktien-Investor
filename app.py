@@ -7790,129 +7790,80 @@ if selected == "Stock Analysis Tool":
 
                start_date = datetime.now() - timedelta(days=39 * 365)
                end_date=datetime.now() 
+
+
+
                # Function to format date
                def format_date(date):
                     return date.strftime('%Y/%m/%d')
 
+               # Function to get current price
+               def get_current_price(ticker):
+                    data = yf.download(ticker, period="1d")
+                    return float(data['Close'].iloc[0])  # Use .iloc[0] to select the first element
 
+               # Function to get historical price data
                def get_price_data(ticker, current_price, usd_to_eur_rate):
                     start_date = datetime.now() - timedelta(days=39 * 365)
-                    end_date=datetime.now() 
-               
+                    end_date = datetime.now()
+
                     try:
                          data = yf.download(ticker, start=start_date, end=end_date)
-                         close_price = round(data['Close'][-2], 2)
-                         percentage_difference =round(((float(round(current_price,2))) - (float((close_price)))) / (float((close_price))) * 100,2)
-                         
-                         converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+                         close_price = float(data['Close'].iloc[-2])  # Use .iloc[-2] to select the second-to-last element
+                         percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
+                         converted_amount = float(current_price) * float(usd_to_eur_rate)  # Ensure both are floats
                     except Exception as e:
                          close_price = None
                          percentage_difference = None
                          converted_amount = None
-                    
+
                     return close_price, percentage_difference, converted_amount
-   #-------------------------------------------------------------------------------
-                 
 
-               def convert_to_eur(usd_price, conversion_rate=usd_to_eur_rate):
-                    return float(usd_price) * float(conversion_rate)
-
+                    # Main function to run the app
                def main():
 
+
+                    # Check if ticker has changed or is not in session state
                     if ticker not in st.session_state or st.session_state.ticker != ticker:
                          st.session_state.ticker = ticker
                          st.session_state.current_price = get_current_price(ticker)
-                         st.session_state.converted_amount = convert_to_eur(st.session_state.current_price)
-
-                    display_price_analysis()
-
-               def display_price_analysis():
-                    st.write("")
-
-
-               if __name__ == "__main__":
-                    main()
-
-               current_price = st.session_state.current_price
-               amount = current_price 
-               
-          ########################################################################################################     
-
-               # start_date = datetime.now() - timedelta(days=39 * 365)
-               # end_date=datetime.now() 
-               # # Function to format date
-               # def format_date(date):
-               #      return date.strftime('%Y/%m/%d')
-
-
-               # def get_price_data(ticker, current_price, usd_to_eur_rate):
-               #      start_date = datetime.now() - timedelta(days=39 * 365)
-               #      end_date=datetime.now() 
-               
-               #      try:
-               #           data = yf.download(ticker, start=start_date, end=end_date)
-               #           close_price = round(data['Close'][-2], 2)
-               #           percentage_difference =round(((float(round(current_price,2))) - (float((close_price)))) / (float((close_price))) * 100,2)
-                         
-               #           converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
-               #      except Exception as e:
-               #           close_price = None
-               #           percentage_difference = None
-               #           converted_amount = None
-                    
-               #      return close_price, percentage_difference, converted_amount
-               
-
-
-               
-
-               # Main function to run the app
-               def main():
-
-                    if ticker not in st.session_state or st.session_state.ticker != ticker:
-                         st.session_state.ticker = ticker
-                         st.session_state.current_price = get_current_price(ticker)  # Define this function as needed
                          st.session_state.price_data = get_price_data(ticker, st.session_state.current_price, usd_to_eur_rate)
 
+                    # Retrieve data from session state
                     current_price = st.session_state.current_price
-                    close_price,percentage_difference,converted_amount= st.session_state.price_data
-                    converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+                    close_price, percentage_difference, converted_amount = st.session_state.price_data
 
+                    # Format prices
+                    formatted_price_usd = f"{current_price:.2f} $"
+                    formatted_price_eur = f"{converted_amount:.2f} €"
+
+                    # Define styles for percentage difference
                     green_style = "color: green;"
                     red_style = "color: red;"
 
-                    formatted_price_usd = f"{current_price:.2f} $"
-                    formatted_price_eur = f"{converted_amount} €"
-
+                    # Format percentage difference
                     percentage_text = ""
                     if percentage_difference is not None:
                          if percentage_difference > 0:
-
                               percentage_text = f"(<span style='{green_style}'>+{percentage_difference}%</span>)"
-
                          elif percentage_difference < 0:
                               percentage_text = f"(<span style='{red_style}'>{percentage_difference}%</span>)"
-
                          else:
-                                   percentage_text = "(0%)"  # In case of zero percentage difference
+                              percentage_text = "(0%)"
 
+                    # Display results
+                    st.markdown(
+                         f"""
+                         <div style="text-align: center; width: 100%;">
+                              Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
+                              Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
+                              {percentage_text}
+                         </div>
+                         """,
+                         unsafe_allow_html=True,
+                    )
 
-                    with st.container():
-
-                         with middle:
- 
-                              st.markdown(
-                              f"""
-                              <div style="text-align: center; width: 100%;">
-                                   Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
-                                   Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
-                                   {percentage_text}
-                              </div>
-                              """,
-                              unsafe_allow_html=True,
-                         )
-
-
+               # Run the app
                if __name__ == "__main__":
                     main()
 
@@ -9099,10 +9050,10 @@ if selected == "Stock Analysis Tool":
 
 
                          try:
-                              PBVPS = amount / BVPS_quater1 if BVPS_quater1 > 0 else 0.00
+                              PBVPS = current_price / BVPS_quater1 if BVPS_quater1 > 0 else 0.00
                               PBVPS = PBVPS if math.isfinite(PBVPS) and PBVPS > 0 else 0.00
 
-                              PTBVPS=amount/TBVPS_quater1 if BVPS_quater1 > 0 else 0.00
+                              PTBVPS=current_price/TBVPS_quater1 if BVPS_quater1 > 0 else 0.00
                               PTBVPS = PTBVPS if math.isfinite(PTBVPS) and PTBVPS > 0 else 0.00
 
                          except Exception as e:
@@ -10018,14 +9969,14 @@ if selected == "Stock Analysis Tool":
                               pfcf_ttm="{:.2f} ".format(Marketcap / fcf_ttm)  
                               
 
-                         elif not pd.isna(amount) and not pd.isna(eps_diluted_ttm) and eps_diluted_ttm != 0:
-                              pe_ttm = "{:.2f} ".format(amount / eps_diluted_ttm)
+                         elif not pd.isna(current_price) and not pd.isna(eps_diluted_ttm) and eps_diluted_ttm != 0:
+                              pe_ttm = "{:.2f} ".format(current_price / eps_diluted_ttm)
 
 
 
 
                          if netincome_ttm is None:
-                              pe_ttm = "{:.2f} ".format(amount / eps_diluted_ttm)
+                              pe_ttm = "{:.2f} ".format(current_price / eps_diluted_ttm)
                          
                          if fcf_ttm is None or fcf_ttm < 0.0:
                               pfcf_ttm="-"
@@ -10191,7 +10142,7 @@ if selected == "Stock Analysis Tool":
                          try:
                               ROE_ttm_ohne = (ROE_TTM)
                               ROE_ttm="{:.2f}%".format(ROE_ttm_ohne)
-                              fcf_yield_ttm = "{:.2f}%".format((fcf_per_share/amount)*100)
+                              fcf_yield_ttm = "{:.2f}%".format((fcf_per_share/current_price)*100)
                               ROIC_TTM="{:.2f}".format(ROIC_TTM)
                               ROA_TTM =ROA_TTM
                          except Exception as e: 
@@ -10495,7 +10446,7 @@ if selected == "Stock Analysis Tool":
                          f'ATH ({format_date(st.session_state.all_time_high_date)})': f"$ {st.session_state.all_time_high_price:.2f}",
                          f'52WK LOW ({format_date(st.session_state.fifty_two_week_low_date)})': f"$ {st.session_state.fifty_two_week_low:.2f}",
                          'Analyst Target Price': [f"$ {Target_Price}"],
-                         'Current price': ["$ {:.2f}".format(amount)] 
+                         'Current price': ["$ {:.2f}".format(current_price)] 
                          }
           
 
