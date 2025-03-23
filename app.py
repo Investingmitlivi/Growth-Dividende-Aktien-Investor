@@ -12727,40 +12727,44 @@ if selected == "Stock Analysis Tool":
                                    t = t / 100  # Convert to decimal
 
                                    implied_growth = find_growth_rate(fcf, r, t, years, current_price)
-                                   
-                                   st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
+                                   #st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
+                                   st.markdown(f"Implied FCF Growth Rate: <span style='color: green;'>**{implied_growth*100:.3f}%**</span>", unsafe_allow_html=True)
+                                   col1, col2 = st.columns(2)
+                                   with col1:
+                                        
+                                        st.write("### Interpretation")
+                                        st.write(f"""
+                                        - The implied growth rate of **{implied_growth*100:.3f}%** means the company's Free Cash Flow 
+                                             needs to grow at this rate annually for the next **{years}** years to justify the current share price.
+                                        - After year {years}, the growth is assumed to slow to the terminal growth rate of {t*100:.1f}%.
+                                        - If this growth rate seems unrealistically high compared to historical performance or industry standards, 
+                                             the stock might be overvalued.
+                                        - Compare this rate with industry averages and the company's historical growth rates for context.
+                                        """)
 
-                                   st.write("### Interpretation")
-                                   st.write(f"""
-                                   - The implied growth rate of **{implied_growth*100:.3f}%** means the company's Free Cash Flow 
-                                        needs to grow at this rate annually for the next **{years}** years to justify the current share price.
-                                   - After year {years}, the growth is assumed to slow to the terminal growth rate of {t*100:.1f}%.
-                                   - If this growth rate seems unrealistically high compared to historical performance or industry standards, 
-                                        the stock might be overvalued.
-                                   - Compare this rate with industry averages and the company's historical growth rates for context.
-                                   """)
+                                   with col2:
+                                        st.write("### Additional Information")
+                                        final_fcf = fcf * (1 + implied_growth)**years
+                                        projected_fcfs = [fcf * (1 + implied_growth)**i for i in range(1, years + 1)]
+                                        projected_fcfs_rounded = [round(fcf, 2) for fcf in projected_fcfs]
 
-                                   # Additional information
-                                   st.write("### Additional Information")
-                                   final_fcf = fcf * (1 + implied_growth)**years
-                                   projected_fcfs = [fcf * (1 + implied_growth)**i for i in range(1, years + 1)]
-                                   projected_fcfs_rounded = [round(fcf, 2) for fcf in projected_fcfs]
+                                        st.write(f"- Projected FCF after {years} years: ${final_fcf:.2f}")
+                                        terminal_value = final_fcf * (1 + t) / (r - t)
+                                        st.write(f"- Terminal Value: ${terminal_value:.2f}")
+                                        
+                                        # Calculate percentage of value from terminal value
+                                        total_value = present_value(implied_growth, fcf, r, t, years)
+                                        terminal_value_percentage = (terminal_value / (1 + r)**years) / total_value * 100
 
-                                   st.write(f"- Projected FCF after {years} years: ${final_fcf:.2f}")
-                                   terminal_value = final_fcf * (1 + t) / (r - t)
-                                   st.write(f"- Terminal Value: ${terminal_value:.2f}")
-                                   
-                                   # Calculate percentage of value from terminal value
-                                   total_value = present_value(implied_growth, fcf, r, t, years)
-                                   terminal_value_percentage = (terminal_value / (1 + r)**years) / total_value * 100
-
-                                   st.write(f"- Percentage of value from terminal value: {terminal_value_percentage:.2f}%")
+                                        st.write(f"- Percentage of value from terminal value: {terminal_value_percentage:.2f}%")
 
 
 #                                   Use `simple_chart` to generate the FCF projections chart
                                    @st.fragment
                                    def simple_chart():
                                         if st.button(label="Display FCF Calculation"):
+
+
                                              # Generate FCF chart
                                              years_list = list(range(1, years + 1))
                                              fig = go.Figure()
@@ -12768,14 +12772,18 @@ if selected == "Stock Analysis Tool":
                                                   go.Scatter(
                                                   x=years_list, 
                                                   y=projected_fcfs_rounded, 
-                                                  mode='lines+markers', 
-                                                  name="Projected FCF"
+                                                  mode='lines+markers+text',  # Add 'text' mode to display labels
+                                                  name="Projected FCF",
+                                                  text=projected_fcfs_rounded,  # Values to display as labels
+                                                  textposition="top center",  # Position of the labels
                                                   )
-                                             )
+                                              )
+                                           
+                               
                                              fig.update_layout(
                                                   title="Free Cash Flow (FCF) Projections",
-                                                  xaxis_title="Year",
-                                                  yaxis_title="FCF ($)",
+                                                  xaxis_title="Years",
+                                                  yaxis_title="FCF in Billion USD",
                                                   template="plotly_white",
                                                   dragmode=False,  # Disable dragging for zooming
                                              )
