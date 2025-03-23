@@ -7619,6 +7619,7 @@ if selected == "Stock Analysis Tool":
                          'EVVTY':'Evolution AB (Publ)',
                          'RHHBY':'Roche Holding AG',
                          'WOLTF':'Wolters Kluwer N.V',
+                         'LB':'LandBridge Company LLC',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
