@@ -12710,14 +12710,22 @@ if selected == "Stock Analysis Tool":
                               col1, col2 = st.columns(2)
 
                               with col1:
-                                   fcf = st.number_input("Current FCF in Billion USD:", value=0.00, key="fcf_input",help="Enter Free Cash Flow value")
+                                   #fcf = st.number_input("Current FCF in Billion USD:", value=0.00, key="fcf_input",help="Enter Free Cash Flow value")
+                                   fcf = float(col1.text_input("Current FCF in Billion USD: ", value=0.00,key="fcf_input",help="Enter Free Cash Flow in Billion USD").replace(',', '.'))
 
-                                   r = st.number_input("Discount rate WACC (%):", value=8.0, format="%.1f")
+
+                                   #r = st.number_input("Discount rate WACC (%):", value=8.0, format="%.1f")
+                                   r = float(col1.text_input("Discount rate WACC (%):", value=8.0,key="Discount_rate_WACC ",help="Enter Discount rate WACC").replace(',', '.'))
+
                              
                                    years =10
                               with col2:
-                                   t = st.number_input("Terminal Growth Rate (%):", value=2.5, format="%.1f")
-                                   current_price = st.number_input("Marketcap.in Billion USD:", value=0.00, format="%.2f")
+                                   #t = st.number_input("Terminal Growth Rate (%):", value=2.5, format="%.1f")
+                                   t = float(col2.text_input("Terminal Growth Rate (%):", value=2.5,key="Terminal_Growth_Rate",help="Enter Terminal Growth Rate").replace(',', '.'))
+
+                                   #current_price = st.number_input("Marketcap.in Billion USD:", value=0.00, format="%.2f")
+                                   current_price = float(col2.text_input("Marketcap:",value=0.00, key="Marketcap",help="Enter Marketcap in Billion USD:").replace(',', '.'))
+
                                  
 
                               submitted = st.form_submit_button("Calculate")
