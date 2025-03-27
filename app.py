@@ -308,12 +308,22 @@ if selected == "Home":
                st.title("Investment Calculator")
                with st.expander("Click to Expand/minimize for Investment Inputs"):
                     # User inputs
-                    initial_investment = st.number_input("Initial Investment Amount (€)", value=20000.0, min_value=0.0, step=100.0)
-                    annual_contribution = st.number_input("Additional Contribution (€)", value=1000.0, min_value=0.0, step=100.0)
-                    years = st.number_input("Investment Time Horizon (years)", value=10, min_value=1, step=1)
-                    annual_return = st.number_input("Expected Annual Return (%)", value=9.0, min_value=0.0, step=0.1)
+                    #initial_investment = st.number_input("Initial Investment Amount (€)", value=20000.0, min_value=0.0, step=100.0)
+                    initial_investment = float(st.text_input("Initial Investment Amount (€):", value=10000.00).replace(',', '.'))
+
+                    #annual_contribution = st.number_input("Additional Contribution (€)", value=1000.0, min_value=0.0, step=100.0)
+                    annual_contribution = float(st.text_input("Additional Contribution (€):", value=1000.00).replace(',', '.'))
+
+                    #years = st.number_input("Investment Time Horizon (years)", value=10, min_value=1, step=1)
+                    years = int(st.text_input("Investment Time Horizon (years):", value=10).replace(',', '.'))
+
+                    #annual_return = st.number_input("Expected Annual Return (%)", value=9.0, min_value=0.0, step=0.1)
+                    annual_return = float(st.text_input("Expected Annual Return (%):", value=9.00).replace(',', '.'))
+
                     compounding_frequency = st.selectbox("Compounding Frequency", [1, 4, 6, 12], index=2)  # Annually, Quarterly, Semi-annually, Monthly
-               
+                    #compounding_frequency = float(st.text_input("Compounding Frequency", [1, 4, 6, 12]).replace(',', '.'))
+                    #compounding_frequency = float(col1.selectbox("Compounding Frequency", [1, 4, 6, 12], key="compounding_frequency"))
+
                # Calculate the future value over time
                     if st.button("Calculate"):
                          ending_balances, returns = calculate_investment_over_time(initial_investment, annual_contribution, years, annual_return, compounding_frequency)
@@ -390,15 +400,36 @@ if selected == "Home":
                st.title("Dividend Calculator")
                with st.expander("Click to Expand/minimize for your Inputs"):
                     # User inputs
-                    starting_principal = st.number_input("Starting Principal (€)", min_value=0.0, value=100000.0, format="%.2f")
-                    annual_contribution = st.number_input("Annual Contribution (€)", min_value=0.0, value=20000.0, format="%.2f")
-                    dividend_tax_rate = st.number_input("Dividend Tax Rate (%)", min_value=0.0, value=15.0, format="%.2f")
-                    tax_exempt_income = st.number_input("Tax-Exempt Dividend Income Allowed Per Year (€)", min_value=0.0, value=0.0, format="%.2f")
-                    initial_dividend_yield = st.number_input("Initial Annual Dividend Yield (%)", min_value=0.0, value=5.0, format="%.2f")
-                    dividend_increase_rate = st.number_input("Expected Annual Dividend Amount Increase (%)", min_value=0.0, value=3.0, format="%.2f")
-                    share_price_appreciation = st.number_input("Expected Annual Share Price Appreciation (%)", min_value=0.0, value=3.0, format="%.2f")
-                    years = st.number_input("Years Invested", min_value=1, value=20)
+                    #starting_principal = st.number_input("Starting Principal (€)", min_value=0.0, value=100000.0, format="%.2f")
+                    starting_principal = float(st.text_input("Starting Principal (€):", value=100000.00).replace(',', '.'))
 
+
+                    #annual_contribution = st.number_input("Annual Contribution (€)", min_value=0.0, value=20000.0, format="%.2f")
+                    annual_contribution = float(st.text_input("Annual Contribution (€):", value=20000.0).replace(',', '.'))
+
+
+                    #dividend_tax_rate = st.number_input("Dividend Tax Rate (%)", min_value=0.0, value=15.0, format="%.2f")
+                    dividend_tax_rate = float(st.text_input("Dividend Tax Rate (%):", value=15.00).replace(',', '.'))
+
+                    #tax_exempt_income = st.number_input("Tax-Exempt Dividend Income Allowed Per Year (€)", min_value=0.0, value=0.0, format="%.2f")
+                    tax_exempt_income = float(st.text_input("Tax-Exempt Dividend Income Allowed Per Year (€):", value=0.00).replace(',', '.'))
+   
+                    #initial_dividend_yield = st.number_input("Initial Annual Dividend Yield (%)", min_value=0.0, value=5.0, format="%.2f")
+                    initial_dividend_yield = float(st.text_input("Initial Annual Dividend Yield (%):", value=5.0).replace(',', '.'))
+
+
+                    #dividend_increase_rate = st.number_input("Expected Annual Dividend Amount Increase (%)", min_value=0.0, value=3.0, format="%.2f")
+                    dividend_increase_rate = float(st.text_input("Expected Annual Dividend Amount Increase (%):", value=3.0).replace(',', '.'))
+
+                    #share_price_appreciation = st.number_input("Expected Annual Share Price Appreciation (%)", min_value=0.0, value=3.0, format="%.2f")
+                    share_price_appreciation = float(st.text_input("Expected Annual Share Price Appreciation (%):", value=3.0).replace(',', '.'))
+
+
+                    years = int(st.text_input("Years Invested:", value=20).replace(',', '.'))
+                    #years = st.number_input("Years Invested", min_value=1, value=20)
+
+
+                    #years = st.number_input("Investment Time Horizon (years)", value=10, min_value=1, step=1)
                     # Button for calculating dividends and plotting
                     if st.button("Calculate Dividends"):
                          total_dividends_before_tax, dividends_over_years = calculate_dividends(
