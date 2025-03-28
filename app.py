@@ -7651,6 +7651,7 @@ if selected == "Stock Analysis Tool":
                          'RHHBY':'Roche Holding AG',
                          'WOLTF':'Wolters Kluwer N.V',
                          'LB':'LandBridge Company LLC',
+                         'CRWV':'CoreWeave Inc.',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -8168,37 +8169,6 @@ if selected == "Stock Analysis Tool":
 
 
           ###############################################################################################
-
-               #..............................................Stock beta......................................................
-
-               # Define the stock symbol and the market index symbol (e.g., S&P 500)
-               market_index_symbol = '^GSPC'
-
-               # Define the time period for historical data (start_date and end_date)
-               start_date = datetime.now() - timedelta(days=1826)#5years 
-               end_date = datetime.now()     
-
-               try:
-                    # Retrieve historical stock and market index data using yfinance
-                    stock_data = yf.download(ticker, start=start_date, end=end_date)
-                    market_data = yf.download(market_index_symbol, start=start_date, end=end_date)
-
-                    # Calculate daily returns for stock and market
-                    stock_returns = stock_data['Adj Close'].pct_change().dropna()
-                    market_returns = market_data['Adj Close'].pct_change().dropna()
-
-                    # Calculate covariance and variance of returns
-                    covariance = np.cov(stock_returns, market_returns)[0][1]
-                    market_variance = np.var(market_returns)
-
-                    # Calculate beta
-                    beta ="{:,.2f}".format((covariance / market_variance))
-                    #st.write("beta",beta)
-
-               except Exception as e:
-               # Handle ValueError (e.g., division by zero) or KeyError (data not found) by setting beta to 1
-                    beta = "{:,.2f}".format(1.0)
-                    #print(f"Beta of {ticker} could not be calculated. Using default value: {beta:.2f}")
 
 
           ############################################################################################################
@@ -9876,7 +9846,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_forwardPE'],
                                              st.session_state[f'{ticker}_RSI'],
                                              st.session_state[f'{ticker}_PEG'],
-                                             st.session_state[f'{ticker}_Beta'],
+                                             #st.session_state[f'{ticker}_Beta'],
                                              st.session_state[f'{ticker}_Moving_200'],
                                              st.session_state[f'{ticker}_Moving_50'],
                                              st.session_state[f'{ticker}_Target_Price'],
@@ -9899,7 +9869,7 @@ if selected == "Stock Analysis Tool":
                                         forwardPE = quote.fundamental_df.at[0, "Forward P/E"]
                                         RSI = quote.fundamental_df.at[0, "RSI (14)"]
                                         PEG = quote.fundamental_df.at[0, "PEG"]
-                                        Beta = quote.fundamental_df.at[0, "Beta"]
+                                       # Beta = quote.fundamental_df.at[0, "Beta"]
                                         Moving_200 = quote.fundamental_df.at[0, "SMA200"]
                                         Moving_50 = quote.fundamental_df.at[0, "SMA50"]
                                         Target_Price = quote.fundamental_df.at[0, "Target Price"]
@@ -9918,7 +9888,7 @@ if selected == "Stock Analysis Tool":
                                         forwardPE = "{:.2f}".format(00.00)
                                         RSI = "{:.2f}".format(0.00)
                                         PEG = "{:.2f}".format(0.00)
-                                        Beta = beta
+                                       # Beta = beta
                                         Moving_200 = "{:.2f}".format(0.00)
                                         Moving_50 = "{:.2f}".format(0.00)
                                         Target_Price = "{:.2f}".format(0.00)
@@ -9935,7 +9905,7 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_forwardPE'] = forwardPE
                                    st.session_state[f'{ticker}_RSI'] = RSI
                                    st.session_state[f'{ticker}_PEG'] = PEG
-                                   st.session_state[f'{ticker}_Beta'] = Beta
+                                   #st.session_state[f'{ticker}_Beta'] = Beta
                                    st.session_state[f'{ticker}_Moving_200'] = Moving_200
                                    st.session_state[f'{ticker}_Moving_50'] = Moving_50
                                    st.session_state[f'{ticker}_Target_Price'] = Target_Price
@@ -9948,19 +9918,19 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_Earnings_next_5_yrs'] = Earnings_next_5_yrs
                                    st.session_state[f'{ticker}_debt_equity_ttm'] = debt_equity_ttm
 
-                                   return (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, 
+                                   return (forwardPE, RSI, PEG,Moving_200, Moving_50, 
                                         Target_Price, Dividend_TTM, Dividend_Est,
                                         Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, 
                                         Earnings_next_5_yrs, debt_equity_ttm)
 
-                              (forwardPE, RSI, PEG, Beta, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est,Earnings_this_yr, 
+                              (forwardPE, RSI, PEG, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est,Earnings_this_yr, 
                               Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, debt_equity_ttm) = unpack_and_store_fundamental_data(quote, ticker)
 
                          except Exception as e:
                               forwardPE = "{:.2f}".format(00.00)
                               RSI = "{:.2f}".format(0.00)
                               PEG = "{:.2f}".format(0.00)
-                              Beta = beta
+                              #Beta = beta
                               Moving_200 = "{:.2f}".format(0.00)
                               Moving_50 = "{:.2f}".format(0.00)
                               Target_Price = "{:.2f}".format(0.00)
@@ -12737,7 +12707,7 @@ if selected == "Stock Analysis Tool":
                          with st.form("reverse_dcf_form"):
                               st.markdown(
                               f"""<span style='color: green;'>{name}:</span> FCF (TTM): <span style='color: green;'>**{fcf_ttm:.2f} B**</span> 
-                              , Market Capitalization: <span style='color: green;'>**{Marketcap_in_Billion}**</span>
+                              , Market Cap (intraday): <span style='color: green;'>**{Marketcap_in_Billion}**</span>
                               , FCF 10Y CAGR: <span style='color: green;'>**{FCF_Cagr_10}%**</span>
                               , FCF 5Y CAGR: <span style='color: green;'>**{FCF_5_CAGR}%**</span>
                               , FCF Growth YOY: <span style='color: green;'>**{Average_fcf_growth_ten}%**</span>
