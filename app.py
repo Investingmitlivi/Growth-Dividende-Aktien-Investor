@@ -12743,7 +12743,7 @@ if selected == "Stock Analysis Tool":
                               , FCF Growth YOY: <span style='color: green;'>**{Average_fcf_growth_ten}%**</span>
                               , FCF Margin 10Y: <span style='color: green;'>**{FCF_Margin_10}%**</span>
                               , FCF Margin 5Y: <span style='color: green;'>**{FCF_Margin_5}%**</span>
-                              , FCF Margin 1Y: <span style='color: green;'>**{FCF_Margin_1}%**</span>
+                              , FCF Margin 1Y: <span style='color: green;'>**{FCF_Margin_1:.2f}%**</span>
 
                               """,
                               
