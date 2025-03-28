@@ -7738,8 +7738,9 @@ if selected == "Stock Analysis Tool":
                Stock_description=data["data"]["metadata"]["description"]
                stock_sector=data["data"]["metadata"]["sector"]
                cik=data["data"]["metadata"]["CIK"]
-               Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
-               Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
+
+               #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
+               #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
                date_list_annual = [period_end_date for period_end_date in date_annual]
 
@@ -10461,7 +10462,6 @@ if selected == "Stock Analysis Tool":
                          'Operating Margin': [average_operating_margin1_quarter],
                          '5 YR Net Profit Margin': f"{five_yrs_Nettomarge}%",
                          'Net Profit Margin': [Net_margin_ttm],
-                         #'5 YR FCF Margin':[FCF_Margin_5],
                          '5 YR FCF Margin': f"{FCF_Margin_5}%",
                          'FCF Margin': ' {:.2f}%'.format(FCF_Margin_1)
                          }
@@ -12734,14 +12734,19 @@ if selected == "Stock Analysis Tool":
                          This app calculates the Implied Growth Rate using a Two-Stage Reverse DCF model.
                          The default forecast period is set to 10 years.
                          """)
-
                          with st.form("reverse_dcf_form"):
                               st.markdown(
-                              f"""<span style='color: green;'>**{name}**</span> FCF (TTM): <span style='color: green;'>**{fcf_ttm:.2f} B**</span> 
+                              f"""<span style='color: green;'>{name}:</span> FCF (TTM): <span style='color: green;'>**{fcf_ttm:.2f} B**</span> 
                               , Market Capitalization: <span style='color: green;'>**{Marketcap_in_Billion}**</span>
                               , FCF 10Y CAGR: <span style='color: green;'>**{FCF_Cagr_10}%**</span>
                               , FCF 5Y CAGR: <span style='color: green;'>**{FCF_5_CAGR}%**</span>
-                              , FCF Growth YOY: <span style='color: green;'>**{Average_fcf_growth_ten}%**</span>""",
+                              , FCF Growth YOY: <span style='color: green;'>**{Average_fcf_growth_ten}%**</span>
+                              , FCF Margin 10Y: <span style='color: green;'>**{FCF_Margin_10}%**</span>
+                              , FCF Margin 5Y: <span style='color: green;'>**{FCF_Margin_5}%**</span>
+                              , FCF Margin 1Y: <span style='color: green;'>**{FCF_Margin_1}%**</span>
+
+                              """,
+                              
                               unsafe_allow_html=True
                               )
                               col1, col2 = st.columns(2)
