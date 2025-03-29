@@ -13553,9 +13553,9 @@ if selected == "Stock Analysis Tool":
 
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['CapEx'], marker_color='black', name='CapEx'))
 
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Free Cash Flow'], name='Free Cash Flow'))
+                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Free Cash Flow'], marker_color='olive', name='Free Cash Flow'))
 
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Net Income'],name='Net Income'))
+                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Net Income'],marker_color='indigo', name='Net Income'))
                                    # Add the Dividends bar plot
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'],marker_color='green',  name='Dividends Paid'))
                                    
