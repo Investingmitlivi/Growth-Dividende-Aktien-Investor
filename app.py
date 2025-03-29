@@ -103,20 +103,7 @@ custom_css = """
 cred = credentials.Certificate('verstehdieaktie-firebase.json')
 
 secret_key = secrets.token_hex(32)  
-#cred = credentials.Certificate('.streamlit/investingmitlivi-firebase key.json')
 
-# cred = credentials.Certificate({
-#     "type": "service_account",  # Add this line
-#     "project_id": os.getenv("PROJECT_ID"),
-#     "private_key_id": os.getenv("PRIVATE_KEY_ID"),
-#     "private_key": os.getenv("-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCs+Qkt9XOTgQGs\niMsuHdBHF32nWHHYBe9ztGIe/regG4hifHo0CvhwOlsQp7kEgZFlooYJk4oWFL7w\n+tfeYqhGmdoVbcYJxC5H+uVNYhM+I0bK9GkVPjCEdZH33VqhdTBpDTCDWbKzQeMD\nsjBwpSnu5A6lV1QJt0UsQPQlw3N3qTdBljejv9OKiUoPWg79edHIHKE6TF0PEfy5\nLiZF+LEdrot9IN+Yx7XOkutmZLttUkl1mHJdQrIqJlyRrp304Jt4N5oP82LgQQyS\nlXcAt22Rn2nvPv5V8gCVYfzjt96Q3pcDrv5pINor4XwSkGuEwxEThhSieeRAkU2V\naRDR8V4NAgMBAAECggEAB4mMVKF36ylSZnaCMHzsidOg46RbqLl+0eev5Rz6Ihnt\ne0YPGLiSjC+ey1s4/PEOqR/IHFh+n7AkoP3Q0PLd1WzbvYEVgampsp8LjK/pKBUg\nG3vuHohoxUP5Ys0x0gwxBPSl9MGHo0XTDX9KDKIbKldPDrzw/2xGlO35bnkq+Aa2\nNmb+spWMmDC3SalKA4xccMw674wvFBK7XeiCHjkmVbJ8qBA3H9fBo4ApCxAjDTcm\n28xkNBvhD6t+G37QbxFgZlCNw91l7HLejpjCSPt8TnuXxp/ee5/nGtPfAQlL8OmH\nqycsFADWV7OB3ayhJ3PmIYJyW4c4ahCoT2ArA+mOaQKBgQDz7T2/kdwpskRzpaJo\nvwQvH1TS5ABd9mbzGMwknk9bfoE1ySa93SaTk4SQtVbNcaTToVroHvQM1eM/TUp3\nj/BaRuL4ZxEbB/hD3lmCvPFy8ThoQKbgLcIpxQsVi48h4lCtl/do5X3gDDZkA17k\n9mg3Biou9Kw5uVd5sARis30YjwKBgQC1iL+E+fFIeegseeGNOnEYL81ZEHlrTVXY\n8V8TZf0wrDsq9ruN4HahNixyB03203/V3GU4w1Rq4fKikS6rYAPiZe9oWbHaRnQ4\nbUxjqgbOAdfaidUnqieBtQpYCKEChleYj7zpeVC7zbVaITeRJX92nyBOe8z0Qj6J\nAu68IskVowKBgGcERNXJJjA954bn5wVR1tSH6Oz/+d+1FpmIWX8FlQJRFQTAJSp+\nYbJl1NDApR4y5qeyN5BcsjlRg53SaKbCFYIq+eRqsuC1pvYSy77ZSSeAFJCC7Xc0\nHBJD84Bv5k0rJWOLEKQud9DNl5L5kXQlVLIYWmxmTO48BmOQIOoGX8ilAoGBAJnD\n8zXX4KDbYeYKdxsBXbp3AyFl6vMQ1p6kFTyBLy2DNbr2s3dBojp7gLo1pbxk+etU\nfAjQqzi9mqBJCZbwBVpHrbpd/2A8PUVujz38TzdAKG5cQckPP9eGWfSnmnphAOGh\nHwtETzZE0FA/wqmXcZgwwVS5WKmtUvsLGN0TOfCxAoGAXY3A+q17zNKoY3S3+UUg\n7RrI0qfwmnwIVY/dGmL05Mm4gvyc1Gyhz1VOwjp33TuUFI4LPJji9YcoEIRf69sP\nNzVHS/aR2z7TFE0fguja+Uikv4QkeAlWs2ozbqsmrPoSYbg20KS3MKrpVVbIO8sh\nIA7tnJBZjpJqVTh38Npyol8=\n-----END PRIVATE KEY-----\n"),
-#     "client_email": os.getenv("CLIENT_EMAIL"),
-#     "client_id": os.getenv("CLIENT_ID"),
-#     "auth_uri": os.getenv("AUTH_URI"),
-#     "token_uri": os.getenv("TOKEN_URI"),
-#     "auth_provider_x509_cert_url": os.getenv("AUTH_PROVIDER_X509_CERT_URL"),
-#     "client_x509_cert_url": os.getenv("CLIENT_X509_CERT_URL")
-# })
 
 try:
      firebase_admin.initialize_app(cred)
@@ -170,10 +157,7 @@ if selected == "Home":
 
      with st.container():
           
-          #left_column, center_column, right_column = st.columns([1, 2, 1])
 
-          #with left_column:
-          #st.header("what i do")
           st.write("##")
           st.write(
           """
@@ -321,8 +305,7 @@ if selected == "Home":
                     annual_return = float(st.text_input("Expected Annual Return (%):", value=9.00).replace(',', '.'))
 
                     compounding_frequency = st.selectbox("Compounding Frequency", [1, 4, 6, 12], index=2)  # Annually, Quarterly, Semi-annually, Monthly
-                    #compounding_frequency = float(st.text_input("Compounding Frequency", [1, 4, 6, 12]).replace(',', '.'))
-                    #compounding_frequency = float(col1.selectbox("Compounding Frequency", [1, 4, 6, 12], key="compounding_frequency"))
+                  
 
                # Calculate the future value over time
                     if st.button("Calculate"):
@@ -400,37 +383,28 @@ if selected == "Home":
                st.title("Dividend Calculator")
                with st.expander("Click to Expand/minimize for your Inputs"):
                     # User inputs
-                    #starting_principal = st.number_input("Starting Principal (€)", min_value=0.0, value=100000.0, format="%.2f")
                     starting_principal = float(st.text_input("Starting Principal (€):", value=100000.00).replace(',', '.'))
 
 
-                    #annual_contribution = st.number_input("Annual Contribution (€)", min_value=0.0, value=20000.0, format="%.2f")
                     annual_contribution = float(st.text_input("Annual Contribution (€):", value=20000.0).replace(',', '.'))
 
 
-                    #dividend_tax_rate = st.number_input("Dividend Tax Rate (%)", min_value=0.0, value=15.0, format="%.2f")
                     dividend_tax_rate = float(st.text_input("Dividend Tax Rate (%):", value=15.00).replace(',', '.'))
 
-                    #tax_exempt_income = st.number_input("Tax-Exempt Dividend Income Allowed Per Year (€)", min_value=0.0, value=0.0, format="%.2f")
                     tax_exempt_income = float(st.text_input("Tax-Exempt Dividend Income Allowed Per Year (€):", value=0.00).replace(',', '.'))
    
-                    #initial_dividend_yield = st.number_input("Initial Annual Dividend Yield (%)", min_value=0.0, value=5.0, format="%.2f")
                     initial_dividend_yield = float(st.text_input("Initial Annual Dividend Yield (%):", value=5.0).replace(',', '.'))
 
 
-                    #dividend_increase_rate = st.number_input("Expected Annual Dividend Amount Increase (%)", min_value=0.0, value=3.0, format="%.2f")
                     dividend_increase_rate = float(st.text_input("Expected Annual Dividend Amount Increase (%):", value=3.0).replace(',', '.'))
 
-                    #share_price_appreciation = st.number_input("Expected Annual Share Price Appreciation (%)", min_value=0.0, value=3.0, format="%.2f")
                     share_price_appreciation = float(st.text_input("Expected Annual Share Price Appreciation (%):", value=3.0).replace(',', '.'))
 
 
                     years = int(st.text_input("Years Invested:", value=20).replace(',', '.'))
-                    #years = st.number_input("Years Invested", min_value=1, value=20)
 
 
-                    #years = st.number_input("Investment Time Horizon (years)", value=10, min_value=1, step=1)
-                    # Button for calculating dividends and plotting
+                  
                     if st.button("Calculate Dividends"):
                          total_dividends_before_tax, dividends_over_years = calculate_dividends(
                               starting_principal, annual_contribution, dividend_tax_rate, tax_exempt_income,
@@ -517,8 +491,7 @@ if selected == "Home":
          )
           st.write("[Shiller PE ratio for the S&P 500 >](https://www.multpl.com/shiller-pe)")
 
-          # Generates a 64-character hexadecimal string
-          #st.write("Your secret key:", secret_key)
+      
  
 
 st.markdown("""
@@ -7657,16 +7630,9 @@ if selected == "Stock Analysis Tool":
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
 
                with right:   
-                    # #selected_ticker = st.selectbox('Select a ticker', list(ticker_symbol_name.keys()), key='symbol')  
-                    # selected_ticker = st.selectbox(
-                    # 'Select a ticker',
-                    # options=list(ticker_symbol_name.keys()),
-                    # key='symbol'
+             
                     selected_ticker = st.selectbox('Select a ticker', options=ticker_symbol_name.keys(), key='symbol')
-                    #ticker = st.sidebar.text_input("Enter stock ticker:", "AAPL").upper()
-
-                    #help='Start typing to search for a ticker'
-                    #)
+                   
   
 
 
@@ -7880,15 +7846,12 @@ if selected == "Stock Analysis Tool":
                     percentage_text = ""
                     if percentage_difference is not None:
                          if percentage_difference > 0:
-                              #percentage_text = f"(<span style='{green_style}'>+{percentage_difference}%</span>)"
                               percentage_text = f"<span style='{green_style}'>(+{percentage_difference}%)</span>"
 
                          elif percentage_difference < 0:
-                              #percentage_text = f"(<span style='{red_style}'>{percentage_difference}%</span>)"
                               percentage_text = f"<span style='{red_style}'>({percentage_difference}%)</span>"
 
                          else:
-                              #percentage_text = "(0%)"
                               percentage_text = "<span>(0%)</span>"
 
 
@@ -7984,16 +7947,11 @@ if selected == "Stock Analysis Tool":
                start_date_input=start_date
 
                if start_date_input is None:
-               # Set the default start date to "2002-03-04"
-                    #start_date_input = start_date
+              
                     start_date_input = start_date
 
 
-               #data = yf.download(ticker,start=start_date_input, end=end_date) decemeber
 
-
-
-              # data['Adj Close'] = data['Adj Close'].round(2) december
 
           ############################################################################################################
                
@@ -8172,22 +8130,6 @@ if selected == "Stock Analysis Tool":
           ###############################################################################################
 
 
-          ############################################################################################################
-
-
-           
-               # st.markdown(
-               #      """
-               #      <style>
-               #      .stTabs > div > div > div > button {
-               #           flex: 1;
-               #           text-align: center;
-               #      }
-               #      </style>
-               #      """,
-               #      unsafe_allow_html=True
-               #      )
-
                st.markdown(
                     """
                     <style>
@@ -8249,10 +8191,7 @@ if selected == "Stock Analysis Tool":
 
                                         try:
                                              Marketcap = float(market_cap_original.replace('B', ''))  
-                                             #Marketcap = float(market_cap.replace('B', '').replace('M', '')) 
-                                             # Remove 'B' and convert to float
-
-                                             #Marketcap =Marketcap /1000000000
+                                             
                                              Marketcap_in_Billion = (
                                                   "{:.2f}T".format(Marketcap / 1000) if abs(Marketcap) >= 1000 else "{:,.2f}B".format(Marketcap / 1)
                                              )
@@ -8271,9 +8210,7 @@ if selected == "Stock Analysis Tool":
                                         # Handle the specific exceptions here
                                         Forward_PE="NA"   
                                         RSI="N/A"
-                                        #print("     ")
-                                        #print(f"Pyfinance: An error occurred: {e}")
-                                        #print("     ")
+                                       
 
                                         if 'market_cap' not in locals():  
                                                        #print("Error: No data found Marketcap.")
@@ -8891,8 +8828,7 @@ if selected == "Stock Analysis Tool":
 
                               FCF_Margin_annual_10unpacked = annual_data['fcf_margin'][-10:]
 
-                              #FCF_Margin_annual10_unpacked = annual_data['fcf_margin'][-10:] #10years
-                              #FCF_Margin_10 =float(sum(FCF_Margin)/len(FCF_Margin))
+                           
 
                               FCF_Margin_5 = annual_data['fcf_margin'][-5:] 
                               FCF_Margin_5=sum(FCF_Margin_5)/len(FCF_Margin_5)
@@ -9263,7 +9199,6 @@ if selected == "Stock Analysis Tool":
           
                               
           ###################################################################################################
-                         #print("Net_interest_Income_annual_10_unpacked",Net_interest_Income_annual_10_unpacked)
                          def calculate_Net_interest_Income_CAGR_5(Net_interest_Income_annual_10_unpacked, ticker):
                               # Check if the result is already in session state
                               if f'{ticker}_Net_interest_Income_annual_Cagr_5' in st.session_state:
@@ -10325,38 +10260,6 @@ if selected == "Stock Analysis Tool":
                                df = pd.DataFrame(data).transpose()
                                df = df.rename(columns={i: " " for i in df.columns})  # Remove column headers
                                return df
-
-                         # def style_dataframe(df):
-                         #      def highlight_negative(val):
-                         #           """Apply color styles based on the value."""
-                         #           if isinstance(val, (int, float)) and val < 0:
-                         #                return 'color: green'
-                         #           return ''  
-                         #      # Default styling (no additional styling)
-                         #      styled_df = df.style.applymap(highlight_negative) \
-                         #           .set_table_styles(
-
-                         #           [
-                         #                {'selector': 'th.col0',  # Apply to the first column header
-                         #                'props': [('background-color', 'white'),  # Green background for the first header
-                         #                          ('color', 'white'),# White text color for the first header
-                         #                          ('text-align', 'left')]},  # Centered text
-                         #                {'selector': 'th:not(.col0)',  # Apply to other headers
-                         #                'props': [('color', '#2E8B57'), 
-                         #                          # Green text color for other headers
-                         #                          ('text-align', 'left')]},  # Centered text for other headers
-                         #           ],
-                         #           overwrite=False
-                         #      ).hide(axis='index')#.set_caption("")
-                              
-                         #      return styled_df
-                         
-
-                         # def create_dataframe(data):
-                         #      """Erstellt ein DataFrame und entfernt Spaltenüberschriften."""
-                         #      df = pd.DataFrame(data).transpose()
-                         #      df = df.rename(columns={i: " " for i in df.columns})  # Entfernt Spaltenüberschriften
-                         #      return df
 #--------------------------------------------------------------
                          def style_dataframe(df):
                               """Stylt das DataFrame mit Farben für negative Werte und Kopfzeilenanpassungen."""
@@ -10478,20 +10381,7 @@ if selected == "Stock Analysis Tool":
                          
                          }
 
-                         # # Convert data into styled DataFrames
-                         # df1 = style_dataframe(create_dataframe(data1).iloc[0:])
-                         # df2 = style_dataframe(create_dataframe(data2).iloc[0:])
-                         # df3 = style_dataframe(create_dataframe(data3).iloc[0:])
-                         # df4 = style_dataframe(create_dataframe(data4).iloc[0:])
 
-
-                         # # Create a responsive layout with four columns
-                         # col1, col2, col3, col4 = st.columns(4)
-
-                         # Display the dataframes in each column
-                         #display_dataframes([df1, df2, df3, df4], [col1, col2, col3, col4])  
-
-                         # 🖥 **Daten in DataFrames umwandeln & stylen**
                          df1 = style_dataframe(create_dataframe(data1))
                          df2 = style_dataframe(create_dataframe(data2))
                          df3 = style_dataframe(create_dataframe(data3))
@@ -11555,7 +11445,6 @@ if selected == "Stock Analysis Tool":
                                              total.columns = total.iloc[0]  
                                              total = total[1:]  # Remove the first row
 
-                                             #total_annual = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6))
                                              total_annual = total.apply(lambda col: col.map(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6)))
 
 
@@ -11585,7 +11474,6 @@ if selected == "Stock Analysis Tool":
                                              total = total[1:]  # Remove the first row
 
 
-                                             #total_quarter = total.applymap(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6))
                                              total_quarter = total.apply(lambda col: col.map(lambda x: "{:.2f}B".format(x / 1e9) if abs(x) >= 1e9 else "{:,.1f}M".format(x / 1e6)))
 
 
@@ -11958,9 +11846,7 @@ if selected == "Stock Analysis Tool":
                          else:
                                    Dividend_ttm = Financial_data['ttm']['cff_dividend_paid']/1000000000  
                                    fcf_ttm = Financial_data['ttm']['fcf']/1000000000  
-                                   #Dividend_ttm=sum(Dividend_ttm)/len(Dividend_ttm)
-                                   #fcf_ttm=sum(fcf_ttm)/len(fcf_ttm)
-
+                                
                                    try:
                                         one_FCF_annual_payout = round((abs(Dividend_ttm)/fcf_ttm)*100,2)
 
@@ -14067,11 +13953,6 @@ if selected == "Stock Analysis Tool":
                                    'Date': list(date_annual),
                                    'Price/Book Value': Price_to_book_10_annual_unpacked,
                                    })
-
-                                   # Create a Streamlit app
-                                   #st.title('Free Cash Flow and Revenue Data')
-
-                                   # Create a Plotly Express bar chart with side-by-side bars
 
                                    fig12 = px.bar(data, x='Date', y='Price/Book Value',
                                              text ='Price/Book Value',  
