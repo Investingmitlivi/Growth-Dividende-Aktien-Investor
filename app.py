@@ -7663,6 +7663,7 @@ if selected == "Stock Analysis Tool":
                     # options=list(ticker_symbol_name.keys()),
                     # key='symbol'
                     selected_ticker = st.selectbox('Select a ticker', options=ticker_symbol_name.keys(), key='symbol')
+                    #ticker = st.sidebar.text_input("Enter stock ticker:", "AAPL").upper()
 
                     #help='Start typing to search for a ticker'
                     #)
@@ -7891,17 +7892,17 @@ if selected == "Stock Analysis Tool":
                               percentage_text = "<span>(0%)</span>"
 
 
-                    # Display results
-                    st.markdown(
-                         f"""
-                         <div style="text-align: center; width: 100%;">
-                              Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
-                              Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
-                              {percentage_text}
-                         </div>
-                         """,
-                         unsafe_allow_html=True,
-                    )
+                    with middle:
+                         st.markdown(
+                              f"""
+                              <div style="text-align: center; width: 100%;">
+                                   Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
+                                   Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
+                                   {percentage_text}
+                              </div>
+                              """,
+                              unsafe_allow_html=True,
+                         )
 
                # Run the app
                if __name__ == "__main__":
@@ -8002,7 +8003,7 @@ if selected == "Stock Analysis Tool":
                          "1mo": "1 Month",
                          "3mo": "3 Months",
                          "6mo": "6 Months",
-                         #"1y": "1 Year",
+                         "1y": "1 Year",
                          "2y": "2 Years",
                          "5y": "5 Years",
                          "10y": "10 Years",
@@ -8143,7 +8144,7 @@ if selected == "Stock Analysis Tool":
                               "1 Month": "1mo", 
                               "3 Months": "3mo", 
                               "6 Months": "6mo", 
-                              #"1 Year ": '1y', 
+                              "1 Year ": '1y', 
                               "2 Years": "2y", 
                               "5 Years": "5y", 
                               "10 Years": "10y", 
