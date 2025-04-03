@@ -12206,6 +12206,7 @@ if selected == "Stock Analysis Tool":
 
 
                          display_metrics()
+                         
 
                          
                          st.write("")
@@ -13150,62 +13151,88 @@ if selected == "Stock Analysis Tool":
 
 
                                    col1,col2 = st.columns(2)
-
-                                   
-
                                    with col1:
-                                        # st.write(f"""
-                                        # <div style='text-align: center;'>
-                                        # <b>Revenue : 10 YR: {Revenue_Cagr_10}%
-                                        # <b>  5 YR: {Revenue_5_CAGR}%
-                                        # <b>  Current: {Revenue_growth_1year}%
-                                        # </div>
-                                        # """, unsafe_allow_html=True)
-
-
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                        <div style='padding: 0 10px; white-space: nowrap;'>
-                                             <span style='font-size: 12px;font-style: Italic;color: dodgerblue;'>10 YEAR: </span>
-                                             <span style='font-size: 16px; font-weight: bold;'>{Revenue_Cagr_10}%</span>
-                                        </div>
-                                        <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                        <div style='padding: 0 10px; white-space: nowrap;'>
-                                             <span style='font-size: 13px;font-style: Italic;color: dodgerblue;'>5 YEAR: </span>
-                                             <span style='font-size: 16px; font-weight: bold;'>{Revenue_5_CAGR}%</span>
-                                        </div>
-                                        <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                        <div style='padding: 0 10px; white-space: nowrap;'>
-                                             <span style='font-size: 13px;font-style: Italic;color: dodgerblue;'>CURRENT: </span>
-                                             <span style='font-size: 16px; font-weight: bold;'>{Revenue_growth_1year}%</span>
-                                       
+                                             <style>
+                                                  @media (max-width: 768px) {{
+                                                       .metrics-container {{
+                                                            flex-direction: column;
+                                                            align-items: center;
+                                                            gap: 4px;
+                                                       }}
+                                                       .metric-item {{
+                                                            padding: 3px 0 !important;
+                                                            width: 100%;
+                                                            text-align: center;
+                                                       }}
+                                                       .divider {{
+                                                            border-left: none !important;
+                                                            border-top: 1px solid #e0e0e0;
+                                                            width: 60%;
+                                                            height: 1px !important;
+                                                            margin: 3px auto !important;
+                                                       }}
+                                                  }}
+                                             </style>
+                                             <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
+                                                  <div class='metrics-container' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
+                                                       <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10 YEAR: </span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_Cagr_10}%</span>
+                                                       </div>
+                                                       <div class='divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                       <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YEAR: : </span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_5_CAGR}%</span>
+                                                       </div>
+                                                       <div class='divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                       <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>CURRENT: </span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_growth_1year}%</span>
+                                                       </div>
+                                                  </div>
+                                             </div>
                                         """, unsafe_allow_html=True)
-
-                                        st.plotly_chart(fig1,use_container_width=True, config=config)
-
-
+                                        st.plotly_chart(fig1, use_container_width=True, config=config)
 
                                    with col2:
-                                        # st.write(f"""
-                                        #           <div style='text-align: center;'>
-                                        # <b>5 YR Revenue Y/Y: {Revenue_growth_5years:.2f}%  1 YR Revenue: {Revenue_growth_1year:.2f}%
-                                        # </div>
-                                        # """, unsafe_allow_html=True)
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                        <div style='padding: 0 10px; white-space: nowrap;'>
-                                             <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Y/Y: </span>
-                                             <span style='font-size: 16px; font-weight: bold;'>{Revenue_growth_5years:.2f}%</span>
-                                        </div>
-                                        <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                        <div style='padding: 0 10px; white-space: nowrap;'>
-                                             <span style='font-size: 13px;font-style: Italic;color: dodgerblue;'>CURRENT: </span>
-                                             <span style='font-size: 16px; font-weight: bold;'>{Revenue_growth_1year:.2f}%</span>
+                                               <style>
+                                                  @media (max-width: 768px) {{
+                                                       .metrics-container {{
+                                                            flex-direction: column;
+                                                            align-items: center;
+                                                            gap: 4px;
+                                                       }}
+                                                       .metric-item {{
+                                                            padding: 3px 0 !important;
+                                                            width: 100%;
+                                                            text-align: center;
+                                                       }}
+                                                       .divider {{
+                                                            border-left: none !important;
+                                                            border-top: 1px solid #e0e0e0;
+                                                            width: 60%;
+                                                            height: 1px !important;
+                                                            margin: 3px auto !important;
+                                                       }}
+                                                  }}
+                                             </style>
+                                             <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
+                                                  <div class='metrics-container-2' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
+                                                       <div class='metric-item-2' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YEAR Y/Y: </span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_growth_5years:.2f}%</span>
+                                                       </div>
+                                                       <div class='divider-2' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                       <div class='metric-item-2' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>CURRENT: </span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_growth_1year:.2f}%</span>
+                                                       </div>
+                                                  </div>
+                                             </div>
                                         """, unsafe_allow_html=True)
-
-                                        st.plotly_chart(fig2,use_container_width=True, config=config)
+                                        st.plotly_chart(fig2, use_container_width=True, config=config)
                          #...........................................................................................    
                          # 
                          #            
@@ -13286,48 +13313,75 @@ if selected == "Stock Analysis Tool":
 
                                    with col1:
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>10YR EPS: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{EPS_Cagr_10}%</span>
+                                             <style>
+                                                  @media (max-width: 768px) {{
+                                                       .eps-metrics-container {{
+                                                            flex-direction: column;
+                                                            align-items: center;
+                                                       }}
+                                                       .eps-metric-item {{
+                                                            padding: 3px 0 !important;
+                                                            width: 100%;
+                                                            text-align: center;
+                                                       }}
+                                                       .eps-divider {{
+                                                            border-left: none !important;
+                                                            border-top: 1px solid #e0e0e0;
+                                                            width: 60%;
+                                                            height: 1px !important;
+                                                            margin: 3px auto !important;
+                                                       }}
+                                                  }}
+                                             </style>
+                                             <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
+                                                  <div class='eps-metrics-container' style='display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;'>
+                                                       <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10YR EPS: </span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{EPS_Cagr_10}%</span>
+                                                       </div>
+                                                       <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                       <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YR: </span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{EPS_5_CAGR}%</span>
+                                                       </div>
+                                                       <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                       <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>EPS(ttm): </span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{eps_diluted_ttm}</span>
+                                                       </div>
+                                                       <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                       <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Next YR: </span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})</span>
+                                                       </div>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5YR: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{EPS_5_CAGR}%</span>
-                                             </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>EPS(ttm): </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{eps_diluted_ttm}</span>
-                                             </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Next YR: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})</span>
-                                             </div>
-                                        </div>
-                                        </div>
                                         """, unsafe_allow_html=True)
-
-                                        st.plotly_chart(fig1,use_container_width=True,config=config)
+                                        st.plotly_chart(fig1, use_container_width=True, config=config)
 
                                    with col2:
-                                        # For the Share Buyback/dilution metric
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
-                                        <div style='display: flex; justify-content: center; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Share Buyback/dilution past 5 YR: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{Shares_outstanding_funf_growth:.2f}%</span>
+                                             <style>
+                                                  @media (max-width: 768px) {{
+                                                       .buyback-container {{
+                                                            padding: 0.5vw !important;
+                                                       }}
+                                                       .buyback-metric {{
+                                                            white-space: normal !important;
+                                                            padding: 3px 0 !important;
+                                                       }}
+                                                  }}
+                                             </style>
+                                             <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
+                                                  <div class='buyback-container' style='display: flex; justify-content: center; align-items: baseline;'>
+                                                       <div class='buyback-metric' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Share Buyback/dilution past 5 YR: </span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Shares_outstanding_funf_growth:.2f}%</span>
+                                                       </div>
+                                                  </div>
                                              </div>
-                                        </div>
-                                        </div>
                                         """, unsafe_allow_html=True)
-
-
-                                        st.plotly_chart(fig2,use_container_width=True,config=config)
+                                        st.plotly_chart(fig2, use_container_width=True, config=config)
                          #-------------------------------------------------------------------------------------------------
     #-------------------------------------------------------------------------------------------------
                               
@@ -13364,23 +13418,48 @@ if selected == "Stock Analysis Tool":
                                    col1, col2 =st.columns(2)
                                    with col1:
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR CAGR: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{Revenue_per_share_5_cagr}%</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .revps-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .revps-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .revps-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .revps-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='revps-container' style='display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;'>
+                                                  <div class='revps-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YR CAGR: </span>
+                                                       <span style='font-size: clamp(12px, 1.5vw, 16px); font-weight: bold;'>{Revenue_per_share_5_cagr}%</span>
+                                                  </div>
+                                                  <div class='revps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.3vw;'></div>
+                                                  <div class='revps-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Current: </span>
+                                                       <span style='font-size: clamp(12px, 1.5vw, 16px); font-weight: bold;'>{formatted_percentage}</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{formatted_percentage}</span>
+                                             <div class='revps-desc' style='margin-top: 0.3vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-weight: bold; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Revenue per Share (Umsatz pro Aktie) zeigt, wie viel Umsatz pro ausgegebener Aktie erzielt wird
+                                                  </span>
                                              </div>
-                                        </div>
-                                        <div style='margin-top: 5px;'>
-                                             <span style='font-family: Calibri; font-style: bold; font-size: 13px;'>
-                                             Revenue per Share (Umsatz pro Aktie) zeigt, wie viel Umsatz pro ausgegebener Aktie erzielt wird
-                                             </span>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
@@ -13421,24 +13500,49 @@ if selected == "Stock Analysis Tool":
                  
 
                                    with col2:
-                                        
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Y/Y: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{ebitda_Margin_annual_5_average}%</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .ebitda-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .ebitda-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .ebitda-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .ebitda-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{ebitda_Margin_annual_5_average}%</span>
+                                                  </div>
+                                                  <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{EBITDA_MARGIN_TTM}%</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{EBITDA_MARGIN_TTM}%</span>
+                                             <div class='ebitda-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-weight: bold; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Die EBITDA-Marge zeigt, wie effizient ein Unternehmen Umsatz in operativen Gewinn umwandelt, bevor Zinsen, Steuern, Abschreibungen und Amortisationen berücksichtigt werden.
+                                                  </span>
                                              </div>
-                                        </div>
-                                        <div style='margin-top: 5px;'>
-                                             <span style='font-family: Calibri; font-style: bold; font-size: 13px;'>
-                                             Die EBITDA-Marge zeigt, wie effizient ein Unternehmen Umsatz in operativen Gewinn umwandelt, bevor Zinsen, Steuern, Abschreibungen und Amortisationen berücksichtigt werden.                                             </span>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
@@ -13560,33 +13664,56 @@ if selected == "Stock Analysis Tool":
                                    dragmode=False,  # Disable dragging for zooming
                                    )
                                                                  
-
                                    st.markdown(f"""
-                                   <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
-                                   <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                        <div style='padding: 0 10px; white-space: nowrap;'>
-                                             <span style='font-size: 13px; font-style: italic;color: dodgerblue;'>10YR Dividend CAGR: </span>
-                                             <span style='font-size: 16px; font-weight: bold;'>{Dividend_10_CAGR}%</span>
+                                   <style>
+                                        @media (max-width: 768px) {{
+                                             .metrics-container {{
+                                                  flex-direction: column;
+                                                  align-items: center;
+                                             }}
+                                             .metric-item {{
+                                                  padding: 5px 0 !important;
+                                                  width: 100%;
+                                                  text-align: center;
+                                             }}
+                                             .divider {{
+                                                  border-left: none !important;
+                                                  border-top: 1px solid #e0e0e0;
+                                                  width: 70%;
+                                                  height: 1px !important;
+                                                  margin: 5px auto !important;
+                                             }}
+                                        }}
+                                        @media (min-width: 769px) and (max-width: 1024px) {{
+                                             .metric-item span:first-child {{
+                                                  font-size: clamp(10px, 1.3vw, 12px) !important;
+                                             }}
+                                        }}
+                                   </style>
+                                   <div style='text-align: center; border: 1px solid #f0f2f6; padding: 1vw; border-radius: 10px; max-width: 900px; margin: 0 auto 0;'>
+                                        <div class='metrics-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                             <div class='metric-item' style='padding: 0 1vw; white-space: nowrap;'>
+                                                  <span style='font-size: clamp(10px, 1.3vw, 13px); font-style: italic; color: dodgerblue;'>10YR Dividend CAGR: </span>
+                                                  <span style='font-size: clamp(14px, 1.8vw, 16px); font-weight: bold;'>{Dividend_10_CAGR}%</span>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>5YR Dividend CAGR: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{Dividend_5_CAGR}%</span>
+                                             <div class='divider' style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 0.5vw;'></div>
+                                             <div class='metric-item' style='padding: 0 1vw; white-space: nowrap;'>
+                                                  <span style='font-size: clamp(10px, 1.3vw, 13px); font-style: italic; color: dodgerblue;'>5YR Dividend CAGR: </span>
+                                                  <span style='font-size: clamp(14px, 1.8vw, 16px); font-weight: bold;'>{Dividend_5_CAGR}%</span>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>10YR FCF CAGR: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{FCF_Cagr_10}%</span>
+                                             <div class='divider' style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 0.5vw;'></div>
+                                             <div class='metric-item' style='padding: 0 1vw; white-space: nowrap;'>
+                                                  <span style='font-size: clamp(10px, 1.3vw, 13px); font-style: italic; color: dodgerblue;'>10YR FCF CAGR: </span>
+                                                  <span style='font-size: clamp(14px, 1.8vw, 16px); font-weight: bold;'>{FCF_Cagr_10}%</span>
+                                             </div>
+                                             <div class='divider' style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 0.5vw;'></div>
+                                             <div class='metric-item' style='padding: 0 1vw; white-space: nowrap;'>
+                                                  <span style='font-size: clamp(10px, 1.3vw, 13px); font-style: italic; color: dodgerblue;'>5YR FCF CAGR: </span>
+                                                  <span style='font-size: clamp(14px, 1.8vw, 16px); font-weight: bold;'>{FCF_5_CAGR}%</span>
+                                             </div>
                                         </div>
-                                        <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                        <div style='padding: 0 10px; white-space: nowrap;'>
-                                             <span style='font-size: 13px; font-style: italic;color: dodgerblue;'>5YR FCF CAGR: </span>
-                                             <span style='font-size: 16px; font-weight: bold;'>{FCF_5_CAGR}%</span>
-                                        </div>
-                                   </div>
                                    </div>
                                    """, unsafe_allow_html=True)
-                                   
 
                                    st.plotly_chart(fig,use_container_width=True,config=config)
                                    #with col2:
@@ -13648,40 +13775,79 @@ if selected == "Stock Analysis Tool":
 
                                    col1, col2 =st.columns(2)
                                    with col1:
-
-
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Yield: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{Dividend_yield_average}</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .yield-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .yield-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .yield-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='yield-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Yield: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_yield_average}</span>
+                                                  </div>
+                                                  <div class='yield-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Yield: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_per_share_yield}</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current Yield: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{Dividend_per_share_yield}</span>
-                                             </div>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
 
                                    with col2:
-                                        # Dividend Growth Box
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>10 YR Growth Y/Y: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{Dividends_per_share_growth_average_annual_10}</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .growth-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .growth-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .growth-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='growth-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='growth-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10 YR Growth Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_average_annual_10}</span>
+                                                  </div>
+                                                  <div class='growth-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='growth-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Growth: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_last_5_years_growth}</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Growth Y/Y: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{Dividends_per_share_growth_last_5_years_growth}</span>
-                                             </div>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2, use_container_width=True,config=config)
@@ -13750,45 +13916,96 @@ if selected == "Stock Analysis Tool":
                                    col1, col2 = st.columns(2)
                                    with col1:
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR ROIC Y/Y: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{Average_ROIC_funf}</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .roic-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .roic-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .roic-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .roic-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='roic-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='roic-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR ROIC Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Average_ROIC_funf}</span>
+                                                  </div>
+                                                  <div class='roic-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='roic-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current ROIC: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{ROIC_TTM}%</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current ROIC: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{ROIC_TTM}%</span>
+                                             <div class='roic-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften (Summe von Eigenkapital und Fremdkapital)
+                                                  </span>
                                              </div>
-                                        </div>
-                                        <div style='margin-top: 5px;'>
-                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
-                                             Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften (Summe von Eigenkapital und Fremdkapital)
-                                             </span>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1,use_container_width=True,config=config)
 
                                    with col2:
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR ROE Y/Y: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{five_ROE}%</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .roe-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .roe-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .roe-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .roe-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='roe-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='roe-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR ROE Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_ROE}%</span>
+                                                  </div>
+                                                  <div class='roe-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='roe-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current ROE: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{ROE_ttm}</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current ROE: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{ROE_ttm}</span>
+                                             <div class='roe-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften (Investiertes Kapital = Fremdkapital)
+                                                  </span>
                                              </div>
-                                        </div>
-                                        <div style='margin-top: 5px;'>
-                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
-                                        Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.(Investiertes Kapital = Fremdkapital)                                                                           </span>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2,use_container_width=True,config=config)
@@ -13844,22 +14061,47 @@ if selected == "Stock Analysis Tool":
                               #col1, col2 = st.columns(2)
                                    with col1:
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px;font-style: Italic;color: dodgerblue;'>5 YR Gross Margin Y/Y: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{five_yrs_average_gross_margin}</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .gross-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .gross-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .gross-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .gross-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='gross-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='gross-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Gross Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_yrs_average_gross_margin}</span>
+                                                  </div>
+                                                  <div class='gross-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='gross-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Gross Margin: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{average_gross_margin_quater1}</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current Gross Margin: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{average_gross_margin_quater1}</span>
+                                             <div class='gross-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) vom Umsatz übrig bleibt.                                                  </span>
                                              </div>
-                                        </div>
-                                        <div style='margin-top: 5px;'>
-                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
-                                        Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) vom Umsatz übrig bleibt.                                             </span>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
 
@@ -13867,23 +14109,49 @@ if selected == "Stock Analysis Tool":
 
 
                                    with col2:
+# Operating Margin Box
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Operating Margin Y/Y: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{five_yrs_average_operating_margin}</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .operating-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .operating-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .operating-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .operating-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='operating-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='operating-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Operating Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_yrs_average_operating_margin}</span>
+                                                  </div>
+                                                  <div class='operating-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='operating-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Operating Margin: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{average_operating_margin1_quarter}</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current Operating Margin: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{average_operating_margin1_quarter}</span>
+                                             <div class='operating-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Die Operative Marge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) und der Betriebskosten (wie Material-, Produktions-, Verwaltungs- und Vertriebskosten) vom Umsatz übrig bleibt.                                                  </span>
                                              </div>
-                                        </div>
-                                        <div style='margin-top: 5px;'>
-                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
-                                        Die Operative Marge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) und der Betriebskosten (wie Material-, Produktions-, Verwaltungs- und Vertriebskosten) vom Umsatz übrig bleibt.                                             </span>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2,use_container_width=True,config=config)
@@ -13944,22 +14212,48 @@ if selected == "Stock Analysis Tool":
                                    col1, col2 = st.columns(2)
                                    with col1:
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR FCF Margin Y/Y: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{FCF_Margin_5}%</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .fcf-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .fcf-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .fcf-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .fcf-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='fcf-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='fcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR FCF Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{FCF_Margin_5}%</span>
+                                                  </div>
+                                                  <div class='fcf-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='fcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current FCF Margin: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{FCF_Margin_1:.2f}%</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current FCF Margin: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{FCF_Margin_1:.2f}%</span>
+                                             <div class='fcf-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Die FCF-Marge zeigt, wie effizient ein Unternehmen Umsatz in freien Cashflow umwandelt
+                                                  </span>
                                              </div>
-                                        </div>
-                                        <div style='margin-top: 5px;'>
-                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
-                                             Die FCF-Marge (freier Cashflow) ist ein Indikator dafür, wie effizient ein Unternehmen seinen Umsatz in freien Cashflow umwandelt.        </span>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
 
@@ -13967,22 +14261,48 @@ if selected == "Stock Analysis Tool":
 
                                    with col2:
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Net Margin Y/Y: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{five_yrs_Nettomarge}%</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .net-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .net-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .net-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .net-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='net-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='net-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Net Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_yrs_Nettomarge}%</span>
+                                                  </div>
+                                                  <div class='net-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='net-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Net Margin : </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Net_margin_ttm}</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current Net Margin: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{Net_margin_ttm}</span>
+                                             <div class='net-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Die Nettogewinnmarge zeigt den Gewinn nach Abzug aller Kosten vom Umsatz
+                                                  </span>
                                              </div>
-                                        </div>
-                                        <div style='margin-top: 5px;'>
-                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
-                                             Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS), Betriebskosten, Zinsen, Steuern und außerordentlichen Posten vom Umsatz übrig bleibt.        </span>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1,use_container_width=True,config=config)
@@ -14077,53 +14397,104 @@ if selected == "Stock Analysis Tool":
                                    col2, col3 =st.columns(2)
                                    with col2:
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>10 YR P/E: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{average_PE_historical}</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .pe-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .pe-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .pe-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                             }}
+                                             @media (min-width: 769px) and (max-width: 1024px) {{
+                                                  .pe-item {{
+                                                       padding: 0 0.5vw !important;
+                                                  }}
+                                                  .pe-item span:first-child {{
+                                                       font-size: clamp(9px, 1.0vw, 11px) !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='pe-container' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
+                                                  <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/E: </span>
+                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{average_PE_historical}</span>
+                                                  </div>
+                                                  <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                  <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/E: </span>
+                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{pe_five_}</span>
+                                                  </div>
+                                                  <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                  <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Current P/E: </span>
+                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{pe_ttm}</span>
+                                                  </div>
+                                                  <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                  <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Forward P/E: </span>
+                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{forwardPE}</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>5 YR P/E: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{pe_five_}</span>
-                                             </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>Current P/E: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{pe_ttm}</span>
-                                             </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>Forward P/E: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{forwardPE}</span>
-                                             </div>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig21,use_container_width=True,config=config)
 
                                    with col3:
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>10YR P/FCF: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{pfcf_ten}</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .pfcf-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .pfcf-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .pfcf-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='pfcf-container' style='display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;'>
+                                                  <div class='pfcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/FCF: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{pfcf_ten}</span>
+                                                  </div>
+                                                  <div class='pfcf-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='pfcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/FCF: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{pfcf_funf}</span>
+                                                  </div>
+                                                  <div class='pfcf-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='pfcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current P/FCF: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{pfcf_ttm}</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>5YR P/FCF: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{pfcf_funf}</span>
-                                             </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>Current P/FCF: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{pfcf_ttm}</span>
-                                             </div>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
+
                                         st.plotly_chart(fig22,use_container_width=True,config=config)
 
 
@@ -14218,38 +14589,81 @@ if selected == "Stock Analysis Tool":
 
                                    col1, col2 =st.columns(2)
                                    with col1:
-                                       
+                                        # P/TBV Ratio Box
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>10YR P/TBV: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{Average_Price_to_tangible_book}</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .ptbv-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .ptbv-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .ptbv-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='ptbv-container' style='display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;'>
+                                                  <div class='ptbv-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/TBV: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Average_Price_to_tangible_book}</span>
+                                                  </div>
+                                                  <div class='ptbv-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='ptbv-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current P/TBV: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{PTBVPS:.2f}</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current P/TBV: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{PTBVPS:.2f}</span>
-                                             </div>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
+
                                         st.plotly_chart(fig11,use_container_width=True,config=config)
                                         
                                    with col2:
                                         st.markdown(f"""
-                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
-                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px;font-style: Italic;color: dodgerblue;'>10YR P/B: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{average_price_to_book}</span>
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .pb-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .pb-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .pb-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='pb-container' style='display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;'>
+                                                  <div class='pb-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/B: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{average_price_to_book}</span>
+                                                  </div>
+                                                  <div class='pb-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='pb-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current P/B: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{PBVPS:.2f}</span>
+                                                  </div>
                                              </div>
-                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
-                                             <div style='padding: 0 10px; white-space: nowrap;'>
-                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current P/B: </span>
-                                                  <span style='font-size: 16px; font-weight: bold;'>{PBVPS:.2f}</span>
-                                             </div>
-                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig12,use_container_width=True,config=config)
