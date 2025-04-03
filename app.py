@@ -7688,6 +7688,7 @@ if selected == "Stock Analysis Tool":
                Financial_data = data['data']['financials']
                annual_data = Financial_data['annual']
                quarterly_data = Financial_data['quarterly']
+
                eps_diluted_ttm = Financial_data['ttm']['eps_diluted']
                fcf_per_share = Financial_data['ttm']['fcf_per_share']
                Dividend_ttm = Financial_data['ttm']['cff_dividend_paid'] 
@@ -7706,14 +7707,13 @@ if selected == "Stock Analysis Tool":
                Stock_description=data["data"]["metadata"]["description"]
                stock_sector=data["data"]["metadata"]["sector"]
                cik=data["data"]["metadata"]["CIK"]
+               shares_basic_annual_one = annual_data['shares_basic'][-1:]
+               shares_basic_annual_funf_unpacked = annual_data['shares_basic'][-5:]
 
                #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
                #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
-               date_list_annual = [period_end_date for period_end_date in date_annual]
-
-               shares_basic_annual_one = annual_data['shares_basic'][-1:]
-               shares_basic_annual_funf_unpacked = annual_data['shares_basic'][-5:]
+               date_list_annual = [period_end_date for period_end_date in date_annual]      
                Average_shares_basic_annual_one = (sum(shares_basic_annual_one) / len(shares_basic_annual_one)) / 1000000000
                
                #---------------------------pyfinanz-----------------------------------
@@ -13154,20 +13154,55 @@ if selected == "Stock Analysis Tool":
                                    
 
                                    with col1:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b>Revenue : 10 YR: {Revenue_Cagr_10}%
-                                        <b>  5 YR: {Revenue_5_CAGR}%
+                                        # st.write(f"""
+                                        # <div style='text-align: center;'>
+                                        # <b>Revenue : 10 YR: {Revenue_Cagr_10}%
+                                        # <b>  5 YR: {Revenue_5_CAGR}%
+                                        # <b>  Current: {Revenue_growth_1year}%
+                                        # </div>
+                                        # """, unsafe_allow_html=True)
+
+
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                        <div style='padding: 0 10px; white-space: nowrap;'>
+                                             <span style='font-size: 12px;font-style: Italic;color: dodgerblue;'>10 YEAR: </span>
+                                             <span style='font-size: 16px; font-weight: bold;'>{Revenue_Cagr_10}%</span>
                                         </div>
+                                        <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                        <div style='padding: 0 10px; white-space: nowrap;'>
+                                             <span style='font-size: 13px;font-style: Italic;color: dodgerblue;'>5 YEAR: </span>
+                                             <span style='font-size: 16px; font-weight: bold;'>{Revenue_5_CAGR}%</span>
+                                        </div>
+                                        <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                        <div style='padding: 0 10px; white-space: nowrap;'>
+                                             <span style='font-size: 13px;font-style: Italic;color: dodgerblue;'>CURRENT: </span>
+                                             <span style='font-size: 16px; font-weight: bold;'>{Revenue_growth_1year}%</span>
+                                       
                                         """, unsafe_allow_html=True)
 
                                         st.plotly_chart(fig1,use_container_width=True, config=config)
 
+
+
                                    with col2:
-                                        st.write(f"""
-                                                  <div style='text-align: center;'>
-                                        <b>5 YR Revenue Y/Y: {Revenue_growth_5years:.2f}%  1 YR Revenue: {Revenue_growth_1year:.2f}%
+                                        # st.write(f"""
+                                        #           <div style='text-align: center;'>
+                                        # <b>5 YR Revenue Y/Y: {Revenue_growth_5years:.2f}%  1 YR Revenue: {Revenue_growth_1year:.2f}%
+                                        # </div>
+                                        # """, unsafe_allow_html=True)
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                        <div style='padding: 0 10px; white-space: nowrap;'>
+                                             <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Y/Y: </span>
+                                             <span style='font-size: 16px; font-weight: bold;'>{Revenue_growth_5years:.2f}%</span>
                                         </div>
+                                        <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                        <div style='padding: 0 10px; white-space: nowrap;'>
+                                             <span style='font-size: 13px;font-style: Italic;color: dodgerblue;'>CURRENT: </span>
+                                             <span style='font-size: 16px; font-weight: bold;'>{Revenue_growth_1year:.2f}%</span>
                                         """, unsafe_allow_html=True)
 
                                         st.plotly_chart(fig2,use_container_width=True, config=config)
@@ -13250,20 +13285,47 @@ if selected == "Stock Analysis Tool":
                                    col1,col2 = st.columns(2)
 
                                    with col1:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b>10YR EPS: {EPS_Cagr_10}%   5YR: {EPS_5_CAGR}%  EPS(ttm):  {eps_diluted_ttm}    Next YR: {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>10YR EPS: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{EPS_Cagr_10}%</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5YR: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{EPS_5_CAGR}%</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>EPS(ttm): </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{eps_diluted_ttm}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Next YR: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})</span>
+                                             </div>
+                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
 
                                         st.plotly_chart(fig1,use_container_width=True,config=config)
 
                                    with col2:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b>Share Buyback/dilution past 5 YR: {Shares_outstanding_funf_growth:.2f}% 
-                                        </div> 
+                                        # For the Share Buyback/dilution metric
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
+                                        <div style='display: flex; justify-content: center; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Share Buyback/dilution past 5 YR: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{Shares_outstanding_funf_growth:.2f}%</span>
+                                             </div>
+                                        </div>
+                                        </div>
                                         """, unsafe_allow_html=True)
+
 
                                         st.plotly_chart(fig2,use_container_width=True,config=config)
                          #-------------------------------------------------------------------------------------------------
@@ -13301,14 +13363,26 @@ if selected == "Stock Analysis Tool":
 
                                    col1, col2 =st.columns(2)
                                    with col1:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b>Revenue per Share 5 YR CAGR : {Revenue_per_share_5_cagr}%</b>
-                                        <b> Current Revenue per Share: {formatted_percentage}</b><br>
-                                        <span style='font-family: Calibri; font-style: italic;'>
-                                        Revenue per Share (Umsatz pro Aktie) zeigt, wie viel Umsatz pro ausgegebener Aktie erzielt wird                                        </div>
-                                             """, unsafe_allow_html=True)
-
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR CAGR: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{Revenue_per_share_5_cagr}%</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{formatted_percentage}</span>
+                                             </div>
+                                        </div>
+                                        <div style='margin-top: 5px;'>
+                                             <span style='font-family: Calibri; font-style: bold; font-size: 13px;'>
+                                             Revenue per Share (Umsatz pro Aktie) zeigt, wie viel Umsatz pro ausgegebener Aktie erzielt wird
+                                             </span>
+                                        </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
 
 
@@ -13347,14 +13421,26 @@ if selected == "Stock Analysis Tool":
                  
 
                                    with col2:
-                                        st.write(f"""
-                                         <div style='text-align: center;'>
-                                        <b>5 YR EBITDA-Marge Y/Y: {ebitda_Margin_annual_5_average}%</b>
-                                        <b> Current EBITDA-Marge: {EBITDA_MARGIN_TTM}%</b><br>
-                                        <span style='font-family: Calibri; font-style: italic;'>
-                                        Die EBITDA-Marge zeigt, wie effizient ein Unternehmen Umsatz in operativen Gewinn umwandelt, bevor Zinsen, Steuern, Abschreibungen und Amortisationen berücksichtigt werden.                                        </span>
+                                        
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Y/Y: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{ebitda_Margin_annual_5_average}%</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{EBITDA_MARGIN_TTM}%</span>
+                                             </div>
                                         </div>
-                                             """, unsafe_allow_html=True)
+                                        <div style='margin-top: 5px;'>
+                                             <span style='font-family: Calibri; font-style: bold; font-size: 13px;'>
+                                             Die EBITDA-Marge zeigt, wie effizient ein Unternehmen Umsatz in operativen Gewinn umwandelt, bevor Zinsen, Steuern, Abschreibungen und Amortisationen berücksichtigt werden.                                             </span>
+                                        </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
          
          
@@ -13475,14 +13561,33 @@ if selected == "Stock Analysis Tool":
                                    )
                                                                  
 
-
-
-                                   st.write(f"""
-                                        <div style='text-align: center;'>
-                                             <b>10YR Dividend: {Dividend_10_CAGR}%     5YR Dividend: {Dividend_5_CAGR}%       <span style='color:dodgerblue'>10YR FCF CAGR: {FCF_Cagr_10}%    5YR FCF CAGR: {FCF_5_CAGR}%
+                                   st.markdown(f"""
+                                   <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
+                                   <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                        <div style='padding: 0 10px; white-space: nowrap;'>
+                                             <span style='font-size: 13px; font-style: italic;color: dodgerblue;'>10YR Dividend CAGR: </span>
+                                             <span style='font-size: 16px; font-weight: bold;'>{Dividend_10_CAGR}%</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>5YR Dividend CAGR: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{Dividend_5_CAGR}%</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>10YR FCF CAGR: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{FCF_Cagr_10}%</span>
                                         </div>
-                                        """, unsafe_allow_html=True)
+                                        <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                        <div style='padding: 0 10px; white-space: nowrap;'>
+                                             <span style='font-size: 13px; font-style: italic;color: dodgerblue;'>5YR FCF CAGR: </span>
+                                             <span style='font-size: 16px; font-weight: bold;'>{FCF_5_CAGR}%</span>
+                                        </div>
+                                   </div>
+                                   </div>
+                                   """, unsafe_allow_html=True)
                                    
+
                                    st.plotly_chart(fig,use_container_width=True,config=config)
                                    #with col2:
                #------------------------------------------------------------------------------------------------------------------------------------
@@ -13543,17 +13648,40 @@ if selected == "Stock Analysis Tool":
 
                                    col1, col2 =st.columns(2)
                                    with col1:
-                                        st.write(f"""
-                                         <div style='text-align: center;'>
-                                        <b>5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}
+
+
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Yield: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{Dividend_yield_average}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current Yield: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{Dividend_per_share_yield}</span>
+                                             </div>
+                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
-
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
+
                                    with col2:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b> 10 YR Dividend per Share growth Y/Y: {Dividends_per_share_growth_average_annual_10} 5 YR Y/Y: {Dividends_per_share_growth_last_5_years_growth}
+                                        # Dividend Growth Box
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>10 YR Growth Y/Y: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{Dividends_per_share_growth_average_annual_10}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Growth Y/Y: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{Dividends_per_share_growth_last_5_years_growth}</span>
+                                             </div>
+                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2, use_container_width=True,config=config)
@@ -13621,27 +13749,48 @@ if selected == "Stock Analysis Tool":
 
                                    col1, col2 = st.columns(2)
                                    with col1:
-                                        st.write(f"""
-                                         <div style='text-align: center;'>
-                                        <b>5 YR ROIC Y/Y: {Average_ROIC_funf}</b>
-                                        <b> Current ROIC: {ROIC_TTM}%</b><br>
-                                        <span style='font-family: Calibri; font-style: italic;'>
-                                        Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.(Investiertes Kapital = Summe von Eigenkapital und Fremdkapital)
-                                        </span>
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR ROIC Y/Y: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{Average_ROIC_funf}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current ROIC: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{ROIC_TTM}%</span>
+                                             </div>
                                         </div>
-                                             """, unsafe_allow_html=True)
-
+                                        <div style='margin-top: 5px;'>
+                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
+                                             Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften (Summe von Eigenkapital und Fremdkapital)
+                                             </span>
+                                        </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1,use_container_width=True,config=config)
 
                                    with col2:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b>5 YR ROE Y/Y: {five_ROE}% Current ROE: {ROE_ttm}</b><br>
-                                        <span style='font-family: Calibri; font-style: italic;'>
-                                        Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.(Investiertes Kapital = Fremdkapital)
-                                        </span>
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR ROE Y/Y: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{five_ROE}%</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current ROE: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{ROE_ttm}</span>
+                                             </div>
                                         </div>
-                                             """, unsafe_allow_html=True)
+                                        <div style='margin-top: 5px;'>
+                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
+                                        Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften.(Investiertes Kapital = Fremdkapital)                                                                           </span>
+                                        </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2,use_container_width=True,config=config)
                #-------------------------------------------------------------------------------------------------
 
@@ -13694,31 +13843,49 @@ if selected == "Stock Analysis Tool":
 
                               #col1, col2 = st.columns(2)
                                    with col1:
-                                        st.write(f"""
-                                         <div style='text-align: center;'>
-                                        <b>5 YR Gross Margin Y/Y: {five_yrs_average_gross_margin}</b>
-                                        <b> Current Gross Margin: {average_gross_margin_quater1}</b><br>
-                                        <span style='font-family: Calibri; font-style: italic;'>
-                                        Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) vom Umsatz übrig bleibt.
-                                        </span>
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px;font-style: Italic;color: dodgerblue;'>5 YR Gross Margin Y/Y: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{five_yrs_average_gross_margin}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current Gross Margin: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{average_gross_margin_quater1}</span>
+                                             </div>
                                         </div>
-                                             """, unsafe_allow_html=True)
+                                        <div style='margin-top: 5px;'>
+                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
+                                        Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) vom Umsatz übrig bleibt.                                             </span>
+                                        </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
 
                                         st.plotly_chart(fig1,use_container_width=True,config=config)      
 
 
                                    with col2:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b>5 YR Operating Margin Y/Y: {five_yrs_average_operating_margin}</b>
-                                        <b> Current Operating Margin: {average_operating_margin1_quarter}</b><br>
-                                        <span style='font-family: Calibri; font-style: italic;'>
-                                        Die Operative Marge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) 
-                                        und der Betriebskosten (wie Material-, Produktions-, Verwaltungs- und 
-                                        Vertriebskosten) vom Umsatz übrig bleibt.
-                                        </span>
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Operating Margin Y/Y: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{five_yrs_average_operating_margin}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current Operating Margin: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{average_operating_margin1_quarter}</span>
+                                             </div>
                                         </div>
-                                             """, unsafe_allow_html=True)
+                                        <div style='margin-top: 5px;'>
+                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
+                                        Die Operative Marge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) und der Betriebskosten (wie Material-, Produktions-, Verwaltungs- und Vertriebskosten) vom Umsatz übrig bleibt.                                             </span>
+                                        </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2,use_container_width=True,config=config)
 
 
@@ -13776,25 +13943,46 @@ if selected == "Stock Analysis Tool":
 
                                    col1, col2 = st.columns(2)
                                    with col1:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b>5 YR FCF Margin Y/Y: {FCF_Margin_5}%</b>
-                                        <b> Current FCF Margin: {FCF_Margin_1:.2f}%</b><br>
-                                        <span style='font-family: Calibri; font-style: italic;'>
-                                        Die FCF-Marge (freier Cashflow) ist ein Indikator dafür, wie effizient ein Unternehmen seinen Umsatz in freien Cashflow umwandelt.
-                                        </span>
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR FCF Margin Y/Y: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{FCF_Margin_5}%</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current FCF Margin: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{FCF_Margin_1:.2f}%</span>
+                                             </div>
                                         </div>
-                                             """, unsafe_allow_html=True)
+                                        <div style='margin-top: 5px;'>
+                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
+                                             Die FCF-Marge (freier Cashflow) ist ein Indikator dafür, wie effizient ein Unternehmen seinen Umsatz in freien Cashflow umwandelt.        </span>
+                                        </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
 
                                         st.plotly_chart(fig2,use_container_width=True,config=config)
 
                                    with col2:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b>5 YR Net Profit Margin Y/Y: {five_yrs_Nettomarge}% </b>
-                                        <b> Current Net Profit Margin: {Net_margin_ttm}</b><br>
-                                        <span style='font-family: Calibri; font-style: italic;'>
-                                        Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS), Betriebskosten, Zinsen, Steuern und außerordentlichen Posten vom Umsatz übrig bleibt.</span>
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>5 YR Net Margin Y/Y: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{five_yrs_Nettomarge}%</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current Net Margin: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{Net_margin_ttm}</span>
+                                             </div>
+                                        </div>
+                                        <div style='margin-top: 5px;'>
+                                             <span style='font-family: Calibri; font-style: italic; font-size: 13px;'>
+                                             Die Nettogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS), Betriebskosten, Zinsen, Steuern und außerordentlichen Posten vom Umsatz übrig bleibt.        </span>
+                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1,use_container_width=True,config=config)
@@ -13888,17 +14076,52 @@ if selected == "Stock Analysis Tool":
 
                                    col2, col3 =st.columns(2)
                                    with col2:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b><span style='color:dodgerblue'>10 YR P/E:</span> {average_PE_historical}  <span style='color:dodgerblue'>5 YR P/E: </span> {pe_five_}  <span style='color:dodgerblue'>Current P/E: </span> {pe_ttm}  <span style='color:dodgerblue'>Forward P/E:</span>  {forwardPE}
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>10 YR P/E: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{average_PE_historical}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>5 YR P/E: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{pe_five_}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>Current P/E: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{pe_ttm}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>Forward P/E: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{forwardPE}</span>
+                                             </div>
+                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig21,use_container_width=True,config=config)
 
                                    with col3:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b><span style='color:dodgerblue'>10YR Price/FCF:</span>  {pfcf_ten}  <span style='color:dodgerblue'>5YR Price/FCF:  </span> {pfcf_funf}  <span style='color:dodgerblue'>Current Price/FCF:</span>  {pfcf_ttm}
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>10YR P/FCF: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{pfcf_ten}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>5YR P/FCF: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{pfcf_funf}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: italic; color: dodgerblue;'>Current P/FCF: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{pfcf_ttm}</span>
+                                             </div>
+                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig22,use_container_width=True,config=config)
@@ -13995,17 +14218,38 @@ if selected == "Stock Analysis Tool":
 
                                    col1, col2 =st.columns(2)
                                    with col1:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b>10 P/TBV: {Average_Price_to_tangible_book}  Current P/TBV: {PTBVPS:.2f}
+                                       
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin-bottom: 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>10YR P/TBV: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{Average_Price_to_tangible_book}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current P/TBV: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{PTBVPS:.2f}</span>
+                                             </div>
+                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig11,use_container_width=True,config=config)
                                         
                                    with col2:
-                                        st.write(f"""
-                                        <div style='text-align: center;'>
-                                        <b>10 P/BV: {average_price_to_book}  Current P/B: {PBVPS:.2f}
+                                        st.markdown(f"""
+                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 5px 15px; border-radius: 10px; margin: 5px 0 0 0;'>
+                                        <div style='display: flex; justify-content: space-around; align-items: baseline;'>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px;font-style: Italic;color: dodgerblue;'>10YR P/B: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{average_price_to_book}</span>
+                                             </div>
+                                             <div style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 5px;'></div>
+                                             <div style='padding: 0 10px; white-space: nowrap;'>
+                                                  <span style='font-size: 13px; font-style: Italic;color: dodgerblue;'>Current P/B: </span>
+                                                  <span style='font-size: 16px; font-weight: bold;'>{PBVPS:.2f}</span>
+                                             </div>
+                                        </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig12,use_container_width=True,config=config)
