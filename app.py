@@ -13104,30 +13104,73 @@ if selected == "Stock Analysis Tool":
                                    revenue_growth_annual21 = ["{:.2f} %".format(value*100) for value in revenue_growth_annual21_unpacked]
 
 
-                                   # Create a DataFrame for the data
+                                   # # Create a DataFrame for the data
+                                   # data = pd.DataFrame({
+                                   # 'Date': date_annual_20yrs,
+                                   # #'Free Cash Flow': Free_cash_flow_annual_2003,
+                                   # 'Revenue in Billion USD':revenue_annual21,
+                                   # })
+
+
+
+                                   # fig1 = px.bar(data, x='Date', y='Revenue in Billion USD',
+                                   #           text='Revenue in Billion USD',    
+                                   #           labels={'value': 'Amount()'},
+                                   #      # title=f"Revenue : 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%"
+                                   #           ) 
+    
+ 
+                                   # fig1.update_layout(
+                                   # dragmode=False,  # Disable dragging for zooming
+                                   # )
+
+                                   # fig1.update_layout(
+                                   # xaxis_type='category' 
+                                   # )
+
                                    data = pd.DataFrame({
                                    'Date': date_annual_20yrs,
-                                   #'Free Cash Flow': Free_cash_flow_annual_2003,
-                                   'Revenue in Billion USD':revenue_annual21,
+                                   'Revenue in Billion USD': revenue_annual21,
+                                   'Revenue Growth %': revenue_growth_annual21  # Add the growth data to the DataFrame
                                    })
-
-
 
                                    fig1 = px.bar(data, x='Date', y='Revenue in Billion USD',
                                              text='Revenue in Billion USD',    
-                                             labels={'value': 'Amount()'},
-                                        # title=f"Revenue : 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%"
+                                             labels={'value': 'Amount($)'},
+                                             # title=f"Revenue : 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%"
                                              ) 
-    
- 
-                                   fig1.update_layout(
-                                   dragmode=False,  # Disable dragging for zooming
-                                   )
+                                   # Add a line trace for revenue growth (hidden by default, shown only when legend clicked)
+                                   fig1.add_trace(go.Scatter(
+                                   x=data['Date'],
+                                   y=data['Revenue Growth %'].str.rstrip('%').astype('float'),  # Convert % string back to float
+                                   name='Revenue Growth %',
+                                   line=dict(color='red', width=2),
+                                   yaxis='y2',  # Use secondary y-axis
+                                   mode='lines+markers',
+                                   hovertemplate='%{y:.2f}%',
+                                   visible="legendonly"  # <-- Key change: Line hidden unless clicked in legend
+                                   ))
 
+                                   # Create a secondary y-axis for the growth percentage
                                    fig1.update_layout(
-                                   xaxis_type='category' 
+                                   yaxis2=dict(
+                                        title='Growth Rate (%)',
+                                        overlaying='y',
+                                        side='right',
+                                        range=[0, max(data['Revenue Growth %'].str.rstrip('%').astype('float')) * 1.1]  # Add 10% padding
+                                   ),
+                                   dragmode=False,  # Disable dragging for zooming
+                                   xaxis_type='category',
+                                   legend=dict(
+                                        orientation="h",
+                                        yanchor="bottom",
+                                        y=1.02,  # Positions legend above the chart
+                                        xanchor="right",
+                                        x=1
+                                   ),
+                                   showlegend=True  # Ensures legend is visible
                                    )
-                                   
+                                                                      
 
                               # Create a DataFrame for the data
                                    data = pd.DataFrame({
@@ -13234,9 +13277,7 @@ if selected == "Stock Analysis Tool":
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2, use_container_width=True, config=config)
                          #...........................................................................................    
-                         # 
-                         #            
-
+  
                          #-------------------------------------------------------------------------------------------------
                          # Get the current year and calculate next year
                                    current_year = datetime.now().year
