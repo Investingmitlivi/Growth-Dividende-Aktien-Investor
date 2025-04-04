@@ -13100,77 +13100,69 @@ if selected == "Stock Analysis Tool":
                               Annual, Quarter = st.tabs(["Annual", "Quarterly"])
                               with Annual:
                                    
-                                   revenue_annual21 = ["{:.2f}".format(value/1e9) for value in revenue_annual21_unpacked]
+                                   revenue_annual21 = ["{:.2f}B".format(value/1e9) for value in revenue_annual21_unpacked]
                                    revenue_growth_annual21 = ["{:.2f} %".format(value*100) for value in revenue_growth_annual21_unpacked]
 
 
-                                   # # Create a DataFrame for the data
-                                   # data = pd.DataFrame({
-                                   # 'Date': date_annual_20yrs,
-                                   # #'Free Cash Flow': Free_cash_flow_annual_2003,
-                                   # 'Revenue in Billion USD':revenue_annual21,
-                                   # })
-
-
-
-                                   # fig1 = px.bar(data, x='Date', y='Revenue in Billion USD',
-                                   #           text='Revenue in Billion USD',    
-                                   #           labels={'value': 'Amount()'},
-                                   #      # title=f"Revenue : 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%"
-                                   #           ) 
-    
- 
-                                   # fig1.update_layout(
-                                   # dragmode=False,  # Disable dragging for zooming
-                                   # )
-
-                                   # fig1.update_layout(
-                                   # xaxis_type='category' 
-                                   # )
-
                                    data = pd.DataFrame({
                                    'Date': date_annual_20yrs,
-                                   'Revenue in Billion USD': revenue_annual21,
-                                   'Revenue Growth %': revenue_growth_annual21  # Add the growth data to the DataFrame
+                                   'Revenue (B)': [float(val.rstrip('B')) for val in revenue_annual21],  # Numeric values for plotting
+                                   'Revenue Label': revenue_annual21,  # Formatted labels ("XB") for display
+                                   'Revenue Growth %': revenue_growth_annual21
                                    })
 
-                                   fig1 = px.bar(data, x='Date', y='Revenue in Billion USD',
-                                             text='Revenue in Billion USD',    
-                                             labels={'value': 'Amount($)'},
-                                             # title=f"Revenue : 10 YR: {Revenue_Cagr_10}%    5 YR: {Revenue_5_CAGR}%"
-                                             ) 
-                                   # Add a line trace for revenue growth (hidden by default, shown only when legend clicked)
+                                   fig1 = px.bar(data, x='Date', y='Revenue (B)',
+                                             text='Revenue Label',  # Show "XB" labels on bars
+                                             labels={'Revenue (B)': 'Revenue (Billions USD)'},
+                                             )
+
+                                   # Add revenue growth line (hidden by default)
                                    fig1.add_trace(go.Scatter(
                                    x=data['Date'],
-                                   y=data['Revenue Growth %'].str.rstrip('%').astype('float'),  # Convert % string back to float
+                                   y=data['Revenue Growth %'].str.rstrip('%').astype('float'),
                                    name='Revenue Growth %',
                                    line=dict(color='red', width=2),
-                                   yaxis='y2',  # Use secondary y-axis
+                                   yaxis='y2',
                                    mode='lines+markers',
                                    hovertemplate='%{y:.2f}%',
-                                   visible="legendonly"  # <-- Key change: Line hidden unless clicked in legend
+                                   visible="legendonly"
                                    ))
 
-                                   # Create a secondary y-axis for the growth percentage
+                                   # Configure axes and layout
                                    fig1.update_layout(
+                                   yaxis=dict(
+                                        title='Revenue (Billions USD)',
+                                        ticksuffix='B',  # Adds "B" to y-axis ticks
+                                        tickprefix='$'   # Adds "$" for currency
+                                   ),
                                    yaxis2=dict(
                                         title='Growth Rate (%)',
                                         overlaying='y',
                                         side='right',
-                                        range=[0, max(data['Revenue Growth %'].str.rstrip('%').astype('float')) * 1.1]  # Add 10% padding
+                                        range=[0, max(data['Revenue Growth %'].str.rstrip('%').astype('float')) * 1.1]
                                    ),
-                                   dragmode=False,  # Disable dragging for zooming
+                                   dragmode=False,
                                    xaxis_type='category',
                                    legend=dict(
                                         orientation="h",
                                         yanchor="bottom",
-                                        y=1.02,  # Positions legend above the chart
+                                        y=1.02,
                                         xanchor="right",
                                         x=1
                                    ),
-                                   showlegend=True  # Ensures legend is visible
+                                   hovermode='x unified',
+                                   hoverlabel=dict(
+                                        bgcolor='white',
+                                        font_size=12
                                    )
-                                                                      
+                                   )
+
+                                   # Format hover template to show full precision
+                                   fig1.update_traces(
+                                   selector={'name': 'Revenue (B)'},  # Applies to bars only
+                                   hovertemplate='<b>%{x}</b><br>Revenue: $%{customdata:.3f}B<extra></extra>',
+                                   customdata=data['Revenue (B)']  # Uses underlying float values
+                                   )                           
 
                               # Create a DataFrame for the data
                                    data = pd.DataFrame({
@@ -13329,26 +13321,42 @@ if selected == "Stock Analysis Tool":
                                    )
 
 
-                                   shares_diluted_annual21 = ["{:.3f}".format(value/1e9) for value in shares_diluted_annual21_unpacked]
+                                   # Format shares outstanding in millions with "M" suffix
+                                   shares_diluted_annual21 = ["{:.2f}M".format(value/1_000_000) for value in shares_diluted_annual21_unpacked]
 
                                    data = pd.DataFrame({
                                    'Date': date_annual_20yrs,
-                                   'Shares Outstanding in Billion USD': shares_diluted_annual21,
+                                   'Shares Outstanding (M)': [float(val.rstrip('M')) for val in shares_diluted_annual21],  # Store as float for plotting
+                                   'Shares Label': shares_diluted_annual21  # Keep formatted labels for display
                                    })
 
-                                   
-                                   fig2 = px.bar(data, x='Date', y='Shares Outstanding in Billion USD',
-                                             text='Shares Outstanding in Billion USD',  # Display the value on top of each bar
-                                             labels={'value': 'Amount($)'},  # Include the percentage sign in the label
+                                   fig2 = px.bar(data, x='Date', y='Shares Outstanding (M)',
+                                             text='Shares Label',  # Display formatted "XM" values on bars
+                                             labels={'Shares Outstanding (M)': 'Shares Outstanding (Millions)'},
                                              )
 
+                                   # Improve formatting
                                    fig2.update_layout(
-                                   dragmode=False,  # Disable dragging for zooming
+                                   dragmode=False,
+                                   xaxis_type='category',
+                                   yaxis=dict(
+                                        title='Shares Outstanding (Millions)',
+                                        tickprefix='',  # Optional: Add "$" if currency is relevant
+                                        ticksuffix='M'  # Adds "M" to y-axis ticks
+                                   ),
+                                   hovermode='x unified',  # Cleaner hover labels
+                                   hoverlabel=dict(
+                                        bgcolor='white',
+                                        font_size=12
                                    )
-                                                                      # Update layout for better readability
-                                   fig2.update_layout(
-                                   xaxis_type='category' 
                                    )
+
+                                   # Format hover template to show full precision
+                                   fig2.update_traces(
+                                   hovertemplate='<b>%{x}</b><br>Shares: %{customdata:.3f}M<extra></extra>',
+                                   customdata=data['Shares Outstanding (M)']  # Uses underlying float values
+                                   )
+
 
                                    col1,col2 = st.columns(2)
 
@@ -13885,7 +13893,7 @@ if selected == "Stock Analysis Tool":
                                                   </div>
                                                   <div class='growth-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
                                                   <div class='growth-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Growth: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Growth Y/Y: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_last_5_years_growth}</span>
                                                   </div>
                                              </div>
