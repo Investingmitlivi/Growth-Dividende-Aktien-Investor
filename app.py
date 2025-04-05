@@ -7958,10 +7958,11 @@ if selected == "Stock Analysis Tool":
                @st.cache_data(show_spinner=False,ttl=3600)
                def calculate_stock_performance(ticker):
                     periods = {
+                         "5d": "5 Days", 
                          "1mo": "1 Month",
                          "3mo": "3 Months",
                          "6mo": "6 Months",
-                         "1y": "1 Year",
+                        "1y": "1 Year",
                          "2y": "2 Years",
                          "5y": "5 Years",
                          "10y": "10 Years",
@@ -8099,6 +8100,7 @@ if selected == "Stock Analysis Tool":
 
 
                          period_mapping = {
+                              "5d": "5 Days", 
                               "1 Month": "1mo", 
                               "3 Months": "3mo", 
                               "6 Months": "6mo", 
@@ -14400,11 +14402,11 @@ if selected == "Stock Analysis Tool":
                                    )
 
 
-                                   Price_to_fcf_history = ["{:.2f}".format(value) for value in price_to_fcf_annual21_unpacked]
+                                   Price_to_fcf_history = ["{:.2f}".format(value) for value in price_to_fcf_annual21_unpacked[-10:]]
                                    #Price_to_earnings = "{:.2f}".format((Price_to_earnings))
                                    data = pd.DataFrame({
-                                   'Date': date_annual_20yrs,
-                                   'Price/FCF': price_to_fcf_annual21_unpacked,
+                                   'Date': date_annual,
+                                   'Price/FCF': Price_to_fcf_history,
                                    })
 
                                          
