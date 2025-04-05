@@ -7656,7 +7656,7 @@ if selected == "Stock Analysis Tool":
                def clear_cache():
                     st.cache_data.clear()
 
-               @st.cache_data(show_spinner=False,ttl=3600) #for caching results for an hour.
+               @st.cache_data(show_spinner=False,ttl=86400) #24hors
                def fetch_data_from_api(ticker):
                     try:
                          url = f"{base_url}{ticker}?api_key={api_key}"
@@ -8127,6 +8127,7 @@ if selected == "Stock Analysis Tool":
                # Run the app
                if __name__ == "__main__":
                     main()
+
 
 
           ###############################################################################################
@@ -10427,7 +10428,7 @@ if selected == "Stock Analysis Tool":
                          st.markdown(contact_form, unsafe_allow_html = True)
           #################################################################################
                
-                         @st.cache_data(show_spinner=False,ttl=3600)
+                         @st.cache_data(show_spinner=False,ttl=86400)  # 24-hour cache
                          def local_css(file_name):
                                    with open(file_name)as f:
                                         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)      
@@ -13166,11 +13167,11 @@ if selected == "Stock Analysis Tool":
                                    customdata=data['Revenue (B)']  # Uses underlying float values
                                    )                           
 
-                              # Create a DataFrame for the data
+                                   revenue_growth_annual_10 = ["{:.2f} %".format(value*100) for value in revenue_growth_annual21_unpacked[-10:]]
                                    data = pd.DataFrame({
-                                   'Date': date_annual_20yrs,
+                                   'Date': date_annual,
                                    #'Free Cash Flow': Free_cash_flow_annual_2003,
-                                   'Revenue Growth':revenue_growth_annual21,
+                                   'Revenue Growth':revenue_growth_annual_10,
                                    })
 
                                    fig2 = px.bar(data, x='Date', y='Revenue Growth',
@@ -13324,12 +13325,12 @@ if selected == "Stock Analysis Tool":
 
 
                                    # Format shares outstanding in millions with "M" suffix
-                                   shares_diluted_annual21 = ["{:.2f}M".format(value/1_000_000) for value in shares_diluted_annual21_unpacked]
+                                   shares_diluted_annual_10 = ["{:.2f}M".format(value/1_000_000) for value in shares_diluted_annual21_unpacked[-10:]]
 
                                    data = pd.DataFrame({
-                                   'Date': date_annual_20yrs,
-                                   'Shares Outstanding (M)': [float(val.rstrip('M')) for val in shares_diluted_annual21],  # Store as float for plotting
-                                   'Shares Label': shares_diluted_annual21  # Keep formatted labels for display
+                                   'Date': date_annual,
+                                   'Shares Outstanding (M)': [float(val.rstrip('M')) for val in shares_diluted_annual_10],  # Store as float for plotting
+                                   'Shares Label': shares_diluted_annual_10  # Keep formatted labels for display
                                    })
 
                                    fig2 = px.bar(data, x='Date', y='Shares Outstanding (M)',
