@@ -8769,6 +8769,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_fcf_margin_1'],
                                              st.session_state[f'{ticker}_debt_equity_annual_10'] ,
                                              st.session_state[f'{ticker}_Price_to_tangible_book_annual_10'] ,
+                                             st.session_state[f'{ticker}_Price_to_tangible_book_annual_5'] ,
                                              st.session_state[f'{ticker}_EBITDA_growth_annual_10'] ,
                                              st.session_state[f'{ticker}_Price_to_book_annual_5'] ,
                                              st.session_state[f'{ticker}_Price_to_book_annual_10'] ,
@@ -8844,6 +8845,7 @@ if selected == "Stock Analysis Tool":
 
                               debt_equity_annual_10_unpacked = annual_data['debt_to_equity'][-10:]
                               Price_to_tangible_book_annual_10_unpacked = annual_data['price_to_tangible_book'][-10:]
+                              Price_to_tangible_book_annual_5_unpacked = annual_data['price_to_tangible_book'][-5:]
                               EBITDA_growth_annual_10_unpacked = annual_data['ebitda_growth'][-10:]
                               Price_to_book_5_annual_unpacked = annual_data['price_to_book'][-5:]
                               Price_to_book_10_annual_unpacked = annual_data['price_to_book'][-10:]
@@ -8902,6 +8904,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_fcf_margin_1'] = FCF_Margin_1
                               st.session_state[f'{ticker}_debt_equity_annual_10'] = debt_equity_annual_10_unpacked
                               st.session_state[f'{ticker}_Price_to_tangible_book_annual_10'] = Price_to_tangible_book_annual_10_unpacked
+                              st.session_state[f'{ticker}_Price_to_tangible_book_annual_5'] = Price_to_tangible_book_annual_5_unpacked
                               st.session_state[f'{ticker}_EBITDA_growth_annual_10'] = EBITDA_growth_annual_10_unpacked
                               st.session_state[f'{ticker}_Price_to_book_annual_5'] = Price_to_book_5_annual_unpacked
                               st.session_state[f'{ticker}_Price_to_book_annual_10'] = Price_to_book_10_annual_unpacked
@@ -8942,7 +8945,7 @@ if selected == "Stock Analysis Tool":
                                    average_ROA_annual_ttm, One_YR_ROCE, five_yrs_ROCE, Average_total_equity_annual,
                                    Net_income_margin_10_unpacked, Net_income_margin_annual5_unpacked, Net_income_margin_1,
                                    FCF_Margin_annual_10unpacked, FCF_Margin_5, FCF_Margin_1,
-                                   debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,
+                                   debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,Price_to_tangible_book_annual_5_unpacked,
                                    EBITDA_growth_annual_10_unpacked, Price_to_book_5_annual_unpacked,Price_to_book_10_annual_unpacked, 
                                    fcf_per_share_annual_10_unpacked, revenue_per_share_annual_10_unpacked,
                                    Payout_ratio_annual_10_unpacked, NetIncome_growth_annual_10_unpacked,
@@ -8965,7 +8968,7 @@ if selected == "Stock Analysis Tool":
                          (average_ROA_annual_ttm, One_YR_ROCE, five_yrs_ROCE, Average_total_equity_annual,
                          Net_income_margin_10_unpacked, Net_income_margin_annual5_unpacked, Net_income_margin_1,
                          FCF_Margin_annual_10unpacked, FCF_Margin_5, FCF_Margin_1,
-                         debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,
+                         debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,Price_to_tangible_book_annual_5_unpacked,
                          EBITDA_growth_annual_10_unpacked,Price_to_book_5_annual_unpacked,Price_to_book_10_annual_unpacked, 
                          fcf_per_share_annual_10_unpacked, revenue_per_share_annual_10_unpacked,
                          Payout_ratio_annual_10_unpacked, NetIncome_growth_annual_10_unpacked,
@@ -9020,8 +9023,11 @@ if selected == "Stock Analysis Tool":
                          if len_5_annual == 5:
 
                               average_price_to_book_annual_5=  "{:.2f}".format(sum(Price_to_book_5_annual_unpacked)/len(Price_to_book_5_annual_unpacked))
+                              Average_Price_to_tangible_book_5 ="{:.2f}".format(sum(Price_to_tangible_book_annual_5_unpacked)/len(Price_to_tangible_book_annual_5_unpacked))
+
                          else:
                               average_price_to_book_annual_5 = "{:.2f}".format(0.00)
+                              Average_Price_to_tangible_book_5 = "{:.2f}".format(0.00)
           ###################################################################################################
                          def unpack_annual21_data(annual_data,ticker):
 
@@ -13226,7 +13232,7 @@ if selected == "Stock Analysis Tool":
                                                        <div class='divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
                                                        <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
                                                             <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>CURRENT: </span>
-                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_growth_1year}%</span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_growth_1year:.2f}%</span>
                                                        </div>
                                                   </div>
                                              </div>
@@ -14672,6 +14678,11 @@ if selected == "Stock Analysis Tool":
                                                   </div>
                                                   <div class='ptbv-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
                                                   <div class='ptbv-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/TBV: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Average_Price_to_tangible_book_5}</span>
+                                                  </div>
+                                                  <div class='ptbv-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='ptbv-item' style='padding: 0 0.8vw; white-space: nowrap;'>
                                                        <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current P/TBV: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{PTBVPS:.2f}</span>
                                                   </div>
@@ -14709,6 +14720,11 @@ if selected == "Stock Analysis Tool":
                                                   <div class='pb-item' style='padding: 0 0.8vw; white-space: nowrap;'>
                                                        <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/B: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{average_price_to_book}</span>
+                                                  </div>
+                                                  <div class='pfcf-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='pfcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/B: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{average_price_to_book_annual_5}</span>
                                                   </div>
                                                   <div class='pb-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
                                                   <div class='pb-item' style='padding: 0 0.8vw; white-space: nowrap;'>
