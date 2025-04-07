@@ -804,7 +804,6 @@ if selected == "Stock Analysis Tool":
                          'ADC':'Agree Realty Corporation ',
                          'ADCT':'ADC Therapeutics SA ',
                          'ADD':'Color Star Technology Co. Ltd. ',
-                         'ADS:DE':'ADIDAS AG. ',
                          'ADEA':'Adeia Inc. ',
                          'ADER':'26 Capital Acquisition Corp.  ',
                          'ADERU':'26 Capital Acquisition Corp. Unit',
@@ -7625,6 +7624,7 @@ if selected == "Stock Analysis Tool":
                          'WOLTF':'Wolters Kluwer N.V',
                          'LB':'LandBridge Company LLC',
                          'CRWV':'CoreWeave Inc.',
+                         'MUX:DE':'Mutares SE & Co. KGaA',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7750,7 +7750,8 @@ if selected == "Stock Analysis Tool":
                ticker_mapping = {
                'ADS:DE': 'ADS.DE',
                'BRK.A': 'BRK-A',
-               'BRK.B': 'BRK-B'
+               'BRK.B': 'BRK-B',
+               'MUX:DE':'MUX.DE'
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
@@ -14555,6 +14556,104 @@ if selected == "Stock Analysis Tool":
 
                                         st.plotly_chart(fig22,use_container_width=True,config=config)
 
+               #........  ...................................................................................................................               
+                                        #Price_to_earnings=annual_data['price_to_earnings'][-10:]
+                                   Price_to_sales = ["{:.2f}".format(value) for value in Price_to_sales_annual_10_unpacked]
+                                   #Price_to_earnings = "{:.2f}".format((Price_to_earnings))
+                                   data = pd.DataFrame({
+                                   'Date': date_annual,
+                                   'PS Ratio': Price_to_sales,
+                                   })
+                                   
+                                   fig21 = px.bar(data, x='Date', y='PS Ratio',
+                                             text ='PS Ratio',
+                                             labels={'value': 'Ratio'},
+                                             )  # Use 'group' to display bars side by side
+
+                                                                                                                                            
+                                   fig21.add_shape(
+                                   type='line',
+                                   x0=data['Date'].min(),  # Adjust this based on your data
+                                   x1=data['Date'].max(),  # Adjust this based on your data
+                                   y0=P_sales_10,
+                                   y1=P_sales_10,
+                                   line=dict(color='red', width=2, dash='dash'),
+                                   yref='y',
+                                   )
+                                   
+                                   fig21.add_annotation(
+                                   text=f'',
+                                   xref='paper',  # Set xref to 'paper' for center alignment
+                                   yref='paper',  # Set yref to 'paper' for center alignment
+                                   x=0.10,  # Adjust to center horizontally
+                                   y=0.7,  # Adjust to center vertically
+                                   showarrow=False,  # Remove the arrow
+                                   font=dict(color='red'),  # Set font color to red
+                                   )                    
+
+                                   fig21.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+
+                                   fig21.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
+
+                                   col2, col3 =st.columns(2)
+                                   with col2:
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .pe-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .pe-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .pe-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                             }}
+                                             @media (min-width: 769px) and (max-width: 1024px) {{
+                                                  .pe-item {{
+                                                       padding: 0 0.5vw !important;
+                                                  }}
+                                                  .pe-item span:first-child {{
+                                                       font-size: clamp(9px, 1.0vw, 11px) !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='pe-container' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
+                                                  <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/S: </span>
+                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{P_sales_10}</span>
+                                                  </div>
+                                                  <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                  <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/S: </span>
+                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{P_sales_5}</span>
+                                                  </div>
+                                                  <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                  <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Current P/S: </span>
+                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Price_to_sales_last}</span>
+                                                  </div>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                        st.plotly_chart(fig21,use_container_width=True,config=config)
+
+                              
 
                                    #-------------------------------------------------------------------------------------------------
 
