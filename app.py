@@ -1243,8 +1243,7 @@ if selected == "Stock Analysis Tool":
                          'ASLE':'AerSale Corporation ',
                          'ASLN':'ASLAN Pharmaceuticals Limited ',
                          'ASM':'Avino Silver & Gold Mines Ltd.  (Canada)',
-                         'ASMB':'Assembly Biosciences Inc. ',
-                         'ASML':'ASML Holding N.V. New York Registry Shares',
+                         'ASMB':'Assembly Biosciences Inc. ',           
                          'ASND':'Ascendis Pharma A/S ',
                          'ASNS':'Actelis Networks Inc. ',
                          'ASO':'Academy Sports and Outdoors Inc. ',
@@ -5234,7 +5233,6 @@ if selected == "Stock Analysis Tool":
                          'NVIV':'InVivo Therapeutics Holdings Corp ',
                          'NVMI':'Nova Ltd. ',
                          'NVNO':'enVVeno Medical Corporation ',
-                         'NVO':'Novo Nordisk A/S ',
                          'NVOS':'Novo Integrated Sciences Inc. ',
                          'NVR':'NVR Inc. ',
                          'NVRI':'Enviri Corporation ',
@@ -7625,6 +7623,9 @@ if selected == "Stock Analysis Tool":
                          'LB':'LandBridge Company LLC',
                          'CRWV':'CoreWeave Inc.',
                          'MUX:DE':'Mutares SE & Co. KGaA',
+                         'ASML:NL':'ASML Holding N.V',
+                         #'NOVO.B:DK':'Novo Nordisk A/S',
+                         'NVO':'Novo Nordisk ADR',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7710,6 +7711,8 @@ if selected == "Stock Analysis Tool":
                shares_basic_annual_one = annual_data['shares_basic'][-1:]
                shares_basic_annual_funf_unpacked = annual_data['shares_basic'][-5:]
 
+            
+
                #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
                #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
@@ -7751,7 +7754,10 @@ if selected == "Stock Analysis Tool":
                'ADS:DE': 'ADS.DE',
                'BRK.A': 'BRK-A',
                'BRK.B': 'BRK-B',
-               'MUX:DE':'MUX.DE'
+               'MUX:DE':'MUX.DE',
+               'ASML:NL':'ASML',
+               #'NOVO.B:DK':'NVO',
+               #'NVO':'NVO'
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
@@ -12552,7 +12558,7 @@ if selected == "Stock Analysis Tool":
 
                                                                   # Plot the chart using Plotly as a bar chart
                                         fig = px.bar(fcf_df, x='Year', y=['Discounted Cash Flow (Base Case)', 'Discounted Cash Flow (Bullish Case)'],
-                                                       title='Discounted Cash Flows Comparison in Billion USD',
+                                                       title='Discounted Cash Flows Comparison in Billion',
                                                        labels={'value': 'Discounted Cash Flow', 'Year': 'Year'},
                                                        text_auto=True  # Automatically display values on bars
                                                        )
@@ -12561,7 +12567,7 @@ if selected == "Stock Analysis Tool":
                                         fig.update_layout(
                                         xaxis_type='category',  # Ensure x-axis is treated as categorical
                                         dragmode=False,  # Disable dragging for zooming
-                                        yaxis_title="Discounted Cash Flow (in Billion USD)",
+                                        yaxis_title="Discounted Cash Flow (in Billion )",
                                         xaxis_title="Year",
                                         barmode='group'  # Grouped bar chart
                                         )
@@ -12621,7 +12627,7 @@ if selected == "Stock Analysis Tool":
 
                               with col1:
                                    #fcf = st.number_input("Current FCF in Billion USD:", value=0.00, key="fcf_input",help="Enter Free Cash Flow value")
-                                   fcf = float(col1.text_input("Current FCF in Billion USD: ", value=0.00,key="fcf_input",help="Enter Free Cash Flow in Billion USD").replace(',', '.'))
+                                   fcf = float(col1.text_input("Current FCF in Billion: ", value=0.00,key="fcf_input",help="Enter Free Cash Flow in Billion").replace(',', '.'))
 
 
                                    #r = st.number_input("Discount rate WACC (%):", value=8.0, format="%.1f")
@@ -12634,7 +12640,7 @@ if selected == "Stock Analysis Tool":
                                    t = float(col2.text_input("Terminal Growth Rate (%):", value=2.5,key="Terminal_Growth_Rate",help="Enter Terminal Growth Rate").replace(',', '.'))
 
                                    #current_price = st.number_input("Marketcap.in Billion USD:", value=0.00, format="%.2f")
-                                   current_price = float(col2.text_input("Marketcap:",value=0.00, key="Marketcap",help="Enter Marketcap in Billion USD:").replace(',', '.'))
+                                   current_price = float(col2.text_input("Marketcap:",value=0.00, key="Marketcap",help="Enter Marketcap in Billion:").replace(',', '.'))
 
                                  
 
@@ -12702,7 +12708,7 @@ if selected == "Stock Analysis Tool":
                                              fig.update_layout(
                                                   title="Free Cash Flow (FCF) Projections",
                                                   xaxis_title="Years",
-                                                  yaxis_title="FCF in Billion USD",
+                                                  yaxis_title="FCF in Billion",
                                                   template="plotly_white",
                                                   dragmode=False,  # Disable dragging for zooming
                                              )
@@ -13123,7 +13129,7 @@ if selected == "Stock Analysis Tool":
 
                                    fig1 = px.bar(data, x='Date', y='Revenue (B)',
                                              text='Revenue Label',  # Show "XB" labels on bars
-                                             labels={'Revenue (B)': 'Revenue (Billions USD)'},
+                                             labels={'Revenue (B)': 'Revenue (Billions)'},
                                              )
 
                                    # Add revenue growth line (hidden by default)
@@ -13141,7 +13147,7 @@ if selected == "Stock Analysis Tool":
                                    # Configure axes and layout
                                    fig1.update_layout(
                                    yaxis=dict(
-                                        title='Revenue (Billions USD)',
+                                        title='Revenue (Billions)',
                                         ticksuffix='B',  # Adds "B" to y-axis ticks
                                         tickprefix='$'   # Adds "$" for currency
                                    ),
