@@ -9080,6 +9080,69 @@ if selected == "Stock Analysis Tool":
                          (revenue_annual21_unpacked, eps_diluted_annual_21_unpacked, 
                                         dividendPaidInTheLast21Years_unpacked, Dividends_per_share_growth_annual10_unpacked, 
                                         revenue_growth_annual21_unpacked, shares_diluted_annual21_unpacked,Free_cash_flow_annual_21_unpacked) = unpack_annual21_data(annual_data,ticker)
+                         
+
+                         #############################################################################################################################
+
+                    
+
+                         try:
+                              value_at_index_6 = dividendPaidInTheLast21Years_unpacked[-6]
+                              value_at_index_last  = dividendPaidInTheLast21Years_unpacked[-1]
+                         except Exception as e:
+                              value_at_index_6 = 0
+                              value_at_index_last = 0
+                         try:
+                              
+                              if value_at_index_6 == 0 or value_at_index_last ==0:
+                                   Dividend_5_CAGR = 0
+
+                              else:
+                                        try:
+                                             Dividend_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
+                                             #CAGR = round(CAGR, 2)
+
+                                             if isinstance(Dividend_5_CAGR, complex):
+                                                       Dividend_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                                             else:
+                                                  Dividend_5_CAGR = "{:.2f}".format(Dividend_5_CAGR)
+
+                                        except Exception as e:
+                                             Dividend_5_CAGR = 0
+
+                         except Exception as e:  
+
+                              Dividend_5_CAGR =0; 
+                    
+     #.................................10  Dividend CAGR............................................                    
+
+                         try:
+                              value_at_index_11  = dividendPaidInTheLast21Years_unpacked[-11]
+
+                         except Exception as e:
+                              value_at_index_11 = 0
+                              value_at_index_last = 0
+                         try:
+                              
+                              if value_at_index_11 == 0 or value_at_index_last == 0:
+                                   Dividend_10_CAGR = 0
+
+                              else:
+                                        try:
+                                             Dividend_10_CAGR = (pow((value_at_index_last / value_at_index_11), 0.1) - 1) * 100
+                                             #CAGR = round(CAGR, 2)
+
+                                             if isinstance(Dividend_10_CAGR, complex):
+                                                       Dividend_10_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                                             else:
+                                                  Dividend_10_CAGR = "{:.2f}".format(Dividend_10_CAGR, 2)
+
+                                        except Exception as e:
+                                             Dividend_10_CAGR = 0
+
+                         except Exception as e:  
+
+                              Dividend_10_CAGR =0; 
 
 
           ###################################################################################################
@@ -10389,6 +10452,8 @@ if selected == "Stock Analysis Tool":
                          'Revenue CAGR 5 YR': f"{Revenue_5_CAGR}%",
                          'FCF CAGR 10 YR': f"{FCF_Cagr_10}%",
                          'FCF CAGR 5 YR': f"{FCF_5_CAGR}%",
+                         'Dividend CAGR 10 YR': f"{Dividend_10_CAGR}%",
+                         'Dividend CAGR 5 YR': f"{Dividend_5_CAGR}%",
                          'Net Interest Income CAGR 10 YR': f"{Net_interest_Income_annual_Cagr_10 }%",
                          'Net Interest Income CAGR 5 YR': f"{Net_interest_Income_annual_Cagr_5 }%",
                          'RSI (14)': [RSI],
@@ -10396,6 +10461,7 @@ if selected == "Stock Analysis Tool":
                          '200 SMA': [Moving_200]
                          
                          }
+
 
 
                          df1 = style_dataframe(create_dataframe(data1))
@@ -13616,66 +13682,6 @@ if selected == "Stock Analysis Tool":
 
 
 
-
-                    
-
-                                   try:
-                                        value_at_index_6 = dividendPaidInTheLast21Years_unpacked[-6]
-                                        value_at_index_last  = dividendPaidInTheLast21Years_unpacked[-1]
-                                   except Exception as e:
-                                        value_at_index_6 = 0
-                                        value_at_index_last = 0
-                                   try:
-                                        
-                                        if value_at_index_6 == 0 or value_at_index_last ==0:
-                                             Dividend_5_CAGR = 0
-
-                                        else:
-                                                  try:
-                                                       Dividend_5_CAGR = (pow((value_at_index_last / value_at_index_6), 0.2) - 1) * 100
-                                                       #CAGR = round(CAGR, 2)
-
-                                                       if isinstance(Dividend_5_CAGR, complex):
-                                                                 Dividend_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
-                                                       else:
-                                                            Dividend_5_CAGR = "{:.2f}".format(Dividend_5_CAGR)
-
-                                                  except Exception as e:
-                                                       Dividend_5_CAGR = 0
-
-                                   except Exception as e:  
-
-                                        Dividend_5_CAGR =0; 
-                              
-               #.................................10  Dividend CAGR............................................                    
-
-                                   try:
-                                        value_at_index_11  = dividendPaidInTheLast21Years_unpacked[-11]
-
-                                   except Exception as e:
-                                        value_at_index_11 = 0
-                                        value_at_index_last = 0
-                                   try:
-                                        
-                                        if value_at_index_11 == 0 or value_at_index_last == 0:
-                                             Dividend_10_CAGR = 0
-
-                                        else:
-                                                  try:
-                                                       Dividend_10_CAGR = (pow((value_at_index_last / value_at_index_11), 0.1) - 1) * 100
-                                                       #CAGR = round(CAGR, 2)
-
-                                                       if isinstance(Dividend_10_CAGR, complex):
-                                                                 Dividend_10_CAGR = 0  # Set CAGR to 0 if it's a complex number
-                                                       else:
-                                                            Dividend_10_CAGR = "{:.2f}".format(Dividend_10_CAGR, 2)
-
-                                                  except Exception as e:
-                                                       Dividend_10_CAGR = 0
-
-                                   except Exception as e:  
-
-                                        Dividend_10_CAGR =0; 
                                    
                #.................................20  Dividend CAGR............................................                    
                                    
