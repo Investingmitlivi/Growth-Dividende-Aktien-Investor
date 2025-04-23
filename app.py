@@ -8417,7 +8417,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_net_income_quarter_10_unpacked'],
 
                                              st.session_state[f'{ticker}_price_to_fcf_annual21_unpacked'],
-                                             st.session_state[f'{ticker}_date_annual_20yrs'],
+                                             st.session_state[f'{ticker}_date_annual_21yrs'],
                                              st.session_state[f'{ticker}_Price_TBV_quarter10_unpacked'],
                                              st.session_state[f'{ticker}_pe_annual_5_unpacked'],
                                              st.session_state[f'{ticker}_pe_annual_10_unpacked'],
@@ -8457,7 +8457,7 @@ if selected == "Stock Analysis Tool":
                               net_income_quarter_10_unpacked = quarterly_data['net_income'][-10:] 
 
                               price_to_fcf_annual21_unpacked=annual_data['price_to_fcf'][-21:]  
-                              date_annual_20yrs = annual_data['period_end_date'][-21:] 
+                              date_annual_21yrs = annual_data['period_end_date'][-21:] 
                               Price_TBV_quarter10_unpacked = quarterly_data['price_to_tangible_book'][-10:]
 
                               pe_annual_5_unpacked  =annual_data['price_to_earnings'][-5:]
@@ -8492,7 +8492,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_net_income_five_years'] = Average_net_income_annual_funf
                               st.session_state[f'{ticker}_net_income_quarter_10_unpacked'] =net_income_quarter_10_unpacked
                               st.session_state[f'{ticker}_price_to_fcf_annual21_unpacked'] = price_to_fcf_annual21_unpacked
-                              st.session_state[f'{ticker}_date_annual_20yrs'] = date_annual_20yrs
+                              st.session_state[f'{ticker}_date_annual_21yrs'] = date_annual_21yrs
                               st.session_state[f'{ticker}_Price_TBV_quarter10_unpacked'] = Price_TBV_quarter10_unpacked
                               st.session_state[f'{ticker}_pe_annual_5_unpacked']= pe_annual_5_unpacked
                               st.session_state[f'{ticker}_pe_annual_10_unpacked']= pe_annual_10_unpacked
@@ -8522,7 +8522,7 @@ if selected == "Stock Analysis Tool":
 
                               return (round_net_income_annual_one,net_income_annual_funf_unpacked, net_income_annual_10_unpacked,
                                    Average_net_income_annual_funf,net_income_quarter_10_unpacked,
-                                   price_to_fcf_annual21_unpacked,date_annual_20yrs,Price_TBV_quarter10_unpacked,pe_annual_5_unpacked,
+                                   price_to_fcf_annual21_unpacked,date_annual_21yrs,Price_TBV_quarter10_unpacked,pe_annual_5_unpacked,
                                         pe_annual_10_unpacked, 
                                         TBVPS_quater1_unpacked,
                                         BVPS_quater1_unpacked,
@@ -8538,7 +8538,7 @@ if selected == "Stock Analysis Tool":
                                         )
 
                          (round_net_income_annual_one, net_income_annual_funf_unpacked,net_income_annual_10_unpacked,
-                         Average_net_income_annual_funf,net_income_quarter_10_unpacked,price_to_fcf_annual21_unpacked,date_annual_20yrs,
+                         Average_net_income_annual_funf,net_income_quarter_10_unpacked,price_to_fcf_annual21_unpacked,date_annual_21yrs,
                          Price_TBV_quarter10_unpacked,pe_annual_5_unpacked,
                               pe_annual_10_unpacked, 
                               TBVPS_quater1_unpacked,
@@ -8674,7 +8674,7 @@ if selected == "Stock Analysis Tool":
                                    return (st.session_state[f'{ticker}_dividend_cagr_10'],
                                         st.session_state[f'{ticker}_dividend_cagr_10_quarter'],
                                         st.session_state[f'{ticker}_Divdend_per_share_ttm'],
-                                        st.session_state[f'{ticker}_Dividend_per_share_annual10_unpacked'],
+                                        st.session_state[f'{ticker}_Dividend_per_share_annual_21_unpacked'],
                                         st.session_state[f'{ticker}_Dividend_per_share_quarter14_unpacked'],
                                         st.session_state[f'{ticker}_Divdends_paid_annual_5_unpacked'])
 
@@ -8688,7 +8688,7 @@ if selected == "Stock Analysis Tool":
 
                               Divdend_per_share_ttm =Financial_data['ttm']['dividends']
 
-                              Dividend_per_share_annual10_unpacked = annual_data['dividends'][-10:]
+                              Dividend_per_share_annual_21_unpacked = annual_data['dividends'][-21:]
 
                               Dividend_per_share_quarter14_unpacked = quarterly_data['dividends'][-14:] 
 
@@ -8700,16 +8700,18 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_dividend_cagr_10'] = Dividend_per_share_cagr_10
                               st.session_state[f'{ticker}_dividend_cagr_10_quarter'] = Dividend_per_share_cagr_10_quarter
                               st.session_state[f'{ticker}_Divdend_per_share_ttm'] = Divdend_per_share_ttm
-                              st.session_state[f'{ticker}_Dividend_per_share_annual10_unpacked'] = Dividend_per_share_annual10_unpacked
+                              st.session_state[f'{ticker}_Dividend_per_share_annual_21_unpacked'] = Dividend_per_share_annual_21_unpacked
                               st.session_state[f'{ticker}_Dividend_per_share_quarter14_unpacked'] = Dividend_per_share_quarter14_unpacked
                               st.session_state[f'{ticker}_Divdends_paid_annual_5_unpacked'] = Divdends_paid_annual_5_unpacked
 
                               return (Dividend_per_share_cagr_10, Dividend_per_share_cagr_10_quarter,
-                              Divdend_per_share_ttm,Dividend_per_share_annual10_unpacked,Dividend_per_share_quarter14_unpacked,Divdends_paid_annual_5_unpacked)
+                              Divdend_per_share_ttm,Dividend_per_share_annual_21_unpacked,Dividend_per_share_quarter14_unpacked,Divdends_paid_annual_5_unpacked)
 
                          (Dividend_per_share_cagr_10, Dividend_per_share_cagr_10_quarter,Divdend_per_share_ttm,
-                         Dividend_per_share_annual10_unpacked,Dividend_per_share_quarter14_unpacked,Divdends_paid_annual_5_unpacked) = calculate_dividend_cagr(annual_data, quarterly_data, ticker)
+                         Dividend_per_share_annual_21_unpacked,Dividend_per_share_quarter14_unpacked,Divdends_paid_annual_5_unpacked) = calculate_dividend_cagr(annual_data, quarterly_data, ticker)
+###################################################################################################
 
+                         Dividend_per_share_annual10_unpacked = Dividend_per_share_annual_21_unpacked[-10:]   
           ###################################################################################################
                          def calculate_cagr_10_years(annual_data, ticker):
                          # Check if the results are already in session state
@@ -13187,7 +13189,7 @@ if selected == "Stock Analysis Tool":
 
 
                                    data = pd.DataFrame({
-                                   'Date': date_annual_20yrs,
+                                   'Date': date_annual_21yrs,
                                    'Revenue (B)': [float(val.rstrip('B')) for val in revenue_annual21],  # Numeric values for plotting
                                    'Revenue Label': revenue_annual21,  # Formatted labels ("XB") for display
                                    'Revenue Growth %': revenue_growth_annual21
@@ -13795,10 +13797,10 @@ if selected == "Stock Analysis Tool":
                          #-------------------------------------------------------------------------------------------------
                               
 
-                                   Dividend_per_share = ["${:.2f}".format(value * 1) for value in Dividend_per_share_annual10_unpacked]
+                                   Dividend_per_share = ["${:.2f}".format(value * 1) for value in Dividend_per_share_annual_21_unpacked]
                                    
                                    data = pd.DataFrame({
-                                   'Date': date_annual,
+                                   'Date': date_annual_21yrs,
                                    'Dividend per Share': Dividend_per_share,
                                    })
 
