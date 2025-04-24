@@ -239,10 +239,8 @@ if selected == "Home":
                for year in range(1, years + 1):
                     periods = year * compounding_frequency
                     
-                    # Future value of initial investment (compound interest formula)
                     future_value_initial = initial_investment * (1 + rate_per_period) ** periods
                     
-                    # Future value of regular contributions (future value of series formula)
                     future_value_contributions = annual_contribution * (((1 + rate_per_period) ** periods - 1) / rate_per_period)
                     
                     # Total future value (ending balance)
@@ -292,16 +290,12 @@ if selected == "Home":
                st.title("Investment Calculator")
                with st.expander("Click to Expand/minimize for Investment Inputs"):
                     # User inputs
-                    #initial_investment = st.number_input("Initial Investment Amount (€)", value=20000.0, min_value=0.0, step=100.0)
                     initial_investment = float(st.text_input("Initial Investment Amount (€):", value=10000.00).replace(',', '.'))
 
-                    #annual_contribution = st.number_input("Additional Contribution (€)", value=1000.0, min_value=0.0, step=100.0)
                     annual_contribution = float(st.text_input("Additional Contribution (€):", value=1000.00).replace(',', '.'))
 
-                    #years = st.number_input("Investment Time Horizon (years)", value=10, min_value=1, step=1)
                     years = int(st.text_input("Investment Time Horizon (years):", value=10).replace(',', '.'))
 
-                    #annual_return = st.number_input("Expected Annual Return (%)", value=9.0, min_value=0.0, step=0.1)
                     annual_return = float(st.text_input("Expected Annual Return (%):", value=9.00).replace(',', '.'))
 
                     compounding_frequency = st.selectbox("Compounding Frequency", [1, 4, 6, 12], index=2)  # Annually, Quarterly, Semi-annually, Monthly
@@ -8425,7 +8419,8 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_TBVPS_quater1_unpacked'],
                                              st.session_state[f'{ticker}_BVPS_quater1_unpacked'],
 
-                                             st.session_state[f'{ticker}_AverageEndPrice_annual5_unpacked'],
+                                             st.session_state[f'{ticker}_EndPrice_annual_10_unpacked'],
+                                             st.session_state[f'{ticker}_market_cap_annual_10_unpacked'],
                                              st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_5_unpacked'],
                                              st.session_state[f'{ticker}_revenue_5years'],
                                              st.session_state[f'{ticker}_len_5_annual'],
@@ -8466,7 +8461,8 @@ if selected == "Stock Analysis Tool":
                               TBVPS_quater1_unpacked = quarterly_data['tangible_book_per_share'][-1:]
                               BVPS_quater1_unpacked = quarterly_data['book_value_per_share'][-1:]
 
-                              AverageEndPrice_annual5_unpacked = annual_data['period_end_price'][-5:]
+                              EndPrice_annual_10_unpacked = annual_data['period_end_price'][-10:]
+                              market_cap_annual_10_unpacked = annual_data['market_cap'][-10:]
                               Net_Operating_CashFlow_annual_5_unpacked = annual_data['cf_cfo'][-5:]
 
                               Revenue_annual_5_unpacked = annual_data['revenue'][-5:]
@@ -8500,7 +8496,8 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_TBVPS_quater1_unpacked']= TBVPS_quater1_unpacked
                               st.session_state[f'{ticker}_BVPS_quater1_unpacked']= BVPS_quater1_unpacked
 
-                              st.session_state[f'{ticker}_AverageEndPrice_annual5_unpacked']= AverageEndPrice_annual5_unpacked
+                              st.session_state[f'{ticker}_EndPrice_annual_10_unpacked']= EndPrice_annual_10_unpacked
+                              st.session_state[f'{ticker}_market_cap_annual_10_unpacked']=market_cap_annual_10_unpacked
                               st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_5_unpacked']= Net_Operating_CashFlow_annual_5_unpacked
                               st.session_state[f'{ticker}_revenue_5years'] = Revenue_annual_5_unpacked
                               st.session_state[f'{ticker}_len_5_annual'] =len_5_annual
@@ -8526,7 +8523,7 @@ if selected == "Stock Analysis Tool":
                                         pe_annual_10_unpacked, 
                                         TBVPS_quater1_unpacked,
                                         BVPS_quater1_unpacked,
-                                        AverageEndPrice_annual5_unpacked,
+                                        EndPrice_annual_10_unpacked,market_cap_annual_10_unpacked,
                                         Net_Operating_CashFlow_annual_5_unpacked,
                                         Revenue_annual_5_unpacked,len_5_annual,
                                         Revenue_annual_10_unpacked,len_10_annual,
@@ -8543,7 +8540,7 @@ if selected == "Stock Analysis Tool":
                               pe_annual_10_unpacked, 
                               TBVPS_quater1_unpacked,
                               BVPS_quater1_unpacked,
-                              AverageEndPrice_annual5_unpacked,
+                              EndPrice_annual_10_unpacked,market_cap_annual_10_unpacked,
                               Net_Operating_CashFlow_annual_5_unpacked,
                               Revenue_annual_5_unpacked,len_5_annual,
                               Revenue_annual_10_unpacked,len_10_annual,
@@ -9044,7 +9041,7 @@ if selected == "Stock Analysis Tool":
                                    return (st.session_state[f'{ticker}_revenue_annual21'],
                                         st.session_state[f'{ticker}_eps_diluted_annual21'],
                                         st.session_state[f'{ticker}_dividendPaidInTheLast21Years'],
-                                        st.session_state[f'{ticker}_Dividends_per_share_growth_annual10'],
+                                        st.session_state[f'{ticker}_Dividends_per_share_growth_annual_21'],
                                         st.session_state[f'{ticker}_revenue_growth_annual21'],
                                         st.session_state[f'{ticker}_shares_diluted_annual21'],
                                         st.session_state[f'{ticker}_Free_cash_flow_annual_21_unpacked'])
@@ -9056,7 +9053,7 @@ if selected == "Stock Analysis Tool":
 
                               dividendPaidInTheLast21Years_unpacked = [abs(value) for value in annual_data['cff_dividend_paid'][-21:]]
 
-                              Dividends_per_share_growth_annual10_unpacked = annual_data['dividends_per_share_growth'][-10:]
+                              Dividends_per_share_growth_annual_21_unpacked = annual_data['dividends_per_share_growth'][-21:]
 
                               revenue_growth_annual21_unpacked = annual_data['revenue_growth'][-21:]
 
@@ -9068,7 +9065,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_revenue_annual21'] = revenue_annual21_unpacked
                               st.session_state[f'{ticker}_eps_diluted_annual21'] = eps_diluted_annual_21_unpacked
                               st.session_state[f'{ticker}_dividendPaidInTheLast21Years'] = dividendPaidInTheLast21Years_unpacked
-                              st.session_state[f'{ticker}_Dividends_per_share_growth_annual10'] = Dividends_per_share_growth_annual10_unpacked
+                              st.session_state[f'{ticker}_Dividends_per_share_growth_annual_21'] = Dividends_per_share_growth_annual_21_unpacked
                               st.session_state[f'{ticker}_revenue_growth_annual21'] = revenue_growth_annual21_unpacked
                               st.session_state[f'{ticker}_shares_diluted_annual21'] = shares_diluted_annual21_unpacked
                               st.session_state[f'{ticker}_Free_cash_flow_annual_21_unpacked'] = Free_cash_flow_annual_21_unpacked
@@ -9076,13 +9073,14 @@ if selected == "Stock Analysis Tool":
 
 
                               return (revenue_annual21_unpacked, eps_diluted_annual_21_unpacked, 
-                                        dividendPaidInTheLast21Years_unpacked, Dividends_per_share_growth_annual10_unpacked, 
+                                        dividendPaidInTheLast21Years_unpacked, Dividends_per_share_growth_annual_21_unpacked, 
                                         revenue_growth_annual21_unpacked, shares_diluted_annual21_unpacked,Free_cash_flow_annual_21_unpacked)
 
                          (revenue_annual21_unpacked, eps_diluted_annual_21_unpacked, 
-                                        dividendPaidInTheLast21Years_unpacked, Dividends_per_share_growth_annual10_unpacked, 
+                                        dividendPaidInTheLast21Years_unpacked, Dividends_per_share_growth_annual_21_unpacked, 
                                         revenue_growth_annual21_unpacked, shares_diluted_annual21_unpacked,Free_cash_flow_annual_21_unpacked) = unpack_annual21_data(annual_data,ticker)
                          
+                         Dividends_per_share_growth_annual10_unpacked = Dividends_per_share_growth_annual_21_unpacked[-10:]
 
                          #############################################################################################################################
 
@@ -10050,13 +10048,13 @@ if selected == "Stock Analysis Tool":
                               
 
                          try:
-
+                              AverageEndPrice_annual5_unpacked=EndPrice_annual_10_unpacked[-5:]
                               AverageEndPrice_annual5 =sum(AverageEndPrice_annual5_unpacked)/len(AverageEndPrice_annual5_unpacked)
 
 
                          except Exception as e: 
                               
-                              AverageEndPrice_annual10_unpacked = 0.0
+                              AverageEndPrice_annual5 = 0.0
           
 
                          if len(Divdends_paid_annual_5_unpacked) >= 5:
@@ -10177,8 +10175,7 @@ if selected == "Stock Analysis Tool":
                               ROIC_TTM = ROIC_annual_one
                               ROA_TTM =average_ROA_annual_ttm
 
-          #######################################################################################################################
-                         #print("ROE_TTM",ROE_TTM)
+         
 
           #####################################################################################################
                          def calculate_total_debt(ticker, date_quarter, 
@@ -13248,27 +13245,6 @@ if selected == "Stock Analysis Tool":
                                    customdata=data['Revenue (B)']  # Uses underlying float values
                                    )                           
 
-                                   revenue_growth_annual_10 = ["{:.2f} %".format(value*100) for value in revenue_growth_annual21_unpacked[-10:]]
-                                   data = pd.DataFrame({
-                                   'Date': date_annual,
-                                   #'Free Cash Flow': Free_cash_flow_annual_2003,
-                                   'Revenue Growth':revenue_growth_annual_10,
-                                   })
-
-                                   fig2 = px.bar(data, x='Date', y='Revenue Growth',
-                                             text='Revenue Growth', 
-                                             labels={'value': 'Amount'},
-                                             ) 
-                                   
-                                   fig2.update_layout(
-                                   dragmode=False,  # Disable dragging for zooming
-                                   )
-
-                                   fig2.update_layout(
-                                   xaxis_type='category' 
-                                   )
-
-
                                    col1,col2 = st.columns(2)
                                    with col1:
                                         st.markdown(f"""
@@ -13315,136 +13291,54 @@ if selected == "Stock Analysis Tool":
                                         st.plotly_chart(fig1, use_container_width=True, config=config)
 
                                    with col2:
-                                        st.markdown(f"""
-                                               <style>
-                                                  @media (max-width: 768px) {{
-                                                       .metrics-container {{
-                                                            flex-direction: column;
-                                                            align-items: center;
-                                                            gap: 4px;
-                                                       }}
-                                                       .metric-item {{
-                                                            padding: 3px 0 !important;
-                                                            width: 100%;
-                                                            text-align: center;
-                                                       }}
-                                                       .divider {{
-                                                            border-left: none !important;
-                                                            border-top: 1px solid #e0e0e0;
-                                                            width: 60%;
-                                                            height: 1px !important;
-                                                            margin: 3px auto !important;
-                                                       }}
-                                                  }}
-                                             </style>
-                                             <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
-                                                  <div class='metrics-container-2' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
-                                                       <div class='metric-item-2' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YEAR Y/Y: </span>
-                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_growth_5years:.2f}%</span>
-                                                       </div>
-                                                       <div class='divider-2' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
-                                                       <div class='metric-item-2' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>CURRENT: </span>
-                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_growth_1year:.2f}%</span>
-                                                       </div>
-                                                  </div>
-                                             </div>
-                                        """, unsafe_allow_html=True)
-                                        st.plotly_chart(fig2, use_container_width=True, config=config)
-                         #...........................................................................................    
-  
-                         #-------------------------------------------------------------------------------------------------
-                         # Get the current year and calculate next year
-                                   current_year = datetime.now().year
-                                   next_year = current_year + 1
+                                        current_year = datetime.now().year
+                                        next_year = current_year + 1
 
-                                   TTM =eps_diluted_ttm
-                                   try:
-                                        EPS_next_year= float(Earnings_next_yr_in_value)
+                                        TTM =eps_diluted_ttm
+                                        try:
+                                             EPS_next_year= float(Earnings_next_yr_in_value)
 
-                                   except Exception as e:
-                                        EPS_next_year = 0  # or handle it in a way that suits your application
+                                        except Exception as e:
+                                             EPS_next_year = 0  # or handle it in a way that suits your application
 
-                                   eps_diluted_annual_10 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_10_unpacked]
+                                        eps_diluted_annual_10 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_10_unpacked]
 
-                                   data = pd.DataFrame({
-                                   #'Date': date_annual+ ['TTM', '2025'],
-                                   'Date': date_annual + ['TTM', str(next_year)],
-                                   'EPS': eps_diluted_annual_10 + [f"$ {TTM:.2f}", f"$ {EPS_next_year:.2f}"]
-                                   })
+                                        data = pd.DataFrame({
+                                        #'Date': date_annual+ ['TTM', '2025'],
+                                        'Date': date_annual + ['TTM', str(next_year)],
+                                        'EPS': eps_diluted_annual_10 + [f"$ {TTM:.2f}", f"$ {EPS_next_year:.2f}"]
+                                        })
 
-                                   # Create a Streamlit app
-                                   data['EPS_float'] = data['EPS'].str.replace('$', '').astype(float)
+                                        # Create a Streamlit app
+                                        data['EPS_float'] = data['EPS'].str.replace('$', '').astype(float)
 
-                                   # Create a Plotly Express bar chart with side-by-side bars
-                                   
-                                   fig1 = px.bar(data, x='Date', y='EPS',
-                                             text='EPS',  # Display the value on top of each bar
-                                             labels={'value': 'EPS ($)'},  # Include the percentage sign in the label
-                                             ) 
+                                        # Create a Plotly Express bar chart with side-by-side bars
+                                        
+                                        fig1 = px.bar(data, x='Date', y='EPS',
+                                                  text='EPS',  # Display the value on top of each bar
+                                                  labels={'value': 'EPS ($)'},  # Include the percentage sign in the label
+                                                  ) 
 
-                                   fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+                                        fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
 
-                                   #streamlit_blue = '#1f77b4'  # This is Streamlit's default blue color
-                                   colors = len(date_annual) 
-                                   fig1.update_traces(marker_color=colors)
+                                        #streamlit_blue = '#1f77b4'  # This is Streamlit's default blue color
+                                        colors = len(date_annual) 
+                                        fig1.update_traces(marker_color=colors)
 
-                                   # Update layout for better readability
-                                   fig1.update_layout(
-                                   xaxis_title="Date",
-                                   yaxis_title="EPS ($)",
-                                   legend_title="EPS Type",
-                                   font=dict(size=12),
-                                   yaxis_range=[0, max(data['EPS_float'].max(), TTM, EPS_next_year) * 1.1],
-                                   xaxis_type='category' 
-                                   )
+                                        # Update layout for better readability
+                                        fig1.update_layout(
+                                        xaxis_title="Date",
+                                        yaxis_title="EPS ($)",
+                                        legend_title="EPS Type",
+                                        font=dict(size=12),
+                                        yaxis_range=[0, max(data['EPS_float'].max(), TTM, EPS_next_year) * 1.1],
+                                        xaxis_type='category' 
+                                        )
 
-                                   fig1.update_layout(
-                                   dragmode=False,  # Disable dragging for zooming
-                                   )
+                                        fig1.update_layout(
+                                        dragmode=False,  # Disable dragging for zooming
+                                        )
 
-
-                                   # Format shares outstanding in millions with "M" suffix
-                                   shares_diluted_annual_10 = ["{:.2f}M".format(value/1_000_000) for value in shares_diluted_annual21_unpacked[-10:]]
-
-                                   data = pd.DataFrame({
-                                   'Date': date_annual,
-                                   'Shares Outstanding (M)': [float(val.rstrip('M')) for val in shares_diluted_annual_10],  # Store as float for plotting
-                                   'Shares Label': shares_diluted_annual_10  # Keep formatted labels for display
-                                   })
-
-                                   fig2 = px.bar(data, x='Date', y='Shares Outstanding (M)',
-                                             text='Shares Label',  # Display formatted "XM" values on bars
-                                             labels={'Shares Outstanding (M)': 'Shares Outstanding (Millions)'},
-                                             )
-
-                                   # Improve formatting
-                                   fig2.update_layout(
-                                   dragmode=False,
-                                   xaxis_type='category',
-                                   yaxis=dict(
-                                        title='Shares Outstanding (Millions)',
-                                        tickprefix='',  # Optional: Add "$" if currency is relevant
-                                        ticksuffix='M'  # Adds "M" to y-axis ticks
-                                   ),
-                                   hovermode='x unified',  # Cleaner hover labels
-                                   hoverlabel=dict(
-                                        bgcolor='white',
-                                        font_size=12
-                                   )
-                                   )
-
-                                   # Format hover template to show full precision
-                                   fig2.update_traces(
-                                   hovertemplate='<b>%{x}</b><br>Shares: %{customdata:.3f}M<extra></extra>',
-                                   customdata=data['Shares Outstanding (M)']  # Uses underlying float values
-                                   )
-
-
-                                   col1,col2 = st.columns(2)
-
-                                   with col1:
                                         st.markdown(f"""
                                              <style>
                                                   @media (max-width: 768px) {{
@@ -13491,65 +13385,72 @@ if selected == "Stock Analysis Tool":
                                              </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1, use_container_width=True, config=config)
-
-                                   with col2:
-                                        st.markdown(f"""
-                                             <style>
-                                                  @media (max-width: 768px) {{
-                                                       .buyback-container {{
-                                                            padding: 0.5vw !important;
-                                                       }}
-                                                       .buyback-metric {{
-                                                            white-space: normal !important;
-                                                            padding: 3px 0 !important;
-                                                       }}
-                                                  }}
-                                             </style>
-                                             <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
-                                                  <div class='buyback-container' style='display: flex; justify-content: center; align-items: baseline;'>
-                                                       <div class='buyback-metric' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Share Buyback/dilution past 5 YR: </span>
-                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Shares_outstanding_funf_growth:.2f}%</span>
-                                                       </div>
-                                                  </div>
-                                             </div>
-                                        """, unsafe_allow_html=True)
-                                        st.plotly_chart(fig2, use_container_width=True, config=config)
+                         #...........................................................................................    
+  
                          #-------------------------------------------------------------------------------------------------
-    #-------------------------------------------------------------------------------------------------
-                              
+                         # Get the current year and calculate next year
+                          
 
-                                   
-                                        #Price_to_earnings=annual_data['price_to_earnings'][-10:]
+                                   # Format shares outstanding in millions with "M" suffix
+                                   shares_diluted_annual_10 = ["{:.2f}M".format(value/1_000_000) for value in shares_diluted_annual21_unpacked[-10:]]
+
                                    data = pd.DataFrame({
                                    'Date': date_annual,
-                                   'Revenue per Share': revenue_per_share_annual_10_unpacked,
+                                   'Shares Outstanding (M)': [float(val.rstrip('M')) for val in shares_diluted_annual_10],  # Store as float for plotting
+                                   'Shares Label': shares_diluted_annual_10  # Keep formatted labels for display
                                    })
 
+                                   fig2 = px.bar(data, x='Date', y='Shares Outstanding (M)',
+                                             text='Shares Label',  # Display formatted "XM" values on bars
+                                             labels={'Shares Outstanding (M)': 'Shares Outstanding (Millions)'},
+                                             )
 
-                                   
-                                   fig1 = px.bar(data, x='Date', y='Revenue per Share',
-                                                  text='Revenue per Share',  # Display the value on top of each bar
-                                                  labels={'value': 'Amount()'},  # Include the percentage sign in the label
-                                                  )
- 
-
-                                   fig1.update_layout(
-                                   dragmode=False,  # Disable dragging for zooming
+                                   # Improve formatting
+                                   fig2.update_layout(
+                                   dragmode=False,
+                                   xaxis_type='category',
+                                   yaxis=dict(
+                                        title='Shares Outstanding (Millions)',
+                                        tickprefix='',  # Optional: Add "$" if currency is relevant
+                                        ticksuffix='M'  # Adds "M" to y-axis ticks
+                                   ),
+                                   hovermode='x unified',  # Cleaner hover labels
+                                   hoverlabel=dict(
+                                        bgcolor='white',
+                                        font_size=12
                                    )
-                                   fig1.update_layout(
-                                   xaxis_type='category' 
                                    )
 
-                         
-                              # Extract the last 21 years of dividends per share growth data
-                                   
-                 
+                                   # Format hover template to show full precision
+                                   fig2.update_traces(
+                                   hovertemplate='<b>%{x}</b><br>Shares: %{customdata:.3f}M<extra></extra>',
+                                   customdata=data['Shares Outstanding (M)']  # Uses underlying float values
+                                   )
 
-                                 
 
-                                   col1, col2 =st.columns(2)
+                                   col1,col2 = st.columns(2)
+
                                    with col1:
+                                                                                #Price_to_earnings=annual_data['price_to_earnings'][-10:]
+                                        data = pd.DataFrame({
+                                        'Date': date_annual,
+                                        'Revenue per Share': revenue_per_share_annual_10_unpacked,
+                                        })
+
+
+                                        
+                                        fig1 = px.bar(data, x='Date', y='Revenue per Share',
+                                                       text='Revenue per Share',  # Display the value on top of each bar
+                                                       labels={'value': 'Amount()'},  # Include the percentage sign in the label
+                                                       )
+     
+
+                                        fig1.update_layout(
+                                        dragmode=False,  # Disable dragging for zooming
+                                        )
+                                        fig1.update_layout(
+                                        xaxis_type='category' 
+                                        )
                                         st.markdown(f"""
                                         <style>
                                              @media (max-width: 768px) {{
@@ -13598,93 +13499,32 @@ if selected == "Stock Analysis Tool":
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
 
 
-                          #-------------------------------------------------------------------------------------------------
-                                   try:
-                                        ebitda_Margin_annual_10_unpacked = ["{:.2f}%".format(ebitda_Margin_annual_10_unpacked * 100) for ebitda_Margin_annual_10_unpacked in ebitda_Margin_annual_10_unpacked]
-                                        ebitda_Margin_annual_5_average = "{:.2f}".format((ebitda_Margin_annual_5_average)*100)
-                                        EBITDA_MARGIN_TTM ="{:.2f}".format(EBITDA_MARGIN_TTM)
-                                   except Exception as e:
-                                        ebitda_Margin_annual_10_unpacked = 0.0
-                                        ebitda_Margin_annual_5_average = 0.0
-                                        EBITDA_MARGIN_TTM = 0.0
-                                   data = pd.DataFrame({
-                                   'Date': date_annual,
-                                   'EBITDA Margin': ebitda_Margin_annual_10_unpacked,
-                                   })
-
-                                   
-                                   fig1 = px.bar(data, x='Date', y='EBITDA Margin',
-                                                  text='EBITDA Margin',  # Display the value on top of each bar
-                                                  labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                                  #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
-                                                  )
- 
- 
-
-                                   fig1.update_layout(
-                                   dragmode=False,  # Disable dragging for zooming
-                                   )
-                                   fig1.update_layout(
-                                   xaxis_type='category' 
-                                   )
-
-                         
-                                   
-                 
 
                                    with col2:
                                         st.markdown(f"""
-                                        <style>
-                                             @media (max-width: 768px) {{
-                                                  .ebitda-container {{
-                                                       flex-direction: column;
-                                                       align-items: center;
-                                                       gap: 4px;
+                                             <style>
+                                                  @media (max-width: 768px) {{
+                                                       .buyback-container {{
+                                                            padding: 0.5vw !important;
+                                                       }}
+                                                       .buyback-metric {{
+                                                            white-space: normal !important;
+                                                            padding: 3px 0 !important;
+                                                       }}
                                                   }}
-                                                  .ebitda-item {{
-                                                       padding: 3px 0 !important;
-                                                       width: 100%;
-                                                       text-align: center;
-                                                  }}
-                                                  .ebitda-divider {{
-                                                       border-left: none !important;
-                                                       border-top: 1px solid #e0e0e0;
-                                                       width: 60%;
-                                                       height: 1px !important;
-                                                       margin: 3px auto !important;
-                                                  }}
-                                                  .ebitda-desc {{
-                                                       margin-top: 3px !important;
-                                                       font-size: 12px !important;
-                                                  }}
-                                             }}
-                                        </style>
-                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
-                                             <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
-                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Y/Y: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{ebitda_Margin_annual_5_average}%</span>
-                                                  </div>
-                                                  <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
-                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{EBITDA_MARGIN_TTM}%</span>
+                                             </style>
+                                             <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
+                                                  <div class='buyback-container' style='display: flex; justify-content: center; align-items: baseline;'>
+                                                       <div class='buyback-metric' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Share Buyback/dilution past 5 YR: </span>
+                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Shares_outstanding_funf_growth:.2f}%</span>
+                                                       </div>
                                                   </div>
                                              </div>
-                                             <div class='ebitda-desc' style='margin-top: 0.5vw; text-align: center;'>
-                                                  <span style='font-family: Calibri; font-weight: bold; font-size: clamp(10px, 1.1vw, 13px);'>
-                                                  Die EBITDA-Marge zeigt, wie effizient ein Unternehmen Umsatz in operativen Gewinn umwandelt, bevor Zinsen, Steuern, Abschreibungen und Amortisationen berücksichtigt werden.
-                                                  </span>
-                                             </div>
-                                        </div>
                                         """, unsafe_allow_html=True)
-                                        st.plotly_chart(fig1, use_container_width=True,config=config)
-         
-         
+                                        st.plotly_chart(fig2, use_container_width=True, config=config)
+                         #-------------------------------------------------------------------------------------------------
 
-
-
-                                   
                #.................................20  Dividend CAGR............................................                    
                                    
                                    data = pd.DataFrame({
@@ -13795,57 +13635,72 @@ if selected == "Stock Analysis Tool":
                
 
                          #-------------------------------------------------------------------------------------------------
-                              
-
                                    Dividend_per_share = ["${:.2f}".format(value * 1) for value in Dividend_per_share_annual_21_unpacked]
+
+                                   Dividends_per_share_growth_average_annual_10 = "{:.2f}%".format((sum(Dividends_per_share_growth_annual10_unpacked)/len(Dividends_per_share_growth_annual10_unpacked)*100))
+                                   Dividends_per_share_growth_last_5_years_growth = "{:.2f}%".format((sum(Dividends_per_share_growth_annual10_unpacked[-5:])/len(Dividends_per_share_growth_annual10_unpacked[-5:])*100))  # Extract last 5 years
+                                   Dividends_per_share_growth_annual_21 = ["{:.2f}%".format(value * 100) for value in Dividends_per_share_growth_annual_21_unpacked]                                   
                                    
                                    data = pd.DataFrame({
                                    'Date': date_annual_21yrs,
-                                   'Dividend per Share': Dividend_per_share,
+                                   'Dividend per Share': [float(val.lstrip('$')) for val in Dividend_per_share],  # Numeric values for plotting
+                                   'Dividend Label': Dividend_per_share,  # Formatted labels ("$X.XX") for display
+                                   'Dividend Growth %': Dividends_per_share_growth_annual_21
                                    })
 
-                                   
                                    fig1 = px.bar(data, x='Date', y='Dividend per Share',
-                                                  text='Dividend per Share',  # Display the value on top of each bar
-                                                  labels={'value': 'Amount($)'},  # Include the percentage sign in the label
-                                                  )
-
-
-                                   fig1.update_layout(
-                                   dragmode=False,  # Disable dragging for zooming
-                                   )
-                                   fig1.update_layout(
-                                   xaxis_type='category' 
-                                   )
-
-                         
-                                   Dividends_per_share_growth_average_annual_10 = "{:.2f}%".format((sum(Dividends_per_share_growth_annual10_unpacked)/len(Dividends_per_share_growth_annual10_unpacked)*100))
-                                   Dividends_per_share_growth_last_5_years_growth = "{:.2f}%".format((sum(Dividends_per_share_growth_annual10_unpacked[-5:])/len(Dividends_per_share_growth_annual10_unpacked[-5:])*100))  # Extract last 5 years
-                                   Dividends_per_share_growth_annual_10 = ["{:.2f}%".format(value * 100) for value in Dividends_per_share_growth_annual10_unpacked]
-
-
-                                   # Create a DataFrame
-                                   data = pd.DataFrame({
-                                   'Date': date_annual,
-                                   'Dividend per Share growth': Dividends_per_share_growth_annual_10,
-                                   })
-
-
-
-                                   # Create a Plotly Express bar chart
-                                   fig2 = px.bar(data, x='Date', y='Dividend per Share growth',
-                                             text='Dividend per Share growth',  # Corrected the column name
-                                             labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                             text='Dividend Label',  # Display the value on top of each bar
+                                             labels={'Dividend per Share': 'Amount($)'},
                                              )
 
-                                   fig2.update_layout(
-                                   dragmode=False,  # Disable dragging for zooming
+                                   # Add dividend growth line (hidden by default)
+                                   fig1.add_trace(go.Scatter(
+                                   x=data['Date'],
+                                   y=data['Dividend Growth %'].str.rstrip('%').astype('float'),
+                                   name='Dividend Growth %',
+                                   line=dict(color='red', width=2),
+                                   yaxis='y2',
+                                   mode='lines+markers',
+                                   hovertemplate='%{y:.2f}%',
+                                   visible="legendonly"
+                                   ))
+
+                                   # Configure axes and layout
+                                   fig1.update_layout(
+                                   yaxis=dict(
+                                        title='Dividend per Share',
+                                        ticksuffix='$',  # Adds "$" to y-axis ticks
+                                   ),
+                                   yaxis2=dict(
+                                        title='Growth Rate (%)',
+                                        overlaying='y',
+                                        side='right',
+                                        range=[0, max(data['Dividend Growth %'].str.rstrip('%').astype('float')) * 1.1]
+                                   ),
+                                   dragmode=False,
+                                   xaxis_type='category',
+                                   legend=dict(
+                                        orientation="h",
+                                        yanchor="bottom",
+                                        y=1.02,
+                                        xanchor="right",
+                                        x=1
+                                   ),
+                                   hovermode='x unified',
+                                   hoverlabel=dict(
+                                        bgcolor='white',
+                                        font_size=12
+                                   )
                                    )
 
-                                   fig2.update_layout(
-                                   xaxis_type='category' 
+                                   # Format hover template to show full precision
+                                   fig1.update_traces(
+                                   selector={'name': 'Dividend per Share'},  # Applies to bars only
+                                   hovertemplate='<b>%{x}</b><br>Dividend: $%{customdata:.2f}<extra></extra>',
+                                   customdata=data['Dividend per Share']  # Uses underlying float values
                                    )
-
+                                                            
+                                  
                                    col1, col2 =st.columns(2)
                                    with col1:
                                         st.markdown(f"""
@@ -13881,49 +13736,101 @@ if selected == "Stock Analysis Tool":
                                                        <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Yield: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_per_share_yield}</span>
                                                   </div>
+                                                   <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 10 CAGR: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_average_annual_10}</span>
+                                                  </div> <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 5 CAGR: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_last_5_years_growth}</span>
+                                                  </div>
                                              </div>
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
 
                                    with col2:
+                              #-------------------------------------------------------------------------------------------------
+                                        try:
+                                             ebitda_Margin_annual_10_unpacked = ["{:.2f}%".format(ebitda_Margin_annual_10_unpacked * 100) for ebitda_Margin_annual_10_unpacked in ebitda_Margin_annual_10_unpacked]
+                                             ebitda_Margin_annual_5_average = "{:.2f}".format((ebitda_Margin_annual_5_average)*100)
+                                             EBITDA_MARGIN_TTM ="{:.2f}".format(EBITDA_MARGIN_TTM)
+                                        except Exception as e:
+                                             ebitda_Margin_annual_10_unpacked = 0.0
+                                             ebitda_Margin_annual_5_average = 0.0
+                                             EBITDA_MARGIN_TTM = 0.0
+                                        data = pd.DataFrame({
+                                        'Date': date_annual,
+                                        'EBITDA Margin': ebitda_Margin_annual_10_unpacked,
+                                        })
+
+                                        
+                                        fig1 = px.bar(data, x='Date', y='EBITDA Margin',
+                                                       text='EBITDA Margin',  # Display the value on top of each bar
+                                                       labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                                       #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
+                                                       )
+     
+     
+
+                                        fig1.update_layout(
+                                        dragmode=False,  # Disable dragging for zooming
+                                        )
+                                        fig1.update_layout(
+                                        xaxis_type='category' 
+                                        )
+
+                         
+                                   
+                 
+
+                                   with col2:
                                         st.markdown(f"""
                                         <style>
                                              @media (max-width: 768px) {{
-                                                  .growth-container {{
+                                                  .ebitda-container {{
                                                        flex-direction: column;
                                                        align-items: center;
                                                        gap: 4px;
                                                   }}
-                                                  .growth-item {{
+                                                  .ebitda-item {{
                                                        padding: 3px 0 !important;
                                                        width: 100%;
                                                        text-align: center;
                                                   }}
-                                                  .growth-divider {{
+                                                  .ebitda-divider {{
                                                        border-left: none !important;
                                                        border-top: 1px solid #e0e0e0;
                                                        width: 60%;
                                                        height: 1px !important;
                                                        margin: 3px auto !important;
                                                   }}
+                                                  .ebitda-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
                                              }}
                                         </style>
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
-                                             <div class='growth-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
-                                                  <div class='growth-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10 YR Growth Y/Y: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_average_annual_10}</span>
+                                             <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{ebitda_Margin_annual_5_average}%</span>
                                                   </div>
-                                                  <div class='growth-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
-                                                  <div class='growth-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Growth Y/Y: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_last_5_years_growth}</span>
+                                                  <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{EBITDA_MARGIN_TTM}%</span>
                                                   </div>
+                                             </div>
+                                             <div class='ebitda-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-weight: bold; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Die EBITDA-Marge zeigt, wie effizient ein Unternehmen Umsatz in operativen Gewinn umwandelt, bevor Zinsen, Steuern, Abschreibungen und Amortisationen berücksichtigt werden.
+                                                  </span>
                                              </div>
                                         </div>
                                         """, unsafe_allow_html=True)
-                                        st.plotly_chart(fig2, use_container_width=True,config=config)
+                                        st.plotly_chart(fig1, use_container_width=True,config=config)
+         
 
 
 
@@ -14223,7 +14130,7 @@ if selected == "Stock Analysis Tool":
                                              </div>
                                              <div class='operating-desc' style='margin-top: 0.5vw; text-align: center;'>
                                                   <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
-                                                  Die Operative Marge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) und der Betriebskosten (wie Material-, Produktions-, Verwaltungs- und Vertriebskosten) vom Umsatz übrig bleibt.                                                  </span>
+                                                  Die Operative Marge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) und der Betriebskosten vom Umsatz übrig bleibt. </span>
                                              </div>
                                         </div>
                                         """, unsafe_allow_html=True)
@@ -14614,8 +14521,8 @@ if selected == "Stock Analysis Tool":
                                    )
 
 
-                                   col2, col3 =st.columns(2)
-                                   with col2:
+                                   col1, col2 =st.columns(2)
+                                   with col1:
                                         st.markdown(f"""
                                         <style>
                                              @media (max-width: 768px) {{
@@ -14667,7 +14574,114 @@ if selected == "Stock Analysis Tool":
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig21,use_container_width=True,config=config)
 
-                              
+                                   with col2:
+
+                                        OCF_10 = ["{:.2f}".format(value) for value in Net_Operating_CashFlow_annual_10_unpacked]
+                                        market_cap_annual_10 = ["{:.2f}".format(value) for value in market_cap_annual_10_unpacked]
+
+                                        # Calculate Price-to-OCF ratio
+                                        Price_to_OCF_10 = []
+                                        for mc, ocf in zip(market_cap_annual_10, OCF_10):
+                                             mc_float = float(mc)
+                                             ocf_float = float(ocf)
+                                             if ocf_float != 0:  # Avoid division by zero
+                                                  ratio = mc_float / ocf_float
+                                                  Price_to_OCF_10.append("{:.2f}".format(ratio))
+                                             else:
+                                                  Price_to_OCF_10.append("N/A")
+                                                  
+     
+                                        #Price_to_earnings = "{:.2f}".format((Price_to_earnings))
+                                        data = pd.DataFrame({
+                                        'Date': date_annual,
+                                        'P/OCF Ratio': Price_to_OCF_10,
+                                        })
+                                        
+                                        fig21 = px.bar(data, x='Date', y='P/OCF Ratio',
+                                                  text ='P/OCF Ratio',
+                                                  labels={'value': 'Ratio'},
+                                                  )  # Use 'group' to display bars side by side
+
+                                                                                                                                                 
+                                        fig21.add_shape(
+                                        type='line',
+                                        x0=data['Date'].min(),  # Adjust this based on your data
+                                        x1=data['Date'].max(),  # Adjust this based on your data
+                                        y0=P_OCF_10,
+                                        y1=P_OCF_10,
+                                        line=dict(color='red', width=2, dash='dash'),
+                                        yref='y',
+                                        )
+                                        
+                                        fig21.add_annotation(
+                                        text=f'',
+                                        xref='paper',  # Set xref to 'paper' for center alignment
+                                        yref='paper',  # Set yref to 'paper' for center alignment
+                                        x=0.10,  # Adjust to center horizontally
+                                        y=0.7,  # Adjust to center vertically
+                                        showarrow=False,  # Remove the arrow
+                                        font=dict(color='red'),  # Set font color to red
+                                        )                    
+
+                                        fig21.update_layout(
+                                        dragmode=False,  # Disable dragging for zooming
+                                        )
+
+                                        fig21.update_layout(
+                                        xaxis_type='category' 
+                                        )
+
+
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .pe-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .pe-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .pe-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                             }}
+                                             @media (min-width: 769px) and (max-width: 1024px) {{
+                                                  .pe-item {{
+                                                       padding: 0 0.5vw !important;
+                                                  }}
+                                                  .pe-item span:first-child {{
+                                                       font-size: clamp(9px, 1.0vw, 11px) !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='pe-container' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
+                                                  <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/OCF: </span>
+                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{P_OCF_10}</span>
+                                                  </div>
+                                                  <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                  <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/OCF: </span>
+                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{P_OCF_5}</span>
+                                                  </div>
+                                                  <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                  <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Current P/OCF: </span>
+                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{P_OCF_ttm}</span>
+                                                  </div>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                        st.plotly_chart(fig21,use_container_width=True,config=config)
 
                                    #-------------------------------------------------------------------------------------------------
 
