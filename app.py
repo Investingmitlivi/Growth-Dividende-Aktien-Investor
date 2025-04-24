@@ -12977,7 +12977,6 @@ if selected == "Stock Analysis Tool":
                               display_growth_rate_form()
                          if __name__ == "__main__":
                               main()
-          #####################################################################################################################################################                             
 
 
 #####################################################################################################################################################          
@@ -14314,12 +14313,12 @@ if selected == "Stock Analysis Tool":
                                    
                                    fig21.add_annotation(
                                    text=f'',
-                                   xref='paper',  # Set xref to 'paper' for center alignment
-                                   yref='paper',  # Set yref to 'paper' for center alignment
-                                   x=0.10,  # Adjust to center horizontally
-                                   y=0.7,  # Adjust to center vertically
-                                   showarrow=False,  # Remove the arrow
-                                   font=dict(color='red'),  # Set font color to red
+                                   xref='paper',  
+                                   yref='paper',  
+                                   x=0.10,  
+                                   y=0.7,  
+                                   showarrow=False,  
+                                   font=dict(color='red'),  
                                    )                    
 
                                    fig21.update_layout(
@@ -14357,16 +14356,16 @@ if selected == "Stock Analysis Tool":
                                    )
                                    
                                    fig22.add_annotation(text=f'',
-                                   xref='paper',  # Set xref to 'paper' for center alignment
-                                   yref='paper',  # Set yref to 'paper' for center alignment
-                                   x=0.10,  # Adjust to center horizontally
-                                   y=0.7,  # Adjust to center vertically
-                                   showarrow=False,  # Remove the arrow
-                                   font=dict(color='red'),  # Set font color to red
+                                   xref='paper',  
+                                   yref='paper', 
+                                   x=0.10,  
+                                   y=0.7,  
+                                   showarrow=False,  
+                                   font=dict(color='red'), 
                                    )          
 
                                    fig22.update_layout(
-                                        dragmode=False,  # Disable dragging for zooming
+                                        dragmode=False, 
                                    )
 
 
@@ -14504,10 +14503,10 @@ if selected == "Stock Analysis Tool":
                                    
                                    fig21.add_annotation(
                                    text=f'',
-                                   xref='paper',  # Set xref to 'paper' for center alignment
-                                   yref='paper',  # Set yref to 'paper' for center alignment
-                                   x=0.10,  # Adjust to center horizontally
-                                   y=0.7,  # Adjust to center vertically
+                                   xref='paper',  
+                                   yref='paper',  
+                                   x=0.10,  
+                                   y=0.7,  
                                    showarrow=False,  # Remove the arrow
                                    font=dict(color='red'),  # Set font color to red
                                    )                    
@@ -14615,10 +14614,10 @@ if selected == "Stock Analysis Tool":
                                         
                                         fig21.add_annotation(
                                         text=f'',
-                                        xref='paper',  # Set xref to 'paper' for center alignment
-                                        yref='paper',  # Set yref to 'paper' for center alignment
-                                        x=0.10,  # Adjust to center horizontally
-                                        y=0.7,  # Adjust to center vertically
+                                        xref='paper',  
+                                        yref='paper',  
+                                        x=0.10,  
+                                        y=0.7,  
                                         showarrow=False,  # Remove the arrow
                                         font=dict(color='red'),  # Set font color to red
                                         )                    
@@ -14700,8 +14699,8 @@ if selected == "Stock Analysis Tool":
                                    
                                    fig11.add_shape(
                                    type='line',
-                                   x0=data['Date'].min(),  # Adjust this based on your data
-                                   x1=data['Date'].max(),  # Adjust this based on your data
+                                   x0=data['Date'].min(),  
+                                   x1=data['Date'].max(),  
                                    y0=Average_Price_to_tangible_book,
                                    y1=Average_Price_to_tangible_book,
                                    line=dict(color='red', width=2, dash='dash'),
@@ -14710,11 +14709,11 @@ if selected == "Stock Analysis Tool":
                                    
                                    fig11.add_annotation(
                                    text=f'',
-                                   xref='paper',  # Set xref to 'paper' for center alignment
-                                   yref='paper',  # Set yref to 'paper' for center alignment
-                                   x=0.04,  # Adjust to center horizontally
-                                   y=0.7,  # Adjust to center vertically
-                                   showarrow=False,  # Remove the arrow
+                                   xref='paper',  
+                                   yref='paper', 
+                                   x=0.04,  
+                                   y=0.7,  
+                                   showarrow=False,  
                                    font=dict(color='red'),  # Set font color to red
                                    )
 
@@ -14752,12 +14751,12 @@ if selected == "Stock Analysis Tool":
                                    
                                    fig12.add_annotation(
                                    text=f'',
-                                   xref='paper',  # Set xref to 'paper' for center alignment
-                                   yref='paper',  # Set yref to 'paper' for center alignment
-                                   x=0.10,  # Adjust to center horizontally
-                                   y=0.7,  # Adjust to center vertically
-                                   showarrow=False,  # Remove the arrow
-                                   font=dict(color='red'),  # Set font color to red
+                                   xref='paper',  
+                                   yref='paper',  
+                                   x=0.10,  
+                                   y=0.7,  
+                                   showarrow=False,  
+                                   font=dict(color='red'),  
                                    )
 
                                    fig12.update_layout(
@@ -14768,8 +14767,7 @@ if selected == "Stock Analysis Tool":
                                    xaxis_type='category' 
                                    )
 
-                                   # Display the chart using Streamlit
-                                   #st.plotly_chart(fig12,use_container_width=True,config=config)
+                                  
 
 
                                    col1, col2 =st.columns(2)
