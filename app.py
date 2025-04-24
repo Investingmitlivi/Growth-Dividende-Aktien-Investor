@@ -13194,7 +13194,6 @@ if selected == "Stock Analysis Tool":
                                    })
 
                                    fig1 = px.bar(data, x='Date', y='Revenue (B)',
-                                             text='Revenue Label',  # Show "XB" labels on bars
                                              labels={'Revenue (B)': 'Revenue (Billions)'},
                                              )
 
@@ -13295,50 +13294,72 @@ if selected == "Stock Analysis Tool":
                                         current_year = datetime.now().year
                                         next_year = current_year + 1
 
-                                        TTM =eps_diluted_ttm
+                                        TTM = eps_diluted_ttm
                                         try:
-                                             EPS_next_year= float(Earnings_next_yr_in_value)
-
+                                             EPS_next_year = float(Earnings_next_yr_in_value)
                                         except Exception as e:
-                                             EPS_next_year = 0  # or handle it in a way that suits your application
+                                             EPS_next_year = 0
 
+                                        # Format the data
                                         eps_diluted_annual_10 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_10_unpacked]
+                                        net_income_annual_10 = ["{:.2f}B".format(value/1e9) for value in net_income_annual_10_unpacked]
 
+                                        # Create DataFrame - ensure all arrays have same length
                                         data = pd.DataFrame({
-                                        #'Date': date_annual+ ['TTM', '2025'],
                                         'Date': date_annual + ['TTM', str(next_year)],
-                                        'EPS': eps_diluted_annual_10 + [f"$ {TTM:.2f}", f"$ {EPS_next_year:.2f}"]
+                                        'EPS': eps_diluted_annual_10 + [f"$ {TTM:.2f}", f"$ {EPS_next_year:.2f}"],
+                                        'EPS_float': eps_diluted_annual_10_unpacked + [TTM, EPS_next_year],
+                                        'Net Income (B)': [float(val.rstrip('B')) for val in net_income_annual_10] + [None, None],
+                                        'Net Income Label': net_income_annual_10 + ['', '']
                                         })
 
-                                        # Create a Streamlit app
-                                        data['EPS_float'] = data['EPS'].str.replace('$', '').astype(float)
+                                        # Create base figure with EPS bars
+                                        fig1 = px.bar(data, x='Date', y='EPS_float',
+                                                  #text='EPS',
+                                                  labels={'EPS_float': 'EPS ($)'},
+                                                  )
 
-                                        # Create a Plotly Express bar chart with side-by-side bars
-                                        
-                                        fig1 = px.bar(data, x='Date', y='EPS',
-                                                  text='EPS',  # Display the value on top of each bar
-                                                  labels={'value': 'EPS ($)'},  # Include the percentage sign in the label
-                                                  ) 
+                                        # Add net income line - make sure data is numeric
+                                        fig1.add_trace(go.Scatter(
+                                        x=data['Date'][:-2],  # Exclude TTM and next year for net income
+                                        y=data['Net Income (B)'][:-2],  # Only show actual historical data
+                                        name='Net Income (B)',
+                                        line=dict(color='red', width=2),
+                                        yaxis='y2',
+                                        mode='lines+markers',
+                                        hovertemplate='%{y:.2f}B',
+                                        visible="legendonly"
+                                        ))
 
+                                        # Configure dual axes
+                                        fig1.update_layout(
+                                        yaxis=dict(
+                                             title='EPS ($)',
+                                             tickprefix='$',
+                                             range=[0, max(data['EPS_float']) * 1.1]
+                                        ),
+                                        yaxis2=dict(
+                                             title='Net Income (Billions)',
+                                             overlaying='y',
+                                             side='right',
+                                             tickprefix='$',
+                                             ticksuffix='B',
+                                             range=[0, max(data['Net Income (B)'].dropna()) * 1.1] if len(data['Net Income (B)'].dropna()) > 0 else None
+                                        ),
+                                        xaxis_type='category',
+                                        hovermode='x unified',
+                                        legend=dict(
+                                             orientation="h",
+                                             yanchor="bottom",
+                                             y=1.02,
+                                             xanchor="right",
+                                             x=1
+                                        )
+                                        )
+
+                                        # Visual styling
+                                        fig1.update_traces(marker_color='#1f77b4', selector={'name': 'EPS_float'})
                                         fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
-
-                                        #streamlit_blue = '#1f77b4'  # This is Streamlit's default blue color
-                                        colors = len(date_annual) 
-                                        fig1.update_traces(marker_color=colors)
-
-                                        # Update layout for better readability
-                                        fig1.update_layout(
-                                        xaxis_title="Date",
-                                        yaxis_title="EPS ($)",
-                                        legend_title="EPS Type",
-                                        font=dict(size=12),
-                                        yaxis_range=[0, max(data['EPS_float'].max(), TTM, EPS_next_year) * 1.1],
-                                        xaxis_type='category' 
-                                        )
-
-                                        fig1.update_layout(
-                                        dragmode=False,  # Disable dragging for zooming
-                                        )
 
                                         st.markdown(f"""
                                              <style>
@@ -13650,7 +13671,6 @@ if selected == "Stock Analysis Tool":
                                    })
 
                                    fig1 = px.bar(data, x='Date', y='Dividend per Share',
-                                             text='Dividend Label',  # Display the value on top of each bar
                                              labels={'Dividend per Share': 'Amount($)'},
                                              )
 
