@@ -8409,6 +8409,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_net_income_annual_10_unpacked'],
                                              st.session_state[f'{ticker}_net_income_five_years'],
                                              st.session_state[f'{ticker}_net_income_quarter_10_unpacked'],
+                                             
 
                                              st.session_state[f'{ticker}_price_to_fcf_annual21_unpacked'],
                                              st.session_state[f'{ticker}_date_annual_21yrs'],
@@ -8577,6 +8578,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_revenue_growth_5years'],
                                              st.session_state[f'{ticker}_revenue_growth_10years'],
                                              st.session_state[f'{ticker}_Net_interest_Income_annual_10'],
+                                             st.session_state[f'{ticker}_Retained_earnings_annual_10'],
                                              st.session_state[f'{ticker}_Net_interest_Income_annual_10_growth'],
                                              st.session_state[f'{ticker}_Net_interest_Income_quarter_10_growth'])
                                    
@@ -8607,11 +8609,12 @@ if selected == "Stock Analysis Tool":
 
                               Revenue_growth_10years = (Revenue_growth_10years*100)
 
-
+                              Retained_earnings_annual_10_unpacked = annual_data['retained_earnings'][-10:]
 
 
                               try:
                                    Net_interest_Income_annual_10_unpacked = annual_data['net_interest_income'][-10:]
+                                   
                                    Net_interest_Income_annual_10_growth_unpacked = annual_data['net_interest_income_growth'][-10:]
                                    Net_interest_Income_quarter_10_growth_unpacked = quarterly_data['net_interest_income_growth'][-10:]       
                               except Exception as e:
@@ -8633,7 +8636,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_revenue_growth_10years'] = Revenue_growth_10years
                
                               st.session_state[f'{ticker}_Net_interest_Income_annual_10'] =Net_interest_Income_annual_10_unpacked
-
+                              st.session_state[f'{ticker}_Retained_earnings_annual_10']=Retained_earnings_annual_10_unpacked
                               st.session_state[f'{ticker}_Net_interest_Income_annual_10_growth'] =Net_interest_Income_annual_10_growth_unpacked
                               st.session_state[f'{ticker}_Net_interest_Income_quarter_10_growth'] =Net_interest_Income_quarter_10_growth_unpacked
 
@@ -8648,7 +8651,7 @@ if selected == "Stock Analysis Tool":
                                         Revenue_growth_5years,
                                         
                                         Revenue_growth_10years, 
-                                        Net_interest_Income_annual_10_unpacked,Net_interest_Income_annual_10_growth_unpacked,
+                                        Net_interest_Income_annual_10_unpacked,Retained_earnings_annual_10_unpacked,Net_interest_Income_annual_10_growth_unpacked,
                                         Net_interest_Income_quarter_10_growth_unpacked
                                         )
 
@@ -8660,11 +8663,11 @@ if selected == "Stock Analysis Tool":
                          Revenue_growth_1year,
                          Revenue_growth_3years,
                          Revenue_growth_5years,Revenue_growth_10years,
-                         Net_interest_Income_annual_10_unpacked,
+                         Net_interest_Income_annual_10_unpacked,Retained_earnings_annual_10_unpacked,
                          Net_interest_Income_annual_10_growth_unpacked,
                          Net_interest_Income_quarter_10_growth_unpacked
                          ) = calculate_revenue_and_growth(annual_data,quarterly_data, ticker)
-
+                        
           ###################################################################################################
                          def calculate_dividend_cagr(annual_data, quarterly_data, ticker):
                               if f'{ticker}_dividend_cagr_10' in st.session_state:
@@ -10261,6 +10264,7 @@ if selected == "Stock Analysis Tool":
                                    Enterprise_value_in_Billion = "{:.2f}T".format(Enterprise_value / 1000) if abs(Enterprise_value) >= 1000 else "{:,.2f}B".format(Enterprise_value)
                                    Debt_to_EBITDA = "{:.2f}".format((Total_Debt_from_all_calc / 1000000000) / Ebita_ttm)
                                    Ebita_ttm_Billion = "{:.2f}T".format(Ebita_ttm / 1000) if abs(Ebita_ttm) >= 1000 else "{:,.2f}B".format(Ebita_ttm)
+                                   
 
                               except Exception as e:
                                    Enterprise_value = "N/A"
@@ -10284,6 +10288,8 @@ if selected == "Stock Analysis Tool":
                               fcf_ttm = "{:.2f}B".format(fcf_ttm / 1000000000) if abs(fcf_ttm) >= 1000000000 else "{:,.1f}M".format(fcf_ttm / 1000000)
 
                               current_Operating_cash_Flow_Value = "{:.2f}B".format(current_Operating_cash_Flow / 1000000000) if abs(current_Operating_cash_Flow) >= 1000000000 else "{:,.1f}M".format(current_Operating_cash_Flow / 1000000)
+                              
+
 
                               if current_Operating_cash_Flow != 0:
                                    P_OCF_ttm = "{:.2f}".format(Marketcap / (current_Operating_cash_Flow / 1000000000))
@@ -10329,7 +10335,7 @@ if selected == "Stock Analysis Tool":
                                                             fcf_ttm, current_Operating_cash_Flow)
 
           ############################################################################
-
+                       
 
 
           #################################################################################
@@ -10398,6 +10404,7 @@ if selected == "Stock Analysis Tool":
 
 
                          data2 = {
+                         'FCF Yield': [fcf_yield_ttm],
                          '5 YR Dividend Yield': [Dividend_yield_average], 
                          'Dividend Yield': [Dividend_per_share_yield],
                          'Total Shareholder Return': [Share_holder_yield],
@@ -10419,7 +10426,6 @@ if selected == "Stock Analysis Tool":
                          }
 
                          data3 = {
-                         'FCF Yield': [fcf_yield_ttm],
                          'P/S': [Price_to_sales_last],
                          '5 YR P/S': [P_sales_5],
                          '10 YR P/S': [P_sales_10],
@@ -10436,12 +10442,13 @@ if selected == "Stock Analysis Tool":
                          f'ATH ({format_date(st.session_state.all_time_high_date)})': f"$ {st.session_state.all_time_high_price:.2f}",
                          f'52WK LOW ({format_date(st.session_state.fifty_two_week_low_date)})': f"$ {st.session_state.fifty_two_week_low:.2f}",
                          'Analyst Target Price': [f"$ {Target_Price}"],
-                         'Current price': ["$ {:.2f}".format(current_price)] 
+                         'Current price': ["$ {:.2f}".format(current_price)],
+                         'RSI (14)': [RSI],
                          }
           
 
                          data4 = {
-                         'EPS (TTM)': " {:.2f}".format(eps_diluted_ttm),
+                         
                          'EPS Estimate this YR': f"{Earnings_this_yr}",
                          'EPS Estimate next YR': f" {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
                          'EPS Estimate 5 YR (per annum)': [Earnings_next_5_yrs],
@@ -10455,7 +10462,6 @@ if selected == "Stock Analysis Tool":
                          'Dividend CAGR 5 YR': f"{Dividend_5_CAGR}%",
                          'Net Interest Income CAGR 10 YR': f"{Net_interest_Income_annual_Cagr_10 }%",
                          'Net Interest Income CAGR 5 YR': f"{Net_interest_Income_annual_Cagr_5 }%",
-                         'RSI (14)': [RSI],
                          '50 SMA': [Moving_50],
                          '200 SMA': [Moving_200]
                          
@@ -11211,7 +11217,6 @@ if selected == "Stock Analysis Tool":
                                              Short_term_debt_annual = st.session_state[f'{ticker}_Short_term_debt_annual']
                                              LongTerm_debt_annual = st.session_state[f'{ticker}_LongTerm_debt_annual']
                                              Other_longterm_liabilities_annual = st.session_state[f'{ticker}_Other_longterm_liabilities_annual']
-                                             Retained_earnings_annual = st.session_state[f'{ticker}_Retained_earnings_annual']
                                              Total_liabilities_annual = st.session_state[f'{ticker}_Total_liabilities_annual']
                                              Total_Equity_annual = st.session_state[f'{ticker}_Total_Equity_annual']
 
@@ -11249,7 +11254,6 @@ if selected == "Stock Analysis Tool":
                                              Short_term_debt_annual = annual_data['st_debt'][-10:]
                                              LongTerm_debt_annual = annual_data['lt_debt'][-10:]
                                              Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
-                                             Retained_earnings_annual = annual_data['retained_earnings'][-10:]
                                              Total_liabilities_annual = annual_data['total_liabilities'][-10:]
                                              Total_Equity_annual = annual_data['total_equity'][-10:]
                                              ################################ Quarter###############################
@@ -11288,7 +11292,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_Short_term_debt_annual'] = Short_term_debt_annual
                                              st.session_state[f'{ticker}_LongTerm_debt_annual'] = LongTerm_debt_annual
                                              st.session_state[f'{ticker}_Other_longterm_liabilities_annual'] = Other_longterm_liabilities_annual
-                                             st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
+                                             #st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
                                              st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
                                              st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
 
@@ -11330,7 +11334,7 @@ if selected == "Stock Analysis Tool":
                                         Short_term_debt_annual_df = financials_df(Short_term_debt_annual, date_annual, "Short-Term Debt")
                                         LongTerm_debt_annual_df = financials_df(LongTerm_debt_annual, date_annual, "Long-Term Debt")
                                         Other_longterm_liabilities_annual_df = financials_df(Other_longterm_liabilities_annual, date_annual, "Other Long-Term Liabilities")
-                                        Retained_earnings_annual_df = financials_df(Retained_earnings_annual, date_annual, "Retained Earnings")
+                                        Retained_earnings_annual_df = financials_df(Retained_earnings_annual_10_unpacked, date_annual, "Retained Earnings")
                                         Total_liabilities_annual_df = financials_df(Total_liabilities_annual, date_annual, "Total Liabilities")
                                         Total_Equity_annual_df = financials_df(Total_Equity_annual, date_annual, "Total Equity")
 
@@ -11396,7 +11400,6 @@ if selected == "Stock Analysis Tool":
                                                   Short_term_debt_annual = st.session_state[f'{ticker}_Short_term_debt_annual']
                                                   LongTerm_debt_annual = st.session_state[f'{ticker}_LongTerm_debt_annual']
                                                   Other_longterm_liabilities_annual = st.session_state[f'{ticker}_Other_longterm_liabilities_annual']
-                                                  Retained_earnings_annual = st.session_state[f'{ticker}_Retained_earnings_annual']
                                                   Total_liabilities_annual = st.session_state[f'{ticker}_Total_liabilities_annual']
                                                   Total_Equity_annual = st.session_state[f'{ticker}_Total_Equity_annual']
                                                   ################################ Quarter###############################
@@ -11438,7 +11441,6 @@ if selected == "Stock Analysis Tool":
                                                   Short_term_debt_annual = annual_data['st_debt'][-10:]
                                                   LongTerm_debt_annual = annual_data['lt_debt'][-10:]
                                                   Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
-                                                  Retained_earnings_annual = annual_data['retained_earnings'][-10:]
                                                   Total_liabilities_annual = annual_data['total_liabilities'][-10:]
                                                   Total_Equity_annual = annual_data['total_equity'][-10:]
                                                   ################################ Quarter###############################
@@ -11450,7 +11452,6 @@ if selected == "Stock Analysis Tool":
                                                   Net_goodwill_quarter= quarterly_data['goodwill'][-10:]
                                                   Other_lt_assets_quarter = quarterly_data['other_lt_assets'][-10:]
                                                   Total_assets_quarter = quarterly_data['total_assets'][-10:]
-                                             # st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
                                                   Accounts_payable_quarter = quarterly_data['accounts_payable'][-10:]
                                                   Current_accrued_liab_quarter = quarterly_data['current_accrued_liabilities'][-10:]
                                                   Tax_payable_quarter = quarterly_data['tax_payable'][-10:]
@@ -11480,7 +11481,7 @@ if selected == "Stock Analysis Tool":
                                                   st.session_state[f'{ticker}_Short_term_debt_annual'] = Short_term_debt_annual
                                                   st.session_state[f'{ticker}_LongTerm_debt_annual'] = LongTerm_debt_annual
                                                   st.session_state[f'{ticker}_Other_longterm_liabilities_annual'] = Other_longterm_liabilities_annual
-                                                  st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
+                                                  #st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
                                                   st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
                                                   st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
                                                   ################################ Quarter###############################
@@ -11574,7 +11575,7 @@ if selected == "Stock Analysis Tool":
                                              Short_term_debt_annual_df = financials_df(Short_term_debt_annual, date_annual, "Short-Term Debt")
                                              LongTerm_debt_annual_df = financials_df(LongTerm_debt_annual, date_annual, "Long-Term Debt")
                                              Other_longterm_liabilities_annual_df = financials_df(Other_longterm_liabilities_annual, date_annual, "Other Long-Term Liabilities")
-                                             Retained_earnings_annual_df = financials_df(Retained_earnings_annual, date_annual, "Retained Earnings")
+                                             Retained_earnings_annual_df = financials_df(Retained_earnings_annual_10_unpacked, date_annual, "Retained Earnings")
                                              Total_liabilities_annual_df = financials_df(Total_liabilities_annual, date_annual, "Total Liabilities")
                                              Total_Equity_annual_df = financials_df(Total_Equity_annual, date_annual, "Total Equity")
 
@@ -11641,7 +11642,6 @@ if selected == "Stock Analysis Tool":
                                                   LongTerm_debt_annual = st.session_state[f'{ticker}_LongTerm_debt_annual']
                                                   Other_longterm_liabilities_annual = st.session_state[f'{ticker}_Other_longterm_liabilities_annual']
                                                   Total_liabilities_annual = st.session_state[f'{ticker}_Total_liabilities_annual']
-                                                  Retained_earnings_annual = st.session_state[f'{ticker}_Retained_earnings_annual']
                                                   Total_Equity_annual = st.session_state[f'{ticker}_Total_Equity_annual']
                                                   ############################### Quarter###############################
                                                   Total_investments_quarter  = st.session_state[f'{ticker}_Total_investments_quarterly']
@@ -11671,7 +11671,6 @@ if selected == "Stock Analysis Tool":
                                                   LongTerm_debt_annual = annual_data['lt_debt'][-10:]
                                                   Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
                                                   Total_liabilities_annual = annual_data['total_liabilities'][-10:]
-                                                  Retained_earnings_annual =annual_data['retained_earnings'][-10:]
                                                   Total_Equity_annual = annual_data['total_equity'][-10:]
 
                                                   ############################### Quarter###############################
@@ -11703,7 +11702,6 @@ if selected == "Stock Analysis Tool":
                                                   st.session_state[f'{ticker}_LongTerm_debt_annual'] = LongTerm_debt_annual
                                                   st.session_state[f'{ticker}_Other_longterm_liabilities_annual'] = Other_longterm_liabilities_annual
                                                   st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
-                                                  st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
                                                   st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
                                                   ############################### Quarter###############################
 
@@ -11730,7 +11728,7 @@ if selected == "Stock Analysis Tool":
                                              Other_longterm_assets_annual_df = financials_df(Other_longterm_assets_annual, date_annual, "Other Longterm Assets")
                                              Total_assets_annual_df = financials_df(Total_assets_annual, date_annual, "Total Assets")
                                              Unearned_Premiums_annual_df=financials_df(Unearned_Premiums_annual, date_annual, "Unearned Premiums")
-                                             Retained_earnings_annual_df=financials_df(Retained_earnings_annual, date_annual, "Retained Earnings")
+                                             Retained_earnings_annual_df=financials_df(Retained_earnings_annual_10_unpacked, date_annual, "Retained Earnings")
                                              Short_term_debt_annual_df = financials_df(Short_term_debt_annual, date_annual, "Short-Term Debt")
                                              LongTerm_debt_annual_df = financials_df(LongTerm_debt_annual, date_annual, "Long-Term Debt")
                                              Other_longterm_liabilities_annual_df = financials_df(Other_longterm_liabilities_annual, date_annual, "Other Long-Term Liabilities")
@@ -12040,10 +12038,10 @@ if selected == "Stock Analysis Tool":
 
                          try:
                               if float(five_ROE) < 14.00:
-                                        roe = "🔴"  # Red X for KGV less than 23
+                                        roe = "🔴"  
                               
                               else:
-                                        roe= "🟢"  # Green checkmark for KGV greater than or equal to 23          
+                                        roe= "🟢"          
 
                               if float(five_yrs_Nettomarge) > 5:
                                         
@@ -12055,62 +12053,62 @@ if selected == "Stock Analysis Tool":
 
                          try:
                               if one_FCF_annual_payout > 60:
-                                        payout = "🔴"  # Red X for KGV less than 23
+                                        payout = "🔴"  
 
                               elif one_FCF_annual_payout < 0:
-                                        payout = "🔴"  # Red X for KCV smaller than 0           
+                                        payout = "🔴"          
                               else:
-                                        payout= "🟢"  # Green checkmark for KGV greater than or equal to 23
+                                        payout= "🟢"  
                          except Exception as e:
 
                               payout = "🔴" 
 
                          try:
                               if netincome_annual_funf_growth_ < 0:
-                                        netincome = "🔴"  # Red X for KGV less than 23
+                                        netincome = "🔴"  
                               else:
-                                        netincome= "🟢"  # Green checkmark for KGV greater than or equal to 23
+                                        netincome= "🟢"  
 
 
                               if revenue_annual_funf_Growth < 0:
-                                        rev = "🔴"  # Red X for KGV less than 23
+                                        rev = "🔴" 
                               else:
-                                        rev= "🟢"  # Green checkmark for KGV greater than or equal to 23
+                                        rev= "🟢"  
                          except Exception as e:
                               rev = "🔴" 
                               netincome = "🔴"
 
                          try:
                               if FCF_funf_growth < 0:
-                                        fcf = "🔴"  # Red X for KGV less than 23
+                                        fcf = "🔴"  
                               else:
-                                        fcf= "🟢"  # Green checkmark for KGV greater than or equal to 23
+                                        fcf= "🟢"  
 
 
                               if Shares_outstanding_funf_growth > 0:
-                                        share = "🔴"  # Red X for KGV less than 23
+                                        share = "🔴"  
                               else:
-                                        share= "🟢"  # Green checkmark for KGV greater than or equal to 23
+                                        share= "🟢"  
                          except Exception as e:
 
                               share = "🔴" 
                               fcf = "🔴"
                          try:
                               if Average_ROIC_funf == 'NA' or float(Average_ROIC_funf[:-1]) < 9:
-                                        roic = "🔴"  # Red X for 'NA' or less than 9
+                                        roic = "🔴"  
                               else:
-                                        roic= "🟢"  # Green checkmark for KGV greater than or equal to 23
+                                        roic= "🟢"  
                          except Exception as e:
 
                               roic = "🔴" 
 
                          try:
                               if float(debt_equity_ttm) > 2.0:
-                                        dt_equt = "🔴"  # Red X for KGV less than 23
+                                        dt_equt = "🔴"  
 
                               elif float(debt_equity_ttm) < 0:
                                    
-                                   dt_equt = "🔴"  # Red X for KGV less than 23
+                                   dt_equt = "🔴"  
 
                               else:
                                         dt_equt= "🟢"  # Gree
@@ -12121,12 +12119,12 @@ if selected == "Stock Analysis Tool":
 
                          try:
                               if Schuldentillgung > 5:
-                                   schuld = "🔴"  # Red X for KGV less than 23
+                                   schuld = "🔴"  
                               elif Schuldentillgung < 0:
                                    
-                                   schuld = "🔴"  # Red X for KGV less than 23
+                                   schuld = "🔴"  
                               else:
-                                   schuld= "🟢"  # Gree
+                                   schuld= "🟢"  
                          except Exception as e:
                               schuld ="🔴" 
 
@@ -13361,6 +13359,7 @@ if selected == "Stock Analysis Tool":
                                         fig1.update_traces(marker_color='#1f77b4', selector={'name': 'EPS_float'})
                                         fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
 
+                                   
                                         st.markdown(f"""
                                              <style>
                                                   @media (max-width: 768px) {{
