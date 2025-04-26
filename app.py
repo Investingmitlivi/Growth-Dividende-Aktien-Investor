@@ -10386,6 +10386,7 @@ if selected == "Stock Analysis Tool":
                          'Enterprise Value': [Enterprise_value_in_Billion],
                          'EBITDA (TTM)': [Ebita_ttm_Billion], 
                          'Debt/EBITDA': [Debt_to_EBITDA],
+                         'Debt/Equity': [debt_equity_ttm],
                          'Revenue (TTM)': [revenue_ttm],      
                          '5 YR Net Income': [Average_net_income_annual_funf_Billion_Million], 
                          'Net Income (TTM)': [netincome_ttm], 
