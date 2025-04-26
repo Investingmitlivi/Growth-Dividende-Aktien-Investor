@@ -13693,7 +13693,7 @@ if selected == "Stock Analysis Tool":
                                    })
 
                                    fig1 = px.bar(data, x='Date', y='Dividend per Share',
-                                             labels={'Dividend per Share': 'Amount($)'},
+                                             labels={'Dividend per Share': 'Amount'},
                                              )
 
                                    # Add dividend growth line (hidden by default)
@@ -13712,7 +13712,7 @@ if selected == "Stock Analysis Tool":
                                    fig1.update_layout(
                                    yaxis=dict(
                                         title='Dividend per Share',
-                                        ticksuffix='$',  # Adds "$" to y-axis ticks
+                                        tickprefix='$',  # Adds "$" to y-axis ticks
                                    ),
                                    yaxis2=dict(
                                         title='Growth Rate (%)',
@@ -13742,7 +13742,8 @@ if selected == "Stock Analysis Tool":
                                    hovertemplate='<b>%{x}</b><br>Dividend: $%{customdata:.2f}<extra></extra>',
                                    customdata=data['Dividend per Share']  # Uses underlying float values
                                    )
-                                                            
+                                  
+                          
                                   
                                    col1, col2 =st.columns(2)
                                    with col1:
