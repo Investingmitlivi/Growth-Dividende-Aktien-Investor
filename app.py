@@ -7705,6 +7705,9 @@ if selected == "Stock Analysis Tool":
                shares_basic_annual_one = annual_data['shares_basic'][-1:]
                shares_basic_annual_funf_unpacked = annual_data['shares_basic'][-5:]
 
+               
+            
+
             
 
                #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
@@ -8318,9 +8321,14 @@ if selected == "Stock Analysis Tool":
 
                                         st.session_state[f'{ticker}_FCF_quarter_10_unpacked'],
 
+                                        st.session_state[f'{ticker}_debt_to_asset_annual_10_unpacked'],
+                                        st.session_state[f'{ticker}_debt_to_asset_quarter_10_unpacked'],
+
                                         st.session_state[f'{ticker}_fcf_growth_annual_3_unpacked'],
                                         st.session_state[f'{ticker}_fcf_growth_annual_5_unpacked'],
-                                        st.session_state[f'{ticker}_fcf_growth_annual_10_unpacked'])
+                                        st.session_state[f'{ticker}_fcf_growth_annual_10_unpacked']
+                                        
+                                        )
 
                               FCF_annual1_unpacked =annual_data['fcf'][-1:]
 
@@ -8335,6 +8343,9 @@ if selected == "Stock Analysis Tool":
 
                               FCF_quarter_10_unpacked =quarterly_data['fcf'][-10:]
 
+                              Debt_to_assets_annual_10_unpacked  = annual_data['debt_to_assets'][-10:] 
+                              Debt_to_assets_quartar_10_unpacked  = quarterly_data['debt_to_assets'][-10:]
+
                               fcf_growth_annual_3_unpacked =annual_data['fcf_growth'][-3:]
 
                               fcf_growth_annual_5_unpacked =annual_data['fcf_growth'][-5:]
@@ -8348,14 +8359,23 @@ if selected == "Stock Analysis Tool":
 
                               st.session_state[f'{ticker}_FCF_quarter_10_unpacked'] = FCF_quarter_10_unpacked
 
+                              st.session_state[f'{ticker}_debt_to_asset_annual_10_unpacked'] = Debt_to_assets_annual_10_unpacked
+                              st.session_state[f'{ticker}_debt_to_asset_quarter_10_unpacked'] = Debt_to_assets_quartar_10_unpacked
+
                               st.session_state[f'{ticker}_fcf_growth_annual_3_unpacked'] = fcf_growth_annual_3_unpacked
                               st.session_state[f'{ticker}_fcf_growth_annual_5_unpacked'] = fcf_growth_annual_5_unpacked
                               st.session_state[f'{ticker}_fcf_growth_annual_10_unpacked'] = fcf_growth_annual_10_unpacked
 
-                              return FCF_annual1_unpacked, rounded_fcf_Annual_ten,FCF_annual_five_unpacked,FCF_annual_ten_unpacked,FCF_quarter_10_unpacked,fcf_growth_annual_3_unpacked,fcf_growth_annual_5_unpacked,fcf_growth_annual_10_unpacked
+                              return (FCF_annual1_unpacked, rounded_fcf_Annual_ten,FCF_annual_five_unpacked,
+                                      FCF_annual_ten_unpacked,FCF_quarter_10_unpacked,
+                                        Debt_to_assets_annual_10_unpacked,Debt_to_assets_quartar_10_unpacked,
+                                        fcf_growth_annual_3_unpacked,fcf_growth_annual_5_unpacked,fcf_growth_annual_10_unpacked)
 
                               # Assuming `annual_data` and `ticker` are defined elsewhere
-                         FCF_annual1_unpacked, rounded_fcf_Annual_ten,FCF_annual_five_unpacked,FCF_annual_ten_unpacked,FCF_quarter_10_unpacked,fcf_growth_annual_3_unpacked,fcf_growth_annual_5_unpacked,fcf_growth_annual_10_unpacked = calculate_fcf_averages(annual_data,quarterly_data, ticker)
+                         (FCF_annual1_unpacked, rounded_fcf_Annual_ten,FCF_annual_five_unpacked,FCF_annual_ten_unpacked,
+                          FCF_quarter_10_unpacked,Debt_to_assets_annual_10_unpacked,Debt_to_assets_quartar_10_unpacked,
+                          fcf_growth_annual_3_unpacked,fcf_growth_annual_5_unpacked,
+                          fcf_growth_annual_10_unpacked) = calculate_fcf_averages(annual_data,quarterly_data, ticker)
           ###################################################################################################
                          rounded_fcf_Annual_five = (sum(FCF_annual_five_unpacked) / len(FCF_annual_five_unpacked))
                          Average_fcf_growth_3years =  "{:.2f}%".format(((sum(fcf_growth_annual_3_unpacked) / len(fcf_growth_annual_3_unpacked)))*100)
@@ -8364,7 +8384,7 @@ if selected == "Stock Analysis Tool":
                          rounded_fcf_Annual_one = "{:.2f}B".format(average_fcf_Annual_one)
           ###################################################################################################
 
-                         def calculate_roic_averages(annual_data, ticker):
+                         def calculate_roic_averages(annual_data,ticker):
                               if f'{ticker}_roic_last' in st.session_state:
                                    return (st.session_state[f'{ticker}_roic_last'],
                                         st.session_state[f'{ticker}_ROIC_annual_5_unpacked'],
@@ -8674,6 +8694,7 @@ if selected == "Stock Analysis Tool":
                                    return (st.session_state[f'{ticker}_dividend_cagr_10'],
                                         st.session_state[f'{ticker}_dividend_cagr_10_quarter'],
                                         st.session_state[f'{ticker}_Divdend_per_share_ttm'],
+                                        st.session_state[f'{ticker}_debt_assets_ttm'],
                                         st.session_state[f'{ticker}_Dividend_per_share_annual_21_unpacked'],
                                         st.session_state[f'{ticker}_Dividend_per_share_quarter14_unpacked'],
                                         st.session_state[f'{ticker}_Divdends_paid_annual_5_unpacked'])
@@ -8687,6 +8708,7 @@ if selected == "Stock Analysis Tool":
                               Dividend_per_share_cagr_10_quarter= round((Dividend_per_share_cagr_10_quarter*100),2)
 
                               Divdend_per_share_ttm =Financial_data['ttm']['dividends']
+                              debt_assets_ttm =Financial_data['ttm']['debt_to_assets']
 
                               Dividend_per_share_annual_21_unpacked = annual_data['dividends'][-21:]
 
@@ -8700,14 +8722,15 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_dividend_cagr_10'] = Dividend_per_share_cagr_10
                               st.session_state[f'{ticker}_dividend_cagr_10_quarter'] = Dividend_per_share_cagr_10_quarter
                               st.session_state[f'{ticker}_Divdend_per_share_ttm'] = Divdend_per_share_ttm
+                              st.session_state[f'{ticker}_debt_assets_ttm']=debt_assets_ttm
                               st.session_state[f'{ticker}_Dividend_per_share_annual_21_unpacked'] = Dividend_per_share_annual_21_unpacked
                               st.session_state[f'{ticker}_Dividend_per_share_quarter14_unpacked'] = Dividend_per_share_quarter14_unpacked
                               st.session_state[f'{ticker}_Divdends_paid_annual_5_unpacked'] = Divdends_paid_annual_5_unpacked
 
                               return (Dividend_per_share_cagr_10, Dividend_per_share_cagr_10_quarter,
-                              Divdend_per_share_ttm,Dividend_per_share_annual_21_unpacked,Dividend_per_share_quarter14_unpacked,Divdends_paid_annual_5_unpacked)
+                              Divdend_per_share_ttm,debt_assets_ttm,Dividend_per_share_annual_21_unpacked,Dividend_per_share_quarter14_unpacked,Divdends_paid_annual_5_unpacked)
 
-                         (Dividend_per_share_cagr_10, Dividend_per_share_cagr_10_quarter,Divdend_per_share_ttm,
+                         (Dividend_per_share_cagr_10, Dividend_per_share_cagr_10_quarter,Divdend_per_share_ttm,debt_assets_ttm,
                          Dividend_per_share_annual_21_unpacked,Dividend_per_share_quarter14_unpacked,Divdends_paid_annual_5_unpacked) = calculate_dividend_cagr(annual_data, quarterly_data, ticker)
 ###################################################################################################
 
@@ -8841,16 +8864,13 @@ if selected == "Stock Analysis Tool":
 
                               FCF_Margin_annual_10unpacked = annual_data['fcf_margin'][-10:]
 
-                           
-
+                         
                               FCF_Margin_5 = annual_data['fcf_margin'][-5:] 
                               FCF_Margin_5=sum(FCF_Margin_5)/len(FCF_Margin_5)
 
                               FCF_Margin_1 = annual_data['fcf_margin'][-1:]
                               FCF_Margin_1=sum(FCF_Margin_1)/len(FCF_Margin_1)
                               FCF_Margin_1 = (FCF_Margin_1*100)
-
-
 
                               debt_equity_annual_10_unpacked = annual_data['debt_to_equity'][-10:]
                               Price_to_tangible_book_annual_10_unpacked = annual_data['price_to_tangible_book'][-10:]
@@ -9970,7 +9990,9 @@ if selected == "Stock Analysis Tool":
                          except Exception as e:
                               
                               debt_equity_ttm =debt_equity_ttm
+                              debt_equity_ttm_prozent =0.0
                         
+                         debt_equity_ttm_prozent = "{:.2f}".format(float(debt_equity_ttm)*100)
 
           
                          if Revenue_ttm!=0 and average_revenue_annual_ttm !=0 :
@@ -13768,9 +13790,9 @@ if selected == "Stock Analysis Tool":
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
-
+#-------------------------------------------------------------------------------------------------
                                    with col2:
-                              #-------------------------------------------------------------------------------------------------
+                              
                                         try:
                                              ebitda_Margin_annual_10_unpacked = ["{:.2f}%".format(ebitda_Margin_annual_10_unpacked * 100) for ebitda_Margin_annual_10_unpacked in ebitda_Margin_annual_10_unpacked]
                                              ebitda_Margin_annual_5_average = "{:.2f}".format((ebitda_Margin_annual_5_average)*100)
@@ -13804,7 +13826,7 @@ if selected == "Stock Analysis Tool":
                                    
                  
 
-                                   with col2:
+                                   
                                         st.markdown(f"""
                                         <style>
                                              @media (max-width: 768px) {{
@@ -13852,8 +13874,172 @@ if selected == "Stock Analysis Tool":
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
          
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                   col1, col2 = st.columns(2)
+                                   with col1:
+                              
+                                        try:
+                                             debt_equity_annual_5_unpacked = debt_equity_annual_10_unpacked[-5:]
+                                             debt_equity_annual_5_average = "{:.2f}".format((sum(debt_equity_annual_5_unpacked)/len(debt_equity_annual_5_unpacked))*100)
+                                             debt_equity_annual_10_unpacked = ["{:.2f}%".format(debt_equity_annual_10_unpacked * 100) for debt_equity_annual_10_unpacked in debt_equity_annual_10_unpacked]
+
+                                        except Exception as e:
+                                             debt_equity_annual_10_unpacked = 0.0
+                                             debt_equity_annual_5_average = 0.0
 
 
+                                        data = pd.DataFrame({
+                                        'Date': date_annual,
+                                        'Debt to Equity': debt_equity_annual_10_unpacked,
+                                        })
+
+                                        
+                                        fig1 = px.bar(data, x='Date', y='Debt to Equity',
+                                                       text='Debt to Equity',  # Display the value on top of each bar
+                                                       labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                                       #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
+                                                       )
+     
+     
+
+                                        fig1.update_layout(
+                                        dragmode=False,  # Disable dragging for zooming
+                                        )
+                                        fig1.update_layout(
+                                        xaxis_type='category' 
+                                        )                                   
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .ebitda-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .ebitda-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .ebitda-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .ebitda-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{debt_equity_annual_5_average}%</span>
+                                                  </div>
+                                                  <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{debt_equity_ttm_prozent}%</span>
+                                                  </div>
+                                             </div>
+                                             <div class='ebitda-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-weight: bold; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Debt to Equity ➔ zeigt das Verhältnis der Schulden zum Eigenkapital.
+                                                  </span>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                        st.plotly_chart(fig1, use_container_width=True,config=config)
+         
+                                   with col2:
+                              
+                                        try:
+                                             Debt_to_assets_annual_5_unpacked = Debt_to_assets_annual_10_unpacked[-5:]
+                                             Debt_to_assets_annual_5_average = "{:.2f}".format((sum(Debt_to_assets_annual_5_unpacked)/len(Debt_to_assets_annual_5_unpacked))*100)
+                                             Debt_to_assets_annual_10_unpacked = ["{:.2f}%".format(Debt_to_assets_annual_10_unpacked  * 100) for Debt_to_assets_annual_10_unpacked  in Debt_to_assets_annual_10_unpacked ]
+                                             debt_assets_ttm ="{:.2f}".format(debt_assets_ttm*100)
+                                        except Exception as e:
+                                             Debt_to_assets_annual_10_unpacked  = 0.0
+                                             Debt_to_assets_annual_5_average = 0.0
+                                             debt_assets_ttm = 0.0
+
+                                        data = pd.DataFrame({
+                                        'Date': date_annual,
+                                        'Debt to Assets': Debt_to_assets_annual_10_unpacked ,
+                                        })
+
+                                        
+                                        fig2 = px.bar(data, x='Date', y='Debt to Assets',
+                                                       text='Debt to Assets',  # Display the value on top of each bar
+                                                       labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                                       #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
+                                                       )
+     
+     
+
+                                        fig2.update_layout(
+                                        dragmode=False,  # Disable dragging for zooming
+                                        )
+                                        fig2.update_layout(
+                                        xaxis_type='category' 
+                                        )
+
+                         
+                                   
+                 
+
+                                   
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .ebitda-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .ebitda-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .ebitda-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .ebitda-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Debt_to_assets_annual_5_average}%</span>
+                                                  </div>
+                                                  <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{debt_assets_ttm}%</span>
+                                                  </div>
+                                             </div>
+                                             <div class='ebitda-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-weight: bold; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Debt to Assets ➔ zeigt das Verhältnis der Schulden zum Gesamtvermögen.
+                                                  </span>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                        st.plotly_chart(fig2, use_container_width=True,config=config)
+         
 
 
                                         #------------------------------------------------------------------------------------------------------------
