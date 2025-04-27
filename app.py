@@ -12680,7 +12680,6 @@ if selected == "Stock Analysis Tool":
 
                with st.container():   
                     with Reversed_DCF:                         
-
                          # Discounted Cash Flow function with reverse DCF logic
                          @st.cache_data(show_spinner=False, ttl=3600) 
                          
@@ -12746,9 +12745,11 @@ if selected == "Stock Analysis Tool":
                                    t = t / 100  # Convert to decimal
 
                                    implied_growth = find_growth_rate(fcf, r, t, years, Market_cap_rDCF)
+                                   current_price = get_current_price(ticker) 
+
                                    #st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
                                    st.markdown(f"Implied FCF Growth Rate: <span style='color: green;'>**{implied_growth*100:.3f}%**</span>", unsafe_allow_html=True)
-                                   st.markdown(f"Current Price: <span style='color: green;'>**{current_price:.2f}%**</span>", unsafe_allow_html=True)
+                                   st.markdown(f"Current Price: <span style='color: green;'>**{current_price:.2f}$**</span>", unsafe_allow_html=True)
                                    col1, col2 = st.columns(2)
                                    with col1:
                                         
