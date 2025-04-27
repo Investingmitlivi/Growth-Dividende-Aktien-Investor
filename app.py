@@ -12692,9 +12692,9 @@ if selected == "Stock Analysis Tool":
                               pv += terminal_value / (1 + r)**years
                               return pv
 
-                         def find_growth_rate(fcf, r, t, years, current_price):
+                         def find_growth_rate(fcf, r, t, years, Market_cap_rDCF):
                               def objective(g):
-                                   return present_value(g, fcf, r, t, years) - current_price
+                                   return present_value(g, fcf, r, t, years) - Market_cap_rDCF
                               return optimize.brentq(objective, -0.5, 0.5)
                               
 
@@ -12734,7 +12734,7 @@ if selected == "Stock Analysis Tool":
                                    t = float(col2.text_input("Terminal Growth Rate (%):", value=2.5,key="Terminal_Growth_Rate",help="Enter Terminal Growth Rate").replace(',', '.'))
 
                                    #current_price = st.number_input("Marketcap.in Billion USD:", value=0.00, format="%.2f")
-                                   current_price = float(col2.text_input("Marketcap:",value=0.00, key="Marketcap",help="Enter Marketcap in Billion:").replace(',', '.'))
+                                   Market_cap_rDCF = float(col2.text_input("Marketcap:",value=0.00, key="Marketcap",help="Enter Marketcap in Billion:").replace(',', '.'))
 
                                  
 
@@ -12745,9 +12745,10 @@ if selected == "Stock Analysis Tool":
                                    r = r / 100  # Convert to decimal
                                    t = t / 100  # Convert to decimal
 
-                                   implied_growth = find_growth_rate(fcf, r, t, years, current_price)
+                                   implied_growth = find_growth_rate(fcf, r, t, years, Market_cap_rDCF)
                                    #st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
                                    st.markdown(f"Implied FCF Growth Rate: <span style='color: green;'>**{implied_growth*100:.3f}%**</span>", unsafe_allow_html=True)
+                                   st.markdown(f"Current Price: <span style='color: green;'>**{current_price:.2f}%**</span>", unsafe_allow_html=True)
                                    col1, col2 = st.columns(2)
                                    with col1:
                                         
