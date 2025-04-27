@@ -12749,7 +12749,7 @@ if selected == "Stock Analysis Tool":
 
                                    #st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
                                    st.markdown(f"Implied FCF Growth Rate: <span style='color: green;'>**{implied_growth*100:.3f}%**</span>", unsafe_allow_html=True)
-                                   st.markdown(f"Current Price: <span style='color: green;'>**{current_price:.2f}$**</span>", unsafe_allow_html=True)
+                                   st.markdown(f"Current Price: <span style='color: green;'>**{current_price:.2f} USD**</span>", unsafe_allow_html=True)
                                    col1, col2 = st.columns(2)
                                    with col1:
                                         
