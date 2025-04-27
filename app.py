@@ -12369,7 +12369,7 @@ if selected == "Stock Analysis Tool":
                                    st.write("")
 
 
-                                   col1,col2,col3 = st.columns(3)
+                                   col1,col2,col3,col4,col5 = st.columns(5)
                               
                                    with col1:
                                         st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
@@ -12379,6 +12379,14 @@ if selected == "Stock Analysis Tool":
                               
                                    with col3:    
                                         st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
+
+                                   with col4:    
+                                        st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Margin 10Y:<br> {FCF_Margin_10}%<br></div>", unsafe_allow_html=True)
+                              
+                                   with col5:    
+                                        st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Margin 5Y: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
+
+                              
 
                                    st.write("")
                                    col5,col4= st.columns(2)
@@ -12706,7 +12714,7 @@ if selected == "Stock Analysis Tool":
                               , FCF Margin 1Y: <span style='color: green;'>**{FCF_Margin_1:.2f}%**</span>
 
                               """,
-                              
+                            
                               unsafe_allow_html=True
                               )
                               col1, col2 = st.columns(2)
