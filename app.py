@@ -12,6 +12,7 @@ import firebase_admin
 import os
 import secrets
 import math
+import re
 
 
 
@@ -7687,6 +7688,7 @@ if selected == "Stock Analysis Tool":
                eps_diluted_ttm = Financial_data['ttm']['eps_diluted']
                fcf_per_share = Financial_data['ttm']['fcf_per_share']
                Dividend_ttm = Financial_data['ttm']['cff_dividend_paid'] 
+               Dividend_per_share_ttm =  Financial_data['ttm']['dividends'] 
                fcf_ttm = Financial_data['ttm']['fcf']/1000000000 
                ROE_TTM =Financial_data['ttm']['roe']*100  
                ROIC_TTM =Financial_data['ttm']['roic']*100   
@@ -8440,7 +8442,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_TBVPS_quater1_unpacked'],
                                              st.session_state[f'{ticker}_BVPS_quater1_unpacked'],
 
-                                             st.session_state[f'{ticker}_EndPrice_annual_10_unpacked'],
+                                             st.session_state[f'{ticker}_EndPrice_annual_21_unpacked'],
                                              st.session_state[f'{ticker}_market_cap_annual_10_unpacked'],
                                              st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_5_unpacked'],
                                              st.session_state[f'{ticker}_revenue_5years'],
@@ -8482,7 +8484,7 @@ if selected == "Stock Analysis Tool":
                               TBVPS_quater1_unpacked = quarterly_data['tangible_book_per_share'][-1:]
                               BVPS_quater1_unpacked = quarterly_data['book_value_per_share'][-1:]
 
-                              EndPrice_annual_10_unpacked = annual_data['period_end_price'][-10:]
+                              EndPrice_annual_21_unpacked = annual_data['period_end_price'][-21:]
                               market_cap_annual_10_unpacked = annual_data['market_cap'][-10:]
                               Net_Operating_CashFlow_annual_5_unpacked = annual_data['cf_cfo'][-5:]
 
@@ -8517,7 +8519,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_TBVPS_quater1_unpacked']= TBVPS_quater1_unpacked
                               st.session_state[f'{ticker}_BVPS_quater1_unpacked']= BVPS_quater1_unpacked
 
-                              st.session_state[f'{ticker}_EndPrice_annual_10_unpacked']= EndPrice_annual_10_unpacked
+                              st.session_state[f'{ticker}_EndPrice_annual_21_unpacked']= EndPrice_annual_21_unpacked
                               st.session_state[f'{ticker}_market_cap_annual_10_unpacked']=market_cap_annual_10_unpacked
                               st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_5_unpacked']= Net_Operating_CashFlow_annual_5_unpacked
                               st.session_state[f'{ticker}_revenue_5years'] = Revenue_annual_5_unpacked
@@ -8544,7 +8546,7 @@ if selected == "Stock Analysis Tool":
                                         pe_annual_10_unpacked, 
                                         TBVPS_quater1_unpacked,
                                         BVPS_quater1_unpacked,
-                                        EndPrice_annual_10_unpacked,market_cap_annual_10_unpacked,
+                                        EndPrice_annual_21_unpacked,market_cap_annual_10_unpacked,
                                         Net_Operating_CashFlow_annual_5_unpacked,
                                         Revenue_annual_5_unpacked,len_5_annual,
                                         Revenue_annual_10_unpacked,len_10_annual,
@@ -8561,7 +8563,7 @@ if selected == "Stock Analysis Tool":
                               pe_annual_10_unpacked, 
                               TBVPS_quater1_unpacked,
                               BVPS_quater1_unpacked,
-                              EndPrice_annual_10_unpacked,market_cap_annual_10_unpacked,
+                              EndPrice_annual_21_unpacked,market_cap_annual_10_unpacked,
                               Net_Operating_CashFlow_annual_5_unpacked,
                               Revenue_annual_5_unpacked,len_5_annual,
                               Revenue_annual_10_unpacked,len_10_annual,
@@ -8573,7 +8575,7 @@ if selected == "Stock Analysis Tool":
                               ) = calculate_net_income_averages(annual_data,quarterly_data, ticker)
 
           ###################################################################################################
-                    
+                         EndPrice_annual_10_unpacked = EndPrice_annual_21_unpacked[-10:]
 
                          Average_net_income_annual_funf_Billion_Million = (
                          "{:.2f}B".format(Average_net_income_annual_funf / 1e9) 
@@ -9981,6 +9983,8 @@ if selected == "Stock Analysis Tool":
                               Earnings_next_5_yrs = "{:.2f}".format(0.00)
                               debt_equity_ttm = "{:.2f}".format(0.0)
 
+                             
+
           ###################################################################################################
 
                          debt_equity_ttm = round((((sum(debt_equity_annual1_unpacked) / len(debt_equity_annual1_unpacked)))), 2)
@@ -10001,11 +10005,26 @@ if selected == "Stock Analysis Tool":
                          else:
                               Price_to_sales_last = "NA"
                               Net_margin_ttm="NA"
-                         
-                         
-                    
+###############################################################################################################                              
+                         try:
+                         # Try to split and extract value from Dividend_TTM
+                              Dividend_TTM_extract_value = Dividend_TTM.split('(')[0].split()[-1]
 
-                    
+                              match = re.search(r'([\d.]+)\s*\(', Dividend_TTM)
+                              if match:
+                                   Dividend_TTM_extract_value = float(match.group(1))
+
+                              # Catch ValueError if the value is invalid
+                       
+                              if Dividend_TTM_extract_value == "-":
+                                   Dividend_TTM_extract_value = 0.00
+                              else:
+                                   Dividend_TTM_extract_value =Dividend_TTM_extract_value
+
+                              # Catch other exceptions and set Dividend_TTM_extract_value to a formatted value of Dividend_per_share_ttm
+                         except Exception as e:
+                              Dividend_TTM_extract_value = "{:.2f}".format(float(Dividend_per_share_ttm))
+                         
 
                          if not pd.isna(Marketcap) and not pd.isna(netincome_ttm) and netincome_ttm != 0 and fcf_ttm !=0:
                     
@@ -10150,7 +10169,7 @@ if selected == "Stock Analysis Tool":
  
 
                          
-                         Dividend_per_share_yield_no_percentage =abs((Divdend_per_share_ttm)/current_price)*100
+                         Dividend_per_share_yield_no_percentage =round(abs((Divdend_per_share_ttm)/current_price)*100,2)
                          Dividend_per_share_yield ="{:.2f}%".format(abs((Divdend_per_share_ttm)/current_price)*100)
 
                          Average_total_equity_annual = (sum(Total_Equity_annual1_unpacked) / len(Total_Equity_annual1_unpacked))
@@ -10184,7 +10203,7 @@ if selected == "Stock Analysis Tool":
                          except (IndexError, ZeroDivisionError): 
                               Buyback_yield=0   
 
-                         Share_holder_yield="{:.2f}%".format(Dividend_per_share_yield_no_percentage+Buyback_yield)
+                         Share_holder_yield="{:.2f}%".format(float(Dividend_per_share_yield_no_percentage) + float(Buyback_yield))
                          
                          
                     
@@ -13689,118 +13708,198 @@ if selected == "Stock Analysis Tool":
                
 
                          #-------------------------------------------------------------------------------------------------
-                                   Dividend_per_share = ["${:.2f}".format(value * 1) for value in Dividend_per_share_annual_21_unpacked]
-
-                                   Dividends_per_share_growth_average_annual_10 = "{:.2f}%".format((sum(Dividends_per_share_growth_annual10_unpacked)/len(Dividends_per_share_growth_annual10_unpacked)*100))
-                                   Dividends_per_share_growth_last_5_years_growth = "{:.2f}%".format((sum(Dividends_per_share_growth_annual10_unpacked[-5:])/len(Dividends_per_share_growth_annual10_unpacked[-5:])*100))  # Extract last 5 years
-                                   Dividends_per_share_growth_annual_21 = ["{:.2f}%".format(value * 100) for value in Dividends_per_share_growth_annual_21_unpacked]                                   
-                                   
-                                   data = pd.DataFrame({
-                                   'Date': date_annual_21yrs,
-                                   'Dividend per Share': [float(val.lstrip('$')) for val in Dividend_per_share],  # Numeric values for plotting
-                                   'Dividend Label': Dividend_per_share,  # Formatted labels ("$X.XX") for display
-                                   'Dividend Growth %': Dividends_per_share_growth_annual_21
-                                   })
-
-                                   fig1 = px.bar(data, x='Date', y='Dividend per Share',
-                                             labels={'Dividend per Share': 'Amount'},
-                                             )
-
-                                   # Add dividend growth line (hidden by default)
-                                   fig1.add_trace(go.Scatter(
-                                   x=data['Date'],
-                                   y=data['Dividend Growth %'].str.rstrip('%').astype('float'),
-                                   name='Dividend Growth %',
-                                   line=dict(color='red', width=2),
-                                   yaxis='y2',
-                                   mode='lines+markers',
-                                   hovertemplate='%{y:.2f}%',
-                                   visible="legendonly"
-                                   ))
-
-                                   # Configure axes and layout
-                                   fig1.update_layout(
-                                   yaxis=dict(
-                                        title='Dividend per Share',
-                                        tickprefix='$',  # Adds "$" to y-axis ticks
-                                   ),
-                                   yaxis2=dict(
-                                        title='Growth Rate (%)',
-                                        overlaying='y',
-                                        side='right',
-                                        range=[0, max(data['Dividend Growth %'].str.rstrip('%').astype('float')) * 1.1]
-                                   ),
-                                   dragmode=False,
-                                   xaxis_type='category',
-                                   legend=dict(
-                                        orientation="h",
-                                        yanchor="bottom",
-                                        y=1.02,
-                                        xanchor="right",
-                                        x=1
-                                   ),
-                                   hovermode='x unified',
-                                   hoverlabel=dict(
-                                        bgcolor='white',
-                                        font_size=12
-                                   )
-                                   )
-
-                                   # Format hover template to show full precision
-                                   fig1.update_traces(
-                                   selector={'name': 'Dividend per Share'},  # Applies to bars only
-                                   hovertemplate='<b>%{x}</b><br>Dividend: $%{customdata:.2f}<extra></extra>',
-                                   customdata=data['Dividend per Share']  # Uses underlying float values
-                                   )
-                                  
-                          
-                                  
+                                   # Format and extend lists with TTM
+                                   #Dividend_TTM = float(2.0)
                                    col1, col2 =st.columns(2)
                                    with col1:
-                                        st.markdown(f"""
-                                        <style>
-                                             @media (max-width: 768px) {{
-                                                  .yield-container {{
-                                                       flex-direction: column;
-                                                       align-items: center;
-                                                       gap: 4px;
+                                        def display_dividend_analysis():
+                                   
+                                             Dividend_per_share_21 = ["{:.2f}".format(float(value)) for value in Dividend_per_share_annual_21_unpacked] + ["{:.2f}".format(float(Dividend_TTM_extract_value))]
+                                             #EndPrice_annual_21 = ["{:.2f}".format(value) for value in EndPrice_annual_21_unpacked] + ["{:.2f}".format(Dividend_TTM_extract_value / (Dividend_per_share_yield_no_percentage / 100))]
+                                             try:
+                                                  EndPrice_annual_21 = ["{:.2f}".format(float(value)) for value in EndPrice_annual_21_unpacked] + [ "{:.2f}".format(float(Dividend_TTM_extract_value) / (float(Dividend_per_share_yield_no_percentage) / 100))]
+
+                                             except Exception:
+                                                  EndPrice_annual_21 = ["{:.2f}".format(float(value)) for value in EndPrice_annual_21_unpacked] + ["{:.2f}".format(float(0.00))]
+
+                                             # Calculate dividend yield list including TTM
+                                             dividend_yield_21_list = []
+                                             for div, price in zip(Dividend_per_share_21, EndPrice_annual_21):
+                                                  div_float = float(div)
+                                                  price_float = float(price)
+                                                  if price_float != 0:
+                                                       yield_ = div_float / price_float * 100
+                                                       dividend_yield_21_list.append("{:.2f}%".format(yield_))
+                                                  else:
+                                                       dividend_yield_21_list.append("N/A")
+
+                                             # Convert yield to numeric
+                                             dividend_yield_numeric = [float(val.strip('%')) if val != "N/A" else None for val in dividend_yield_21_list]
+
+                                             # Formatted Dividend per Share with $
+                                             #Dividend_per_share = ["${:.2f}".format(value) for value in Dividend_per_share_annual_21_unpacked] + ["${:.2f}".format(Dividend_TTM_extract_value)]
+                                             Dividend_per_share = ["${:.2f}".format(float(value)) for value in Dividend_per_share_annual_21_unpacked] + ["${:.2f}".format(float(Dividend_TTM_extract_value))]
+
+
+                                             # Growth values (append TTM)
+                                             Dividends_per_share_growth_ttm = Dividends_per_share_growth_annual_21_unpacked[-1:]
+                                             Dividends_per_share_growth_ttm =sum(Dividends_per_share_growth_ttm)/len(Dividends_per_share_growth_ttm)
+                                             Dividends_per_share_growth_annual_21 = ["{:.2f}%".format(value * 100) for value in Dividends_per_share_growth_annual_21_unpacked] + ["{:.2f}%".format(Dividends_per_share_growth_ttm * 100)]
+                                                                           
+
+                                             # Averages
+                                             Dividends_per_share_growth_average_annual_10 = "{:.2f}%".format(sum(Dividends_per_share_growth_annual10_unpacked) / len(Dividends_per_share_growth_annual10_unpacked) * 100)
+                                             Dividends_per_share_growth_last_5_years_growth = "{:.2f}%".format(sum(Dividends_per_share_growth_annual10_unpacked[-5:]) / 5 * 100)
+
+
+                                             # Add 'TTM' to dates
+                                             date_full = date_annual_21yrs + ["TTM"]
+
+                                             # DataFrame for Plotly
+                                             data = pd.DataFrame({
+                                             'Date': date_full,
+                                             'Dividend per Share': [float(val.lstrip('$')) for val in Dividend_per_share],
+                                             'Dividend Label': Dividend_per_share,
+                                             'Dividend Growth %': Dividends_per_share_growth_annual_21,
+                                             'Dividend Yield %': dividend_yield_numeric
+                                             })
+
+                                             # Select date range via slider
+                                             selected_range = st.select_slider(
+                                             "Zeitraum auswählen (inkl. TTM)",
+                                             options=date_full,
+                                             value=(date_full[0], date_full[-1])
+                                             )
+                                             start_idx = date_full.index(selected_range[0])
+                                             end_idx = date_full.index(selected_range[1]) + 1
+                                             data_filtered = data.iloc[start_idx:end_idx]
+
+                                             # Plotly bar chart
+                                             fig1 = px.bar(
+                                             data_filtered,
+                                             x='Date',
+                                             y='Dividend per Share',
+                                             labels={'Dividend per Share': 'Amount'},
+                                             text='Dividend Label'
+                                             )
+
+                                             # Add Dividend Growth % as line
+                                             fig1.add_trace(go.Scatter(
+                                             x=data_filtered['Date'],
+                                             y=data_filtered['Dividend Growth %'].str.rstrip('%').astype(float),
+                                             name='Dividend Growth %',
+                                             line=dict(color='red', width=2),
+                                             yaxis='y2',
+                                             mode='lines+markers',
+                                             hovertemplate='%{y:.2f}%',
+                                             visible="legendonly"
+                                             ))
+
+                                             # Add Dividend Yield % as line
+                                             fig1.add_trace(go.Scatter(
+                                             x=data_filtered['Date'],
+                                             y=data_filtered['Dividend Yield %'],
+                                             name='Dividend Yield %',
+                                             line=dict(color='green', width=2),
+                                             yaxis='y3',
+                                             mode='lines+markers',
+                                             hovertemplate='%{y:.2f}%',
+                                             visible="legendonly"
+                                             ))
+
+                                             # Layout with 3 y-axes
+                                             fig1.update_layout(
+                                             yaxis=dict(
+                                                  title='Dividend per Share ➔ Dividend Yield (%)',
+                                                  tickprefix='$',
+                                                  rangemode='tozero',
+                                                  showgrid=False
+                                             ),
+                                             yaxis2=dict(
+                                                  title='Dividend Growth (%)',
+                                                  overlaying='y',
+                                                  side='right',
+                                                  showgrid=False,
+                                                  range=[0, max(data_filtered['Dividend Growth %'].str.rstrip('%').astype(float)) * 1.1]
+                                             ),
+                                             yaxis3=dict(
+                                                  overlaying='y',
+                                                  anchor='free',
+                                                  side='left',
+                                                  position=0.05,
+                                                  showgrid=False
+                                             ),
+                                             dragmode=False,
+                                             xaxis_type='category',
+                                             legend=dict(
+                                                  orientation="h",
+                                                  yanchor="bottom",
+                                                  y=1.02,
+                                                  xanchor="right",
+                                                  x=1
+                                             ),
+                                             hovermode='x unified',
+                                             hoverlabel=dict(
+                                                  bgcolor='white',
+                                                  font_size=12
+                                             )
+                                             )
+
+                                             # Hover formatting
+                                             fig1.update_traces(
+                                             selector={'type': 'bar'},
+                                             hovertemplate='<b>%{x}</b><br>Dividend: $%{customdata:.2f}<extra></extra>',
+                                             customdata=data_filtered['Dividend per Share']
+                                             )
+
+                
+ 
+                                             st.markdown(f"""
+                                             <style>
+                                                  @media (max-width: 768px) {{
+                                                       .yield-container {{
+                                                            flex-direction: column;
+                                                            align-items: center;
+                                                            gap: 4px;
+                                                       }}
+                                                       .yield-item {{
+                                                            padding: 3px 0 !important;
+                                                            width: 100%;
+                                                            text-align: center;
+                                                       }}
+                                                       .yield-divider {{
+                                                            border-left: none !important;
+                                                            border-top: 1px solid #e0e0e0;
+                                                            width: 60%;
+                                                            height: 1px !important;
+                                                            margin: 3px auto !important;
+                                                       }}
                                                   }}
-                                                  .yield-item {{
-                                                       padding: 3px 0 !important;
-                                                       width: 100%;
-                                                       text-align: center;
-                                                  }}
-                                                  .yield-divider {{
-                                                       border-left: none !important;
-                                                       border-top: 1px solid #e0e0e0;
-                                                       width: 60%;
-                                                       height: 1px !important;
-                                                       margin: 3px auto !important;
-                                                  }}
-                                             }}
-                                        </style>
-                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
-                                             <div class='yield-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
-                                                  <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Yield: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_yield_average}</span>
-                                                  </div>
-                                                  <div class='yield-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
-                                                  <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Yield: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_per_share_yield}</span>
-                                                  </div>
-                                                   <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 10 CAGR: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_average_annual_10}</span>
-                                                  </div> <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 5 CAGR: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_last_5_years_growth}</span>
+                                             </style>
+                                             <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                                  <div class='yield-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                       <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Yield: </span>
+                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_yield_average}</span>
+                                                       </div>
+                                                       <div class='yield-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                       <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Yield: </span>
+                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_per_share_yield}</span>
+                                                       </div>
+                                                       <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 10 CAGR: </span>
+                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_average_annual_10}</span>
+                                                       </div> <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 5 CAGR: </span>
+                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_last_5_years_growth}</span>
+                                                       </div>
                                                   </div>
                                              </div>
-                                        </div>
-                                        """, unsafe_allow_html=True)
-                                        st.plotly_chart(fig1, use_container_width=True,config=config)
+                                             """, unsafe_allow_html=True)
+                                             st.plotly_chart(fig1, use_container_width=True,config=config)
+
+                                        display_dividend_analysis()
 #-------------------------------------------------------------------------------------------------
                                    with col2:
                               
