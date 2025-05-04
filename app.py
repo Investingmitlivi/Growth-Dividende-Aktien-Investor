@@ -10304,7 +10304,12 @@ if selected == "Stock Analysis Tool":
                                    Enterprise_value = ((Marketcap) + (Total_Debt_from_all_calc/1000000000) - Total_cash_last_years)
                                    Enterprise_value_in_Billion = "{:.2f}T".format(Enterprise_value / 1000) if abs(Enterprise_value) >= 1000 else "{:,.2f}B".format(Enterprise_value)
                                    Debt_to_EBITDA = "{:.2f}".format((Total_Debt_from_all_calc / 1000000000) / Ebita_ttm)
-                                   Ebita_ttm_Billion = "{:.2f}T".format(Ebita_ttm / 1000) if abs(Ebita_ttm) >= 1000 else "{:,.2f}B".format(Ebita_ttm)
+                                   Ebita_ttm_Billion = (
+                                        f"{Ebita_ttm / 1000:.2f}T" if abs(Ebita_ttm) >= 1000 else
+                                        f"{Ebita_ttm:,.2f}B" if abs(Ebita_ttm) >= 1 else
+                                        f"{Ebita_ttm * 1000:,.2f}M"  # Now with decimals (e.g., "123.45M")
+                                        )
+
                                    
 
                               except Exception as e:
