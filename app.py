@@ -13236,233 +13236,291 @@ if selected == "Stock Analysis Tool":
                     with Charts:
                               Annual, Quarter = st.tabs(["Annual", "Quarterly"])
                               with Annual:
-                                   
-                                   revenue_annual21 = ["{:.2f}B".format(value/1e9) for value in revenue_annual21_unpacked]
-                                   revenue_growth_annual21 = ["{:.2f} %".format(value*100) for value in revenue_growth_annual21_unpacked]
-
-
-                                   data = pd.DataFrame({
-                                   'Date': date_annual_21yrs,
-                                   'Revenue (B)': [float(val.rstrip('B')) for val in revenue_annual21],  # Numeric values for plotting
-                                   'Revenue Label': revenue_annual21,  # Formatted labels ("XB") for display
-                                   'Revenue Growth %': revenue_growth_annual21
-                                   })
-
-                                   fig1 = px.bar(data, x='Date', y='Revenue (B)',
-                                             labels={'Revenue (B)': 'Revenue (Billions)'},
-                                             )
-
-                                   # Add revenue growth line (hidden by default)
-                                   fig1.add_trace(go.Scatter(
-                                   x=data['Date'],
-                                   y=data['Revenue Growth %'].str.rstrip('%').astype('float'),
-                                   name='Revenue Growth %',
-                                   line=dict(color='red', width=2),
-                                   yaxis='y2',
-                                   mode='lines+markers',
-                                   hovertemplate='%{y:.2f}%',
-                                   visible="legendonly"
-                                   ))
-
-                                   # Configure axes and layout
-                                   fig1.update_layout(
-                                   yaxis=dict(
-                                        title='Revenue (Billions)',
-                                        ticksuffix='B',  # Adds "B" to y-axis ticks
-                                        tickprefix='$'   # Adds "$" for currency
-                                   ),
-                                   yaxis2=dict(
-                                        title='Growth Rate (%)',
-                                        overlaying='y',
-                                        side='right',
-                                        range=[0, max(data['Revenue Growth %'].str.rstrip('%').astype('float')) * 1.1]
-                                   ),
-                                   dragmode=False,
-                                   xaxis_type='category',
-                                   legend=dict(
-                                        orientation="h",
-                                        yanchor="bottom",
-                                        y=1.02,
-                                        xanchor="right",
-                                        x=1
-                                   ),
-                                   hovermode='x unified',
-                                   hoverlabel=dict(
-                                        bgcolor='white',
-                                        font_size=12
-                                   )
-                                   )
-
-                                   # Format hover template to show full precision
-                                   fig1.update_traces(
-                                   selector={'name': 'Revenue (B)'},  # Applies to bars only
-                                   hovertemplate='<b>%{x}</b><br>Revenue: $%{customdata:.3f}B<extra></extra>',
-                                   customdata=data['Revenue (B)']  # Uses underlying float values
-                                   )                           
-
                                    col1,col2 = st.columns(2)
                                    with col1:
-                                        st.markdown(f"""
-                                             <style>
-                                                  @media (max-width: 768px) {{
-                                                       .metrics-container {{
-                                                            flex-direction: column;
-                                                            align-items: center;
-                                                            gap: 4px;
-                                                       }}
-                                                       .metric-item {{
-                                                            padding: 3px 0 !important;
-                                                            width: 100%;
-                                                            text-align: center;
-                                                       }}
-                                                       .divider {{
-                                                            border-left: none !important;
-                                                            border-top: 1px solid #e0e0e0;
-                                                            width: 60%;
-                                                            height: 1px !important;
-                                                            margin: 3px auto !important;
-                                                       }}
-                                                  }}
-                                             </style>
-                                             <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
-                                                  <div class='metrics-container' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
-                                                       <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10 YEAR: </span>
-                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_Cagr_10}%</span>
-                                                       </div>
-                                                       <div class='divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
-                                                       <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YEAR: : </span>
-                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_5_CAGR}%</span>
-                                                       </div>
-                                                       <div class='divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
-                                                       <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>CURRENT: </span>
-                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_growth_1year:.2f}%</span>
-                                                       </div>
-                                                  </div>
-                                             </div>
-                                        """, unsafe_allow_html=True)
-                                        st.plotly_chart(fig1, use_container_width=True, config=config)
+                                        @st.fragment
+                                        def display_revenue_chart():
+                                             # Format revenue data
+                                             revenue_annual21 = ["{:.2f}B".format(value/1e9) for value in revenue_annual21_unpacked]
+                                             revenue_growth_annual21 = ["{:.2f}%".format(value*100) for value in revenue_growth_annual21_unpacked]
 
-                                   with col2:
-                                        current_year = datetime.now().year
-                                        next_year = current_year + 1
+                                             # Create DataFrame
+                                             data = pd.DataFrame({
+                                                  'Date': date_annual_21yrs,
+                                                  'Revenue (B)': [float(val.rstrip('B')) for val in revenue_annual21],
+                                                  'Revenue Label': revenue_annual21,
+                                                  'Revenue Growth %': [float(val.rstrip('%')) for val in revenue_growth_annual21]
+                                             })
 
-                                        TTM = eps_diluted_ttm
-                                        try:
-                                             EPS_next_year = float(Earnings_next_yr_in_value)
-                                        except Exception as e:
-                                             EPS_next_year = 0
-
-                                        # Format the data
-                                        eps_diluted_annual_10 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_10_unpacked]
-                                        net_income_annual_10 = ["{:.2f}B".format(value/1e9) for value in net_income_annual_10_unpacked]
-
-                                        # Create DataFrame - ensure all arrays have same length
-                                        data = pd.DataFrame({
-                                        'Date': date_annual + ['TTM', str(next_year)],
-                                        'EPS': eps_diluted_annual_10 + [f"$ {TTM:.2f}", f"$ {EPS_next_year:.2f}"],
-                                        'EPS_float': eps_diluted_annual_10_unpacked + [TTM, EPS_next_year],
-                                        'Net Income (B)': [float(val.rstrip('B')) for val in net_income_annual_10] + [None, None],
-                                        'Net Income Label': net_income_annual_10 + ['', '']
-                                        })
-
-                                        # Create base figure with EPS bars
-                                        fig1 = px.bar(data, x='Date', y='EPS_float',
-                                                  #text='EPS',
-                                                  labels={'EPS_float': 'EPS ($)'},
+                                             # Year range slider function
+                                             def year_range_slider(dates):
+                                                  return st.select_slider(
+                                                       "Select year range:",
+                                                       options=dates,
+                                                       value=(dates[0], dates[-1]),
+                                                       key='revenue_year_slider'
                                                   )
 
-                                        # Add net income line - make sure data is numeric
-                                        fig1.add_trace(go.Scatter(
-                                        x=data['Date'][:-2],  # Exclude TTM and next year for net income
-                                        y=data['Net Income (B)'][:-2],  # Only show actual historical data
-                                        name='Net Income (B)',
-                                        line=dict(color='red', width=2),
-                                        yaxis='y2',
-                                        mode='lines+markers',
-                                        hovertemplate='%{y:.2f}B',
-                                        visible="legendonly"
-                                        ))
+                                             # Get selected year range
+                                             selected_start, selected_end = year_range_slider(date_annual_21yrs)
 
-                                        # Configure dual axes
-                                        fig1.update_layout(
-                                        yaxis=dict(
-                                             title='EPS ($)',
-                                             tickprefix='$',
-                                             range=[0, max(data['EPS_float']) * 1.1]
-                                        ),
-                                        yaxis2=dict(
-                                             title='Net Income (Billions)',
-                                             overlaying='y',
-                                             side='right',
-                                             tickprefix='$',
-                                             ticksuffix='B',
-                                             range=[0, max(data['Net Income (B)'].dropna()) * 1.1] if len(data['Net Income (B)'].dropna()) > 0 else None
-                                        ),
-                                        xaxis_type='category',
-                                        hovermode='x unified',
-                                        legend=dict(
-                                             orientation="h",
-                                             yanchor="bottom",
-                                             y=1.02,
-                                             xanchor="right",
-                                             x=1
-                                        )
-                                        )
+                                             # Filter data
+                                             start_idx = date_annual_21yrs.index(selected_start)
+                                             end_idx = date_annual_21yrs.index(selected_end) + 1
+                                             data_filtered = data.iloc[start_idx:end_idx]
 
-                                        # Visual styling
-                                        fig1.update_traces(marker_color='#1f77b4', selector={'name': 'EPS_float'})
-                                        fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+                                             # Create visualization
+                                             fig = px.bar(
+                                                  data_filtered,
+                                                  x='Date',
+                                                  y='Revenue (B)',
+                                                  labels={'Revenue (B)': 'Revenue (Billions)'},
+                                                  text='Revenue Label'
+                                             )
 
-                                   
-                                        st.markdown(f"""
-                                             <style>
-                                                  @media (max-width: 768px) {{
-                                                       .eps-metrics-container {{
-                                                            flex-direction: column;
-                                                            align-items: center;
-                                                       }}
-                                                       .eps-metric-item {{
-                                                            padding: 3px 0 !important;
-                                                            width: 100%;
-                                                            text-align: center;
-                                                       }}
-                                                       .eps-divider {{
-                                                            border-left: none !important;
-                                                            border-top: 1px solid #e0e0e0;
-                                                            width: 60%;
-                                                            height: 1px !important;
-                                                            margin: 3px auto !important;
-                                                       }}
-                                                  }}
-                                             </style>
-                                             <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
-                                                  <div class='eps-metrics-container' style='display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;'>
-                                                       <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10YR EPS: </span>
-                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{EPS_Cagr_10}%</span>
+                                             # Add growth line
+                                             fig.add_trace(go.Scatter(
+                                                  x=data_filtered['Date'],
+                                                  y=data_filtered['Revenue Growth %'],
+                                                  name='Revenue Growth %',
+                                                  line=dict(color='red', width=2),
+                                                  yaxis='y2',
+                                                  mode='lines+markers',
+                                                  hovertemplate='%{y:.2f}%',
+                                                  visible="legendonly"
+                                             ))
+
+                                             # Configure layout
+                                             fig.update_layout(
+                                                  yaxis=dict(
+                                                       title='Revenue (Billions)',
+                                                       ticksuffix='B',
+                                                       tickprefix='$',
+                                                       rangemode='tozero',
+                                                       showgrid=False
+                                                  ),
+                                                  yaxis2=dict(
+                                                       title='Growth Rate (%)',
+                                                       overlaying='y',
+                                                       side='right',
+                                                       range=[0, max(data_filtered['Revenue Growth %']) * 1.1] if not data_filtered.empty else [0, 1],
+                                                       showgrid=False
+                                                  ),
+                                                  xaxis_type='category',
+                                                  legend=dict(
+                                                       orientation="h",
+                                                       yanchor="bottom",
+                                                       y=1.02,
+                                                       xanchor="right",
+                                                       x=1
+                                                  ),
+                                                  hovermode='x unified'
+                                             )
+
+                                             # Custom hover template
+                                             fig.update_traces(
+                                                  selector={'type': 'bar'},
+                                                  hovertemplate='<b>%{x}</b><br>Revenue: $%{y:.2f}B<extra></extra>'
+                                             )
+
+                                        
+                                             st.markdown(f"""
+                                                       <style>
+                                                            @media (max-width: 768px) {{
+                                                                 .metrics-container {{
+                                                                      flex-direction: column;
+                                                                      align-items: center;
+                                                                      gap: 4px;
+                                                                 }}
+                                                                 .metric-item {{
+                                                                      padding: 3px 0 !important;
+                                                                      width: 100%;
+                                                                      text-align: center;
+                                                                 }}
+                                                                 .divider {{
+                                                                      border-left: none !important;
+                                                                      border-top: 1px solid #e0e0e0;
+                                                                      width: 60%;
+                                                                      height: 1px !important;
+                                                                      margin: 3px auto !important;
+                                                                 }}
+                                                            }}
+                                                       </style>
+                                                       <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
+                                                            <div class='metrics-container' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
+                                                                 <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                                      <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10 YEAR: </span>
+                                                                      <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_Cagr_10}%</span>
+                                                                 </div>
+                                                                 <div class='divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                                 <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                                      <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YEAR: : </span>
+                                                                      <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_5_CAGR}%</span>
+                                                                 </div>
+                                                                 <div class='divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                                 <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                                      <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>CURRENT: </span>
+                                                                      <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_growth_1year:.2f}%</span>
+                                                                 </div>
+                                                            </div>
                                                        </div>
-                                                       <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
-                                                       <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YR: </span>
-                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{EPS_5_CAGR}%</span>
-                                                       </div>
-                                                       <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
-                                                       <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>EPS(ttm): </span>
-                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{eps_diluted_ttm}</span>
-                                                       </div>
-                                                       <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
-                                                       <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Next YR: </span>
-                                                            <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})</span>
+                                                  """, unsafe_allow_html=True)
+                                             st.plotly_chart(fig, use_container_width=True, config=config)
+                                    
+                                        display_revenue_chart()
+
+                                   with col2:
+                                        @st.fragment
+                                        def display_financial_chart():
+                                             current_year = datetime.now().year
+                                             next_year = current_year + 1
+                                             
+                                             # Get your financial data
+                                             TTM = eps_diluted_ttm
+                                             try:
+                                                  EPS_next_year = float(Earnings_next_yr_in_value)
+                                             except Exception as e:
+                                                  EPS_next_year = 0
+
+                                             # Format the data
+                                             eps_diluted_annual_10 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_10_unpacked]
+                                             net_income_annual_10 = ["{:.2f}B".format(value/1e9) for value in net_income_annual_10_unpacked]
+
+                                             # Create DataFrame
+                                             data = pd.DataFrame({
+                                                  'Date': date_annual + ['TTM', str(next_year)],
+                                                  'EPS': eps_diluted_annual_10 + [f"$ {TTM:.2f}", f"$ {EPS_next_year:.2f}"],
+                                                  'EPS_float': eps_diluted_annual_10_unpacked + [TTM, EPS_next_year],
+                                                  'Net Income (B)': [float(val.rstrip('B')) for val in net_income_annual_10] + [None, None],
+                                                  'Net Income Label': net_income_annual_10 + ['', ''],
+                                                  'Year': [int(d[:4]) for d in date_annual] + [current_year, next_year]  # Add year column for filtering
+                                             })
+
+                                             # Add date range slider
+                                             min_year = min(data['Year'][:-2])  # Exclude TTM and next year
+                                             max_year = max(data['Year'][:-2])
+                                             
+                                        
+                                             year_range = st.slider(
+                                                  "Select year range:",
+                                                  min_value=min_year,
+                                                  max_value=max_year,
+                                                  value=(min_year, max_year),
+                                                  key='year_slider'
+                                             )
+                                             
+                                             # Filter data based on slider selection
+                                             filtered_data = data[
+                                                  (data['Year'] >= year_range[0]) & 
+                                                  (data['Year'] <= year_range[1]) |
+                                                  (data['Date'].isin(['TTM', str(next_year)]))  # Always include TTM and next year
+                                             ]
+
+                                             # Create base figure with filtered data
+                                             fig1 = px.bar(filtered_data, x='Date', y='EPS_float',
+                                                  labels={'EPS_float': 'EPS'},
+                                                  #text='EPS',  # This displays the formatted EPS values
+                                                  text_auto='.2f')  # Auto-format text with 2 decimals
+
+                                                                    # Configure text position inside bars
+                                             fig1.update_traces(textposition='inside', 
+                                                                 textfont_size=12,
+                                                                 textfont_color='white',
+                                                                 insidetextanchor='middle')
+
+                                             # Add net income line (only for historical data)
+                                             if len(filtered_data[:-2]) > 0:  # Only add if we have historical data
+                                                  fig1.add_trace(go.Scatter(
+                                                       x=filtered_data['Date'][:-2],
+                                                       y=filtered_data['Net Income (B)'][:-2],
+                                                       name='Net Income (B)',
+                                                       line=dict(color='red', width=2),
+                                                       yaxis='y2',
+                                                       mode='lines+markers',
+                                                       hovertemplate='%{y:.2f}B',
+                                                       visible="legendonly"
+                                                  ))
+
+                                             # Configure dual axes
+                                             fig1.update_layout(
+                                                  yaxis=dict(
+                                                       title='EPS ($)',
+                                                       tickprefix='$',
+                                                       range=[0, max(filtered_data['EPS_float']) * 1.1]
+                                                  ),
+                                                  yaxis2=dict(
+                                                       title='Net Income (Billions)',
+                                                       overlaying='y',
+                                                       side='right',
+                                                       tickprefix='$',
+                                                       ticksuffix='B',
+                                                       range=[0, max(filtered_data['Net Income (B)'].dropna()) * 1.1] if len(filtered_data['Net Income (B)'].dropna()) > 0 else None
+                                                  ),
+                                                  xaxis_type='category',
+                                                  hovermode='x unified',
+                                                  legend=dict(
+                                                       orientation="h",
+                                                       yanchor="bottom",
+                                                       y=1.02,
+                                                       xanchor="right",
+                                                       x=1
+                                                  )
+                                             )
+
+                                             # Visual styling
+                                             fig1.update_traces(marker_color='#1f77b4', selector={'name': 'EPS_float'})
+                                             fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+
+
+                                        
+                                             st.markdown(f"""
+                                                  <style>
+                                                       @media (max-width: 768px) {{
+                                                            .eps-metrics-container {{
+                                                                 flex-direction: column;
+                                                                 align-items: center;
+                                                            }}
+                                                            .eps-metric-item {{
+                                                                 padding: 3px 0 !important;
+                                                                 width: 100%;
+                                                                 text-align: center;
+                                                            }}
+                                                            .eps-divider {{
+                                                                 border-left: none !important;
+                                                                 border-top: 1px solid #e0e0e0;
+                                                                 width: 60%;
+                                                                 height: 1px !important;
+                                                                 margin: 3px auto !important;
+                                                            }}
+                                                       }}
+                                                  </style>
+                                                  <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
+                                                       <div class='eps-metrics-container' style='display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;'>
+                                                            <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                                 <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10YR EPS: </span>
+                                                                 <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{EPS_Cagr_10}%</span>
+                                                            </div>
+                                                            <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                            <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                                 <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YR: </span>
+                                                                 <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{EPS_5_CAGR}%</span>
+                                                            </div>
+                                                            <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                            <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                                 <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>EPS(ttm): </span>
+                                                                 <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{eps_diluted_ttm}</span>
+                                                            </div>
+                                                            <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
+                                                            <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
+                                                                 <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Next YR: </span>
+                                                                 <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})</span>
+                                                            </div>
                                                        </div>
                                                   </div>
-                                             </div>
-                                        """, unsafe_allow_html=True)
-                                        st.plotly_chart(fig1, use_container_width=True, config=config)
+                                             """, unsafe_allow_html=True)
+                                             st.plotly_chart(fig1, use_container_width=True, config=config)
+
+                                        display_financial_chart()
                          #...........................................................................................    
   
                          #-------------------------------------------------------------------------------------------------
@@ -13717,6 +13775,7 @@ if selected == "Stock Analysis Tool":
                                    #Dividend_TTM = float(2.0)
                                    col1, col2 =st.columns(2)
                                    with col1:
+                                        @st.fragment
                                         def display_dividend_analysis():
                                    
                                              Dividend_per_share_21 = ["{:.2f}".format(float(value)) for value in Dividend_per_share_annual_21_unpacked] + ["{:.2f}".format(float(Dividend_TTM_extract_value))]
@@ -13771,7 +13830,7 @@ if selected == "Stock Analysis Tool":
 
                                              # Select date range via slider
                                              selected_range = st.select_slider(
-                                             "Zeitraum auswählen (inkl. TTM)",
+                                             "Select year range:",
                                              options=date_full,
                                              value=(date_full[0], date_full[-1])
                                              )
