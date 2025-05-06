@@ -7767,64 +7767,128 @@ if selected == "Stock Analysis Tool":
 
           ###########################################################################################################
 
-               #@st.cache_data(show_spinner=False)
-               def get_current_price(ticker):
-                    stock_info = yf.Ticker(ticker)
-                    #quote = Quote(ticker)
-                    try:
-                         current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
-                         #fundamental_df = quote.fundamental_df
+#                #@st.cache_data(show_spinner=False)
+#                def get_current_price(ticker):
+#                     stock_info = yf.Ticker(ticker)
+#                     #quote = Quote(ticker)
+#                     try:
+#                          current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
+#                          #fundamental_df = quote.fundamental_df
                          
-                    except Exception:
-                         try:
-                              # Fallback to previous close
-                              current_price = float(stock_info.info["previousClose"])
+#                     except Exception:
+#                          try:
+#                               # Fallback to previous close
+#                               current_price = float(stock_info.info["previousClose"])
                               
-                         except Exception:
-                              try:
-                                   current_price = stock_info.history(period="2d", interval="1d")["Close"].iloc[-1]
+#                          except Exception:
+#                               try:
+#                                    current_price = stock_info.history(period="2d", interval="1d")["Close"].iloc[-1]
 
-                              except Exception:
+#                               except Exception:
                                    
-                                   current_price = float(quote.fundamental_df.at[0, "Price"])
-                                   current_price = float(current_price.replace(',', ''))
-                              except Exception:
-                                   current_price =  None
+#                                    current_price = float(quote.fundamental_df.at[0, "Price"])
+#                                    current_price = float(current_price.replace(',', ''))
+#                               except Exception:
+#                                    current_price =  None
 
 
-                    return current_price
-#--------------------------------------------------percentage_difference-----------------------------
+#                     return current_price
+# #--------------------------------------------------percentage_difference-----------------------------
 
                start_date = datetime.now() - timedelta(days=39 * 365)
                end_date=datetime.now() 
 
 
 
-               # Function to format date
-               def format_date(date):
-                    return date.strftime('%Y/%m/%d')
+#                # Function to format date
+#                def format_date(date):
+#                     return date.strftime('%Y/%m/%d')
 
-               # Function to get current price
+#                # Function to get current price
+#                def get_current_price(ticker):
+#                     data = yf.download(ticker, period="1d")
+#                     return float(data['Close'].iloc[0])  # Use .iloc[0] to select the first element
+
+#                # Function to get historical price data
+#                def get_price_data(ticker, current_price, usd_to_eur_rate):
+#                     start_date = datetime.now() - timedelta(days=39 * 365)
+#                     end_date = datetime.now()
+
+#                     try:
+#                          data = yf.download(ticker, start=start_date, end=end_date)
+#                          close_price = float(data['Close'].iloc[-2])  # Use .iloc[-2] to select the second-to-last element
+#                          percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
+#                          converted_amount = float(current_price) * float(usd_to_eur_rate)  # Ensure both are floats
+#                     except Exception as e:
+#                          close_price = None
+#                          percentage_difference = None
+#                          converted_amount = None
+
+#                     return close_price, percentage_difference, converted_amount
+               
+
+
                def get_current_price(ticker):
-                    data = yf.download(ticker, period="1d")
-                    return float(data['Close'].iloc[0])  # Use .iloc[0] to select the first element
+                    """Safely get current price with multiple fallback methods"""
+                    stock_info = yf.Ticker(ticker)
+                    
+                    try:
+                         # Try getting most recent price from intraday data
+                         hist = stock_info.history(period="1d", interval="1m")
+                         if not hist.empty:
+                              return float(hist["Close"].iloc[-1])
+                    except Exception:
+                         pass
+                    
+                    try:
+                         # Fallback to previous close
+                         info = stock_info.info
+                         if "previousClose" in info:
+                              return float(info["previousClose"])
+                    except Exception:
+                         pass
+                    
+                    try:
+                         # Fallback to daily data
+                         hist = stock_info.history(period="2d")
+                         if not hist.empty:
+                              return float(hist["Close"].iloc[-1])
+                    except Exception:
+                         pass
+                    
+                    try:
+                         # Final fallback to fundamental data
+                         quote = Quote(ticker)
+                         fundamental_df = quote.fundamental_df
+                         if not fundamental_df.empty and "Price" in fundamental_df.columns:
+                              price_str = str(fundamental_df.at[0, "Price"])
+                              return float(price_str.replace(',', ''))
+                    except Exception:
+                         pass
+                    
+                    return None  # If all methods fail
 
-               # Function to get historical price data
                def get_price_data(ticker, current_price, usd_to_eur_rate):
-                    start_date = datetime.now() - timedelta(days=39 * 365)
+                    """Get historical price data with proper error handling"""
+                    if current_price is None:
+                         return None, None, None
+                         
+                    start_date = datetime.now() - timedelta(days=39*365)
                     end_date = datetime.now()
-
+                    
                     try:
                          data = yf.download(ticker, start=start_date, end=end_date)
-                         close_price = float(data['Close'].iloc[-2])  # Use .iloc[-2] to select the second-to-last element
+                         if data.empty or len(data) < 2:
+                              return None, None, None
+                              
+                         close_price = float(data['Close'].iloc[-2])  # Previous day's close
                          percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
-                         converted_amount = float(current_price) * float(usd_to_eur_rate)  # Ensure both are floats
+                         converted_amount = float(current_price) * float(usd_to_eur_rate)
+                         return close_price, percentage_difference, converted_amount
                     except Exception as e:
-                         close_price = None
-                         percentage_difference = None
-                         converted_amount = None
+                         return None, None, None
 
-                    return close_price, percentage_difference, converted_amount
+
 
                     # Main function to run the app
                def main():
@@ -8060,7 +8124,9 @@ if selected == "Stock Analysis Tool":
                     )
 
                     return fig
-
+               
+               
+               @st.fragment
                def display_stock_chart():
                     if 'previous_ticker' not in st.session_state or st.session_state.previous_ticker != ticker:
                          st.session_state.selected_period = None
@@ -8124,8 +8190,7 @@ if selected == "Stock Analysis Tool":
 
                
                          st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-               #@st.cache_data
-               #@st.fragment
+             
                def main():
          
                     if ticker:
