@@ -12433,7 +12433,6 @@ if selected == "Stock Analysis Tool":
 
                                    if "Average_10years_treasury_rate" not in st.session_state:
                                         st.session_state["Average_10years_treasury_rate"] = 4.25
-                                        #print("treasury_yield_data",Average_10years_treasury_rate)
 
 
                                    if "Pepetual_growth_rate" not in st.session_state:
@@ -13836,15 +13835,13 @@ if selected == "Stock Analysis Tool":
                
 
                          #-------------------------------------------------------------------------------------------------
-                                   # Format and extend lists with TTM
-                                   #Dividend_TTM = float(2.0)
+                               
                                    col1, col2 =st.columns(2)
                                    with col1:
                                         @st.fragment
                                         def display_dividend_analysis():
                                    
                                              Dividend_per_share_21 = ["{:.2f}".format(float(value)) for value in Dividend_per_share_annual_21_unpacked] + ["{:.2f}".format(float(Dividend_TTM_extract_value))]
-                                             #EndPrice_annual_21 = ["{:.2f}".format(value) for value in EndPrice_annual_21_unpacked] + ["{:.2f}".format(Dividend_TTM_extract_value / (Dividend_per_share_yield_no_percentage / 100))]
                                              try:
                                                   EndPrice_annual_21 = ["{:.2f}".format(float(value)) for value in EndPrice_annual_21_unpacked] + [ "{:.2f}".format(float(Dividend_TTM_extract_value) / (float(Dividend_per_share_yield_no_percentage) / 100))]
 
@@ -13929,7 +13926,7 @@ if selected == "Stock Analysis Tool":
                                              x=data_filtered['Date'],
                                              y=data_filtered['Dividend Yield %'],
                                              name='Dividend Yield %',
-                                             line=dict(color='green', width=2),
+                                             line=dict(color='indigo', width=3),
                                              yaxis='y3',
                                              mode='lines+markers',
                                              hovertemplate='%{y:.2f}%',
