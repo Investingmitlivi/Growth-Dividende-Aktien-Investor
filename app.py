@@ -8025,48 +8025,50 @@ if selected == "Stock Analysis Tool":
 
           ############################################################################################################
                
-               @st.cache_data(show_spinner=False,ttl=3600)
+               @st.cache_data(show_spinner=False, ttl=3600)
                def calculate_stock_performance(ticker):
-                    periods = {
-                         "5d": "5 Days", 
+                    period_mapping = {
+                         "5d": "5 Days",
                          "1mo": "1 Month",
                          "3mo": "3 Months",
                          "6mo": "6 Months",
-                        "1y": "1 Year",
+                         "1y": "1 Year",
                          "2y": "2 Years",
                          "5y": "5 Years",
                          "10y": "10 Years",
                          "max": "MAX"
                     }
 
-                    #stock = yf.Ticker(ticker)
+                    stock_info = yf.Ticker(ticker)
                     performances = {}
                     
-                    for period, label in periods.items():
+                    for period_code, period_label in period_mapping.items():
                          try:
-                              hist = stock_info.history(period=period)
-                              if len(hist) > 0:
+                              hist = stock_info.history(period=period_code)
+                              if not hist.empty:
                                    start_price = hist['Close'].iloc[0]
                                    end_price = hist['Close'].iloc[-1]
                                    performance = ((end_price - start_price) / start_price) * 100
-                                   performances[label] = f"{performance:.2f}%"
+                                   performances[period_label] = f"{performance:.2f}%"
                               else:
-                                   performances[label] = "No data"
+                                   performances[period_label] = "No data"
                          except Exception as e:
-                              performances[label] = f"Error: {str(e)}"
+                              performances[period_label] = f"Error: {str(e)}"
                     
-                    # Store the performances in session state
-                    st.session_state[f'{ticker}_performances'] = performances
-                    return performances
-          
-               def get_detailed_data(ticker, period):
-                    stock_info = yf.Ticker(ticker)
-                    detailed_data = stock_info.history(period=period)
-                    return detailed_data
-          
+                    return performances, period_mapping
+
+               def get_detailed_data(ticker, period_code):
+                    try:
+                         stock_info = yf.Ticker(ticker)
+                         return stock_info.history(period=period_code)
+                    except Exception as e:
+                         st.error(f"Error fetching data: {str(e)}")
+                         return None
 
                def create_figure(detailed_data):
-               
+                    if detailed_data is None or detailed_data.empty:
+                         return None
+                         
                     fig = go.Figure()
 
                     # Add the area fill
@@ -8074,8 +8076,8 @@ if selected == "Stock Analysis Tool":
                          x=detailed_data.index,
                          y=detailed_data['Close'],
                          fill='tozeroy',
-                         fillcolor='rgba(34, 139, 34, 0.2)',  # Very light green, adjust as needed
-                         line_color='rgba(0, 0, 0, 0)',  # Transparent line for fill
+                         fillcolor='rgba(34, 139, 34, 0.2)',
+                         line_color='rgba(0, 0, 0, 0)',
                          showlegend=False
                     ))
 
@@ -8083,80 +8085,74 @@ if selected == "Stock Analysis Tool":
                     fig.add_trace(go.Scatter(
                          x=detailed_data.index,
                          y=detailed_data['Close'],
-                         line=dict(color='rgba(34, 139, 34, 0.7)', width=4),  # Darker green line, adjust as needed
-                         #name=None
-                         showlegend=False  # Hide legend
+                         line=dict(color='rgba(34, 139, 34, 0.7)', width=4),
+                         showlegend=False
                     ))
 
                     # Update the layout
                     fig.update_layout(
                          xaxis_title='Date',
-                         #yaxis_title='Price ($)',
-                         plot_bgcolor='white',  # White background
-                         paper_bgcolor='white',  # White surrounding area
+                         plot_bgcolor='white',
+                         paper_bgcolor='white',
                          xaxis=dict(
                               showgrid=True,
                               gridcolor='lightgrey',
                               showline=True,
                               linecolor='lightgrey'
-                    ),
-                    yaxis=dict(
-                         showgrid=True,
-                         gridcolor='lightgrey',
-                         showline=True,
-                         linecolor='lightgrey',
-                         tickprefix='$'  # Add dollar sign prefix to y-axis ticks
-                    ),
-                    margin=dict(l=40, r=40, t=40, b=40),
-                    showlegend=False  # Hide legend
+                         ),
+                         yaxis=dict(
+                              showgrid=True,
+                              gridcolor='lightgrey',
+                              showline=True,
+                              linecolor='lightgrey',
+                              tickprefix='$'
+                         ),
+                         margin=dict(l=40, r=40, t=40, b=40),
+                         showlegend=False,
+                         dragmode=False,
+                         hoverlabel=dict(
+                              bgcolor='rgba(139, 57, 34, 0.76)',
+                              font_size=15,
+                              font_color='white'
+                         )
                     )
 
                     fig.update_traces(
-                    hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
-                    )
-                    fig.update_layout(
-                    dragmode=False,  # Disable dragging for zooming
-                    hoverlabel=dict(
-                         bgcolor='rgba(139, 57, 34, 0.76)',  # Dark green background
-                         font_size=15,                      # Font size
-                         font_color='white'                 # Font color
-                    )
+                         hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
                     )
 
                     return fig
-               
-               
+
                @st.fragment
-               def display_stock_chart():
+               def display_stock_chart(ticker):
+                    # Initialize session state
                     if 'previous_ticker' not in st.session_state or st.session_state.previous_ticker != ticker:
                          st.session_state.selected_period = None
                          st.session_state.previous_ticker = ticker
 
                     with st.container():
-                         if f'{ticker}_performances' not in st.session_state:
-                              performances = calculate_stock_performance(ticker)
-                              st.session_state[f'{ticker}_performances'] = performances
-
-                         else:
-                              performances = st.session_state[f'{ticker}_performances']
-
-                         options = [f"{period} ({perf})" for period, perf in performances.items()]
+                         # Get performance data and period mapping
+                         performances, period_mapping = calculate_stock_performance(ticker)
                          
+                         # Create reverse mapping (label -> code)
+                         reverse_mapping = {v: k for k, v in period_mapping.items()}
                          
+                         # Create options for the menu
+                         options = [f"{label} ({performances.get(label, 'N/A')})" 
+                                   for label in period_mapping.values()]
+                         
+                         # Set default period if not set
                          if 'selected_period' not in st.session_state:
-                              st.session_state.selected_period = "5 Years" if "5 Years" in performances else "MAX"
+                              default_period = "5 Years" if "5 Years" in performances else next(iter(period_mapping.values()))
+                              st.session_state.selected_period = default_period
 
-
+                         # Find default index for the menu
                          try:
-                              default_index = options.index(f"5 Years ({performances['5 Years']})" 
-                                   if "5 Years" in performances 
-                                   else f"MAX ({performances['MAX']})" 
-                                   if f"MAX ({performances['MAX']})" in options 
-                                   else 0
-                              )
+                              default_index = list(period_mapping.values()).index(st.session_state.selected_period)
                          except ValueError:
                               default_index = 0
 
+                         # Create the period selection menu
                          selected = option_menu(
                               menu_title=None,
                               options=options,
@@ -8168,37 +8164,24 @@ if selected == "Stock Analysis Tool":
                          )
 
                          # Update selected period
-                         st.session_state.selected_period = selected.split(" (")[0]
-
-
-                         period_mapping = {
-                              "5d": "5 Days", 
-                              "1 Month": "1mo", 
-                              "3 Months": "3mo", 
-                              "6 Months": "6mo", 
-                              "1 Year ": '1y', 
-                              "2 Years": "2y", 
-                              "5 Years": "5y", 
-                              "10 Years": "10y", 
-                              "MAX": "max"
-                         }
+                         selected_period = selected.split(" (")[0]
+                         st.session_state.selected_period = selected_period
                          
+                         # Get the corresponding period code
+                         period_code = reverse_mapping.get(selected_period, "5y")
+                         
+                         # Get data and display chart
+                         detailed_data = get_detailed_data(ticker, period_code)
+                         if detailed_data is not None and not detailed_data.empty:
+                              fig = create_figure(detailed_data)
+                              if fig:
+                                   st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+                         else:
+                              st.warning("No data available for the selected period")
 
-                         detailed_data = get_detailed_data(ticker, period_mapping[st.session_state.selected_period])
-
-                         fig = create_figure(detailed_data)
-
-               
-                         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-             
-               def main():
-         
-                    if ticker:
-                         display_stock_chart()          
-               # Run the app
+               # Example usage
                if __name__ == "__main__":
-                    main()
-
+                    display_stock_chart(ticker)
 
 
           ###############################################################################################
@@ -8410,13 +8393,24 @@ if selected == "Stock Analysis Tool":
 
                               FCF_quarter_10_unpacked =quarterly_data['fcf'][-10:]
 
-                              Debt_to_assets_annual_10_unpacked  = annual_data['debt_to_assets'][-10:] 
-                              Debt_to_assets_quartar_10_unpacked  = quarterly_data['debt_to_assets'][-10:]
+                              #Debt_to_assets_annual_10_unpacked  = annual_data['debt_to_assets'][-10:] 
+                              #Debt_to_assets_quartar_10_unpacked  = quarterly_data['debt_to_assets'][-10:]
 
                               fcf_growth_annual_3_unpacked =annual_data['fcf_growth'][-3:]
 
                               fcf_growth_annual_5_unpacked =annual_data['fcf_growth'][-5:]
                               fcf_growth_annual_10_unpacked =annual_data['fcf_growth'][-10:]
+
+
+                              try:
+                                   Debt_to_assets_annual_10_unpacked  = annual_data['debt_to_assets'][-10:] 
+                                   Debt_to_assets_quartar_10_unpacked  = quarterly_data['debt_to_assets'][-10:]
+                                   
+
+                              except Exception as e:
+
+                                   Debt_to_assets_annual_10_unpacked = [0]*10
+                                   Debt_to_assets_quartar_10_unpacked = [0]*10
 
 
                               st.session_state[f'{ticker}_fcf_last'] = FCF_annual1_unpacked
@@ -8775,7 +8769,13 @@ if selected == "Stock Analysis Tool":
                               Dividend_per_share_cagr_10_quarter= round((Dividend_per_share_cagr_10_quarter*100),2)
 
                               Divdend_per_share_ttm =Financial_data['ttm']['dividends']
-                              debt_assets_ttm =Financial_data['ttm']['debt_to_assets']
+
+                              try:
+                                   debt_assets_ttm =Financial_data['ttm']['debt_to_assets']                                  
+
+                              except Exception as e:
+
+                                   debt_assets_ttm = [0]*1
 
                               Dividend_per_share_annual_21_unpacked = annual_data['dividends'][-21:]
 
