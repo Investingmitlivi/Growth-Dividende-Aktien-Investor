@@ -7621,6 +7621,7 @@ if selected == "Stock Analysis Tool":
                          'ASML:NL':'ASML Holding N.V',
                          #'NOVO.B:DK':'Novo Nordisk A/S',
                          'NVO':'Novo Nordisk ADR',
+                         'NBIS':'Nebius Group N.V.',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7655,6 +7656,7 @@ if selected == "Stock Analysis Tool":
                @st.cache_data(show_spinner=False,ttl=86400) #24hors
                def fetch_data_from_api(ticker):
                     try:
+
                          url = f"{base_url}{ticker}?api_key={api_key}"
                          response = requests.get(url, headers=header)
                     
@@ -8635,6 +8637,8 @@ if selected == "Stock Analysis Tool":
 
           ###################################################################################################
                          EndPrice_annual_10_unpacked = EndPrice_annual_21_unpacked[-10:]
+                         market_cap_annual_10_unpacked_Average = sum(market_cap_annual_10_unpacked)/len(market_cap_annual_10_unpacked)
+                         market_cap_annual_5_Average = sum(market_cap_annual_10_unpacked[-5:])/len(market_cap_annual_10_unpacked[-5:])
 
                          Average_net_income_annual_funf_Billion_Million = (
                          "{:.2f}B".format(Average_net_income_annual_funf / 1e9) 
@@ -10132,23 +10136,22 @@ if selected == "Stock Analysis Tool":
 
 
                          if len(Revenue_annual_10_unpacked) >= 10:
-                              P_OCF_10="{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_10_unpacked)/len(Net_Operating_CashFlow_annual_10_unpacked))/1000000000))
-                              P_sales_10="{:.2f}".format(Marketcap/((sum(Revenue_annual_10_unpacked)/len(Revenue_annual_10_unpacked))/1000000000))
+                              P_OCF_10="{:.2f}".format((market_cap_annual_10_unpacked_Average)/(sum(Net_Operating_CashFlow_annual_10_unpacked)/len(Net_Operating_CashFlow_annual_10_unpacked)))
+                              P_sales_10="{:.2f}".format(sum(Price_to_sales_annual_10_unpacked)/len(Price_to_sales_annual_10_unpacked))
                               Average_fcf_growth_ten =  "{:.2f}".format(((sum(fcf_growth_annual_10_unpacked) / len(fcf_growth_annual_10_unpacked)))*100)
                               average_PE_historical = "{:.2f}".format((sum(pe_annual_10_unpacked) / len(pe_annual_10_unpacked)))
-                              pfcf_ten="{:.2f}".format(Marketcap/(rounded_fcf_Annual_ten/1000000000))
+                              pfcf_ten="{:.2f}".format(sum(price_to_fcf_annual21_unpacked[-10:])/len(price_to_fcf_annual21_unpacked[-10:]))
 
                               Net_income_margin_10 = "{:.2f}".format((Net_income_margin_10years)*100)
                               FCF_Margin_10 = "{:.2f}".format(FCF_Margin_10)
                               EPS_growth_10yrs="{:.2f}".format(EPS_growth_10yrs)
-                              Average_pe_ten = "{:.2f}".format(sum(pe_annual_10_unpacked) / len(pe_annual_10_unpacked))
+                             
 
                          else:
                               P_OCF_10= "-"
                               Average_fcf_growth_ten = "0.00"
                               #Revenue_growth_10years= "0.00"
                               EPS_growth_10yrs="0.00"
-                              Average_pe_ten = "0.00"
                               average_PE_historical = "-"
                               pfcf_ten = "-"
                               Net_income_margin_10 ="-"
@@ -10179,55 +10182,63 @@ if selected == "Stock Analysis Tool":
                          try:
                               if len(Revenue_annual_5_unpacked) >= 5:
                                    Average_ROIC_funf = "{:.2f}%".format(Average_ROIC_funf)
+
                                    average_FCF_annual_five_we = (
                                         "{:.2f}B".format(rounded_fcf_Annual_five / 1_000_000_000)
                                         if abs(rounded_fcf_Annual_five) >= 1_000_000_000
                                         else "{:,.1f}M".format(rounded_fcf_Annual_five / 1_000_000)
                                    )
+                                   
                                    five_ROE = "{:.2f}".format(
                                         (sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked)) * 100
                                    )
+                                   
                                    pe_five_ = "{:.2f}".format(
-                                        float(Marketcap) / (Average_net_income_annual_funf / 1_000_000_000)
+                                        (sum(pe_annual_5_unpacked) / len(pe_annual_5_unpacked))
+                                  
                                    )
                                    pfcf_funf = "{:.2f}".format(
-                                        Marketcap / (rounded_fcf_Annual_five / 1_000_000_000)
+                                        (sum(price_to_fcf_annual21_unpacked[-5:]) / len(price_to_fcf_annual21_unpacked[-5:]))
                                    )
-                                   P_OCF_5= "{:.2f}".format(Marketcap/((sum(Net_Operating_CashFlow_annual_5_unpacked)/len(Net_Operating_CashFlow_annual_5_unpacked))/1000000000))
+                                   
+                                   P_OCF_5 = "{:.2f}".format(
+                                        (market_cap_annual_5_Average) / (sum(Net_Operating_CashFlow_annual_5_unpacked) / 
+                                                       len(Net_Operating_CashFlow_annual_5_unpacked)))
+                                  
 
                                    KCV = pfcf_funf
                                    KGV = pe_five_
+
                                    five_Yrs_ROE = "{:.2f}".format(
                                         (sum(ROE_annual_5_unpacked) / len(ROE_annual_5_unpacked)) * 100
                                    )
+                                   
                                    Average_fcf_growth_five = "{:.2f}%".format(
                                         (sum(fcf_growth_annual_5_unpacked) / len(fcf_growth_annual_5_unpacked)) * 100
                                    )
-                                   Average_pe_five = "{:.2f}".format(
-                                        sum(pe_annual_5_unpacked) / len(pe_annual_5_unpacked)
-                                   )
+                                   
                                    five_yrs_Nettomarge = "{:.2f}".format(Net_income_margin_annual5 * 100)
                                    FCF_Margin_5 = "{:.2f}".format(FCF_Margin_5 * 100)
-                                   P_sales_5="{:.2f}".format(Marketcap/((sum(Revenue_annual_5_unpacked)/len(Revenue_annual_5_unpacked))/1000000000))
+                                   
+                                   P_sales_5 = "{:.2f}".format(
+                                        sum(Price_to_sales_annual_10_unpacked[-5:]) / len(Price_to_sales_annual_10_unpacked[-5:])
+                                   )
                               else:
                                    raise ValueError(" ")
 
                          except Exception as e:
-
                               # Set fallback/default values
-                              Average_ROIC_funf = "NA"
+                              Average_ROIC_funf = "-"
                               average_FCF_annual_five_we = "{:.2f}".format(0.0)
-                              five_yrs_Nettomarge = "0.00"
                               five_ROE = "0.00"
+                              pe_five_ = "N/A"
                               pfcf_funf = "-"
-                              pe_five_ = "-"
-                              average_PE_historical = "-"
                               P_OCF_5 = "-"
-                              KGV = 0.0
-                              KCV = 0.0
+                              KCV = "{:.2f}".format(0.0)
+                              KGV = "{:.2f}".format(0.0)
                               five_Yrs_ROE = 0.0
-                              Average_fcf_growth_five = "0.00"
-                              Average_pe_five = "0.00"
+                              Average_fcf_growth_five = "{:.2f}".format(0.0)
+                              five_yrs_Nettomarge = "{:.2f}".format(0.0)
                               FCF_Margin_5 = "-"
                               P_sales_5 = "-"
                          
