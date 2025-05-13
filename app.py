@@ -7656,7 +7656,6 @@ if selected == "Stock Analysis Tool":
                @st.cache_data(show_spinner=False,ttl=86400) #24hors
                def fetch_data_from_api(ticker):
                     try:
-
                          url = f"{base_url}{ticker}?api_key={api_key}"
                          response = requests.get(url, headers=header)
                     
@@ -8505,7 +8504,7 @@ if selected == "Stock Analysis Tool":
 
                                              st.session_state[f'{ticker}_EndPrice_annual_21_unpacked'],
                                              st.session_state[f'{ticker}_market_cap_annual_10_unpacked'],
-                                             st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_5_unpacked'],
+                                             st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_10_unpacked'],
                                              st.session_state[f'{ticker}_revenue_5years'],
                                              st.session_state[f'{ticker}_len_5_annual'],
 
@@ -8547,7 +8546,7 @@ if selected == "Stock Analysis Tool":
 
                               EndPrice_annual_21_unpacked = annual_data['period_end_price'][-21:]
                               market_cap_annual_10_unpacked = annual_data['market_cap'][-10:]
-                              Net_Operating_CashFlow_annual_5_unpacked = annual_data['cf_cfo'][-5:]
+                              Net_Operating_CashFlow_annual_10_unpacked = annual_data['cf_cfo'][-10:]
 
                               Revenue_annual_5_unpacked = annual_data['revenue'][-5:]
 
@@ -8582,7 +8581,7 @@ if selected == "Stock Analysis Tool":
 
                               st.session_state[f'{ticker}_EndPrice_annual_21_unpacked']= EndPrice_annual_21_unpacked
                               st.session_state[f'{ticker}_market_cap_annual_10_unpacked']=market_cap_annual_10_unpacked
-                              st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_5_unpacked']= Net_Operating_CashFlow_annual_5_unpacked
+                              st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_10_unpacked']= Net_Operating_CashFlow_annual_10_unpacked
                               st.session_state[f'{ticker}_revenue_5years'] = Revenue_annual_5_unpacked
                               st.session_state[f'{ticker}_len_5_annual'] =len_5_annual
 
@@ -8608,7 +8607,7 @@ if selected == "Stock Analysis Tool":
                                         TBVPS_quater1_unpacked,
                                         BVPS_quater1_unpacked,
                                         EndPrice_annual_21_unpacked,market_cap_annual_10_unpacked,
-                                        Net_Operating_CashFlow_annual_5_unpacked,
+                                        Net_Operating_CashFlow_annual_10_unpacked,
                                         Revenue_annual_5_unpacked,len_5_annual,
                                         Revenue_annual_10_unpacked,len_10_annual,
                                         Revenue_quarter_10_unpacked,len_10_quarter,                                             
@@ -8625,7 +8624,7 @@ if selected == "Stock Analysis Tool":
                               TBVPS_quater1_unpacked,
                               BVPS_quater1_unpacked,
                               EndPrice_annual_21_unpacked,market_cap_annual_10_unpacked,
-                              Net_Operating_CashFlow_annual_5_unpacked,
+                              Net_Operating_CashFlow_annual_10_unpacked,
                               Revenue_annual_5_unpacked,len_5_annual,
                               Revenue_annual_10_unpacked,len_10_annual,
                               Revenue_quarter_10_unpacked,len_10_quarter,
@@ -8645,7 +8644,29 @@ if selected == "Stock Analysis Tool":
                          if Average_net_income_annual_funf >= 1e9
                          else "{:,.1f}M".format(Average_net_income_annual_funf / 1e6)
 
-                         )               
+                         )      
+                         Net_Operating_CashFlow_annual_5_unpacked = Net_Operating_CashFlow_annual_10_unpacked[-5:]
+
+                         market_cap_annual_10 = [float(value) for value in market_cap_annual_10_unpacked]
+                         OCF_10 = [float(value) for value in Net_Operating_CashFlow_annual_10_unpacked]
+
+
+                         # Calculate Price-to-OCF ratios (store both numeric and formatted versions)
+                         # Calculate Price-to-OCF ratios
+                         Price_to_OCF_10 = []
+                         Price_to_OCF_10_numeric = []
+                         for mc, ocf in zip(market_cap_annual_10, OCF_10):
+                              if ocf != 0:
+                                   ratio = mc / ocf
+                                   Price_to_OCF_10_numeric.append(ratio)  # Keep numeric for calculations
+                                   Price_to_OCF_10.append("{:.2f}".format(ratio))  # Formatted string
+                              else:
+                                   Price_to_OCF_10.append("N/A")  # Formatted string for display
+
+                         #print("P_OCF_10",P_OCF_10)
+                         #print("P_OCF_5",P_OCF_5)
+
+         
 
                          Average_net_income_annual_one_Bill_Milli ="{:.2f}B".format(round_net_income_annual_one/ 1000000000) if(round_net_income_annual_one) >= 1000000000 else "{:,.1f}M".format(round_net_income_annual_one / 1000000)
 
@@ -9482,7 +9503,6 @@ if selected == "Stock Analysis Tool":
                               if f'{ticker}_Changes_in_working_capital_annual_10' in st.session_state:
                                    # If the data already exists in session state, return the unpacked values
                                    return (st.session_state[f'{ticker}_Changes_in_working_capital_annual_10'],
-                                             st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_10_unpacked'],
                                              st.session_state[f'{ticker}_Capex_annual_10'],
                                              st.session_state[f'{ticker}_Purchase_of_Investment_annual_10'],
                                              st.session_state[f'{ticker}_Sale_maturity_of_Investments_annual_10'],
@@ -9517,7 +9537,6 @@ if selected == "Stock Analysis Tool":
                               # Unpacking annual data (last 10 years)
      
                               Changes_in_working_capital_annual_10_unpacked = annual_data['cfo_change_in_working_capital'][-10:]
-                              Net_Operating_CashFlow_annual_10_unpacked = annual_data['cf_cfo'][-10:]
                               Capex_annual_10_unpacked = annual_data['cfi_ppe_purchases'][-10:]
                               Purchase_of_Investment_annual_10_unpacked = annual_data['cfi_investment_purchases'][-10:]
                               Sale_maturity_of_Investments_annual_10_unpacked = annual_data['cfi_investment_sales'][-10:]
@@ -9571,7 +9590,6 @@ if selected == "Stock Analysis Tool":
 
                               # Store annual data in session state
                               st.session_state[f'{ticker}_Changes_in_working_capital_annual_10'] = Changes_in_working_capital_annual_10_unpacked
-                              st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_10_unpacked'] = Net_Operating_CashFlow_annual_10_unpacked 
                               st.session_state[f'{ticker}_Capex_annual_10'] = Capex_annual_10_unpacked
                               st.session_state[f'{ticker}_Purchase_of_Investment_annual_10'] = Purchase_of_Investment_annual_10_unpacked
                               st.session_state[f'{ticker}_Sale_maturity_of_Investments_annual_10'] = Sale_maturity_of_Investments_annual_10_unpacked
@@ -9605,7 +9623,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_Net_Financing_cashFlow_quarter_10'] = Net_Financing_cashFlow_quarter_10_unpacked
                               st.session_state[f'{ticker}_Net_change_in_cash_quarter_10'] = Net_change_in_cash_quarter_10_unpacked
 
-                              return (Changes_in_working_capital_annual_10_unpacked, Net_Operating_CashFlow_annual_10_unpacked ,Capex_annual_10_unpacked,
+                              return (Changes_in_working_capital_annual_10_unpacked,Capex_annual_10_unpacked,
                                         Purchase_of_Investment_annual_10_unpacked, Sale_maturity_of_Investments_annual_10_unpacked,
                                         Net_investing_CashFlow_annual_10_unpacked, Insurance_Reduction_of_DebtNet_annual_10_unpacked,
                                         Debt_issued_annual_10_unpacked, Debt_repaid_annual_10_unpacked,
@@ -9622,7 +9640,7 @@ if selected == "Stock Analysis Tool":
                                         Repurchase_of_common_Preferred_stock_quarter_10_unpacked, Net_Financing_cashFlow_quarter_10_unpacked,
                                         Net_change_in_cash_quarter_10_unpacked)
                          
-                         (Changes_in_working_capital_annual_10_unpacked,Net_Operating_CashFlow_annual_10_unpacked,Capex_annual_10_unpacked,
+                         (Changes_in_working_capital_annual_10_unpacked,Capex_annual_10_unpacked,
                                         Purchase_of_Investment_annual_10_unpacked, Sale_maturity_of_Investments_annual_10_unpacked,
                                         Net_investing_CashFlow_annual_10_unpacked, Insurance_Reduction_of_DebtNet_annual_10_unpacked,
                                         Debt_issued_annual_10_unpacked, Debt_repaid_annual_10_unpacked,
@@ -10136,7 +10154,7 @@ if selected == "Stock Analysis Tool":
 
 
                          if len(Revenue_annual_10_unpacked) >= 10:
-                              P_OCF_10="{:.2f}".format((market_cap_annual_10_unpacked_Average)/(sum(Net_Operating_CashFlow_annual_10_unpacked)/len(Net_Operating_CashFlow_annual_10_unpacked)))
+                              P_OCF_10 = "{:.2f}".format(sum(Price_to_OCF_10_numeric)/len(Price_to_OCF_10_numeric)) #if Price_to_OCF_10_numeric else None
                               P_sales_10="{:.2f}".format(sum(Price_to_sales_annual_10_unpacked)/len(Price_to_sales_annual_10_unpacked))
                               Average_fcf_growth_ten =  "{:.2f}".format(((sum(fcf_growth_annual_10_unpacked) / len(fcf_growth_annual_10_unpacked)))*100)
                               average_PE_historical = "{:.2f}".format((sum(pe_annual_10_unpacked) / len(pe_annual_10_unpacked)))
@@ -10150,7 +10168,6 @@ if selected == "Stock Analysis Tool":
                          else:
                               P_OCF_10= "-"
                               Average_fcf_growth_ten = "0.00"
-                              #Revenue_growth_10years= "0.00"
                               EPS_growth_10yrs="0.00"
                               average_PE_historical = "-"
                               pfcf_ten = "-"
@@ -10200,10 +10217,7 @@ if selected == "Stock Analysis Tool":
                                    pfcf_funf = "{:.2f}".format(
                                         (sum(price_to_fcf_annual21_unpacked[-5:]) / len(price_to_fcf_annual21_unpacked[-5:]))
                                    )
-                                   
-                                   P_OCF_5 = "{:.2f}".format(
-                                        (market_cap_annual_5_Average) / (sum(Net_Operating_CashFlow_annual_5_unpacked) / 
-                                                       len(Net_Operating_CashFlow_annual_5_unpacked)))
+                                   P_OCF_5 = "{:.2f}".format(sum(Price_to_OCF_10_numeric[-5:])/len(Price_to_OCF_10_numeric[-5:])) #if len(Price_to_OCF_10_numeric) >= 5 else None
                                   
 
                                    KCV = pfcf_funf
@@ -10519,8 +10533,8 @@ if selected == "Stock Analysis Tool":
                          '10 YR P/E': [average_PE_historical],
                          'Operating Cashflow (TTM)': [current_Operating_cash_Flow_Value], 
                          'Price/OCF (TTM)': [P_OCF_ttm],  
-                         '5 YR Price/OCF ': [P_OCF_5],  
-                         '10 YR Price/OCF': [P_OCF_10],  
+                         '5 YR Price/OCF ': f"{P_OCF_5}",  
+                         '10 YR Price/OCF': f"{P_OCF_10}",  
                          '5 YR Gross Profit Margin': [five_yrs_average_gross_margin],
                          'Gross Profit Margin (TTM)': [average_gross_margin_quater1],
                          }
@@ -15030,22 +15044,6 @@ if selected == "Stock Analysis Tool":
 
                                    with col2:
 
-                                        OCF_10 = ["{:.2f}".format(value) for value in Net_Operating_CashFlow_annual_10_unpacked]
-                                        market_cap_annual_10 = ["{:.2f}".format(value) for value in market_cap_annual_10_unpacked]
-
-                                        # Calculate Price-to-OCF ratio
-                                        Price_to_OCF_10 = []
-                                        for mc, ocf in zip(market_cap_annual_10, OCF_10):
-                                             mc_float = float(mc)
-                                             ocf_float = float(ocf)
-                                             if ocf_float != 0:  # Avoid division by zero
-                                                  ratio = mc_float / ocf_float
-                                                  Price_to_OCF_10.append("{:.2f}".format(ratio))
-                                             else:
-                                                  Price_to_OCF_10.append("N/A")
-                                                  
-     
-                                        #Price_to_earnings = "{:.2f}".format((Price_to_earnings))
                                         data = pd.DataFrame({
                                         'Date': date_annual,
                                         'P/OCF Ratio': Price_to_OCF_10,
