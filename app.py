@@ -7643,6 +7643,9 @@ if selected == "Stock Analysis Tool":
 
                api_key = os.getenv("api_key")
                base_url = os.getenv("base_url")
+               api_key = '7bd83d28344a3e5d2c2103dd4ca746f133259764'
+
+               base_url = 'https://public-api.quickfs.net/v1/data/all-data/'
 
 
                if not api_key or not base_url:
@@ -13758,12 +13761,15 @@ if selected == "Stock Analysis Tool":
                                    'Free Cash Flow': FCF_annual_ten_unpacked,
                                    'CapEx': [round(abs(x), 2) for x in Capex_annual_10_unpacked ],
                                    'Net Income': net_income_annual_10_unpacked,
-                                   'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked
+                                   'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked,
+                                   'Research & Development':Research_Dev_annual_10_unpacked
                                    })
 
                                    fig = go.Figure()
 
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Operating Cash Flow'], name='Operating Cash Flow'))
+                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Research & Development'], name='Research & Development'))
+
+                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Operating Cash Flow'], marker_color='brown', name='Operating Cash Flow'))
 
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['CapEx'], marker_color='black', name='CapEx'))
 
