@@ -14306,7 +14306,7 @@ if selected == "Stock Analysis Tool":
                                         #------------------------------------------------------------------------------------------------------------
 
                                    try:
-                                        ROIC_annual_10years = ["{:.2f}%".format(ROE_annual_10_unpacked * 100) for ROE_annual_10_unpacked in ROE_annual_10_unpacked]
+                                        ROIC_annual_10years = ["{:.2f}%".format(ROIC_annual_10_unpacked * 100) for ROIC_annual_10_unpacked in ROIC_annual_10_unpacked]
                                    except Exception as e:
                                         ROIC_annual_10years = 0.0
 
