@@ -7643,10 +7643,7 @@ if selected == "Stock Analysis Tool":
 
                api_key = os.getenv("api_key")
                base_url = os.getenv("base_url")
-               api_key = '7bd83d28344a3e5d2c2103dd4ca746f133259764'
-
-               base_url = 'https://public-api.quickfs.net/v1/data/all-data/'
-
+           
 
                if not api_key or not base_url:
                     st.error("API_KEY or BASE_URL not found in environment variables.")
