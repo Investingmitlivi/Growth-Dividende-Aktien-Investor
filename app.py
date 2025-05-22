@@ -10655,141 +10655,7 @@ if selected == "Stock Analysis Tool":
                                         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)      
                          local_css("style.css")
           #################################################################################
-               def unpack_financial_data(annual_data, ticker):
-               # Define session state keys based on ticker
-                    session_keys = {
-                         'Total_interest_income_annual_10': f'{ticker}_Total_interest_income_annual_10',
-                         'Total_interest_expense_annual_10': f'{ticker}_Total_interest_expense_annual_10',
-                         'Net_interest_Income_annual_10': f'{ticker}_Net_interest_Income_annual_10',
-                         'Prov_Credit_losses_annual_10': f'{ticker}_Prov_Credit_losses_annual_10',
-                         'Netinterest_Prov_Credit_losses_annual_10': f'{ticker}_Netinterest_Prov_Credit_losses_annual_10',
-                         'Total_Non_interest_expenses_annual_10': f'{ticker}_Total_Non_interest_expenses_annual_10',
-                         'Total_Non_interest_revenue_annual_10': f'{ticker}_Total_Non_interest_revenue_annual_10',
-                         'Net_premiums_earned_annual_10': f'{ticker}_Net_premiums_earned_annual_10',
-                         'Net_investment_income_annual_10': f'{ticker}_Net_investment_income_annual_10',
-                         'Fees_and_other_income_annual_10': f'{ticker}_Fees_and_other_income_annual_10',
-                         'Interest_Expense_insurance_annual_10': f'{ticker}_Interest_Expense_insurance_annual_10',
-                         'Policy_benefits_claim_annual_10': f'{ticker}_Policy_benefits_claim_annual_10',
-                         'Operating_income_annual_10': f'{ticker}_Operating_income_annual_10',
-                         'cogs_list_annual_10': f'{ticker}_cogs_list_annual_10',
-                         'gross_profit_annual_10': f'{ticker}_gross_profit_annual_10',
-                         'SGA_Expense_annual_10': f'{ticker}_SGA_Expense_annual_10',
-                         'Depreciation_Depletion_Amortisation_annual_10': f'{ticker}_Depreciation_Depletion_Amortisation_annual_10',
-                         'Interest_Income_annual_10': f'{ticker}_Interest_Income_annual_10',
-                         'Research_Dev_annual_10': f'{ticker}_Research_Dev_annual_10',
-                         'interest_expense_list_annual_10': f'{ticker}_interest_expense_list_annual_10',
-                         'operating_income_list_annual_10': f'{ticker}_operating_income_list_annual_10'
-                    }
 
-                    # Check if all data is in session state
-                    if all(key in st.session_state for key in session_keys.values()):
-                         return tuple(st.session_state[key] for key in session_keys.values())
-
-                    # Unpack the data if not present in session state
-                    try:
-                         Total_interest_income_annual_10_unpacked = annual_data['total_interest_income'][-10:]
-                         Total_interest_expense_annual_10_unpacked = annual_data['total_interest_expense'][-10:]
-                         #Net_interest_Income_annual_10_unpacked = annual_data['net_interest_income'][-10:]
-                         Prov_Credit_losses_annual_10_unpacked = annual_data['credit_losses_provision'][-10:]
-                         Netinterest_Prov_Credit_losses_annual_10_unpacked = annual_data['net_interest_income_after_credit_losses_provision'][-10:]
-                         Total_Non_interest_expenses_annual_10_unpacked = annual_data['total_noninterest_expense'][-10:]
-                         Total_Non_interest_revenue_annual_10_unpacked = annual_data['total_noninterest_revenue'][-10:]
-
-                         # Store unpacked data in session state
-                         st.session_state.update({
-                              session_keys['Total_interest_income_annual_10']: Total_interest_income_annual_10_unpacked,
-                              session_keys['Total_interest_expense_annual_10']: Total_interest_expense_annual_10_unpacked,
-                              session_keys['Net_interest_Income_annual_10']: Net_interest_Income_annual_10_unpacked,
-                              session_keys['Prov_Credit_losses_annual_10']: Prov_Credit_losses_annual_10_unpacked,
-                              session_keys['Netinterest_Prov_Credit_losses_annual_10']: Netinterest_Prov_Credit_losses_annual_10_unpacked,
-                              session_keys['Total_Non_interest_expenses_annual_10']: Total_Non_interest_expenses_annual_10_unpacked,
-                              session_keys['Total_Non_interest_revenue_annual_10']: Total_Non_interest_revenue_annual_10_unpacked
-                         })
-
-                         return (
-                              Total_interest_income_annual_10_unpacked,
-                              Total_interest_expense_annual_10_unpacked,
-                              Net_interest_Income_annual_10_unpacked,
-                              Prov_Credit_losses_annual_10_unpacked,
-                              Netinterest_Prov_Credit_losses_annual_10_unpacked,
-                              Total_Non_interest_expenses_annual_10_unpacked,
-                              Total_Non_interest_revenue_annual_10_unpacked
-                         )
-
-                    except KeyError:
-                         try:
-                              Net_premiums_earned_annual_10_unpacked = annual_data['premiums_earned'][-10:]
-                              Net_investment_income_annual_10_unpacked = annual_data['net_investment_income'][-10:]
-                              Fees_and_other_income_annual_10_unpacked = annual_data['fees_and_other_income'][-10:]
-                              Interest_Expense_insurance_annual_10_unpacked = annual_data['interest_expense_insurance'][-10:]
-                              Policy_benefits_claim_annual_10_unpacked = annual_data['net_policyholder_claims_expense'][-10:]
-                              Operating_income_annual_10_unpacked = annual_data['operating_income'][-10:]
-
-                              # Store unpacked data in session state
-                              st.session_state.update({
-                                   session_keys['Net_premiums_earned_annual_10']: Net_premiums_earned_annual_10_unpacked,
-                                   session_keys['Net_investment_income_annual_10']: Net_investment_income_annual_10_unpacked,
-                                   session_keys['Fees_and_other_income_annual_10']: Fees_and_other_income_annual_10_unpacked,
-                                   session_keys['Interest_Expense_insurance_annual_10']: Interest_Expense_insurance_annual_10_unpacked,
-                                   session_keys['Policy_benefits_claim_annual_10']: Policy_benefits_claim_annual_10_unpacked,
-                                   session_keys['Operating_income_annual_10']: Operating_income_annual_10_unpacked
-                              })
-
-                              return (
-                                   Net_premiums_earned_annual_10_unpacked,
-                                   Net_investment_income_annual_10_unpacked,
-                                   Fees_and_other_income_annual_10_unpacked,
-                                   Interest_Expense_insurance_annual_10_unpacked,
-                                   Policy_benefits_claim_annual_10_unpacked,
-                                   Operating_income_annual_10_unpacked
-                              )
-
-                         except KeyError:
-                              try:
-                                   cogs_list_annual_10_unpacked = annual_data['cogs'][-10:]
-                                   gross_profit_annual_10_unpacked = annual_data['gross_profit'][-10:]
-                                   SGA_Expense_annual_10_unpacked = annual_data['total_opex'][-10:]
-                                   Research_Dev_annual_10_unpacked = annual_data['rnd'][-10:]
-                                   interest_expense_list_annual_10_unpacked = annual_data['interest_expense'][-10:]
-                                   operating_income_list_annual_10_unpacked = annual_data['operating_income'][-10:]
-
-
-                                   try:
-                                        Depreciation_Depletion_Amortisation_annual_10_unpacked = annual_data['cfo_da'][-10:]
-                                        Interest_Income_annual_10_unpacked = annual_data['interest_income'][-10:]
-                                   except KeyError:
-                                        Depreciation_Depletion_Amortisation_annual_10_unpacked = [0] * len_10_annual
-                                        Interest_Income_annual_10_unpacked = [0] * len_10_annual
-
-
-                                   # Store unpacked data in session state
-                                   st.session_state.update({
-                                        session_keys['cogs_list_annual_10']: cogs_list_annual_10_unpacked,
-                                        session_keys['gross_profit_annual_10']: gross_profit_annual_10_unpacked,
-                                        session_keys['SGA_Expense_annual_10']: SGA_Expense_annual_10_unpacked,
-                                        session_keys['Research_Dev_annual_10']: Research_Dev_annual_10_unpacked,
-                                        session_keys['interest_expense_list_annual_10']: interest_expense_list_annual_10_unpacked,
-                                        session_keys['operating_income_list_annual_10']: operating_income_list_annual_10_unpacked,
-                                        session_keys['Depreciation_Depletion_Amortisation_annual_10']: Depreciation_Depletion_Amortisation_annual_10_unpacked,
-                                        session_keys['Interest_Income_annual_10']: Interest_Income_annual_10_unpacked
-                                   
-                                   })
-
-                                   return (
-                                        cogs_list_annual_10_unpacked,
-                                        gross_profit_annual_10_unpacked,
-                                        SGA_Expense_annual_10_unpacked,
-                                        Research_Dev_annual_10_unpacked,
-                                        interest_expense_list_annual_10_unpacked,
-                                        operating_income_list_annual_10_unpacked,
-                                        Depreciation_Depletion_Amortisation_annual_10_unpacked,
-                                        Interest_Income_annual_10_unpacked
-                                   
-                                   )
-
-                              except KeyError:
-                                   st.write("Data not available.")
-                                   return ()
 
 
           #################################################################################
@@ -13750,8 +13616,16 @@ if selected == "Stock Analysis Tool":
                                         st.plotly_chart(fig2, use_container_width=True, config=config)
                          #-------------------------------------------------------------------------------------------------
 
-               #.................................20  Dividend CAGR............................................                    
-                                   
+               #.................................20  Dividend CAGR............................................    
+               # 
+               #                 
+                                   try:
+                                        Research_Dev_annual_10_unpacked    = Research_Dev_annual_10_unpacked   
+
+                                   except Exception as e:    
+                                        Research_Dev_annual_10_unpacked =  [0]*len_10_annual
+
+
                                    data = pd.DataFrame({
                                    'Date': date_annual,
                                    'Dividends': [round(abs(x), 2) for x in Cash_Dividends_paid_Total_annual_10_unpacked],
