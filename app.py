@@ -9681,6 +9681,7 @@ if selected == "Stock Analysis Tool":
                                         st.session_state[f'{ticker}_Total_Equity_quarter10'],
                                         st.session_state[f'{ticker}_Total_Equity_quarter1'],
                                         st.session_state[f'{ticker}_Total_Equity_annual1'],
+                                        st.session_state[f'{ticker}_Total_Equity_annual'],
                                         st.session_state[f'{ticker}_gross_margin_annual5'],
                                         st.session_state[f'{ticker}_gross_margin_annual10'],
                                         st.session_state[f'{ticker}_operating_margin_quater1'],
@@ -9770,6 +9771,11 @@ if selected == "Stock Analysis Tool":
                                    Total_Equity_quarter10_unpacked = quarterly_data['total_equity'][-10:]
                               except KeyError:
                                    Total_Equity_quarter10_unpacked = [0] * len_10_quarter
+
+                              try:
+                                   Total_Equity_annual = annual_data['total_equity'][-10:]
+                              except KeyError:
+                                   Total_Equity_annual = [0] * len_10_annual
 
                               try:
                                    Total_Equity_quarter1_unpacked = quarterly_data['total_equity'][-1:]
@@ -9874,6 +9880,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_Total_Equity_quarter10'] = Total_Equity_quarter10_unpacked
                               st.session_state[f'{ticker}_Total_Equity_quarter1'] = Total_Equity_quarter1_unpacked
                               st.session_state[f'{ticker}_Total_Equity_annual1'] = Total_Equity_annual1_unpacked
+                              st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
                               st.session_state[f'{ticker}_gross_margin_annual5'] = gross_margin_annual5_unpacked
                               st.session_state[f'{ticker}_gross_margin_annual10'] = gross_margin_annual10_unpacked
                               st.session_state[f'{ticker}_operating_margin_quater1'] = operating_margin_quater1_unpacked
@@ -9908,6 +9915,7 @@ if selected == "Stock Analysis Tool":
                                    Total_Equity_quarter10_unpacked,
                                    Total_Equity_quarter1_unpacked,
                                    Total_Equity_annual1_unpacked,
+                                   Total_Equity_annual,
                                    gross_margin_annual5_unpacked,
                                    gross_margin_annual10_unpacked,
                                    operating_margin_quater1_unpacked,
@@ -9944,6 +9952,7 @@ if selected == "Stock Analysis Tool":
                          Total_Equity_quarter10_unpacked,
                          Total_Equity_quarter1_unpacked,
                          Total_Equity_annual1_unpacked,
+                         Total_Equity_annual,
                          gross_margin_annual5_unpacked,
                          gross_margin_annual10_unpacked,
                          operating_margin_quater1_unpacked,
@@ -11258,7 +11267,6 @@ if selected == "Stock Analysis Tool":
                                              LongTerm_debt_annual = annual_data['lt_debt'][-10:]
                                              Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
                                              Total_liabilities_annual = annual_data['total_liabilities'][-10:]
-                                             Total_Equity_annual = annual_data['total_equity'][-10:]
                                              ################################ Quarter###############################
 
                                              cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
@@ -11295,7 +11303,6 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_Short_term_debt_annual'] = Short_term_debt_annual
                                              st.session_state[f'{ticker}_LongTerm_debt_annual'] = LongTerm_debt_annual
                                              st.session_state[f'{ticker}_Other_longterm_liabilities_annual'] = Other_longterm_liabilities_annual
-                                             #st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
                                              st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
                                              st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
 
@@ -11445,7 +11452,6 @@ if selected == "Stock Analysis Tool":
                                                   LongTerm_debt_annual = annual_data['lt_debt'][-10:]
                                                   Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
                                                   Total_liabilities_annual = annual_data['total_liabilities'][-10:]
-                                                  Total_Equity_annual = annual_data['total_equity'][-10:]
                                                   ################################ Quarter###############################
                                                   cash_and_equiv_quarterly_Balance_Sheet = quarterly_data['cash_and_equiv'][-10:]
                                                   st_investments_quarterly_Balance_Sheet = quarterly_data['st_investments'][-10:]
@@ -11484,7 +11490,6 @@ if selected == "Stock Analysis Tool":
                                                   st.session_state[f'{ticker}_Short_term_debt_annual'] = Short_term_debt_annual
                                                   st.session_state[f'{ticker}_LongTerm_debt_annual'] = LongTerm_debt_annual
                                                   st.session_state[f'{ticker}_Other_longterm_liabilities_annual'] = Other_longterm_liabilities_annual
-                                                  #st.session_state[f'{ticker}_Retained_earnings_annual'] = Retained_earnings_annual
                                                   st.session_state[f'{ticker}_Total_liabilities_annual'] = Total_liabilities_annual
                                                   st.session_state[f'{ticker}_Total_Equity_annual'] = Total_Equity_annual
                                                   ################################ Quarter###############################
@@ -11674,7 +11679,6 @@ if selected == "Stock Analysis Tool":
                                                   LongTerm_debt_annual = annual_data['lt_debt'][-10:]
                                                   Other_longterm_liabilities_annual = annual_data['other_lt_liabilities'][-10:]
                                                   Total_liabilities_annual = annual_data['total_liabilities'][-10:]
-                                                  Total_Equity_annual = annual_data['total_equity'][-10:]
 
                                                   ############################### Quarter###############################
 
@@ -13481,6 +13485,10 @@ if selected == "Stock Analysis Tool":
                          #-------------------------------------------------------------------------------------------------
                          # Get the current year and calculate next year
                           
+                                   nav_per_share = [equity / shares if shares != 0 else None
+                                                  for equity, shares in zip(Total_Equity_annual, shares_diluted_annual21_unpacked[-10:])]
+                                   
+                                   print("nav_per_share",nav_per_share)
 
                                    # Format shares outstanding in millions with "M" suffix
                                    shares_diluted_annual_10 = ["{:.2f}M".format(value/1_000_000) for value in shares_diluted_annual21_unpacked[-10:]]
@@ -13523,25 +13531,56 @@ if selected == "Stock Analysis Tool":
 
                                    with col1:
                                                                                 #Price_to_earnings=annual_data['price_to_earnings'][-10:]
+                                        # DataFrame erstellen
                                         data = pd.DataFrame({
                                         'Date': date_annual,
                                         'Revenue per Share': revenue_per_share_annual_10_unpacked,
+                                        'NAV per Share': nav_per_share
                                         })
 
-
-                                        
-                                        fig1 = px.bar(data, x='Date', y='Revenue per Share',
-                                                       text='Revenue per Share',  # Display the value on top of each bar
-                                                       labels={'value': 'Amount()'},  # Include the percentage sign in the label
-                                                       )
-     
-
-                                        fig1.update_layout(
-                                        dragmode=False,  # Disable dragging for zooming
+                                        # Plot erstellen
+                                        fig1 = px.bar(
+                                        data,
+                                        x='Date',
+                                        y='Revenue per Share',
+                                        text='Revenue per Share',
+                                        labels={'Revenue per Share': 'Umsatz pro Aktie '},
                                         )
-                                        fig1.update_layout(
-                                        xaxis_type='category' 
+
+                                        # NAV als zweite Y-Achse hinzufügen (rote Linie)
+                                        fig1.add_scatter(
+                                        x=data['Date'],
+                                        y=data['NAV per Share'],
+                                        name='NAV pro Aktie ',
+                                        line=dict(color='red', width=2),
+                                        yaxis='y2',
+                                        mode='lines+markers',
+                                        hovertemplate='%{y:.2f} ',
+                                        visible='legendonly'  # Nur über Legende sichtbar
                                         )
+
+                                        # Layout aktualisieren
+                                        fig1.update_layout(
+                                        dragmode=False,
+                                        xaxis_type='category',
+                                        yaxis=dict(title='Umsatz pro Aktie '),
+                                        yaxis2=dict(
+                                             overlaying='y',
+                                             side='right',
+                                             showgrid=False,
+                                             title='NAV pro Aktie '
+                                        ),
+                                      
+                                        legend=dict(
+                                             orientation="h",
+                                             yanchor="bottom",
+                                             y=1.02,
+                                             xanchor="right",
+                                             x=1
+                                                  )
+                                             )
+
+
                                         st.markdown(f"""
                                         <style>
                                              @media (max-width: 768px) {{
