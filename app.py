@@ -7622,6 +7622,7 @@ if selected == "Stock Analysis Tool":
                          #'NOVO.B:DK':'Novo Nordisk A/S',
                          'NVO':'Novo Nordisk ADR',
                          'NBIS':'Nebius Group N.V.',
+                         'MBB:DE':'MBB SE',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7758,6 +7759,7 @@ if selected == "Stock Analysis Tool":
                'ASML:NL':'ASML',
                #'NOVO.B:DK':'NVO',
                #'NVO':'NVO'
+               'MBB:DE':'MBB.DE',
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
