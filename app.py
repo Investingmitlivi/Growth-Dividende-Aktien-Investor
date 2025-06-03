@@ -479,12 +479,8 @@ if selected == "Home":
           st.write("[Superinvestor Portfolios 13F fillings >](https://dataroma.com/m/home.php)")
           st.write("[Hedge Fund Manager 13F Portfolio >](https://hedgefollow.com/)")
 
-          st.write(
-          """
-          S&P 500 PE ratio, Price to Sales ratio, Earnings etc
-           """
-         )
-          st.write("[Shiller PE ratio for the S&P 500 >](https://www.multpl.com/shiller-pe)")
+          st.write("[Shiller S&P 500 PE ratio, Price to Sales ratio, Earnings etc >](https://www.multpl.com/shiller-pe)")
+          st.write("[BERKSHIRE HATHAWAY INC.SHAREHOLDER LETTERS>](https://www.berkshirehathaway.com/letters/letters.html)")
 
       
  
