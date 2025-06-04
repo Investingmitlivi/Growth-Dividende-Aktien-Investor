@@ -12177,7 +12177,7 @@ if selected == "Stock Analysis Tool":
                                                        <tr>
                                                        <td class="section-header">Earnings Multiples</td>
                                                        <th>Value</th>
-                                                       <th>Change</th>
+                                                       <th>Score</th>
                                                        </tr>
                                                        <tr>
                                                        <td>5 YR P/E < 23</td>
@@ -12196,7 +12196,7 @@ if selected == "Stock Analysis Tool":
                                                        <tr>
                                                        <td class="section-header">Leverage ratio/Bilanzkennzahl</td>
                                                        <th>Value</th>
-                                                       <th>Change</th>
+                                                       <th>Score</th>
                                                        </tr>
                                                        <tr>
                                                        <td>5 YR FCF / DEBT < 5</td>
@@ -12217,7 +12217,7 @@ if selected == "Stock Analysis Tool":
                                                        <tr>
                                                        <td class="section-header">Gewinnkennzahl/Ausschüttungsquote</td>
                                                        <th>Value</th>
-                                                       <th>Change</th>
+                                                       <th>Score</th>
                                                        </tr>
                                                        <tr>
                                                        <td>5 YR ROIC > 9%</td>
@@ -12246,7 +12246,7 @@ if selected == "Stock Analysis Tool":
                                                        <tr>
                                                        <td class="section-header">Wachstum/Aktienrückkauf</td>
                                                        <th>Value</th>
-                                                       <th>Change</th>
+                                                       <th>Score</th>
                                                        </tr>
                                                        <tr>
                                                        <td>Revenue Growth 5 YR</td>
