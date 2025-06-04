@@ -13944,20 +13944,20 @@ if selected == "Stock Analysis Tool":
                                              <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
                                                   <div class='yield-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
                                                        <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Yield: </span>
-                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_yield_average}</span>
+                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 10 CAGR:</span>
+                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_average_annual_10}</span>
                                                        </div>
                                                        <div class='yield-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
                                                        <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Yield: </span>
-                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_per_share_yield}</span>
+                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 5 CAGR:  </span>
+                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_last_5_years_growth}</span>
                                                        </div>
                                                        <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 10 CAGR: </span>
-                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_average_annual_10}</span>
+                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Yield:</span>
+                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_yield_average}</span>
                                                        </div> <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 5 CAGR: </span>
-                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_last_5_years_growth}</span>
+                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Yield:</span>
+                                                            <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_per_share_yield}</span>
                                                        </div>
                                                   </div>
                                              </div>
