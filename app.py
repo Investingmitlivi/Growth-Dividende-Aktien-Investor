@@ -13528,33 +13528,78 @@ if selected == "Stock Analysis Tool":
                                    col1,col2 = st.columns(2)
 
                                    with col1:
-                                                                                #Price_to_earnings=annual_data['price_to_earnings'][-10:]
-                                        # DataFrame erstellen
+                                                                                
                                         data = pd.DataFrame({
                                         'Date': date_annual,
                                         'Revenue per Share': revenue_per_share_annual_10_unpacked,
+                                        'Free Cash Flow per Share':fcf_per_share_annual_10_unpacked,
                                         'NAV per Share': nav_per_share
                                         })
 
-                                        # Plot erstellen
+                                        # Format numbers for better display
+                                        data['Revenue_text'] = data['Revenue per Share'].apply(lambda x: f"{x:,.2f}")
+                                        data['FCF_text'] = data['Free Cash Flow per Share'].apply(lambda x: f"{x:,.2f}")
+                                        data['NAV_text'] = data['NAV per Share'].apply(lambda x: f"{x:,.2f}")
+
+                                        # Create figure with Revenue per Share as bars
                                         fig1 = px.bar(
-                                        data,
-                                        x='Date',
-                                        y='Revenue per Share',
-                                        text='Revenue per Share',
-                                        labels={'Revenue per Share': 'Umsatz pro Aktie '},
+                                             data,
+                                             x='Date',
+                                             y='Revenue per Share',
+                                             text='Revenue_text',
+                                             labels={'Revenue per Share': 'Umsatz pro Aktie'},
+                                             custom_data=['Date', 'Revenue_text', 'FCF_text', 'NAV_text']
                                         )
 
-                                        # NAV als zweite Y-Achse hinzufügen (rote Linie)
+                                        # Add Free Cash Flow per Share as a green line (secondary axis)
                                         fig1.add_scatter(
-                                        x=data['Date'],
-                                        y=data['NAV per Share'],
-                                        name='NAV pro Aktie ',
-                                        line=dict(color='red', width=2),
-                                        yaxis='y2',
-                                        mode='lines+markers',
-                                        hovertemplate='%{y:.2f} ',
-                                        visible='legendonly'  # Nur über Legende sichtbar
+                                             x=data['Date'],
+                                             y=data['Free Cash Flow per Share'],
+                                             name='Free Cash Flow pro Aktie',
+                                             line=dict(color='indigo', width=2),
+                                             yaxis='y2',
+                                             mode='lines+markers',
+                                             customdata=data[['Date', 'Revenue_text', 'FCF_text', 'NAV_text']].values,
+                                             hovertemplate=(
+                                                  "<b>Date</b>: %{customdata[0]}<br>"
+                                                  "<b>Revenue per Share</b>: %{customdata[1]}<br>"
+                                                  "<b>Free Cash Flow per Share</b>: %{customdata[2]}<br>"
+                                                  "<b>NAV per Share</b>: %{customdata[3]}<br>"
+                                                  "<extra></extra>"
+                                                  
+                                             ),
+                                              visible="legendonly"
+                                        )
+
+                                        # Add NAV per Share as a red line (secondary axis)
+                                        fig1.add_scatter(
+                                             x=data['Date'],
+                                             y=data['NAV per Share'],
+                                             name='NAV pro Aktie',
+                                             line=dict(color='red', width=2),
+                                             yaxis='y2',
+                                             mode='lines+markers',
+                                             customdata=data[['Date', 'Revenue_text', 'FCF_text', 'NAV_text']].values,
+                                             hovertemplate=(
+                                                  "<b>Date</b>: %{customdata[0]}<br>"
+                                                  "<b>Revenue per Share</b>: %{customdata[1]}<br>"
+                                                  "<b>Free Cash Flow per Share</b>: %{customdata[2]}<br>"
+                                                  "<b>NAV per Share</b>: %{customdata[3]}<br>"
+                                                  "<extra></extra>"
+                                             ),
+                                              visible="legendonly"
+                                        )
+
+                                        # Update hover for the bar chart
+                                        fig1.update_traces(
+                                             hovertemplate=(
+                                                  "<b>Date</b>: %{customdata[0]}<br>"
+                                                  "<b>Revenue per Share</b>: %{customdata[1]}<br>"
+                                                  "<b>Free Cash Flow per Share</b>: %{customdata[2]}<br>"
+                                                  "<b>NAV per Share</b>: %{customdata[3]}<br>"
+                                                  "<extra></extra>"
+                                             ),
+                                             selector={'type': 'bar'}
                                         )
 
                                         # Layout aktualisieren
@@ -13566,7 +13611,7 @@ if selected == "Stock Analysis Tool":
                                              overlaying='y',
                                              side='right',
                                              showgrid=False,
-                                             title='NAV pro Aktie '
+                                             title='Free Cash Flow / NAV pro Aktie'
                                         ),
                                       
                                         legend=dict(
