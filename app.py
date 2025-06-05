@@ -13486,7 +13486,7 @@ if selected == "Stock Analysis Tool":
                                    nav_per_share = [equity / shares if shares != 0 else None
                                                   for equity, shares in zip(Total_Equity_annual, shares_diluted_annual21_unpacked[-10:])]
                                    
-                                   print("nav_per_share",nav_per_share)
+              
 
                                    # Format shares outstanding in millions with "M" suffix
                                    shares_diluted_annual_10 = ["{:.2f}M".format(value/1_000_000) for value in shares_diluted_annual21_unpacked[-10:]]
