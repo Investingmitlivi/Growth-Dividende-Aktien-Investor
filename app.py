@@ -1644,7 +1644,7 @@ if selected == "Stock Analysis Tool":
                          'BMRN':'BioMarin Pharmaceutical Inc. ',
                          'BMTX':'BM Technologies Inc. ',
                          'BMY':'Bristol-Myers Squibb Company ',
-                         'BN':'Brookfield Corporation  Limited Voting Shares',
+                         'BN':'Brookfield Corporation',
                          'BNED':'Barnes & Noble Education Inc ',
                          'BNGO':'Bionano Genomics Inc. ',
                          'BNGOW':'Bionano Genomics Inc. ',
@@ -7615,10 +7615,11 @@ if selected == "Stock Analysis Tool":
                          'CRWV':'CoreWeave Inc.',
                          'MUX:DE':'Mutares SE & Co. KGaA',
                          'ASML:NL':'ASML Holding N.V',
-                         #'NOVO.B:DK':'Novo Nordisk A/S',
-                         'NVO':'Novo Nordisk ADR',
+                         'NOVO.B:DK':'Novo Nordisk A/S',
+                         'NVO':'Novo Nordisk A/S',
                          'NBIS':'Nebius Group N.V.',
                          'MBB:DE':'MBB SE',
+                         'ETOR':'eToro Group Ltd.',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7753,7 +7754,7 @@ if selected == "Stock Analysis Tool":
                'BRK.B': 'BRK-B',
                'MUX:DE':'MUX.DE',
                'ASML:NL':'ASML',
-               #'NOVO.B:DK':'NVO',
+               'NOVO.B:DK':'NVO',
                #'NVO':'NVO'
                'MBB:DE':'MBB.DE',
                }
