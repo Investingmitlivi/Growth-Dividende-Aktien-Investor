@@ -8020,7 +8020,7 @@ if selected == "Stock Analysis Tool":
                          x=detailed_data.index,
                          y=detailed_data['Close'],
                          fill='tozeroy',
-                         fillcolor='rgba(34, 139, 34, 0.2)',
+                         fillcolor='green',
                          line_color='rgba(0, 0, 0, 0)',
                          showlegend=False
                     ))
@@ -8039,7 +8039,7 @@ if selected == "Stock Analysis Tool":
                          plot_bgcolor='white',
                          paper_bgcolor='white',
                          xaxis=dict(
-                              showgrid=True,
+                              showgrid=False,
                               gridcolor='lightgrey',
                               showline=True,
                               linecolor='lightgrey'
@@ -8094,6 +8094,10 @@ if selected == "Stock Analysis Tool":
                          try:
                               default_index = list(period_mapping.values()).index(st.session_state.selected_period)
                          except ValueError:
+
+                              default_index = 6
+
+                         except Exception:
                               default_index = 0
 
                          # Create the period selection menu
@@ -12470,71 +12474,97 @@ if selected == "Stock Analysis Tool":
 
                                              Average_Middle_DCF=round((low_DCF+high_DCF)/2)
 
+                                             st.markdown("""
+                                             <style>
+                                             .valuation-table {
+                                             width: 100%;
+                                             border-collapse: collapse;
+                                             margin-top: 20px;
+                                             font-family: Arial, sans-serif;
+                                             }
+                                             .valuation-table th {
+                                             background-color: #4b71ff;
+                                             color: white;
+                                             padding: 12px;
+                                             text-align: center;
+                                             font-weight: bold;
+                                             }
+                                             .valuation-table td {
+                                             padding: 12px;
+                                             text-align: center;
+                                             border: 1px solid #e0e0e0;
+                                             }
+                                             .current-price-highlight {
+                                             background-color: #e8f5e9;
+                                             color: #2e7d32;
+                                             font-weight: bold;
+                                             padding: 8px 12px;
+                                             border-radius: 4px;
+                                             display: inline-block;
+                                             margin-top: 10px;
+                                             border: 1px solid #c8e6c9;
+                                             }
+                                             .positive-value {
+                                             color: #2e7d32;
+                                             font-weight: bold;
+                                             }
+                                             .negative-value {
+                                             color: #c62828;
+                                             font-weight: bold;
+                                             }
+                                             .method-column {
+                                             text-align: left;
+                                             font-weight: bold;
+                                             }
+                                             </style>
+                                             """, unsafe_allow_html=True)
 
+                                             # Create the valuation table
+                                             table_html = f"""
+                                             <table class="valuation-table">
+                                             <tr>
+                                             <th>Method</th>
+                                             <th>Low Estimate</th>
+                                             <th>Mid Estimate</th>
+                                             <th>High Estimate</th>
+                                             </tr>
 
-                                             col11, col12,col13, col14= st.columns(4)
+                                             <!-- Benjamin Graham + DCF Row -->
+                                             <tr>
+                                             <td class="method-column">Benjamin Graham + DCF</td>
+                                             <td class="{"positive-value" if float(average_sum_both1) > float(converted_amount) else "negative-value"}">
+                                                  {average_sum_both1} €
+                                             </td>
+                                             <td class="{"positive-value" if float(average_Middle_multiple_value) > float(converted_amount) else "negative-value"}">
+                                                  {average_Middle_multiple_value} €
+                                             </td>
+                                             <td class="{"positive-value" if float(average_sum_both2) > float(converted_amount) else "negative-value"}">
+                                                  {average_sum_both2} €
+                                             </td>
+                                             </tr>
 
-                                             col11.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
+                                             <!-- DCF Analysis Row -->
+                                             <tr>
+                                             <td class="method-column">Discounted Cash Flow (DCF)</td>
+                                             <td class="{"positive-value" if float(low_DCF) > float(converted_amount) else "negative-value"}">
+                                                  {low_DCF:.2f} €
+                                             </td>
+                                             <td class="{"positive-value" if float(Average_Middle_DCF) > float(converted_amount) else "negative-value"}">
+                                                  {Average_Middle_DCF:.2f} €
+                                             </td>
+                                             <td class="{"positive-value" if float(high_DCF) > float(converted_amount) else "negative-value"}">
+                                                  {high_DCF:.2f} €
+                                             </td>
+                                             </tr>
+                                             </table>
 
-                                             col12.write(f"Low Estimate:")
-                                             col13.write(f"Middle Estimate: ")
-                                             col14.write(f"High Estimate:")
-
-
-                                             col15, col16, col17, col18 = st.columns(4)
-
-
-                                             col15.write(f" Benjamin Graham Fair Value + DCF:  ")
-                                             # Adding a help expander below
-
-                                                  
-                                             if float(average_sum_both1) > float(converted_amount):
-                                                  font_color = "green"
-                                             else:
-                                                  font_color = "red"
-                                             col16.write(f"<span style='color:{font_color}'>{average_sum_both1} €</span>", unsafe_allow_html=True)
-
-                                             if float(average_Middle_multiple_value) > float(converted_amount):
-                                                  font_color = "green"
-                                             else:
-                                                  font_color = "red"
-                                                  #col17.write(f"{average_Middle_multiple_value:.2f} €")
-                                             
-                                             col17.write(f"<span style='color:{font_color}'>{average_Middle_multiple_value} €</span>", unsafe_allow_html=True)
-                                                  #col18.write(f"{average_sum_both2:.2f} €")
-                                                  
-
-                                             if float(average_sum_both2) > float(converted_amount):
-                                                  font_color = "green"
-                                             else:
-                                                  font_color = "red"
-                                             col18.write(f"<span style='color:{font_color}'>{average_sum_both2} €</span>", unsafe_allow_html=True)
-
-                                                       # Display number outputs for each estimate
-                                             col19, col20, col21, col22 = st.columns(4)
-
-                                             col19.write(f"Discounted Cash Flow Analysis (DCF):")
-                                                  #col20.write(f"{low_DCF:.2f} €")
-                                             if float(low_DCF) > float(converted_amount):
-                                                  font_color = "green"
-                                             else:
-                                                  font_color = "red"
-                                             col20.write(f"<span style='color:{font_color}'>{low_DCF:.2f} €</span>", unsafe_allow_html=True)
-                                                  #col21.write(f"{Average_Middle_DCF:.2f} €")
-
-                                             if float(Average_Middle_DCF) > float(converted_amount):
-                                                  font_color = "green"
-                                             else:
-                                                  font_color = "red"
-                                             col21.write(f"<span style='color:{font_color}'>{Average_Middle_DCF:.2f} €</span>", unsafe_allow_html=True)
-                                                  #col22.write(f"{high_DCF:.2f} €")
-
-                                             if float(high_DCF) > float(converted_amount):
-                                                  font_color = "green"
-                                             else:
-                                                  font_color = "red"
-                                             col22.write(f"<span style='color:{font_color}'>{high_DCF:.2f} €</span>", unsafe_allow_html=True)
-
+                                             <div style="text-align: right; margin-top: 15px;">
+                                             <span class="current-price-highlight">
+                                             <strong>Current Price:</strong> {converted_amount} €
+                                             </span>
+                                             </div>
+                                             """
+                                             st.markdown(table_html, unsafe_allow_html=True)
 
                                              present_values_df = pd.DataFrame({
                                              #'Year': range(1, FCF_discount_in_years + 1),
@@ -12888,28 +12918,7 @@ if selected == "Stock Analysis Tool":
                                    
                                    Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*usd_to_eur_rate)
                                         
-                                             
-                                   # st.markdown('</div>', unsafe_allow_html=True)
 
-                    
-                                   # if float(Revenue_low_Euro) < float(converted_amount):
-                                   #           font_color = "red"
-                                   # else:
-                                   #           font_color = "green"
-                                   # cola.write(f"<span style='color:{font_color}'>{Revenue_low_Euro} €</span>", unsafe_allow_html=True)
-
-                                   # if float(Revenue_mid_Euro) < float(converted_amount):
-                                   #           font_color = "red"
-                                   # else:
-                                   #           font_color = "green"
-                                   # colb.write(f"<span style='color:{font_color}'>{Revenue_mid_Euro} €</span>", unsafe_allow_html=True)
-
-                                   # if float(Revenue_high_Euro) < float(converted_amount):
-                                   #           font_color = "red"
-                                   # else:
-                                   #           font_color = "green"
-                                   # colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro} €</span>", unsafe_allow_html=True)
-                                   # After your calculations, replace the column writes with this table:
 
                                    st.markdown("""
                                    <style>
@@ -13782,7 +13791,6 @@ if selected == "Stock Analysis Tool":
                                              dividend_yield_numeric = [float(val.strip('%')) if val != "N/A" else None for val in dividend_yield_21_list]
 
                                              # Formatted Dividend per Share with $
-                                             #Dividend_per_share = ["${:.2f}".format(value) for value in Dividend_per_share_annual_21_unpacked] + ["${:.2f}".format(Dividend_TTM_extract_value)]
                                              Dividend_per_share = ["${:.2f}".format(float(value)) for value in Dividend_per_share_annual_21_unpacked] + ["${:.2f}".format(float(Dividend_TTM_extract_value))]
 
 
@@ -13965,7 +13973,6 @@ if selected == "Stock Analysis Tool":
                                         fig1 = px.bar(data, x='Date', y='EBITDA Margin',
                                                        text='EBITDA Margin',  # Display the value on top of each bar
                                                        labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                                       #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
                                                        )
      
      
@@ -14052,7 +14059,6 @@ if selected == "Stock Analysis Tool":
                                         fig1 = px.bar(data, x='Date', y='Debt to Equity',
                                                        text='Debt to Equity',  # Display the value on top of each bar
                                                        labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                                       #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
                                                        )
      
      
@@ -14131,7 +14137,6 @@ if selected == "Stock Analysis Tool":
                                         fig2 = px.bar(data, x='Date', y='Debt to Assets',
                                                        text='Debt to Assets',  # Display the value on top of each bar
                                                        labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                                       #title=f"5 YR Dividend Yield: {Dividend_yield_average}  Current Dividend yield: {Dividend_per_share_yield}"
                                                        )
      
      
