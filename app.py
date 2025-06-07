@@ -7765,67 +7765,11 @@ if selected == "Stock Analysis Tool":
                stock_info = yf.Ticker(ticker)
 
 
-          ###########################################################################################################
 
-#                #@st.cache_data(show_spinner=False)
-#                def get_current_price(ticker):
-#                     stock_info = yf.Ticker(ticker)
-#                     #quote = Quote(ticker)
-#                     try:
-#                          current_price = stock_info.history(period="1d", interval="1m")["Close"].iloc[-1]
-#                          #fundamental_df = quote.fundamental_df
-                         
-#                     except Exception:
-#                          try:
-#                               # Fallback to previous close
-#                               current_price = float(stock_info.info["previousClose"])
-                              
-#                          except Exception:
-#                               try:
-#                                    current_price = stock_info.history(period="2d", interval="1d")["Close"].iloc[-1]
-
-#                               except Exception:
-                                   
-#                                    current_price = float(quote.fundamental_df.at[0, "Price"])
-#                                    current_price = float(current_price.replace(',', ''))
-#                               except Exception:
-#                                    current_price =  None
-
-
-#                     return current_price
 # #--------------------------------------------------percentage_difference-----------------------------
 
                start_date = datetime.now() - timedelta(days=39 * 365)
                end_date=datetime.now() 
-
-
-
-#                # Function to format date
-#                def format_date(date):
-#                     return date.strftime('%Y/%m/%d')
-
-#                # Function to get current price
-#                def get_current_price(ticker):
-#                     data = yf.download(ticker, period="1d")
-#                     return float(data['Close'].iloc[0])  # Use .iloc[0] to select the first element
-
-#                # Function to get historical price data
-#                def get_price_data(ticker, current_price, usd_to_eur_rate):
-#                     start_date = datetime.now() - timedelta(days=39 * 365)
-#                     end_date = datetime.now()
-
-#                     try:
-#                          data = yf.download(ticker, start=start_date, end=end_date)
-#                          close_price = float(data['Close'].iloc[-2])  # Use .iloc[-2] to select the second-to-last element
-#                          percentage_difference = round(((current_price - close_price) / close_price) * 100, 2)
-#                          converted_amount = float(current_price) * float(usd_to_eur_rate)  # Ensure both are floats
-#                     except Exception as e:
-#                          close_price = None
-#                          percentage_difference = None
-#                          converted_amount = None
-
-#                     return close_price, percentage_difference, converted_amount
-               
 
 
                def get_current_price(ticker):
@@ -8393,8 +8337,6 @@ if selected == "Stock Analysis Tool":
 
                               FCF_quarter_10_unpacked =quarterly_data['fcf'][-10:]
 
-                              #Debt_to_assets_annual_10_unpacked  = annual_data['debt_to_assets'][-10:] 
-                              #Debt_to_assets_quartar_10_unpacked  = quarterly_data['debt_to_assets'][-10:]
 
                               fcf_growth_annual_3_unpacked =annual_data['fcf_growth'][-3:]
 
@@ -8635,8 +8577,7 @@ if selected == "Stock Analysis Tool":
 
           ###################################################################################################
                          EndPrice_annual_10_unpacked = EndPrice_annual_21_unpacked[-10:]
-                         market_cap_annual_10_unpacked_Average = sum(market_cap_annual_10_unpacked)/len(market_cap_annual_10_unpacked)
-                         market_cap_annual_5_Average = sum(market_cap_annual_10_unpacked[-5:])/len(market_cap_annual_10_unpacked[-5:])
+
 
                          Average_net_income_annual_funf_Billion_Million = (
                          "{:.2f}B".format(Average_net_income_annual_funf / 1e9) 
@@ -8644,13 +8585,11 @@ if selected == "Stock Analysis Tool":
                          else "{:,.1f}M".format(Average_net_income_annual_funf / 1e6)
 
                          )      
-                         Net_Operating_CashFlow_annual_5_unpacked = Net_Operating_CashFlow_annual_10_unpacked[-5:]
 
                          market_cap_annual_10 = [float(value) for value in market_cap_annual_10_unpacked]
                          OCF_10 = [float(value) for value in Net_Operating_CashFlow_annual_10_unpacked]
 
 
-                         # Calculate Price-to-OCF ratios (store both numeric and formatted versions)
                          # Calculate Price-to-OCF ratios
                          Price_to_OCF_10 = []
                          Price_to_OCF_10_numeric = []
@@ -8662,13 +8601,9 @@ if selected == "Stock Analysis Tool":
                               else:
                                    Price_to_OCF_10.append("N/A")  # Formatted string for display
 
-                         #print("P_OCF_10",P_OCF_10)
-                         #print("P_OCF_5",P_OCF_5)
+                       
 
          
-
-                         Average_net_income_annual_one_Bill_Milli ="{:.2f}B".format(round_net_income_annual_one/ 1000000000) if(round_net_income_annual_one) >= 1000000000 else "{:,.1f}M".format(round_net_income_annual_one / 1000000)
-
           ###################################################################################################
 
                          def calculate_revenue_and_growth(annual_data,quarterly_data, ticker):
@@ -8869,13 +8804,7 @@ if selected == "Stock Analysis Tool":
 
                          FCF_Cagr_10, EPS_Cagr_10, Revenue_Cagr_10,Net_interest_Income_annual_Cagr_10 = calculate_cagr_10_years(annual_data, ticker)
 
-          ###################################################################################################
 
-                    #....................................................
-
-                         Free_cash_flow_annual_one = annual_data['fcf'][-1:] 
-                         Average_Free_cash_flow_annual_one = ((sum(Free_cash_flow_annual_one) / len(Free_cash_flow_annual_one)))/1000000000
-                         Average_Free_cash_flow_annual_one_one =Average_Free_cash_flow_annual_one
           ###################################################################################################
                          def calculate_financial_ratios(annual_data, quarterly_data, ticker):
                          # Check if the results are already in session state
@@ -9472,10 +9401,6 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_Revenue_per_share_5_cagr'] = Revenue_per_share_5_cagr
 
                               return Revenue_per_share_5_cagr
-                         
-                    
-
-                              # Usage example:
                          
                          Revenue_per_share_5_cagr = calculate_Revenue_per_share_5_cagr(revenue_per_share_annual_10_unpacked, ticker)
                     ###################################################################################################
@@ -12305,356 +12230,356 @@ if selected == "Stock Analysis Tool":
                with st.container():   
                     with Stock_Analyser:
 
-                         # Function to calculate NPV
-                         #def calculate_npv(wacc, discounted_values,):
-                          #    return npv(wacc / 100, discounted_values)
-                         
-                         def calculate_pv(fcf, wacc, year):
-                              return fcf/ ((1 + wacc / 100) ** year)
-
                          @st.fragment
-                         def simple_chart(fig, present_values_df_horizontal,average_fcf_values1, average_fcf_values2, npv_result, npv_result2):
-                              if st.form_submit_button(label="Display FCF Calculation"):
-                                   st.plotly_chart(fig,use_container_width=True, config=config)
+                         def display_DCF():
+                              #    return npv(wacc / 100, discounted_values)
+                              
+                              def calculate_pv(fcf, wacc, year):
+                                   return fcf/ ((1 + wacc / 100) ** year)
 
-                                   st.dataframe(present_values_df_horizontal,use_container_width=True)
+                              @st.fragment
+                              def simple_chart(fig, present_values_df_horizontal,average_fcf_values1, average_fcf_values2, npv_result, npv_result2):
+                                   if st.form_submit_button(label="Display FCF Calculation"):
+                                        st.plotly_chart(fig,use_container_width=True, config=config)
+
+                                        st.dataframe(present_values_df_horizontal,use_container_width=True)
+               
+
+                              #@st.cache_data(show_spinner=False,ttl=3600) 
+                              def display_growth_rate_formexer():
+
+                                   with st.form(key='growth_rate_formex'):
+
+                                        if "Average_10years_treasury_rate" not in st.session_state:
+                                             st.session_state["Average_10years_treasury_rate"] = 4.25
+
+
+                                        if "Pepetual_growth_rate" not in st.session_state:
+                                             st.session_state["Pepetual_growth_rate"] = 0.025
+                                             
+
+
+                                        col1, col2,col3,col4,col5 = st.columns(5)
+
+                                        col1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 10Y CAGR :<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
+                                        
+                                        col2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 5Y CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
+                                        
+                                        col3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 10Y CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
+
+                                        col4.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 5Y CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
+
+                                        col5.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
+
+
+                                   #to add space
+                                        st.write("")
+
+
+                                        col1,col2,col3,col4,col5 = st.columns(5)
+                                   
+                                        with col1:
+                                             st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
+                                             
+                                        with col2:    
+                                             st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
+                                   
+                                        with col3:    
+                                             st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
+
+                                        with col4:    
+                                             st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Margin 10Y:<br> {FCF_Margin_10}%<br></div>", unsafe_allow_html=True)
+                                   
+                                        with col5:    
+                                             st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Margin 5Y: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
+
+                                   
+
+                                        st.write("")
+                                        col5,col4= st.columns(2)
+
+                                        #WACC = float(col5.text_input("WACC (%):", value="8.00").replace(',', '.'))
+                                        WACC = float(col5.text_input("WACC (%):", value=st.session_state.get('WACC', 8.00)).replace(',', '.'))
+
+                              
+                                        #FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)).replace(',', '.'))
+                                        FCF_discount_in_years = int(col4.text_input("Years:", value=st.session_state.get('FCF_discount_in_years', 10)).replace(',', '.'))
+
+
+                                   
+                                   #------------------------------------------------------------------------------------------------------------------------
+                                        col9, col8,col34,col10= st.columns(4)
+                                        
+                                        Growth_rate1 = float(col9.text_input("Growth Rate (Base Case) in %:",value=0.00,key="growth_rate1ex").replace(',', '.'))
+                                        col8.write('')
+                                        col34.write('')
+                                        Growth_rate2 = float(col10.text_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2ex").replace(',', '.'))
+                                   
+
+                                   
+                                   #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
+
+                                        cola, col8,col34,colc= st.columns(4)
+                                        Margin_of_safety1 = float(cola.text_input("1.Margin of Safety (%):", value=9.00).replace(',', '.'))
+                                        col8.write('')
+                                        col34.write('')
+                                        Margin_of_safety3 = float(colc.text_input("2.Margin of Safety (%):", value=9.00).replace(',', '.'))
+                                   #-------------------------------------------------------------------------------------------------------------------------------------------
+
+
+                                        if st.form_submit_button(label="Calculate"):
+                                             if average_fcf_Annual_one <= 0.00:
+
+                                                  average_fcf_Annual_DCF1 = rounded_fcf_Annual_five/1000000000
+                                                  average_fcf_Annual_DCF2 = rounded_fcf_Annual_five/1000000000
+                                                  print("last 5 years FCF:",rounded_fcf_Annual_five/1000000000)
+                                             else:
+
+                                                  average_fcf_Annual_DCF1=average_fcf_Annual_one
+                                                  average_fcf_Annual_DCF2=average_fcf_Annual_one
+                                                  print("last FCF:",average_fcf_Annual_one)
+
+
+                                             discounted_values = [] 
+                                             average_fcf_values1 = []
+                                             # Array for average FCF values (Base Case)
+
+                                        
+                                             for i in range(FCF_discount_in_years):
+                                                  discounted_value = average_fcf_Annual_DCF1 * (1 + (Growth_rate1/100))
+                                                  average_fcf_Annual_DCF1 = discounted_value
+                                                  average_fcf_values1.append(average_fcf_Annual_DCF1)  # Store in the array
+
+                                                  discounted_values.append(discounted_value) 
+
+                                                  # Calculate present values up to the second-to-last year
+                                                  present_values_base_case = [calculate_pv(fcf, WACC, year) for year, fcf in enumerate(average_fcf_values1[:-1], start=1)]
+
+                                                  #print(average_fcf_Annual_DCF1)
+
+                                                  if i == FCF_discount_in_years - 1:
+                                                       second_to_last_discounted_value = discounted_values[-2]  # Access second-to-last element
+
+                                                       Terminal_Value = second_to_last_discounted_value * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
+
+                                                       # Discount the Terminal Value to its present value
+                                                       Terminal_Value_pv = Terminal_Value / ((1 + WACC / 100) ** FCF_discount_in_years)
+
+                                                       # Add the Terminal Value (PV) into the present_values_base_case array
+                                                       present_values_base_case.append(Terminal_Value_pv)
+
+                                                       # Calculate the total sum of present values (including Terminal Value)
+                                                       total_present_value = sum(present_values_base_case)
+
+
+
+                                             print("Total_Debt_from_all_calc",(Total_Debt_from_all_calc/1000000000))
+                                             print("Total_cash_last_years",Total_cash_last_years)
+                                             Equity_value_ = total_present_value+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
+                                             Intrinsic_value =Equity_value_/Average_shares_basic_annual_one
+                                             print("Average_shares_basic_annual_one",Average_shares_basic_annual_one)
+
+                                             Euro_equivalent = Intrinsic_value*usd_to_eur_rate
+
+                                        
+
+                                   #----------------------------------------------------------2:Growth rate Estimate------------------------------------------------------------------------
+
+                                        
+                                             discounted_values2 = [] 
+                                             average_fcf_values2 = []  # Array for average FCF values (Bullish Case)
+                                             # Create an empty list to store discounted values
+                                             for j in range(FCF_discount_in_years):
+                                                  discounted_value2 = average_fcf_Annual_DCF2 * (1 + (Growth_rate2/100))
+                                                  average_fcf_Annual_DCF2 = discounted_value2
+                                                  average_fcf_values2.append(average_fcf_Annual_DCF2)  # Store in the array
+
+                                                  discounted_values2.append(discounted_value2)  # Add the discounted value to the list
+                                             
+                                                  present_values_bullish_case = [calculate_pv(fcf, WACC, year) for year, fcf in enumerate(average_fcf_values2[:-1], start=1)]
+
+                                                  if j == FCF_discount_in_years - 1:
+                                                       second_to_last_discounted_value2 = discounted_values2[-2]  # Access second-to-last element
+
+                                                       Terminal_Value2 = second_to_last_discounted_value2 * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
+
+                                                       # Discount the Terminal Value to its present value
+                                                       Terminal_Value_pv2 = Terminal_Value2 / ((1 + WACC / 100) ** FCF_discount_in_years)
+
+                                                       # Add the Terminal Value (PV) into the present_values_base_case array
+                                                       present_values_bullish_case.append(Terminal_Value_pv2)
+
+                                                       # Calculate the total sum of present values (including Terminal Value)
+                                                       total_present_value2 = sum(present_values_bullish_case)
+
+
           
+                                             #rounded_npv_result2 = round(npv_result2, 2)  
 
-                         #@st.cache_data(show_spinner=False,ttl=3600) 
-                         def display_growth_rate_formexer():
+                                             Equity_value2 = total_present_value2+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
+                                             Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
 
-                              with st.form(key='growth_rate_formex'):
-
-                                   if "Average_10years_treasury_rate" not in st.session_state:
-                                        st.session_state["Average_10years_treasury_rate"] = 4.25
-
-
-                                   if "Pepetual_growth_rate" not in st.session_state:
-                                        st.session_state["Pepetual_growth_rate"] = 0.025
-                                        
-
-
-                                   col1, col2,col3,col4,col5 = st.columns(5)
-
-                                   col1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 10Y CAGR :<br> {FCF_Cagr_10}%</div>", unsafe_allow_html=True)
-                                   
-                                   col2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF 5Y CAGR:<br> {FCF_5_CAGR}%</div>", unsafe_allow_html=True)
-                                   
-                                   col3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 10Y CAGR:<br> {EPS_Cagr_10}%</div>", unsafe_allow_html=True)
-
-                                   col4.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 5Y CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
-
-                                   col5.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
-
-
-                              #to add space
-                                   st.write("")
-
-
-                                   col1,col2,col3,col4,col5 = st.columns(5)
-                              
-                                   with col1:
-                                        st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
-                                        
-                                   with col2:    
-                                        st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
-                              
-                                   with col3:    
-                                        st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
-
-                                   with col4:    
-                                        st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Margin 10Y:<br> {FCF_Margin_10}%<br></div>", unsafe_allow_html=True)
-                              
-                                   with col5:    
-                                        st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Margin 5Y: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
-
-                              
-
-                                   st.write("")
-                                   col5,col4= st.columns(2)
-
-                                   #WACC = float(col5.text_input("WACC (%):", value="8.00").replace(',', '.'))
-                                   WACC = float(col5.text_input("WACC (%):", value=st.session_state.get('WACC', 8.00)).replace(',', '.'))
-
-                         
-                                   #FCF_discount_in_years = int(col4.text_input("Years:", value=int(10)).replace(',', '.'))
-                                   FCF_discount_in_years = int(col4.text_input("Years:", value=st.session_state.get('FCF_discount_in_years', 10)).replace(',', '.'))
-
-
-                              
-                              #------------------------------------------------------------------------------------------------------------------------
-                                   col9, col8,col34,col10= st.columns(4)
-                                   
-                                   Growth_rate1 = float(col9.text_input("Growth Rate (Base Case) in %:",value=0.00,key="growth_rate1ex").replace(',', '.'))
-                                   col8.write('')
-                                   col34.write('')
-                                   Growth_rate2 = float(col10.text_input("Growth Rate (Bullish Case) in %:", value=0.00, key="growth_rate2ex").replace(',', '.'))
-                              
-
-                              
-                              #---------------------------------------------------------Margin of Safety -------------------------------------------------------------
-
-                                   cola, col8,col34,colc= st.columns(4)
-                                   Margin_of_safety1 = float(cola.text_input("1.Margin of Safety (%):", value=9.00).replace(',', '.'))
-                                   col8.write('')
-                                   col34.write('')
-                                   Margin_of_safety3 = float(colc.text_input("2.Margin of Safety (%):", value=9.00).replace(',', '.'))
-                              #-------------------------------------------------------------------------------------------------------------------------------------------
-
-
-                                   if st.form_submit_button(label="Calculate"):
-                                        if average_fcf_Annual_one <= 0.00:
-
-                                             average_fcf_Annual_DCF1 = rounded_fcf_Annual_five/1000000000
-                                             average_fcf_Annual_DCF2 = rounded_fcf_Annual_five/1000000000
-                                             print("last 5 years FCF:",rounded_fcf_Annual_five/1000000000)
-                                        else:
-
-                                             average_fcf_Annual_DCF1=average_fcf_Annual_one
-                                             average_fcf_Annual_DCF2=average_fcf_Annual_one
-                                             print("last FCF:",average_fcf_Annual_one)
-
-
-                                        discounted_values = [] 
-                                        average_fcf_values1 = []
-                                        # Array for average FCF values (Base Case)
-
-                                   
-                                        for i in range(FCF_discount_in_years):
-                                             discounted_value = average_fcf_Annual_DCF1 * (1 + (Growth_rate1/100))
-                                             average_fcf_Annual_DCF1 = discounted_value
-                                             average_fcf_values1.append(average_fcf_Annual_DCF1)  # Store in the array
-
-                                             discounted_values.append(discounted_value) 
-
-                                             # Calculate present values up to the second-to-last year
-                                             present_values_base_case = [calculate_pv(fcf, WACC, year) for year, fcf in enumerate(average_fcf_values1[:-1], start=1)]
-
-                                             #print(average_fcf_Annual_DCF1)
-
-                                             if i == FCF_discount_in_years - 1:
-                                                  second_to_last_discounted_value = discounted_values[-2]  # Access second-to-last element
-
-                                                  Terminal_Value = second_to_last_discounted_value * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
-
-                                                  # Discount the Terminal Value to its present value
-                                                  Terminal_Value_pv = Terminal_Value / ((1 + WACC / 100) ** FCF_discount_in_years)
-
-                                                  # Add the Terminal Value (PV) into the present_values_base_case array
-                                                  present_values_base_case.append(Terminal_Value_pv)
-
-                                                  # Calculate the total sum of present values (including Terminal Value)
-                                                  total_present_value = sum(present_values_base_case)
-
-
-
-                                        print("Total_Debt_from_all_calc",(Total_Debt_from_all_calc/1000000000))
-                                        print("Total_cash_last_years",Total_cash_last_years)
-                                        Equity_value_ = total_present_value+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
-                                        Intrinsic_value =Equity_value_/Average_shares_basic_annual_one
-                                        print("Average_shares_basic_annual_one",Average_shares_basic_annual_one)
-
-                                        Euro_equivalent = Intrinsic_value*usd_to_eur_rate
-
-                                   
-
-                              #----------------------------------------------------------2:Growth rate Estimate------------------------------------------------------------------------
-
-                                   
-                                        discounted_values2 = [] 
-                                        average_fcf_values2 = []  # Array for average FCF values (Bullish Case)
-                                        # Create an empty list to store discounted values
-                                        for j in range(FCF_discount_in_years):
-                                             discounted_value2 = average_fcf_Annual_DCF2 * (1 + (Growth_rate2/100))
-                                             average_fcf_Annual_DCF2 = discounted_value2
-                                             average_fcf_values2.append(average_fcf_Annual_DCF2)  # Store in the array
-
-                                             discounted_values2.append(discounted_value2)  # Add the discounted value to the list
-                                        
-                                             present_values_bullish_case = [calculate_pv(fcf, WACC, year) for year, fcf in enumerate(average_fcf_values2[:-1], start=1)]
-
-                                             if j == FCF_discount_in_years - 1:
-                                                  second_to_last_discounted_value2 = discounted_values2[-2]  # Access second-to-last element
-
-                                                  Terminal_Value2 = second_to_last_discounted_value2 * (1 + st.session_state["Pepetual_growth_rate"]) / ((WACC/100) - st.session_state["Pepetual_growth_rate"])
-
-                                                  # Discount the Terminal Value to its present value
-                                                  Terminal_Value_pv2 = Terminal_Value2 / ((1 + WACC / 100) ** FCF_discount_in_years)
-
-                                                  # Add the Terminal Value (PV) into the present_values_base_case array
-                                                  present_values_bullish_case.append(Terminal_Value_pv2)
-
-                                                  # Calculate the total sum of present values (including Terminal Value)
-                                                  total_present_value2 = sum(present_values_bullish_case)
-
-
-     
-                                        #rounded_npv_result2 = round(npv_result2, 2)  
-
-                                        Equity_value2 = total_present_value2+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
-                                        Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
-
-                                        Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
-
-                                   
-                                        #------------------------------------------Graham 1.Estimate--------------------------------------------------------------
+                                             Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
 
                                         
-                                        
-
-                                        if EPS_last_average < 0:
-                                             EPS_last_average_graham = Average_eps_basic_annual_five
-                                             EPS_last_average_graham2 =Average_eps_basic_annual_five
-                                        else:
-                                             EPS_last_average_graham =EPS_last_average
-                                             EPS_last_average_graham2 =EPS_last_average
-
-                                        graham_valuation = (EPS_last_average_graham * (7+1.5 * Growth_rate1) * 4.4)/ st.session_state["Average_10years_treasury_rate"]
-                                        
-                                        Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
-                                             #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
-                                        # Display the result
-                                   # .   ...........................................Graham 2.Estimate.........................................   
-                                   
-                                        graham_valuation2 = (EPS_last_average_graham2 * (7+1.5*Growth_rate2)*4.4)/ st.session_state["Average_10years_treasury_rate"]
-                                   
-                                        Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
-
-
-                                   #........................................................................................
-
-
-                                        Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
-                                   
-                                        average_sum1 = Multiples_valuation1 / 2
-                                        average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
-                                        
-                                        #st.write(average_sum_both1,converted_amount)
-
-
-                                        Multiples_valuation2 =Euro_equivalent2+Euro_equivalent_graham_valuation2
-                                        average_sum2 = Multiples_valuation2 / 2
-                                        average_sum_both2=round(average_sum2 *(1-Margin_of_safety3/100),2)
-
-                                        Middle_multiple_value = average_sum_both1+average_sum_both2
-                                        average_Middle_multiple_value =round(Middle_multiple_value/2,2)
-
-
-                                        low_DCF=(Euro_equivalent*(1-Margin_of_safety1/100))
-                                        high_DCF=(Euro_equivalent2*(1-Margin_of_safety3/100))
-
-                                        Average_Middle_DCF=round((low_DCF+high_DCF)/2)
-
-
-
-                                        col11, col12,col13, col14= st.columns(4)
-
-                                        col11.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
-
-                                        col12.write(f"Low Estimate:")
-                                        col13.write(f"Middle Estimate: ")
-                                        col14.write(f"High Estimate:")
-
-
-                                        col15, col16, col17, col18 = st.columns(4)
-
-
-                                        col15.write(f" Benjamin Graham Fair Value + DCF:  ")
-                                        # Adding a help expander below
+                                             #------------------------------------------Graham 1.Estimate--------------------------------------------------------------
 
                                              
-                                        if float(average_sum_both1) > float(converted_amount):
-                                             font_color = "green"
-                                        else:
-                                             font_color = "red"
-                                        col16.write(f"<span style='color:{font_color}'>{average_sum_both1} €</span>", unsafe_allow_html=True)
+                                             
 
-                                        if float(average_Middle_multiple_value) > float(converted_amount):
-                                             font_color = "green"
-                                        else:
-                                             font_color = "red"
-                                             #col17.write(f"{average_Middle_multiple_value:.2f} €")
+                                             if EPS_last_average < 0:
+                                                  EPS_last_average_graham = Average_eps_basic_annual_five
+                                                  EPS_last_average_graham2 =Average_eps_basic_annual_five
+                                             else:
+                                                  EPS_last_average_graham =EPS_last_average
+                                                  EPS_last_average_graham2 =EPS_last_average
+
+                                             graham_valuation = (EPS_last_average_graham * (7+1.5 * Growth_rate1) * 4.4)/ st.session_state["Average_10years_treasury_rate"]
+                                             
+                                             Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
+                                                  #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
+                                             # Display the result
+                                        # .   ...........................................Graham 2.Estimate.........................................   
                                         
-                                        col17.write(f"<span style='color:{font_color}'>{average_Middle_multiple_value} €</span>", unsafe_allow_html=True)
-                                             #col18.write(f"{average_sum_both2:.2f} €")
+                                             graham_valuation2 = (EPS_last_average_graham2 * (7+1.5*Growth_rate2)*4.4)/ st.session_state["Average_10years_treasury_rate"]
+                                        
+                                             Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
+
+
+                                        #........................................................................................
+
+
+                                             Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
+                                        
+                                             average_sum1 = Multiples_valuation1 / 2
+                                             average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
                                              
-
-                                        if float(average_sum_both2) > float(converted_amount):
-                                             font_color = "green"
-                                        else:
-                                             font_color = "red"
-                                        col18.write(f"<span style='color:{font_color}'>{average_sum_both2} €</span>", unsafe_allow_html=True)
-
-                                                  # Display number outputs for each estimate
-                                        col19, col20, col21, col22 = st.columns(4)
-
-                                        col19.write(f"Discounted Cash Flow Analysis (DCF):")
-                                             #col20.write(f"{low_DCF:.2f} €")
-                                        if float(low_DCF) > float(converted_amount):
-                                             font_color = "green"
-                                        else:
-                                             font_color = "red"
-                                        col20.write(f"<span style='color:{font_color}'>{low_DCF:.2f} €</span>", unsafe_allow_html=True)
-                                             #col21.write(f"{Average_Middle_DCF:.2f} €")
-
-                                        if float(Average_Middle_DCF) > float(converted_amount):
-                                             font_color = "green"
-                                        else:
-                                             font_color = "red"
-                                        col21.write(f"<span style='color:{font_color}'>{Average_Middle_DCF:.2f} €</span>", unsafe_allow_html=True)
-                                             #col22.write(f"{high_DCF:.2f} €")
-
-                                        if float(high_DCF) > float(converted_amount):
-                                             font_color = "green"
-                                        else:
-                                             font_color = "red"
-                                        col22.write(f"<span style='color:{font_color}'>{high_DCF:.2f} €</span>", unsafe_allow_html=True)
+                                             #st.write(average_sum_both1,converted_amount)
 
 
-                                        present_values_df = pd.DataFrame({
-                                        #'Year': range(1, FCF_discount_in_years + 1),
-                                        'Year': [str(i) for i in range(1, FCF_discount_in_years)] + ['Terminal Value'],  # Label the last year as "Terminal Value"
+                                             Multiples_valuation2 =Euro_equivalent2+Euro_equivalent_graham_valuation2
+                                             average_sum2 = Multiples_valuation2 / 2
+                                             average_sum_both2=round(average_sum2 *(1-Margin_of_safety3/100),2)
 
-                                        'Present Value (Base Case)': present_values_base_case,
-                                        'Present Value (Bullish Case)': present_values_bullish_case
-                                        })
+                                             Middle_multiple_value = average_sum_both1+average_sum_both2
+                                             average_Middle_multiple_value =round(Middle_multiple_value/2,2)
 
-                                        # Transpose the DataFrame to make it horizontal
-                                        present_values_df_horizontal = present_values_df.set_index('Year').T                                        
 
-                                        # Save average FCF values to a DataFrame for plotting
-                                        fcf_df = pd.DataFrame({
-                                             'Year': range(1, FCF_discount_in_years+1),
-                                             #'Year': [str(i) for i in range(1, FCF_discount_in_years)] + ['Terminal Value'],  # Label the last year as "Terminal Value"
-                                             'Discounted Cash Flow (Base Case)': average_fcf_values1,
-                                             'Discounted Cash Flow (Bullish Case)': average_fcf_values2
+                                             low_DCF=(Euro_equivalent*(1-Margin_of_safety1/100))
+                                             high_DCF=(Euro_equivalent2*(1-Margin_of_safety3/100))
+
+                                             Average_Middle_DCF=round((low_DCF+high_DCF)/2)
+
+
+
+                                             col11, col12,col13, col14= st.columns(4)
+
+                                             col11.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True)
+
+                                             col12.write(f"Low Estimate:")
+                                             col13.write(f"Middle Estimate: ")
+                                             col14.write(f"High Estimate:")
+
+
+                                             col15, col16, col17, col18 = st.columns(4)
+
+
+                                             col15.write(f" Benjamin Graham Fair Value + DCF:  ")
+                                             # Adding a help expander below
+
+                                                  
+                                             if float(average_sum_both1) > float(converted_amount):
+                                                  font_color = "green"
+                                             else:
+                                                  font_color = "red"
+                                             col16.write(f"<span style='color:{font_color}'>{average_sum_both1} €</span>", unsafe_allow_html=True)
+
+                                             if float(average_Middle_multiple_value) > float(converted_amount):
+                                                  font_color = "green"
+                                             else:
+                                                  font_color = "red"
+                                                  #col17.write(f"{average_Middle_multiple_value:.2f} €")
                                              
-                                        })
+                                             col17.write(f"<span style='color:{font_color}'>{average_Middle_multiple_value} €</span>", unsafe_allow_html=True)
+                                                  #col18.write(f"{average_sum_both2:.2f} €")
+                                                  
+
+                                             if float(average_sum_both2) > float(converted_amount):
+                                                  font_color = "green"
+                                             else:
+                                                  font_color = "red"
+                                             col18.write(f"<span style='color:{font_color}'>{average_sum_both2} €</span>", unsafe_allow_html=True)
+
+                                                       # Display number outputs for each estimate
+                                             col19, col20, col21, col22 = st.columns(4)
+
+                                             col19.write(f"Discounted Cash Flow Analysis (DCF):")
+                                                  #col20.write(f"{low_DCF:.2f} €")
+                                             if float(low_DCF) > float(converted_amount):
+                                                  font_color = "green"
+                                             else:
+                                                  font_color = "red"
+                                             col20.write(f"<span style='color:{font_color}'>{low_DCF:.2f} €</span>", unsafe_allow_html=True)
+                                                  #col21.write(f"{Average_Middle_DCF:.2f} €")
+
+                                             if float(Average_Middle_DCF) > float(converted_amount):
+                                                  font_color = "green"
+                                             else:
+                                                  font_color = "red"
+                                             col21.write(f"<span style='color:{font_color}'>{Average_Middle_DCF:.2f} €</span>", unsafe_allow_html=True)
+                                                  #col22.write(f"{high_DCF:.2f} €")
+
+                                             if float(high_DCF) > float(converted_amount):
+                                                  font_color = "green"
+                                             else:
+                                                  font_color = "red"
+                                             col22.write(f"<span style='color:{font_color}'>{high_DCF:.2f} €</span>", unsafe_allow_html=True)
 
 
-                                                                  # Plot the chart using Plotly as a bar chart
-                                        fig = px.bar(fcf_df, x='Year', y=['Discounted Cash Flow (Base Case)', 'Discounted Cash Flow (Bullish Case)'],
-                                                       title='Discounted Cash Flows Comparison in Billion',
-                                                       labels={'value': 'Discounted Cash Flow', 'Year': 'Year'},
-                                                       text_auto=True  # Automatically display values on bars
-                                                       )
-                                        fig.update_traces(textposition='inside')  # Automatically position text labels
+                                             present_values_df = pd.DataFrame({
+                                             #'Year': range(1, FCF_discount_in_years + 1),
+                                             'Year': [str(i) for i in range(1, FCF_discount_in_years)] + ['Terminal Value'],  # Label the last year as "Terminal Value"
 
-                                        fig.update_layout(
-                                        xaxis_type='category',  # Ensure x-axis is treated as categorical
-                                        dragmode=False,  # Disable dragging for zooming
-                                        yaxis_title="Discounted Cash Flow (in Billion )",
-                                        xaxis_title="Year",
-                                        barmode='group'  # Grouped bar chart
-                                        )
+                                             'Present Value (Base Case)': present_values_base_case,
+                                             'Present Value (Bullish Case)': present_values_bullish_case
+                                             })
 
-                                        # Call the chart display function
-                                        simple_chart(fig, present_values_df_horizontal,average_fcf_values1, average_fcf_values2,Equity_value_, total_present_value2)
+                                             # Transpose the DataFrame to make it horizontal
+                                             present_values_df_horizontal = present_values_df.set_index('Year').T                                        
+
+                                             # Save average FCF values to a DataFrame for plotting
+                                             fcf_df = pd.DataFrame({
+                                                  'Year': range(1, FCF_discount_in_years+1),
+                                                  #'Year': [str(i) for i in range(1, FCF_discount_in_years)] + ['Terminal Value'],  # Label the last year as "Terminal Value"
+                                                  'Discounted Cash Flow (Base Case)': average_fcf_values1,
+                                                  'Discounted Cash Flow (Bullish Case)': average_fcf_values2
+                                                  
+                                             })
 
 
-                                   
-                         display_growth_rate_formexer()
+                                                                      # Plot the chart using Plotly as a bar chart
+                                             fig = px.bar(fcf_df, x='Year', y=['Discounted Cash Flow (Base Case)', 'Discounted Cash Flow (Bullish Case)'],
+                                                            title='Discounted Cash Flows Comparison in Billion',
+                                                            labels={'value': 'Discounted Cash Flow', 'Year': 'Year'},
+                                                            text_auto=True  # Automatically display values on bars
+                                                            )
+                                             fig.update_traces(textposition='inside')  # Automatically position text labels
 
+                                             fig.update_layout(
+                                             xaxis_type='category',  # Ensure x-axis is treated as categorical
+                                             dragmode=False,  # Disable dragging for zooming
+                                             yaxis_title="Discounted Cash Flow (in Billion )",
+                                             xaxis_title="Year",
+                                             barmode='group'  # Grouped bar chart
+                                             )
+
+                                             # Call the chart display function
+                                             simple_chart(fig, present_values_df_horizontal,average_fcf_values1, average_fcf_values2,Equity_value_, total_present_value2)
+
+
+                                        
+                              display_growth_rate_formexer()
+                         display_DCF()
 
      #.........................................................
      
@@ -12663,109 +12588,112 @@ if selected == "Stock Analysis Tool":
                with st.container():   
                     with Reversed_DCF:                         
                          # Discounted Cash Flow function with reverse DCF logic
-                         @st.cache_data(show_spinner=False, ttl=3600) 
-                         
-                         def present_value(g, fcf, r, t, years):
-                              pv = 0
-                              for i in range(1, years + 1):
-                                   pv += fcf * (1 + g)**i / (1 + r)**i
-                              terminal_value = fcf * (1 + g)**years * (1 + t) / (r - t)
-                              pv += terminal_value / (1 + r)**years
-                              return pv
-
-                         def find_growth_rate(fcf, r, t, years, Market_cap_rDCF):
-                              def objective(g):
-                                   return present_value(g, fcf, r, t, years) - Market_cap_rDCF
-                              return optimize.brentq(objective, -0.5, 0.5)
+                         #@st.cache_data(show_spinner=False, ttl=3600) 
+                         @st.fragment                                             
+                         def Reversed_DCF():
                               
+                              def present_value(g, fcf, r, t, years):
+                                   pv = 0
+                                   for i in range(1, years + 1):
+                                        pv += fcf * (1 + g)**i / (1 + r)**i
+                                   terminal_value = fcf * (1 + g)**years * (1 + t) / (r - t)
+                                   pv += terminal_value / (1 + r)**years
+                                   return pv
 
-                         st.write("""
-                         This app calculates the Implied Growth Rate using a Two-Stage Reverse DCF model.
-                         The default forecast period is set to 10 years.
-                         """)
-                         with st.form("reverse_dcf_form"):
-                              st.markdown(
-                              f"""<span style='color: green;'>{name}:</span> FCF (TTM): <span style='color: green;'>**{fcf_ttm:.2f} B**</span> 
-                              , Market Cap (intraday): <span style='color: green;'>**{Marketcap_in_Billion}**</span>
-                              , FCF 10Y CAGR: <span style='color: green;'>**{FCF_Cagr_10}%**</span>
-                              , FCF 5Y CAGR: <span style='color: green;'>**{FCF_5_CAGR}%**</span>
-                              , FCF Growth YOY: <span style='color: green;'>**{Average_fcf_growth_ten}%**</span>
-                              , FCF Margin 10Y: <span style='color: green;'>**{FCF_Margin_10}%**</span>
-                              , FCF Margin 5Y: <span style='color: green;'>**{FCF_Margin_5}%**</span>
-                              , FCF Margin 1Y: <span style='color: green;'>**{FCF_Margin_1:.2f}%**</span>
+                              def find_growth_rate(fcf, r, t, years, Market_cap_rDCF):
+                                   def objective(g):
+                                        return present_value(g, fcf, r, t, years) - Market_cap_rDCF
+                                   return optimize.brentq(objective, -0.5, 0.5)
+                                   
 
-                              """,
-                            
-                              unsafe_allow_html=True
-                              )
-                              col1, col2 = st.columns(2)
+                              st.write("""
+                              This app calculates the Implied Growth Rate using a Two-Stage Reverse DCF model.
+                              The default forecast period is set to 10 years.
+                              """)
+                              with st.form("reverse_dcf_form"):
+                                   st.markdown(
+                                   f"""<span style='color: green;'>{name}:</span> FCF (TTM): <span style='color: green;'>**{fcf_ttm:.2f} B**</span> 
+                                   , Market Cap (intraday): <span style='color: green;'>**{Marketcap_in_Billion}**</span>
+                                   , FCF 10Y CAGR: <span style='color: green;'>**{FCF_Cagr_10}%**</span>
+                                   , FCF 5Y CAGR: <span style='color: green;'>**{FCF_5_CAGR}%**</span>
+                                   , FCF Growth YOY: <span style='color: green;'>**{Average_fcf_growth_ten}%**</span>
+                                   , FCF Margin 10Y: <span style='color: green;'>**{FCF_Margin_10}%**</span>
+                                   , FCF Margin 5Y: <span style='color: green;'>**{FCF_Margin_5}%**</span>
+                                   , FCF Margin 1Y: <span style='color: green;'>**{FCF_Margin_1:.2f}%**</span>
 
-                              with col1:
-                                   #fcf = st.number_input("Current FCF in Billion USD:", value=0.00, key="fcf_input",help="Enter Free Cash Flow value")
-                                   fcf = float(col1.text_input("Current FCF in Billion: ", value=0.00,key="fcf_input",help="Enter Free Cash Flow in Billion").replace(',', '.'))
-
-
-                                   #r = st.number_input("Discount rate WACC (%):", value=8.0, format="%.1f")
-                                   r = float(col1.text_input("Discount rate WACC (%):", value=8.0,key="Discount_rate_WACC ",help="Enter Discount rate WACC").replace(',', '.'))
-
-                             
-                                   years =10
-                              with col2:
-                                   #t = st.number_input("Terminal Growth Rate (%):", value=2.5, format="%.1f")
-                                   t = float(col2.text_input("Terminal Growth Rate (%):", value=2.5,key="Terminal_Growth_Rate",help="Enter Terminal Growth Rate").replace(',', '.'))
-
-                                   #current_price = st.number_input("Marketcap.in Billion USD:", value=0.00, format="%.2f")
-                                   Market_cap_rDCF = float(col2.text_input("Marketcap:",value=0.00, key="Marketcap",help="Enter Marketcap in Billion:").replace(',', '.'))
-
-                                 
-
-                              submitted = st.form_submit_button("Calculate")
-
-                         if submitted:
-                              try:
-                                   r = r / 100  # Convert to decimal
-                                   t = t / 100  # Convert to decimal
-
-                                   implied_growth = find_growth_rate(fcf, r, t, years, Market_cap_rDCF)
-                                   current_price = get_current_price(ticker) 
-
-                                   #st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
-                                   st.markdown(f"Implied FCF Growth Rate: <span style='color: green;'>**{implied_growth*100:.3f}%**</span>", unsafe_allow_html=True)
-                                   st.markdown(f"Current Price: <span style='color: green;'>**$ {current_price:.2f}**</span>", unsafe_allow_html=True)
+                                   """,
+                              
+                                   unsafe_allow_html=True
+                                   )
                                    col1, col2 = st.columns(2)
+
                                    with col1:
-                                        
-                                        st.write("### Interpretation")
-                                        st.write(f"""
-                                        - The implied growth rate of **{implied_growth*100:.3f}%** means the company's Free Cash Flow 
-                                             needs to grow at this rate annually for the next **{years}** years to justify the current share price.
-                                        - After year {years}, the growth is assumed to slow to the terminal growth rate of {t*100:.1f}%.
-                                        - If this growth rate seems unrealistically high compared to historical performance or industry standards, 
-                                             the stock might be overvalued.
-                                        - Compare this rate with industry averages and the company's historical growth rates for context.
-                                        """)
+                                        #fcf = st.number_input("Current FCF in Billion USD:", value=0.00, key="fcf_input",help="Enter Free Cash Flow value")
+                                        fcf = float(col1.text_input("Current FCF in Billion: ", value=0.00,key="fcf_input",help="Enter Free Cash Flow in Billion").replace(',', '.'))
 
+
+                                        #r = st.number_input("Discount rate WACC (%):", value=8.0, format="%.1f")
+                                        r = float(col1.text_input("Discount rate WACC (%):", value=8.0,key="Discount_rate_WACC ",help="Enter Discount rate WACC").replace(',', '.'))
+
+                              
+                                        years =10
                                    with col2:
-                                        st.write("### Additional Information")
-                                        final_fcf = fcf * (1 + implied_growth)**years
-                                        projected_fcfs = [fcf * (1 + implied_growth)**i for i in range(1, years + 1)]
-                                        projected_fcfs_rounded = [round(fcf, 2) for fcf in projected_fcfs]
+                                        #t = st.number_input("Terminal Growth Rate (%):", value=2.5, format="%.1f")
+                                        t = float(col2.text_input("Terminal Growth Rate (%):", value=2.5,key="Terminal_Growth_Rate",help="Enter Terminal Growth Rate").replace(',', '.'))
 
-                                        st.write(f"- Projected FCF after {years} years: ${final_fcf:.2f}")
-                                        terminal_value = final_fcf * (1 + t) / (r - t)
-                                        st.write(f"- Terminal Value: ${terminal_value:.2f}")
-                                        
-                                        # Calculate percentage of value from terminal value
-                                        total_value = present_value(implied_growth, fcf, r, t, years)
-                                        terminal_value_percentage = (terminal_value / (1 + r)**years) / total_value * 100
+                                        #current_price = st.number_input("Marketcap.in Billion USD:", value=0.00, format="%.2f")
+                                        Market_cap_rDCF = float(col2.text_input("Marketcap:",value=0.00, key="Marketcap",help="Enter Marketcap in Billion:").replace(',', '.'))
 
-                                        st.write(f"- Percentage of value from terminal value: {terminal_value_percentage:.2f}%")
+                                   
 
+                                   submitted = st.form_submit_button("Calculate")
+
+                              if submitted:
+                                   try:
+                                        r = r / 100  # Convert to decimal
+                                        t = t / 100  # Convert to decimal
+
+                                        implied_growth = find_growth_rate(fcf, r, t, years, Market_cap_rDCF)
+                                        current_price = get_current_price(ticker) 
+
+                                        #st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
+                                        st.markdown(f"Implied FCF Growth Rate: <span style='color: green;'>**{implied_growth*100:.3f}%**</span>", unsafe_allow_html=True)
+                                        st.markdown(f"Current Price: <span style='color: green;'>**$ {current_price:.2f}**</span>", unsafe_allow_html=True)
+                                        col1, col2 = st.columns(2)
+                                        with col1:
+                                             
+                                             st.write("### Interpretation")
+                                             st.write(f"""
+                                             - The implied growth rate of **{implied_growth*100:.3f}%** means the company's Free Cash Flow 
+                                                  needs to grow at this rate annually for the next **{years}** years to justify the current share price.
+                                             - After year {years}, the growth is assumed to slow to the terminal growth rate of {t*100:.1f}%.
+                                             - If this growth rate seems unrealistically high compared to historical performance or industry standards, 
+                                                  the stock might be overvalued.
+                                             - Compare this rate with industry averages and the company's historical growth rates for context.
+                                             """)
+
+                                        with col2:
+                                             st.write("### Additional Information")
+                                             final_fcf = fcf * (1 + implied_growth)**years
+                                             projected_fcfs = [fcf * (1 + implied_growth)**i for i in range(1, years + 1)]
+                                             projected_fcfs_rounded = [round(fcf, 2) for fcf in projected_fcfs]
+
+                                             st.write(f"- Projected FCF after {years} years: ${final_fcf:.2f}")
+                                             terminal_value = final_fcf * (1 + t) / (r - t)
+                                             st.write(f"- Terminal Value: ${terminal_value:.2f}")
+                                             
+                                             # Calculate percentage of value from terminal value
+                                             total_value = present_value(implied_growth, fcf, r, t, years)
+                                             terminal_value_percentage = (terminal_value / (1 + r)**years) / total_value * 100
+
+                                             st.write(f"- Percentage of value from terminal value: {terminal_value_percentage:.2f}%")
+                                   except Exception as e:
+                                        st.write(f" ")
 
 #                                   Use `simple_chart` to generate the FCF projections chart
                                    @st.fragment
-                                   def simple_chart():
-                                        if st.button(label="Display FCF Calculation"):
+                                   def simple_chart_rDCF():
+                                        if st.button(label="Display FCF Projections"):
 
 
                                              # Generate FCF chart
@@ -12780,9 +12708,9 @@ if selected == "Stock Analysis Tool":
                                                   text=projected_fcfs_rounded,  # Values to display as labels
                                                   textposition="top center",  # Position of the labels
                                                   )
-                                              )
-                                           
-                               
+                                             )
+                                        
+                              
                                              fig.update_layout(
                                                   title="Free Cash Flow (FCF) Projections",
                                                   xaxis_title="Years",
@@ -12793,10 +12721,11 @@ if selected == "Stock Analysis Tool":
                                              st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
                                    # Call the `simple_chart` function to display the plot
-                                   simple_chart()
+                                   simple_chart_rDCF()
 
-                              except Exception as e:
-                                   st.write(f" ")
+                                   
+
+                         Reversed_DCF()
           ################################experiment2########
                
                                    
@@ -12805,8 +12734,7 @@ if selected == "Stock Analysis Tool":
                     
                     #use_container_width=True
                     with Multiple_Valuation:        
-                    #@st.experimental_fragment
-                         
+                         @st.fragment                         
 
                     
                          def display_growth_rate_form():
@@ -12865,14 +12793,14 @@ if selected == "Stock Analysis Tool":
                                    col2.write('')
                                    #st.write(current_price)
                                    #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
-                                   col1.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True) 
+                                   #col1.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True) 
 
                                    #colx.write('')
                                    colx.write(f"<div style='background-color:#4b71ff;padding: 10px; border-radius: 5px; color: white;'>Desired Rate of Return: <br><br>{''}</div>", unsafe_allow_html=True)
 
-                                   st.write("")
-                                   colx.write('')
-                                   colx.write(f"Multiple of Earnings Valuation:")
+                                   #st.write("")
+                                   #colx.write('')
+                                   #colx.write(f"Multiple of Earnings Valuation:")
                               
                                    
                                    Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0,key="Growth_rate_revenue_LOW22", placeholder="Enter % (e.g. 5)").replace(',', '.'))
@@ -12961,35 +12889,90 @@ if selected == "Stock Analysis Tool":
                                    Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*usd_to_eur_rate)
                                         
                                              
-                                   st.markdown('</div>', unsafe_allow_html=True)
+                                   # st.markdown('</div>', unsafe_allow_html=True)
 
                     
-                                   if float(Revenue_low_Euro) < float(converted_amount):
-                                             font_color = "red"
-                                   else:
-                                             font_color = "green"
-                                   cola.write(f"<span style='color:{font_color}'>{Revenue_low_Euro} €</span>", unsafe_allow_html=True)
+                                   # if float(Revenue_low_Euro) < float(converted_amount):
+                                   #           font_color = "red"
+                                   # else:
+                                   #           font_color = "green"
+                                   # cola.write(f"<span style='color:{font_color}'>{Revenue_low_Euro} €</span>", unsafe_allow_html=True)
 
-                                   if float(Revenue_mid_Euro) < float(converted_amount):
-                                             font_color = "red"
-                                   else:
-                                             font_color = "green"
-                                   colb.write(f"<span style='color:{font_color}'>{Revenue_mid_Euro} €</span>", unsafe_allow_html=True)
+                                   # if float(Revenue_mid_Euro) < float(converted_amount):
+                                   #           font_color = "red"
+                                   # else:
+                                   #           font_color = "green"
+                                   # colb.write(f"<span style='color:{font_color}'>{Revenue_mid_Euro} €</span>", unsafe_allow_html=True)
 
-                                   if float(Revenue_high_Euro) < float(converted_amount):
-                                             font_color = "red"
-                                   else:
-                                             font_color = "green"
-                                   colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro} €</span>", unsafe_allow_html=True)
+                                   # if float(Revenue_high_Euro) < float(converted_amount):
+                                   #           font_color = "red"
+                                   # else:
+                                   #           font_color = "green"
+                                   # colc.write(f"<span style='color:{font_color}'>{Revenue_high_Euro} €</span>", unsafe_allow_html=True)
+                                   # After your calculations, replace the column writes with this table:
 
-                         #@st.fragment
-                         #@st.cache_data
-                         #@single_fragment
-                         def main():
+                                   st.markdown("""
+                                   <style>
+                                   .valuation-table {
+                                        width: 100%;
+                                        border-collapse: collapse;
+                                        margin-top: 20px;
+                                   }
+                                   .valuation-table th {
+                                        background-color: #4b71ff;
+                                        color: white;
+                                        padding: 10px;
+                                        text-align: center;
+                                   }
+                                   .valuation-table td {
+                                        padding: 10px;
+                                        text-align: center;
+                                        border: 1px solid #ddd;
+                                   }
+                                   </style>
+                                   """, unsafe_allow_html=True)
+
+                                   # Create the table
+                                   table_html = f"""
+                                   <table class="valuation-table">
+                                   <tr>
+                                        <th>Scenario</th>
+                                        <th>Projected Value (€)</th>
+                                        <th>vs Current Price</th>
+                                   </tr>
+                                   <tr>
+                                        <td>Low Estimate</td>
+                                        <td style='color: {"red" if float(Revenue_low_Euro) < float(converted_amount) else "green"}'>{Revenue_low_Euro} €</td>
+                                        <td>{"Undervalued" if float(Revenue_low_Euro) > float(converted_amount) else "Overvalued"}</td>
+                                   </tr>
+                                   <tr>
+                                        <td>Mid Estimate</td>
+                                        <td style='color: {"red" if float(Revenue_mid_Euro) < float(converted_amount) else "green"}'>{Revenue_mid_Euro} €</td>
+                                        <td>{"Undervalued" if float(Revenue_mid_Euro) > float(converted_amount) else "Overvalued"}</td>
+                                   </tr>
+                                   <tr>
+                                        <td>High Estimate</td>
+                                        <td style='color: {"red" if float(Revenue_high_Euro) < float(converted_amount) else "green"}'>{Revenue_high_Euro} €</td>
+                                        <td>{"Undervalued" if float(Revenue_high_Euro) > float(converted_amount) else "Overvalued"}</td>
+                                   </tr>
+                                   </table>
+                                   """
+
+                                   st.markdown(table_html, unsafe_allow_html=True)
+
+                                   # Optional: Add current price reference
+                                   st.markdown(f"""
+                                   <div style="text-align: left; margin-top: 15px;">
+                                   <strong>Current Price:</strong> <span style="color: green; font-weight: bold;">{converted_amount} €</span>
+                                   </div>
+                                   """, unsafe_allow_html=True)
+
+
+                         #def main():
                               
-                              display_growth_rate_form()
-                         if __name__ == "__main__":
-                              main()
+                         display_growth_rate_form()
+                        # if __name__ == "__main__":
+                             # main()
 
 
 #####################################################################################################################################################          
@@ -13557,7 +13540,7 @@ if selected == "Stock Analysis Tool":
                                              x=data['Date'],
                                              y=data['Free Cash Flow per Share'],
                                              name='Free Cash Flow pro Aktie',
-                                             line=dict(color='indigo', width=2),
+                                             line=dict(color='red', width=2),
                                              yaxis='y2',
                                              mode='lines+markers',
                                              customdata=data[['Date', 'Revenue_text', 'FCF_text', 'NAV_text']].values,
@@ -13577,7 +13560,7 @@ if selected == "Stock Analysis Tool":
                                              x=data['Date'],
                                              y=data['NAV per Share'],
                                              name='NAV pro Aktie',
-                                             line=dict(color='red', width=2),
+                                             line=dict(color='darkred', width=2),
                                              yaxis='y2',
                                              mode='lines+markers',
                                              customdata=data[['Date', 'Revenue_text', 'FCF_text', 'NAV_text']].values,
@@ -13723,7 +13706,7 @@ if selected == "Stock Analysis Tool":
 
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['Research & Development'], name='Research & Development'))
 
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Operating Cash Flow'], marker_color='brown', name='Operating Cash Flow'))
+                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Operating Cash Flow'], marker_color='darkred', name='Operating Cash Flow'))
 
                                    fig.add_trace(go.Bar(x=data['Date'], y=data['CapEx'], marker_color='black', name='CapEx'))
 
@@ -13761,57 +13744,8 @@ if selected == "Stock Analysis Tool":
                                    fig.update_layout(
                                    dragmode=False,  # Disable dragging for zooming
                                    )
-                                                                 
-                                   st.markdown(f"""
-                                   <style>
-                                        @media (max-width: 768px) {{
-                                             .metrics-container {{
-                                                  flex-direction: column;
-                                                  align-items: center;
-                                             }}
-                                             .metric-item {{
-                                                  padding: 5px 0 !important;
-                                                  width: 100%;
-                                                  text-align: center;
-                                             }}
-                                             .divider {{
-                                                  border-left: none !important;
-                                                  border-top: 1px solid #e0e0e0;
-                                                  width: 70%;
-                                                  height: 1px !important;
-                                                  margin: 5px auto !important;
-                                             }}
-                                        }}
-                                        @media (min-width: 769px) and (max-width: 1024px) {{
-                                             .metric-item span:first-child {{
-                                                  font-size: clamp(10px, 1.3vw, 12px) !important;
-                                             }}
-                                        }}
-                                   </style>
-                                   <div style='text-align: center; border: 1px solid #f0f2f6; padding: 1vw; border-radius: 10px; max-width: 900px; margin: 0 auto 0;'>
-                                        <div class='metrics-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
-                                             <div class='metric-item' style='padding: 0 1vw; white-space: nowrap;'>
-                                                  <span style='font-size: clamp(10px, 1.3vw, 13px); font-style: italic; color: dodgerblue;'>10YR Dividend CAGR: </span>
-                                                  <span style='font-size: clamp(14px, 1.8vw, 16px); font-weight: bold;'>{Dividend_10_CAGR}%</span>
-                                             </div>
-                                             <div class='divider' style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 0.5vw;'></div>
-                                             <div class='metric-item' style='padding: 0 1vw; white-space: nowrap;'>
-                                                  <span style='font-size: clamp(10px, 1.3vw, 13px); font-style: italic; color: dodgerblue;'>5YR Dividend CAGR: </span>
-                                                  <span style='font-size: clamp(14px, 1.8vw, 16px); font-weight: bold;'>{Dividend_5_CAGR}%</span>
-                                             </div>
-                                             <div class='divider' style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 0.5vw;'></div>
-                                             <div class='metric-item' style='padding: 0 1vw; white-space: nowrap;'>
-                                                  <span style='font-size: clamp(10px, 1.3vw, 13px); font-style: italic; color: dodgerblue;'>10YR FCF CAGR: </span>
-                                                  <span style='font-size: clamp(14px, 1.8vw, 16px); font-weight: bold;'>{FCF_Cagr_10}%</span>
-                                             </div>
-                                             <div class='divider' style='border-left: 1px solid #e0e0e0; height: 20px; margin: 0 0.5vw;'></div>
-                                             <div class='metric-item' style='padding: 0 1vw; white-space: nowrap;'>
-                                                  <span style='font-size: clamp(10px, 1.3vw, 13px); font-style: italic; color: dodgerblue;'>5YR FCF CAGR: </span>
-                                                  <span style='font-size: clamp(14px, 1.8vw, 16px); font-weight: bold;'>{FCF_5_CAGR}%</span>
-                                             </div>
-                                        </div>
-                                   </div>
-                                   """, unsafe_allow_html=True)
+
+                                 
 
                                    st.plotly_chart(fig,use_container_width=True,config=config)
                                    #with col2:
@@ -13899,7 +13833,7 @@ if selected == "Stock Analysis Tool":
                                              x=data_filtered['Date'],
                                              y=data_filtered['Dividend Growth %'].str.rstrip('%').astype(float),
                                              name='Dividend Growth %',
-                                             line=dict(color='red', width=2),
+                                             line=dict(color='darkred', width=2),
                                              yaxis='y2',
                                              mode='lines+markers',
                                              hovertemplate='%{y:.2f}%',
@@ -13911,7 +13845,7 @@ if selected == "Stock Analysis Tool":
                                              x=data_filtered['Date'],
                                              y=data_filtered['Dividend Yield %'],
                                              name='Dividend Yield %',
-                                             line=dict(color='indigo', width=3),
+                                             line=dict(color='red', width=2),
                                              yaxis='y3',
                                              mode='lines+markers',
                                              hovertemplate='%{y:.2f}%',
