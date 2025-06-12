@@ -505,27 +505,6 @@ if selected == "Stock Analysis Tool":
      COOKIE_NAME = "login_token"
      COOKIE_EXPIRY_DAYS = 1  # Token expires in 1 day
 
-     # # JavaScript to handle cookies
-     # def set_cookie(key, value, expiry_days=1):
-     #      expiry_date = (datetime.now(timezone.utc) + timedelta(days=expiry_days)).strftime("%a, %d-%b-%Y %H:%M:%S GMT")
-     #      js_code = f"document.cookie = '{key}={value}; expires={expiry_date}; path=/';"
-     #      # Removed the line to execute JS code to set the cookie in the browser
-
-     # def get_cookie(key):
-     #      js_code = f"""
-     #      <script>
-     #           let cookie = document.cookie;
-     #           let value = cookie.split('; ').find(row => row.startsWith('{key}=')).split('=')[1];
-     #           window.parent.postMessage(value, "*");
-     #      </script>
-     #      """
-     #      # Removed the line to execute JS code to retrieve cookie value
-
-     # def delete_cookie(key):
-     #      js_code = f"document.cookie = '{key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';"
-     #      # Removed the line to execute JS code to delete the cookie
-
-
      def app():
           
           if 'username' not in st.session_state:
@@ -576,28 +555,6 @@ if selected == "Stock Analysis Tool":
                except Exception as e:
                     st.warning(f'Signup failed: {e}')
 
-          # # Function to sign in with email and password
-          # def sign_in_with_email_and_password(email=None, password=None, return_secure_token=True):
-          #      rest_api_url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword"
-
-          #      try:
-          #           payload = {
-          #                "returnSecureToken": return_secure_token,
-          #                "email": email,
-          #                "password": password
-          #           }
-          #           payload = json.dumps(payload)
-          #           r = requests.post(rest_api_url, params={"key": "AIzaSyApr-etDzcGcsVcmaw7R7rPxx3A09as7uw"}, data=payload)
-          #           data = r.json()
-          #           user_info = {
-          #                'email': data['email'],
-          #                'username': data.get('displayName')  # Retrieve username if available
-          #           }
-          #           return user_info
-                  
-          #      except Exception as e:
-          #           st.warning(f'Signin failed: {e}')
-              # Function to sign in with email and password
           def sign_in_with_email_and_password(email=None, password=None):
                rest_api_url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword"
                try:
@@ -15369,16 +15326,11 @@ if selected == "Stock Analysis Tool":
                                    st.session_state.password_input = password
                                    login()
                               
-               with middle:
-                    if st.button('Forgot Password', key='forgot_password'):
-                         forget()
+               #with middle:
+                #    if st.button('Forgot Password', key='forgot_password'):
+                 #        forget()
 
-                         
-                         
-               #if st.session_state.signout:
-               #              st.text('Name '+st.session_state.username)
-                              #st.text('Email:id: '+st.session_state.useremail)
-                              #st.button('Sign out', on_click=t) 
+     
 
 
      if __name__ == "__main__":     
@@ -15524,10 +15476,8 @@ if selected == "Contacts":
 
      def app():
 
-     # Usernm = []
-          st.title('Welcome to verstehdieaktie')
-          
-
+  
+     
           if 'username' not in st.session_state:
                st.session_state.username = ''
           if 'useremail' not in st.session_state:
