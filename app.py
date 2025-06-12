@@ -505,32 +505,28 @@ if selected == "Stock Analysis Tool":
      COOKIE_NAME = "login_token"
      COOKIE_EXPIRY_DAYS = 1  # Token expires in 1 day
 
-     # JavaScript to handle cookies
-     def set_cookie(key, value, expiry_days=1):
-          expiry_date = (datetime.now(timezone.utc) + timedelta(days=expiry_days)).strftime("%a, %d-%b-%Y %H:%M:%S GMT")
-          js_code = f"document.cookie = '{key}={value}; expires={expiry_date}; path=/';"
-          # Removed the line to execute JS code to set the cookie in the browser
+     # # JavaScript to handle cookies
+     # def set_cookie(key, value, expiry_days=1):
+     #      expiry_date = (datetime.now(timezone.utc) + timedelta(days=expiry_days)).strftime("%a, %d-%b-%Y %H:%M:%S GMT")
+     #      js_code = f"document.cookie = '{key}={value}; expires={expiry_date}; path=/';"
+     #      # Removed the line to execute JS code to set the cookie in the browser
 
-     def get_cookie(key):
-          js_code = f"""
-          <script>
-               let cookie = document.cookie;
-               let value = cookie.split('; ').find(row => row.startsWith('{key}=')).split('=')[1];
-               window.parent.postMessage(value, "*");
-          </script>
-          """
-          # Removed the line to execute JS code to retrieve cookie value
+     # def get_cookie(key):
+     #      js_code = f"""
+     #      <script>
+     #           let cookie = document.cookie;
+     #           let value = cookie.split('; ').find(row => row.startsWith('{key}=')).split('=')[1];
+     #           window.parent.postMessage(value, "*");
+     #      </script>
+     #      """
+     #      # Removed the line to execute JS code to retrieve cookie value
 
-     def delete_cookie(key):
-          js_code = f"document.cookie = '{key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';"
-          # Removed the line to execute JS code to delete the cookie
+     # def delete_cookie(key):
+     #      js_code = f"document.cookie = '{key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';"
+     #      # Removed the line to execute JS code to delete the cookie
 
 
      def app():
-
-
-     # Usernm = []
-          #st.title('Welcome to verstehdieaktie')
           
           if 'username' not in st.session_state:
                st.session_state.username = ''
@@ -538,20 +534,24 @@ if selected == "Stock Analysis Tool":
                st.session_state.useremail = ''  
           if 'is_logged_in' not in st.session_state:
                st.session_state.is_logged_in = False
-          if 'needs_rerun' not in st.session_state:
-               st.session_state.needs_rerun = False
+          #if 'needs_rerun' not in st.session_state:
+           #    st.session_state.needs_rerun = False
+          if 'login_token' not in st.session_state:
+               st.session_state.login_token = None
 
-          # Check for login token in cookies
-          cookie_token = get_cookie(COOKIE_NAME)
-          if cookie_token and 'login_token' not in st.session_state:
+          # Check for valid login token on each run
+          if not st.session_state.is_logged_in and st.session_state.login_token is None:
                try:
-                    user_data = serializer.loads(cookie_token, max_age=86400)  # 24-hour expiry
-                    st.session_state.username = user_data['username']
-                    st.session_state.useremail = user_data['email']
-                    st.session_state.is_logged_in = True
-                    st.session_state.login_token = cookie_token
-               except Exception:
-                    delete_cookie(COOKIE_NAME)  # Remove invalid/expired cookie
+                    # Get token from query parameters (alternative to cookies)
+                    params = st.query_params
+                    if COOKIE_NAME in params:
+                         user_data = serializer.loads(params[COOKIE_NAME], max_age=86400)  # 24-hour expiry
+                         st.session_state.username = user_data['username']
+                         st.session_state.useremail = user_data['email']
+                         st.session_state.is_logged_in = True
+                         st.session_state.login_token = params[COOKIE_NAME]
+               except:
+                    pass  # Token is invalid or expired
 
 
           # Function to sign up with email and password
@@ -611,36 +611,45 @@ if selected == "Stock Analysis Tool":
                return None
 
 #######################################################################################################
-          # Login function
+    # Login function
           def login():
-               userinfo = sign_in_with_email_and_password(st.session_state.email_input, st.session_state.password_input)
+               userinfo = sign_in_with_email_and_password(
+                    st.session_state.email_input, 
+                    st.session_state.password_input
+               )
 
                if userinfo:
                     st.session_state.username = userinfo['username']
                     st.session_state.useremail = userinfo['email']
                     st.session_state.is_logged_in = True
 
-                    # Create a secure login token
-                    login_token = serializer.dumps({'username': userinfo['username'], 'email': userinfo['email']})
+                    # Create and store token
+                    login_token = serializer.dumps({
+                         'username': userinfo['username'], 
+                         'email': userinfo['email']
+                    })
                     st.session_state.login_token = login_token
-                    # Update query parameters
-                    #st.query_params['login_token'] = login_token
-                    set_cookie(COOKIE_NAME, login_token, expiry_days=COOKIE_EXPIRY_DAYS)
-
-                    st.session_state.needs_rerun = True
-               else:
-                    st.warning('Login Failed')
+                    
+                    # Set token in query params (more reliable than cookies in Streamlit)
+                    st.query_params[COOKIE_NAME] = login_token
+                    
+                    st.rerun()
 ###########################################################################
 
           def logout():
+               # Clear session and query params
                for key in ['username', 'useremail', 'is_logged_in', 'login_token']:
                     if key in st.session_state:
                          del st.session_state[key]
-               #st.query_params.clear()
-               delete_cookie(COOKIE_NAME)  # Remove cookie on logout
+               
+               # Remove token from URL
+               params = st.query_params
+               if COOKIE_NAME in params:
+                    del params[COOKIE_NAME]
+               st.query_params = params
+               
+               st.rerun()
 
-               #st.rerun()
-               st.session_state.needs_rerun = True
 ############################# email reset##########################################################
           def reset_password(email):
                try:
@@ -15640,6 +15649,16 @@ if selected == "Contacts":
                st.query_params.clear()
                #st.rerun()
                st.session_state.needs_rerun = True
+               # Remove token from URL
+               params = st.query_params
+               if COOKIE_NAME in params:
+                    del params[COOKIE_NAME]
+               st.query_params = params
+               
+               st.rerun()
+
+ 
+
 ############################# email reset##########################################################
           def reset_password(email):
                try:
