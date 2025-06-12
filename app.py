@@ -10423,7 +10423,7 @@ if selected == "Stock Analysis Tool":
                          data1 = {
                          'Market Cap (intraday)': [Marketcap_in_Billion],
                          'Enterprise Value': [Enterprise_value_in_Billion],
-                         'EBITDA (TTM)': [Ebita_ttm_Billion], 
+                         #'EBITDA (TTM)': [Ebita_ttm_Billion], 
                          'Debt/EBITDA': [Debt_to_EBITDA],
                          'Debt/Equity': [debt_equity_ttm],
                          'Revenue (TTM)': [revenue_ttm],      
