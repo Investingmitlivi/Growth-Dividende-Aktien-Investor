@@ -7579,6 +7579,7 @@ if selected == "Stock Analysis Tool":
                          'WOLTF':'Wolters Kluwer N.V',
                          'LB':'LandBridge Company LLC',
                          'CRWV':'CoreWeave Inc.',
+                         'ADS:DE':'adidas AG',
                          'MUX:DE':'Mutares SE & Co. KGaA',
                          'ASML:NL':'ASML Holding N.V',
                          'NOVO.B:DK':'Novo Nordisk A/S',
@@ -7586,6 +7587,7 @@ if selected == "Stock Analysis Tool":
                          'NBIS':'Nebius Group N.V.',
                          'MBB:DE':'MBB SE',
                          'ETOR':'eToro Group Ltd.',
+                         'KRI:GR':'Kri-Kri Milk Industry S.A', 
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7713,21 +7715,25 @@ if selected == "Stock Analysis Tool":
                with left:
                     st.write(styled_link, unsafe_allow_html=True)
                #.............................................................................................
-               
-               ticker_mapping = {
-               'ADS:DE': 'ADS.DE',
+               ticker_mapping1 = {
                'BRK.A': 'BRK-A',
                'BRK.B': 'BRK-B',
+               }
+
+
+
+               ticker_mapping = {
+               'ADS:DE': 'ADS.DE',
                'MUX:DE':'MUX.DE',
                'ASML:NL':'ASML',
                'NOVO.B:DK':'NVO',
-               #'NVO':'NVO'
                'MBB:DE':'MBB.DE',
+               'KRI:GR':'AO2.F',
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
                ticker = ticker_mapping.get(ticker, ticker)
-
+               ticker = ticker_mapping1.get(ticker, ticker)
                stock_info = yf.Ticker(ticker)
 
 
@@ -7810,6 +7816,9 @@ if selected == "Stock Analysis Tool":
                          st.session_state.current_price = get_current_price(ticker)
                          st.session_state.price_data = get_price_data(ticker, st.session_state.current_price, usd_to_eur_rate)
 
+
+
+
                     # Retrieve data from session state
                     current_price = st.session_state.current_price
                     close_price, percentage_difference, converted_amount = st.session_state.price_data
@@ -7836,23 +7845,66 @@ if selected == "Stock Analysis Tool":
 
 
                     with middle:
-                         st.markdown(
-                              f"""
-                              <div style="text-align: center; width: 100%;">
-                                   Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
-                                   Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
-                                   {percentage_text}
-                              </div>
-                              """,
-                              unsafe_allow_html=True,
-                         )
+                         # st.markdown(
+                         #      f"""
+                         #      <div style="text-align: center; width: 100%;">
+                         #           Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
+                         #           Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
+                         #           {percentage_text}
+                         #      </div>
+                         #      """,
+                         #      unsafe_allow_html=True,
+                         # )
+                         #formatted_price_usd = f"{current_price:.2f} €"
+
+                         # Ausgabe basierend auf Mapping
+                         if ticker in ticker_mapping.values():
+                              st.markdown(
+                                   f"""
+                                   <div style="text-align: center; width: 100%;">
+                                        Aktueller Preis: <span style='{green_style}'>{current_price:.2f} €</span>
+                                   </div>
+                                   """,
+                                   unsafe_allow_html=True,
+                              )
+                         else:
+                              st.markdown(
+                                   f"""
+                                   <div style="text-align: center; width: 100%;">
+                                        Current Price: <span style='{green_style}'>{formatted_price_usd}</span> 
+                                        Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> 
+                                        {percentage_text}
+                                   </div>
+                                   """,
+                                   unsafe_allow_html=True,
+                              )
 
                # Run the app
                if __name__ == "__main__":
                     main()
 
-               current_price = get_current_price(ticker)  # Get current price
-               converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+               #current_price = get_current_price(ticker)  # Get current price
+               #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+
+
+               # Initialize usd_to_eur_rate at the beginning (before any conditionals)
+               if 'usd_to_eur_rate' not in st.session_state:
+                    st.session_state.usd_to_eur_rate = get_exchange_rate(base_currency, target_currency) # Implement this function
+               
+
+               if ticker in ticker_mapping.values():  # If ticker is in mapped values (EUR-denominated)
+                    current_price = get_current_price(ticker)
+                    #st.session_state.usd_to_eur_rate = 1  # Get current price in EUR
+                    converted_amount = "{:.2f}".format(current_price * 1)
+                    st.session_state.usd_to_eur_rate = 1  # No conversion needed  
+
+                    
+               else:  # For non-mapped tickers (assumed to be USD-denominated)
+                    #usd_to_eur_rate=usd_to_eur_rate 
+                    current_price = get_current_price(ticker)  # Get current price in USD
+                    converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+                    st.session_state.usd_to_eur_rate = get_exchange_rate(base_currency, target_currency)
+                    
 
 
                ########################
@@ -12349,7 +12401,8 @@ if selected == "Stock Analysis Tool":
                                              Intrinsic_value =Equity_value_/Average_shares_basic_annual_one
                                              print("Average_shares_basic_annual_one",Average_shares_basic_annual_one)
 
-                                             Euro_equivalent = Intrinsic_value*usd_to_eur_rate
+                                             #Euro_equivalent = Intrinsic_value*usd_to_eur_rate
+                                             Euro_equivalent = Intrinsic_value*st.session_state.usd_to_eur_rate 
 
                                         
 
@@ -12389,7 +12442,9 @@ if selected == "Stock Analysis Tool":
                                              Equity_value2 = total_present_value2+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
                                              Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
 
-                                             Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
+                                             #Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
+                                             Euro_equivalent2 = Intrinsic_value2*st.session_state.usd_to_eur_rate 
+                                             
 
                                         
                                              #------------------------------------------Graham 1.Estimate--------------------------------------------------------------
@@ -12406,14 +12461,16 @@ if selected == "Stock Analysis Tool":
 
                                              graham_valuation = (EPS_last_average_graham * (7+1.5 * Growth_rate1) * 4.4)/ st.session_state["Average_10years_treasury_rate"]
                                              
-                                             Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
+                                             #Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
+                                             Euro_equivalent_graham_valuation = graham_valuation*st.session_state.usd_to_eur_rate 
                                                   #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
                                              # Display the result
                                         # .   ...........................................Graham 2.Estimate.........................................   
                                         
                                              graham_valuation2 = (EPS_last_average_graham2 * (7+1.5*Growth_rate2)*4.4)/ st.session_state["Average_10years_treasury_rate"]
                                         
-                                             Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
+                                             #Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
+                                             Euro_equivalent_graham_valuation2 = graham_valuation2*st.session_state.usd_to_eur_rate 
 
 
                                         #........................................................................................
@@ -12654,7 +12711,7 @@ if selected == "Stock Analysis Tool":
 
                                         #st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
                                         st.markdown(f"Implied FCF Growth Rate: <span style='color: green;'>**{implied_growth*100:.3f}%**</span>", unsafe_allow_html=True)
-                                        st.markdown(f"Current Price: <span style='color: green;'>**$ {current_price:.2f}**</span>", unsafe_allow_html=True)
+                                        #st.markdown(f"Current Price: <span style='color: green;'>**$ {current_price:.2f}**</span>", unsafe_allow_html=True)
                                         col1, col2 = st.columns(2)
                                         with col1:
                                              
@@ -12847,7 +12904,8 @@ if selected == "Stock Analysis Tool":
                                    Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
 
 
-                                   Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
+                                   #Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
+                                   Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*st.session_state.usd_to_eur_rate) 
                                         
                               
                               # -----------------------------MIDDLE-------------
@@ -12864,7 +12922,8 @@ if selected == "Stock Analysis Tool":
                                    Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid=Assumption_mid_inklu_shares_outstanding_mid*(1-(Margin_of_safety_mid/100))
                                    
 
-                                   Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*usd_to_eur_rate)
+                                   #Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*usd_to_eur_rate)
+                                   Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*st.session_state.usd_to_eur_rate) 
                                         
 
                                         
@@ -12882,7 +12941,8 @@ if selected == "Stock Analysis Tool":
 
                                    Assumption_high_inklu_shares_outstanding_MarginofSafety_high=Assumption_high_inklu_shares_outstanding_high*(1-(Margin_of_safety_high/100))
                                    
-                                   Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*usd_to_eur_rate)
+                                   #Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*usd_to_eur_rate)
+                                   Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*st.session_state.usd_to_eur_rate) 
                                         
 
 
