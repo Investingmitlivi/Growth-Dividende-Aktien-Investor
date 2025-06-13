@@ -13097,7 +13097,7 @@ if selected == "Stock Analysis Tool":
                                              formatted_data = ["{:.2f}B".format(data / 1_000_000_000) for data in metric_data]
 
                                         elif metric_name == 'Dividend per share':
-                                             formatted_data = ["${:.2f}".format(data ) for data in metric_data]
+                                             formatted_data = ["{:.2f}".format(data ) for data in metric_data]
                                         else:
                                              #formatted_data = ["{:.2f}".format(data) for data in metric_data]
                                              formatted_data = ["{:.2f}".format(data) for data in metric_data]
@@ -13189,7 +13189,7 @@ if selected == "Stock Analysis Tool":
                                                                  formatted_data = ["{:.2f}B".format(data / 1_000_000_000) for data in metric_data]
 
                                                             elif metric_name == 'Dividend per share':
-                                                                 formatted_data = ["${:.2f}".format(data ) for data in metric_data]
+                                                                 formatted_data = ["{:.2f}".format(data ) for data in metric_data]
                                                             else:
                                                                  formatted_data = ["{:.2f}".format(data) for data in metric_data]
 
@@ -13817,7 +13817,7 @@ if selected == "Stock Analysis Tool":
                                              dividend_yield_numeric = [float(val.strip('%')) if val != "N/A" else None for val in dividend_yield_21_list]
 
                                              # Formatted Dividend per Share with $
-                                             Dividend_per_share = ["${:.2f}".format(float(value)) for value in Dividend_per_share_annual_21_unpacked] + ["${:.2f}".format(float(Dividend_TTM_extract_value))]
+                                             Dividend_per_share = ["{:.2f}".format(float(value)) for value in Dividend_per_share_annual_21_unpacked] + ["${:.2f}".format(float(Dividend_TTM_extract_value))]
 
 
                                              # Growth values (append TTM)
@@ -13866,7 +13866,7 @@ if selected == "Stock Analysis Tool":
                                              fig1.add_trace(go.Scatter(
                                              x=data_filtered['Date'],
                                              y=data_filtered['Dividend Growth %'].str.rstrip('%').astype(float),
-                                             name='Dividend Growth %',
+                                             name='Dividend Growth',
                                              line=dict(color='darkred', width=2),
                                              yaxis='y2',
                                              mode='lines+markers',
@@ -13878,7 +13878,7 @@ if selected == "Stock Analysis Tool":
                                              fig1.add_trace(go.Scatter(
                                              x=data_filtered['Date'],
                                              y=data_filtered['Dividend Yield %'],
-                                             name='Dividend Yield %',
+                                             name='Dividend Yield',
                                              line=dict(color='red', width=2),
                                              yaxis='y3',
                                              mode='lines+markers',
@@ -13890,7 +13890,7 @@ if selected == "Stock Analysis Tool":
                                              fig1.update_layout(
                                              yaxis=dict(
                                                   title='Dividend per Share ➔ Dividend Yield (%)',
-                                                  tickprefix='$',
+                                                  #tickprefix='$',
                                                   rangemode='tozero',
                                                   showgrid=False
                                              ),
@@ -13927,7 +13927,7 @@ if selected == "Stock Analysis Tool":
                                              # Hover formatting
                                              fig1.update_traces(
                                              selector={'type': 'bar'},
-                                             hovertemplate='<b>%{x}</b><br>Dividend: $%{customdata:.2f}<extra></extra>',
+                                             hovertemplate='<b>%{x}</b><br>Dividend: %{customdata:.2f}<extra></extra>',
                                              customdata=data_filtered['Dividend per Share']
                                              )
 
