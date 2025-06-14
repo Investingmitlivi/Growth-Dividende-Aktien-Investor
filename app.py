@@ -4497,7 +4497,6 @@ if selected == "Stock Analysis Tool":
                          'LUV':'Southwest Airlines Company ',
                          'LUXH':'LuxUrban Hotels Inc. ',
                          'LVLU':'Lulus Fashion Lounge Holdings Inc. ',
-                         'LVMHF':'LVMH Moet Hennessey-Louis Vuitton ',
                          'LVO':'LiveOne Inc. ',
                          'LVOX':'LiveVox Holdings Inc.  ',
                          'LVOXW':'LiveVox Holdings Inc. ',
@@ -7588,6 +7587,9 @@ if selected == "Stock Analysis Tool":
                          'MBB:DE':'MBB SE',
                          'ETOR':'eToro Group Ltd.',
                          'KRI:GR':'Kri-Kri Milk Industry S.A', 
+                         'LVMHF':'LVMH Moet Hennessey-Louis Vuitton ',
+                         'MC:FR':'LVMH Moët Hennessy - Louis Vuitton Société Européenne', 
+                         'SAN:FR':'Sanofi SA',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7729,6 +7731,8 @@ if selected == "Stock Analysis Tool":
                'NOVO.B:DK':'NVO',
                'MBB:DE':'MBB.DE',
                'KRI:GR':'AO2.F',
+               'MC:FR':'MOHF.F',
+               'SAN:FR':'SAN.PA',
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
@@ -12856,30 +12860,30 @@ if selected == "Stock Analysis Tool":
                                    #colx.write(f"Multiple of Earnings Valuation:")
                               
                                    
-                                   Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0,key="Growth_rate_revenue_LOW22", placeholder="Enter % (e.g. 5)").replace(',', '.'))
+                                   Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0,key="Growth_rate_revenue_LOW22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
 
-                                   Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0,key="Growth_rate_revenue_middle22").replace(',', '.'))
-                                   Growth_rate_revenue_high = float(colr11.text_input(" ", value=0,key="Growth_rate_revenue_high22").replace(',', '.'))
+                                   Growth_rate_revenue_middle = float(colr10.text_input(" ", value=0,key="Growth_rate_revenue_middle22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   Growth_rate_revenue_high = float(colr11.text_input(" ", value=0,key="Growth_rate_revenue_high22", placeholder="Enter  (e.g. 5.0)").replace(',', '.'))
                                         
-                                   Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0,key="Growth_rate_net_profit_LOW23").replace(',', '.'))
-                                   Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0,key="Growth_rate__net_profit_middle23").replace(',', '.'))
-                                   Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0,key="Growth_rate__net_profit_high23").replace(',', '.'))
+                                   Growth_rate_net_profit_LOW = float(coln9.text_input(" ", value=0,key="Growth_rate_net_profit_LOW23", placeholder="Enter  (e.g. 5.0)").replace(',', '.'))
+                                   Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0,key="Growth_rate__net_profit_middle23", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0,key="Growth_rate__net_profit_high23", placeholder="Enter (e.g. 5)").replace(',', '.'))
 
-                                   Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0,key="Growth_rate_fcf_margin_LOW24").replace(',', '.'))
-                                   Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0,key="Growth_rate_fcf_margin_middle24").replace(',', '.'))
-                                   Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0,key="Growth_rate_fcf_margin_high24").replace(',', '.'))
+                                   Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0,key="Growth_rate_fcf_margin_LOW24", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0,key="Growth_rate_fcf_margin_middle24", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0,key="Growth_rate_fcf_margin_high24", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
 
-                                   Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0,key="Growth_rate_P_OCF_low22").replace(',', '.'))
-                                   Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0,key="Growth_rate_P_OCF_middle22").replace(',', '0.0'))
-                                   Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0,key="Growth_rate_P_OCF_high22").replace(',', '.'))
+                                   Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0,key="Growth_rate_P_OCF_low22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0,key="Growth_rate_P_OCF_middle22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   Growth_rate_P_OCF_high = float(colcf11.text_input(" ", value=0,key="Growth_rate_P_OCF_high22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
 
-                                   Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0,key="Growth_rate_P_FCF_low22").replace(',', '.'))
-                                   Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0,key="Growth_rate_P_FCF_middle22").replace(',', '.'))
-                                   Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0,key="Growth_rate_P_FCF_high22"))
+                                   Growth_rate_P_FCF_low = float(colfcf9.text_input(" ", value=0,key="Growth_rate_P_FCF_low22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   Growth_rate_P_FCF_middle = float(colfcf10.text_input(" ", value=0,key="Growth_rate_P_FCF_middle22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   Growth_rate_P_FCF_high = float(colfcf11.text_input(" ", value=0,key="Growth_rate_P_FCF_high22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
 
-                                   Margin_of_safety_low = float(cola.text_input(" ", value=9,key="Margin_of_safety_low22").replace(',', '.'))
-                                   Margin_of_safety_mid = float(colb.text_input(" ", value=9,key="Margin_of_safety_mid22").replace(',', '.'))
-                                   Margin_of_safety_high = float(colc.text_input(" ", value=9,key="Margin_of_safety_high22").replace(',', '.'))
+                                   Margin_of_safety_low = float(cola.text_input(" ", value=9,key="Margin_of_safety_low22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   Margin_of_safety_mid = float(colb.text_input(" ", value=9,key="Margin_of_safety_mid22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   Margin_of_safety_high = float(colc.text_input(" ", value=9,key="Margin_of_safety_high22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
 
                                    #except Exception as e:
                                    #    st.error("Please use a dot instead of a comma for decimal values.")
