@@ -7866,7 +7866,7 @@ if selected == "Stock Analysis Tool":
                               st.markdown(
                                    f"""
                                    <div style="text-align: center; width: 100%;">
-                                        Aktueller Preis: <span style='{green_style}'>{current_price:.2f} €</span>
+                                        Aktueller Preis: <span style='{green_style}'>{current_price:.2f} €</span> {percentage_text}
                                    </div>
                                    """,
                                    unsafe_allow_html=True,
@@ -13262,7 +13262,7 @@ if selected == "Stock Analysis Tool":
                                              fig.add_trace(go.Scatter(
                                                   x=data_filtered['Date'],
                                                   y=data_filtered['Revenue Growth %'],
-                                                  name='Revenue Growth %',
+                                                  name='Revenue Growth',
                                                   line=dict(color='red', width=2),
                                                   yaxis='y2',
                                                   mode='lines+markers',
@@ -13300,7 +13300,7 @@ if selected == "Stock Analysis Tool":
                                              # Custom hover template
                                              fig.update_traces(
                                                   selector={'type': 'bar'},
-                                                  hovertemplate='<b>%{x}</b><br>Revenue: $%{y:.2f}B<extra></extra>'
+                                                  hovertemplate='<b>%{x}</b><br>Revenue: %{y:.2f}B<extra></extra>'
                                              )
 
                                         
@@ -13425,7 +13425,7 @@ if selected == "Stock Analysis Tool":
                                              fig1.update_layout(
                                                   yaxis=dict(
                                                        title='EPS ($)',
-                                                       tickprefix='$',
+                                                       #tickprefix='$',
                                                        range=[0, max(filtered_data['EPS_float']) * 1.1]
                                                   ),
                                                   yaxis2=dict(
@@ -13552,101 +13552,93 @@ if selected == "Stock Analysis Tool":
 
                                    with col1:
                                                                                 
+                                        # Prepare the dataframe
                                         data = pd.DataFrame({
                                         'Date': date_annual,
                                         'Revenue per Share': revenue_per_share_annual_10_unpacked,
-                                        'Free Cash Flow per Share':fcf_per_share_annual_10_unpacked,
+                                        'Free Cash Flow per Share': fcf_per_share_annual_10_unpacked,
                                         'NAV per Share': nav_per_share
                                         })
 
-                                        # Format numbers for better display
+                                        # Format numbers for consistent display
                                         data['Revenue_text'] = data['Revenue per Share'].apply(lambda x: f"{x:,.2f}")
                                         data['FCF_text'] = data['Free Cash Flow per Share'].apply(lambda x: f"{x:,.2f}")
                                         data['NAV_text'] = data['NAV per Share'].apply(lambda x: f"{x:,.2f}")
 
-                                        # Create figure with Revenue per Share as bars
+                                        # Create figure with Revenue per Share as bars (default view)
                                         fig1 = px.bar(
-                                             data,
-                                             x='Date',
-                                             y='Revenue per Share',
-                                             text='Revenue_text',
-                                             labels={'Revenue per Share': 'Umsatz pro Aktie'},
-                                             custom_data=['Date', 'Revenue_text', 'FCF_text', 'NAV_text']
+                                        data,
+                                        x='Date',
+                                        y='Revenue per Share',
+                                        text='Revenue_text',
+                                        labels={'Revenue per Share': 'Umsatz pro Aktie'},
+                                        custom_data=['Date', 'Revenue_text', 'FCF_text', 'NAV_text']
                                         )
 
-                                        # Add Free Cash Flow per Share as a green line (secondary axis)
-                                        fig1.add_scatter(
-                                             x=data['Date'],
-                                             y=data['Free Cash Flow per Share'],
-                                             name='Free Cash Flow pro Aktie',
-                                             line=dict(color='red', width=2),
-                                             yaxis='y2',
-                                             mode='lines+markers',
-                                             customdata=data[['Date', 'Revenue_text', 'FCF_text', 'NAV_text']].values,
-                                             hovertemplate=(
-                                                  "<b>Date</b>: %{customdata[0]}<br>"
-                                                  "<b>Revenue per Share</b>: %{customdata[1]}<br>"
-                                                  "<b>Free Cash Flow per Share</b>: %{customdata[2]}<br>"
-                                                  "<b>NAV per Share</b>: %{customdata[3]}<br>"
-                                                  "<extra></extra>"
-                                                  
-                                             ),
-                                              visible="legendonly"
-                                        )
-
-                                        # Add NAV per Share as a red line (secondary axis)
-                                        fig1.add_scatter(
-                                             x=data['Date'],
-                                             y=data['NAV per Share'],
-                                             name='NAV pro Aktie',
-                                             line=dict(color='darkred', width=2),
-                                             yaxis='y2',
-                                             mode='lines+markers',
-                                             customdata=data[['Date', 'Revenue_text', 'FCF_text', 'NAV_text']].values,
-                                             hovertemplate=(
-                                                  "<b>Date</b>: %{customdata[0]}<br>"
-                                                  "<b>Revenue per Share</b>: %{customdata[1]}<br>"
-                                                  "<b>Free Cash Flow per Share</b>: %{customdata[2]}<br>"
-                                                  "<b>NAV per Share</b>: %{customdata[3]}<br>"
-                                                  "<extra></extra>"
-                                             ),
-                                              visible="legendonly"
-                                        )
-
-                                        # Update hover for the bar chart
+                                        # Set default hover template for bars (Revenue only)
                                         fig1.update_traces(
-                                             hovertemplate=(
-                                                  "<b>Date</b>: %{customdata[0]}<br>"
-                                                  "<b>Revenue per Share</b>: %{customdata[1]}<br>"
-                                                  "<b>Free Cash Flow per Share</b>: %{customdata[2]}<br>"
-                                                  "<b>NAV per Share</b>: %{customdata[3]}<br>"
-                                                  "<extra></extra>"
-                                             ),
-                                             selector={'type': 'bar'}
+                                        hovertemplate='<b>%{x}</b><br>Umsatz pro Aktie: %{y:,.2f}<extra></extra>',
+                                        selector={'type': 'bar'}
                                         )
 
-                                        # Layout aktualisieren
+
+                                        # Add Free Cash Flow per Share line (hidden by legend)
+                                        fig1.add_scatter(
+                                        x=data['Date'],
+                                        y=data['Free Cash Flow per Share'],
+                                        name='Free Cash Flow pro Aktie',
+                                        line=dict(color='red', width=2),
+                                        yaxis='y2',
+                                        mode='lines+markers',
+                                        customdata=data[['Date', 'Revenue_text', 'FCF_text', 'NAV_text']].values,
+                                        hovertemplate=(
+                                             "<b>%{x}</b><br>"
+                                             "Umsatz pro Aktie: %{customdata[1]}<br>"
+                                             "Free Cash Flow pro Aktie: %{customdata[2]}<br>"
+                                             #"NAV pro Aktie: %{customdata[3]}<br>"
+                                             "<extra></extra>"
+                                        ),
+                                        visible="legendonly"
+                                        )
+
+                                        # Add NAV per Share line (hidden by legend)
+                                        fig1.add_scatter(
+                                        x=data['Date'],
+                                        y=data['NAV per Share'],
+                                        name='NAV pro Aktie',
+                                        line=dict(color='darkred', width=2),
+                                        yaxis='y2',
+                                        mode='lines+markers',
+                                        customdata=data[['Date', 'Revenue_text', 'FCF_text', 'NAV_text']].values,
+                                        hovertemplate=(
+                                             "<b>%{x}</b><br>"
+                                             "Umsatz pro Aktie: %{customdata[1]}<br>"
+                                             #"Free Cash Flow pro Aktie: %{customdata[2]}<br>"
+                                             "NAV pro Aktie: %{customdata[3]}<br>"
+                                             "<extra></extra>"
+                                        ),
+                                        visible="legendonly"
+                                        )
+
+                                        # Update layout
                                         fig1.update_layout(
                                         dragmode=False,
                                         xaxis_type='category',
-                                        yaxis=dict(title='Umsatz pro Aktie '),
+                                        yaxis=dict(title='Umsatz pro Aktie'),
                                         yaxis2=dict(
                                              overlaying='y',
                                              side='right',
                                              showgrid=False,
                                              title='Free Cash Flow / NAV pro Aktie'
                                         ),
-                                      
                                         legend=dict(
                                              orientation="h",
                                              yanchor="bottom",
                                              y=1.02,
                                              xanchor="right",
                                              x=1
-                                                  )
-                                             )
-
-
+                                        )
+                                        )
                                         st.markdown(f"""
                                         <style>
                                              @media (max-width: 768px) {{
@@ -13740,22 +13732,75 @@ if selected == "Stock Analysis Tool":
                                    'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked,
                                    'Research & Development':Research_Dev_annual_10_unpacked
                                    })
+                                 
 
                                    fig = go.Figure()
 
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Research & Development'], name='Research & Development'))
+                                   # Add traces with legendonly visibility
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Research & Development'],
+                                   name='Research & Development',
+                                   visible=True,  # Default visible
+                                   customdata=data['Research & Development'],
+                                   hovertemplate='<b>%{x}</b><br>Research & Development: %{customdata}<extra></extra>'
+                                   ))
 
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Operating Cash Flow'], marker_color='darkred', name='Operating Cash Flow'))
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Operating Cash Flow'],
+                                   name='Operating Cash Flow',
+                                   marker_color='darkred',
+                                   visible=True,  # Default visible
+                                   customdata=data['Operating Cash Flow'],
+                                   hovertemplate='<b>%{x}</b><br>Operating Cash Flow:%{customdata}<extra></extra>'
+                                   ))
 
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['CapEx'], marker_color='black', name='CapEx'))
 
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Free Cash Flow'], marker_color='olive', name='Free Cash Flow'))
+                                     #hovertemplate='<b>%{x}</b><br>Umsatz pro Aktie: %{y:,.2f}<extra></extra>',
+                                      #  selector={'type': 'bar'}
+                                       # )
 
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Net Income'],marker_color='indigo', name='Net Income'))
-                                   # Add the Dividends bar plot
-                                   fig.add_trace(go.Bar(x=data['Date'], y=data['Dividends'],marker_color='green',  name='Dividends Paid'))
-                                   
-                                   
+
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['CapEx'],
+                                   name='CapEx',
+                                   marker_color='black',
+                                   visible=True,  # Default visible
+                                   customdata=data['CapEx'],
+                                   hovertemplate='<b>%{x}</b><br>CapEx: %{customdata}<extra></extra>'
+                                   ))
+
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Free Cash Flow'],
+                                   name='Free Cash Flow',
+                                   marker_color='olive',
+                                   visible=True,  # Default visible
+                                   customdata=data['Free Cash Flow'],
+                                   hovertemplate='<b>%{x}</b><br>Free Cash Flow: %{customdata}<extra></extra>'
+                                   ))
+
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Net Income'],
+                                   name='Net Income',
+                                   marker_color='indigo',
+                                   visible=True,  # Default visible
+                                   customdata=data['Net Income'],
+                                   hovertemplate='<b>%{x}</b><br>Net Income: %{customdata}<extra></extra>'
+                                   ))
+
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Dividends'],
+                                   name='Dividends Paid',
+                                   marker_color='green',
+                                   visible=True,  # Default visible
+                                   customdata=data['Dividends'],
+                                   hovertemplate='<b>%{x}</b><br>Dividends: %{customdata}<extra></extra>'
+                                   ))
                                    
                                    fig.update_layout(
                                    xaxis_type='category' 
@@ -13779,12 +13824,12 @@ if selected == "Stock Analysis Tool":
                                    )
 
                                    fig.update_traces(texttemplate='%{y}', textposition='inside')
+                                   
 
                                    fig.update_layout(
-                                   dragmode=False,  # Disable dragging for zooming
+                                   dragmode=False, 
                                    )
-
-                                 
+                                                                 
 
                                    st.plotly_chart(fig,use_container_width=True,config=config)
                                    #with col2:
