@@ -10039,7 +10039,7 @@ if selected == "Stock Analysis Tool":
                          
 
                                    except Exception as e:
-                                        forwardPE = "{:.2f}".format(00.00)
+                                        forwardPE = forward_pe_formatted
                                         RSI = "{:.2f}".format(0.00)
                                         PEG = "{:.2f}".format(0.00)
                                        # Beta = beta
@@ -10078,10 +10078,11 @@ if selected == "Stock Analysis Tool":
                                         Earnings_next_5_yrs, debt_equity_ttm)
 
                               (forwardPE, RSI, PEG, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est,Earnings_this_yr, 
-                              Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, debt_equity_ttm) = unpack_and_store_fundamental_data(quote, ticker)
+    
+                          Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, debt_equity_ttm) = unpack_and_store_fundamental_data(quote, ticker)
 
                          except Exception as e:
-                              forwardPE = "{:.2f}".format(00.00)
+                              forwardPE = forward_pe_formatted
                               RSI = "NA"
                               PEG = "NA"
                               #Beta = beta
@@ -10146,24 +10147,28 @@ if selected == "Stock Analysis Tool":
                                    pe_ttm =quote.fundamental_df.at[0, "P/E"]
 
                               except Exception as e:
-                                   pe_ttm = "{:.2f} ".format(Marketcap / netincome_ttm)
+                                   #pe_ttm = "{:.2f} ".format(Marketcap / netincome_ttm)
+                                   pe_ttm = pe_formatted
                                    
                               pfcf_ttm="{:.2f} ".format(Marketcap / fcf_ttm)  
                               
 
                          elif not pd.isna(current_price) and not pd.isna(eps_diluted_ttm) and eps_diluted_ttm != 0:
-                              pe_ttm = "{:.2f} ".format(current_price / eps_diluted_ttm)
+                              #pe_ttm = "{:.2f} ".format(current_price / eps_diluted_ttm)
+                              pe_ttm = pe_formatted
 
 
 
 
                          if netincome_ttm is None:
-                              pe_ttm = "{:.2f} ".format(current_price / eps_diluted_ttm)
+                              #pe_ttm = "{:.2f} ".format(current_price / eps_diluted_ttm)
+                              pe_ttm = pe_formatted
                          
                          if fcf_ttm is None or fcf_ttm < 0.0:
                               pfcf_ttm="-"
                          if netincome_ttm < 0:
-                              pe_ttm = "-"    
+                              #pe_ttm = "-"   
+                              pe_ttm = pe_formatted 
                          else:
                               pfcf_ttm="-" 
                               
@@ -10554,10 +10559,11 @@ if selected == "Stock Analysis Tool":
                          '5 YR Net Income': [Average_net_income_annual_funf_Billion_Million], 
                          'Net Income (TTM)': [netincome_ttm], 
                          'PEG': [PEG],
-                         #'Forward P/E': [forwardPE], 
-                         'Forward P/E': [forward_pe_formatted], 
-                         #'P/E (TTM)': [pe_ttm],
-                         'P/E (TTM)': [pe_formatted],
+
+                         'Forward P/E': [forwardPE], 
+                         #'Forward P/E': [forward_pe_formatted], 
+                         'P/E (TTM)': [pe_ttm],
+                         #'P/E (TTM)': [pe_formatted],
                          '5 YR P/E': [pe_five_],
                          '10 YR P/E': [average_PE_historical],
                          'Operating Cashflow (TTM)': [current_Operating_cash_Flow_Value], 
