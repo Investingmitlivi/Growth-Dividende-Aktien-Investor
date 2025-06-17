@@ -7594,6 +7594,7 @@ if selected == "Stock Analysis Tool":
                          'SIE:DE':'Siemens Aktiengesellschaft ',
                          'FER:NL':'Ferrovial SE',
                          'CVC:NL':'CVC Capital Partners PLC', 
+                         'ENX:FR':'Euronext N.V.',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7741,6 +7742,7 @@ if selected == "Stock Analysis Tool":
                'SIE:DE':'SIE.DE',
                'FER:NL':'8ZQ.F',
                'CVC:NL':'Z1W.F',
+               'ENX:FR':'ENX.PA',
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
