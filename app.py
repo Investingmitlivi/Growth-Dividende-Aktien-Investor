@@ -7590,6 +7590,10 @@ if selected == "Stock Analysis Tool":
                          'LVMHF':'LVMH Moet Hennessey-Louis Vuitton ',
                          'MC:FR':'LVMH Moët Hennessy - Louis Vuitton Société Européenne', 
                          'SAN:FR':'Sanofi SA',
+                         'FLOW:NL':'Flow Traders BV',
+                         'SIE:DE':'Siemens Aktiengesellschaft ',
+                         'FER:NL':'Ferrovial SE',
+                         'CVC:NL':'CVC Capital Partners PLC', 
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7733,6 +7737,10 @@ if selected == "Stock Analysis Tool":
                'KRI:GR':'AO2.F',
                'MC:FR':'MOHF.F',
                'SAN:FR':'SAN.PA',
+               'FLOW:NL':'FLOW.AS',
+               'SIE:DE':'SIE.DE',
+               'FER:NL':'8ZQ.F',
+               'CVC:NL':'Z1W.F',
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
@@ -8188,78 +8196,138 @@ if selected == "Stock Analysis Tool":
 
                     with Metric:  
 
-                         #@st.cache_data(show_spinner=False)
                          def get_market_cap(stock_info, ticker):
-                         #stock_info = yf.Ticker(ticker)
-
-                              if f'{ticker}_market_cap' in st.session_state:
-                                   return st.session_state[f'{ticker}_market_cap'], st.session_state[f'{ticker}_market_cap_formatted']
-
-                              try:
-                                   # Get market capitalization
-                                   Marketcap = stock_info.info['marketCap']
-                                   Marketcap_in_million=Marketcap
-                                   Marketcap =Marketcap /1000000000
-                                   Marketcap_in_Billion = (
-                                        "{:.2f}T".format(Marketcap / 1000) if abs(Marketcap) >= 1000 else "{:,.2f}B".format(Marketcap / 1)
-                                   )
-                                   st.session_state[f'{ticker}_market_cap'] = Marketcap
-                                   st.session_state[f'{ticker}_market_cap_formatted'] = Marketcap_in_Billion
-                                   return Marketcap, Marketcap_in_Billion
+                              """
+                              Retrieves and caches market capitalization and valuation metrics for a given stock ticker.
                               
-                              except Exception as e:
-
+                              Args:
+                                   stock_info: yfinance Ticker object or similar data source
+                                   ticker: stock ticker symbol (e.g., 'AAPL')
+                                   
+                              Returns:
+                                   tuple: (
+                                        market_cap_billion, 
+                                        market_cap_formatted,
+                                        pe_ratio,
+                                        pe_formatted,
+                                        forward_pe,
+                                        forward_pe_formatted,
+                                        peg_ratio,
+                                        peg_formatted
+                                   )
+                              """
+                              # Check session state first
+                              cache_key = f'{ticker}_valuation_data'
+                              if cache_key in st.session_state:
+                                   return st.session_state[cache_key]
+                              
+                              # Initialize default values
+                              metrics = {
+                                   'market_cap_billion': None,
+                                   'market_cap_formatted': "N/A",
+                                   'pe_ratio': None,
+                                   'pe_formatted': "N/A",
+                                   'forward_pe': None,
+                                   'forward_pe_formatted': "N/A",
+                                   'peg_ratio': None,
+                                   'peg_formatted': "N/A"
+                              }
+                              
+                              try:
+                                   # Primary data source - yfinance
+                                   info = stock_info.info
+                                   
+                                   # Market Cap
+                                   market_cap = info.get('marketCap')
+                                   if market_cap:
+                                        metrics['market_cap_billion'] = market_cap / 1_000_000_000
+                                        metrics['market_cap_formatted'] = (
+                                             f"{metrics['market_cap_billion'] / 1000:.2f}T" 
+                                             if metrics['market_cap_billion'] >= 1000 
+                                             else f"{metrics['market_cap_billion']:.2f}B"
+                                        )
+                                   
+                                   # Valuation Ratios
+                                   metrics['pe_ratio'] = info.get('trailingPE')
+                                   metrics['pe_formatted'] = f"{metrics['pe_ratio']:.2f}" if metrics['pe_ratio'] else "N/A"
+                                   
+                                   metrics['forward_pe'] = info.get('forwardPE')
+                                   metrics['forward_pe_formatted'] = f"{metrics['forward_pe']:.2f}" if metrics['forward_pe'] else "N/A"
+                                   
+                                   # Add PEG Ratio
+                                   metrics['peg_ratio'] = info.get('pegRatio')
+                                   metrics['peg_formatted'] = f"{metrics['peg_ratio']:.2f}" if metrics['peg_ratio'] else "N/A"
+                                   
+                              except Exception as primary_error:
+                                   # Fallback to alternative data sources
                                    try:
-
-                             # fundamental_df = quote.fundamental_df
-                                        
-                                        market_cap_original = quote.fundamental_df.at[0, "Market Cap"] 
-                                        #print("market_cap",market_cap_original)
-
-                                        try:
-                                             Marketcap = float(market_cap_original.replace('B', ''))  
-                                             
-                                             Marketcap_in_Billion = (
-                                                  "{:.2f}T".format(Marketcap / 1000) if abs(Marketcap) >= 1000 else "{:,.2f}B".format(Marketcap / 1)
+                                        if hasattr(stock_info, 'fundamental_df'):
+                                             market_cap_str = stock_info.fundamental_df.at[0, "Market Cap"]
+                                             if 'B' in market_cap_str:
+                                                  market_cap = float(market_cap_str.replace('B', ''))
+                                                  metrics['market_cap_billion'] = market_cap
+                                                  metrics['market_cap_formatted'] = (
+                                                  f"{market_cap / 1000:.2f}T" if market_cap >= 1000 
+                                                  else f"{market_cap:.2f}B"
+                                                  )
+                                             elif 'T' in market_cap_str:
+                                                  market_cap = float(market_cap_str.replace('T', '')) * 1000
+                                                  metrics['market_cap_billion'] = market_cap
+                                                  metrics['market_cap_formatted'] = f"{market_cap / 1000:.2f}T"
+                                   except:
+                                        pass
+                              
+                              # Final fallback - estimate market cap
+                              if metrics['market_cap_billion'] is None:
+                                   try:
+                                        current_price = stock_info.info.get('currentPrice')
+                                        shares_outstanding = stock_info.info.get('sharesOutstanding')
+                                        if current_price and shares_outstanding:
+                                             market_cap = current_price * shares_outstanding
+                                             metrics['market_cap_billion'] = market_cap / 1_000_000_000
+                                             metrics['market_cap_formatted'] = (
+                                                  f"{metrics['market_cap_billion'] / 1000:.2f}T" 
+                                                  if metrics['market_cap_billion'] >= 1000 
+                                                  else f"{metrics['market_cap_billion']:.2f}B"
                                              )
+                                   except:
+                                        pass
+                              
+                              # Prepare return tuple
+                              result = (
+                                   metrics['market_cap_billion'],
+                                   metrics['market_cap_formatted'],
+                                   metrics['pe_ratio'],
+                                   metrics['pe_formatted'],
+                                   metrics['forward_pe'],
+                                   metrics['forward_pe_formatted'],
+                                   metrics['peg_ratio'],
+                                   metrics['peg_formatted']
+                              )
+                              
+                              # Cache results
+                              st.session_state[cache_key] = result
+                              return result
+                                                                      
+                         # Get all metrics
+                         (
+                         market_cap_billion, 
+                         market_cap_formatted,
+                         pe_ratio,
+                         pe_formatted,
+                         forward_pe,
+                         forward_pe_formatted,
+                         peg_ratio,
+                         peg_formatted
+                         ) = get_market_cap(stock_info, ticker)
 
-                                             st.session_state[f'{ticker}_market_cap'] = Marketcap
-                                             st.session_state[f'{ticker}_market_cap_formatted'] = Marketcap_in_Billion
-                                             return Marketcap, Marketcap_in_Billion
-                                        
-                                        except Exception as e:
-                                             Marketcap_in_Billion=market_cap_original
-                                             st.session_state[f'{ticker}_market_cap'] = None
-                                             st.session_state[f'{ticker}_market_cap_formatted'] = Marketcap_in_Billion
-                                             return None, Marketcap_in_Billion   
-                                             
-                                   except Exception as e:
-                                        # Handle the specific exceptions here
-                                        Forward_PE="NA"   
-                                        RSI="N/A"
-                                       
+                         # Assign to variables
+                         Marketcap = market_cap_billion
+                         Marketcap_in_Billion = market_cap_formatted
+                         Marketcap_in_million = Marketcap * 1000  # Convert billions to millions
 
-                                        if 'market_cap' not in locals():  
-                                                       #print("Error: No data found Marketcap.")
-                                             Marketcap = current_price * shares_eop_ttm
-
-                                             Marketcap_in_Billion = (
-                                                  "{:.2f}T".format(Marketcap / 1000) if abs(Marketcap) >= 1000 else "{:,.2f}B".format(Marketcap / 1)
-                                             )        
-
-                                             st.session_state[f'{ticker}_market_cap'] = Marketcap
-                                             st.session_state[f'{ticker}_market_cap_formatted'] = Marketcap_in_Billion
-                                             return Marketcap, Marketcap_in_Billion
-                                        
-                                        else:
-                                             st.write("Insufficient data to calculate market cap.")
-                                             return None, "N/A"         
-                                                                                
-
-                                        #Marketcap_in_Billion = "{:.2f}B".format(current_price * shares_eop_ttm) 
-                                        
-                         Marketcap, Marketcap_in_Billion = get_market_cap(stock_info, ticker)
-                         Marketcap_in_million =Marketcap
+                         # Print/use the metrics
+                        
           ###################################################################################################             
 
                          def calculate_eps_growth(annual_data,quarterly_data, ticker):
@@ -10014,19 +10082,19 @@ if selected == "Stock Analysis Tool":
 
                          except Exception as e:
                               forwardPE = "{:.2f}".format(00.00)
-                              RSI = "{:.2f}".format(0.00)
-                              PEG = "{:.2f}".format(0.00)
+                              RSI = "NA"
+                              PEG = "NA"
                               #Beta = beta
-                              Moving_200 = "{:.2f}".format(0.00)
-                              Moving_50 = "{:.2f}".format(0.00)
-                              Target_Price = "{:.2f}".format(0.00)
+                              Moving_200 = "NA"
+                              Moving_50 = "NA"
+                              Target_Price ="{:.2f}".format(0.00)
                               Dividend_TTM = "{:.2f}".format(0.00)
-                              Dividend_Est = "{:.2f}".format(0.00)
+                              Dividend_Est = "NA"
                               #Dividend_Ex_Date = "{:.2f}".format(0.00)
-                              Earnings_this_yr = "{:.2f}".format(0.00)
-                              Earnings_next_yr_in_prozent = "{:.2f}".format(0.00)
-                              Earnings_next_yr_in_value = "{:.2f}".format(0.00)
-                              Earnings_next_5_yrs = "{:.2f}".format(0.00)
+                              Earnings_this_yr = "NA"
+                              Earnings_next_yr_in_prozent ="-"
+                              Earnings_next_yr_in_value = "NA"
+                              Earnings_next_5_yrs = "NA"
                               debt_equity_ttm = "{:.2f}".format(0.0)
 
                              
@@ -10486,8 +10554,10 @@ if selected == "Stock Analysis Tool":
                          '5 YR Net Income': [Average_net_income_annual_funf_Billion_Million], 
                          'Net Income (TTM)': [netincome_ttm], 
                          'PEG': [PEG],
-                         'Forward P/E': [forwardPE], 
-                         'P/E (TTM)': [pe_ttm],
+                         #'Forward P/E': [forwardPE], 
+                         'Forward P/E': [forward_pe_formatted], 
+                         #'P/E (TTM)': [pe_ttm],
+                         'P/E (TTM)': [pe_formatted],
                          '5 YR P/E': [pe_five_],
                          '10 YR P/E': [average_PE_historical],
                          'Operating Cashflow (TTM)': [current_Operating_cash_Flow_Value], 
@@ -13866,7 +13936,7 @@ if selected == "Stock Analysis Tool":
                                              dividend_yield_numeric = [float(val.strip('%')) if val != "N/A" else None for val in dividend_yield_21_list]
 
                                              # Formatted Dividend per Share with $
-                                             Dividend_per_share = ["{:.2f}".format(float(value)) for value in Dividend_per_share_annual_21_unpacked] + ["${:.2f}".format(float(Dividend_TTM_extract_value))]
+                                             Dividend_per_share = ["{:.2f}".format(float(value)) for value in Dividend_per_share_annual_21_unpacked] + ["{:.2f}".format(float(Dividend_TTM_extract_value))]
 
 
                                              # Growth values (append TTM)
