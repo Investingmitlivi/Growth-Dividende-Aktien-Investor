@@ -7722,7 +7722,7 @@ if selected == "Stock Analysis Tool":
                with left:
                     st.write(styled_link, unsafe_allow_html=True)
                #.............................................................................................
-               ticker_mapping1 = {
+               ticker_mapping_1 = {
                'BRK.A': 'BRK-A',
                'BRK.B': 'BRK-B',
                }
@@ -7732,22 +7732,39 @@ if selected == "Stock Analysis Tool":
                ticker_mapping = {
                'ADS:DE': 'ADS.DE',
                'MUX:DE':'MUX.DE',
-               'ASML:NL':'ASML',
-               'NOVO.B:DK':'NVO',
+               #'ASML:NL':'ASML',
+               #'NOVO.B:DK':'NVO',
                'MBB:DE':'MBB.DE',
                'KRI:GR':'AO2.F',
-               'MC:FR':'MOHF.F',
+               #'MC:FR':'MOHF.F',
                'SAN:FR':'SAN.PA',
                'FLOW:NL':'FLOW.AS',
                'SIE:DE':'SIE.DE',
                'FER:NL':'8ZQ.F',
-               'CVC:NL':'Z1W.F',
+               #'CVC:NL':'Z1W.F',
                'ENX:FR':'ENX.PA',
+               }
+
+               ticker_mapping_2 = {
+               #'ADS:DE': 'ADS.DE',
+               #'MUX:DE':'MUX.DE',
+               'ASML:NL':'ASML',
+               'NOVO.B:DK':'NVO',
+               #'MBB:DE':'MBB.DE',
+               #'KRI:GR':'AO2.F',
+               'MC:FR':'LVMHF',
+               #'SAN:FR':'SAN.PA',
+               #'FLOW:NL':'FLOW.AS',
+               #'SIE:DE':'SIE.DE',
+               #'FER:NL':'8ZQ.F',
+               'CVC:NL':'CVCCF',
+               #'ENX:FR':'ENX.PA',
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
                ticker = ticker_mapping.get(ticker, ticker)
-               ticker = ticker_mapping1.get(ticker, ticker)
+               ticker = ticker_mapping_1.get(ticker, ticker)
+               ticker = ticker_mapping_2.get(ticker, ticker)
                stock_info = yf.Ticker(ticker)
 
 
@@ -7912,6 +7929,12 @@ if selected == "Stock Analysis Tool":
                     converted_amount = "{:.2f}".format(current_price * 1)
                     st.session_state.usd_to_eur_rate = 1  # No conversion needed  
 
+               if ticker in ticker_mapping_2.values():  # If ticker is in mapped values (EUR-denominated)
+                    current_price = get_current_price(ticker)
+                    #st.session_state.usd_to_eur_rate = 1  # Get current price in EUR
+                    #converted_amount = "{:.2f}".format(current_price * 1)
+                    converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+                    st.session_state.usd_to_eur_rate = 1  # No conversion needed  
                     
                else:  # For non-mapped tickers (assumed to be USD-denominated)
                     #usd_to_eur_rate=usd_to_eur_rate 
@@ -8824,6 +8847,7 @@ if selected == "Stock Analysis Tool":
                               Dividend_per_share_cagr_10_quarter= round((Dividend_per_share_cagr_10_quarter*100),2)
 
                               Divdend_per_share_ttm =Financial_data['ttm']['dividends']
+                              print("Divdend_per_share_ttm",Divdend_per_share_ttm)
 
                               try:
                                    debt_assets_ttm =Financial_data['ttm']['debt_to_assets']                                  
@@ -10048,7 +10072,7 @@ if selected == "Stock Analysis Tool":
                                         Moving_200 = "{:.2f}".format(0.00)
                                         Moving_50 = "{:.2f}".format(0.00)
                                         Target_Price = "{:.2f}".format(0.00)
-                                        Dividend_TTM = "{:.2f}".format(0.00)
+                                        Dividend_TTM = Divdend_per_share_ttm
                                         Dividend_Est = "{:.2f}".format(0.00)
                                         #Dividend_Ex_Date = "{:.2f}".format(0.00)
                                         Earnings_this_yr = "{:.2f}".format(0.00)
@@ -10091,7 +10115,7 @@ if selected == "Stock Analysis Tool":
                               Moving_200 = "NA"
                               Moving_50 = "NA"
                               Target_Price ="{:.2f}".format(0.00)
-                              Dividend_TTM = "{:.2f}".format(0.00)
+                              Dividend_TTM =Divdend_per_share_ttm
                               Dividend_Est = "NA"
                               #Dividend_Ex_Date = "{:.2f}".format(0.00)
                               Earnings_this_yr = "NA"
