@@ -7573,14 +7573,12 @@ if selected == "Stock Analysis Tool":
                          'EHMEF':'goeasy Ltd',
                          'CNSWF':'Constellation Software Inc.',
                          'SDZNY':'Sandoz Group AG',
-                         'EVVTY':'Evolution AB (Publ)',
-                         'RHHBY':'Roche Holding AG',
-                         'WOLTF':'Wolters Kluwer N.V',
                          'LB':'LandBridge Company LLC',
                          'CRWV':'CoreWeave Inc.',
                          'ADS:DE':'adidas AG',
                          'MUX:DE':'Mutares SE & Co. KGaA',
                          'ASML:NL':'ASML Holding N.V',
+                         'ASML':'ASML Holding N.V',
                          'NOVO.B:DK':'Novo Nordisk A/S',
                          'NVO':'Novo Nordisk A/S',
                          'NBIS':'Nebius Group N.V.',
@@ -7595,6 +7593,10 @@ if selected == "Stock Analysis Tool":
                          'FER:NL':'Ferrovial SE',
                          'CVC:NL':'CVC Capital Partners PLC', 
                          'ENX:FR':'Euronext N.V.',
+                         'EVVTY':'Evolution AB (Publ)',
+                         'RHHBY':'Roche Holding AG',
+                         'WKL:NL':'Wolters Kluwer N.V',
+                         'AS':'Amer Sports, Inc',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7732,33 +7734,21 @@ if selected == "Stock Analysis Tool":
                ticker_mapping = {
                'ADS:DE': 'ADS.DE',
                'MUX:DE':'MUX.DE',
-               #'ASML:NL':'ASML',
-               #'NOVO.B:DK':'NVO',
                'MBB:DE':'MBB.DE',
                'KRI:GR':'AO2.F',
-               #'MC:FR':'MOHF.F',
                'SAN:FR':'SAN.PA',
                'FLOW:NL':'FLOW.AS',
                'SIE:DE':'SIE.DE',
                'FER:NL':'8ZQ.F',
-               #'CVC:NL':'Z1W.F',
                'ENX:FR':'ENX.PA',
                }
 
                ticker_mapping_2 = {
-               #'ADS:DE': 'ADS.DE',
-               #'MUX:DE':'MUX.DE',
                'ASML:NL':'ASML',
                'NOVO.B:DK':'NVO',
-               #'MBB:DE':'MBB.DE',
-               #'KRI:GR':'AO2.F',
                'MC:FR':'LVMHF',
-               #'SAN:FR':'SAN.PA',
-               #'FLOW:NL':'FLOW.AS',
-               #'SIE:DE':'SIE.DE',
-               #'FER:NL':'8ZQ.F',
                'CVC:NL':'CVCCF',
-               #'ENX:FR':'ENX.PA',
+               'WKL:NL':'WOLTF',
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
