@@ -7681,6 +7681,7 @@ if selected == "Stock Analysis Tool":
                stock_sector=data["data"]["metadata"]["sector"]
                cik=data["data"]["metadata"]["CIK"]
                shares_basic_annual_one = annual_data['shares_basic'][-1:]
+               shares_basic_annual_one = annual_data['shares_diluted'][-1:]
                shares_basic_annual_funf_unpacked = annual_data['shares_basic'][-5:]
 
                
@@ -7692,7 +7693,6 @@ if selected == "Stock Analysis Tool":
                #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
                date_list_annual = [period_end_date for period_end_date in date_annual]      
-               Average_shares_basic_annual_one = (sum(shares_basic_annual_one) / len(shares_basic_annual_one)) / 1000000000
                
                #---------------------------pyfinanz-----------------------------------
                try:
@@ -9235,6 +9235,8 @@ if selected == "Stock Analysis Tool":
                          
                          Dividends_per_share_growth_annual10_unpacked = Dividends_per_share_growth_annual_21_unpacked[-10:]
 
+                         shares_diluted_annual_1 =(sum(shares_diluted_annual21_unpacked[-1:])/len(shares_diluted_annual21_unpacked[-1:]))/ 1000000000
+                         print("shares_diluted_annual_1",shares_diluted_annual_1)
                          #############################################################################################################################
 
                     
@@ -12494,8 +12496,7 @@ if selected == "Stock Analysis Tool":
                                              print("Total_Debt_from_all_calc",(Total_Debt_from_all_calc/1000000000))
                                              print("Total_cash_last_years",Total_cash_last_years)
                                              Equity_value_ = total_present_value+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
-                                             Intrinsic_value =Equity_value_/Average_shares_basic_annual_one
-                                             print("Average_shares_basic_annual_one",Average_shares_basic_annual_one)
+                                             Intrinsic_value =Equity_value_/shares_diluted_annual_1
 
                                              #Euro_equivalent = Intrinsic_value*usd_to_eur_rate
                                              Euro_equivalent = Intrinsic_value*st.session_state.usd_to_eur_rate 
@@ -12536,7 +12537,7 @@ if selected == "Stock Analysis Tool":
                                              #rounded_npv_result2 = round(npv_result2, 2)  
 
                                              Equity_value2 = total_present_value2+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
-                                             Intrinsic_value2 =Equity_value2/Average_shares_basic_annual_one
+                                             Intrinsic_value2 =Equity_value2/shares_diluted_annual_1
 
                                              #Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
                                              Euro_equivalent2 = Intrinsic_value2*st.session_state.usd_to_eur_rate 
@@ -12995,7 +12996,7 @@ if selected == "Stock Analysis Tool":
                                              #
 
                                    Assumption_low=(Revenue_assumption_low*average_FCF_Profit_margin_low)*average_PFCF_POCF_low
-                                   Assumption_low_inklu_shares_outstanding_low =Assumption_low/Average_shares_basic_annual_one
+                                   Assumption_low_inklu_shares_outstanding_low =Assumption_low/shares_diluted_annual_1
 
                                    Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
 
@@ -13013,7 +13014,7 @@ if selected == "Stock Analysis Tool":
 
                                    Assumption_mid=(Revenue_assumption_mid*average_FCF_Profit_margin_mid)*average_PFCF_POCF_mid
 
-                                   Assumption_mid_inklu_shares_outstanding_mid =Assumption_mid/Average_shares_basic_annual_one
+                                   Assumption_mid_inklu_shares_outstanding_mid =Assumption_mid/shares_diluted_annual_1
 
                                    Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid=Assumption_mid_inklu_shares_outstanding_mid*(1-(Margin_of_safety_mid/100))
                                    
@@ -13033,7 +13034,7 @@ if selected == "Stock Analysis Tool":
 
                                    Assumption_high=(Revenue_assumption_high*average_FCF_Profit_margin_high)*average_PFCF_POCF_high
 
-                                   Assumption_high_inklu_shares_outstanding_high =Assumption_high/Average_shares_basic_annual_one
+                                   Assumption_high_inklu_shares_outstanding_high =Assumption_high/shares_diluted_annual_1
 
                                    Assumption_high_inklu_shares_outstanding_MarginofSafety_high=Assumption_high_inklu_shares_outstanding_high*(1-(Margin_of_safety_high/100))
                                    
