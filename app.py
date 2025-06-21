@@ -7656,38 +7656,145 @@ if selected == "Stock Analysis Tool":
                #st.write(usage)
                #response.json()
                
-               #--------------------------------------------------------------
-               Financial_data = data['data']['financials']
-               annual_data = Financial_data['annual']
-               quarterly_data = Financial_data['quarterly']
+               @st.cache_data(show_spinner=False, ttl=3600)
+               def store_financial_data(data, ticker):
+                    """
+                    Stores all financial data in session state for caching and reuse
+                    Returns tuple of all stored values
+                    """
+                    if f'{ticker}_financial_data_stored' in st.session_state:
+                         return (
+                              st.session_state.get(f'{ticker}_eps_diluted_ttm'),
+                              st.session_state.get(f'{ticker}_fcf_per_share'),
+                              st.session_state.get(f'{ticker}_Dividend_ttm'),
+                              st.session_state.get(f'{ticker}_Dividend_per_share_ttm'),
+                              st.session_state.get(f'{ticker}_fcf_ttm'),
+                              st.session_state.get(f'{ticker}_ROE_TTM'),
+                              st.session_state.get(f'{ticker}_ROIC_TTM'),
+                              st.session_state.get(f'{ticker}_EBITDA_MARGIN_TTM'),
+                              st.session_state.get(f'{ticker}_ROA_TTM'),
+                              st.session_state.get(f'{ticker}_netincome_ttm'),
+                              st.session_state.get(f'{ticker}_revenue_ttm'),
+                              st.session_state.get(f'{ticker}_shares_eop_ttm'),
+                              st.session_state.get(f'{ticker}_current_Operating_cash_Flow'),
+                              st.session_state.get(f'{ticker}_Revenue_ttm'),
+                              st.session_state.get(f'{ticker}_date_quarter'),
+                              st.session_state.get(f'{ticker}_date_annual'),
+                              st.session_state.get(f'{ticker}_Stock_description'),
+                              st.session_state.get(f'{ticker}_stock_sector'),
+                              st.session_state.get(f'{ticker}_cik'),
+                              st.session_state.get(f'{ticker}_annual_data'),
+                              st.session_state.get(f'{ticker}_quarterly_data'),
+                              st.session_state.get(f'{ticker}_Financial_data')
+                         )
 
-               eps_diluted_ttm = Financial_data['ttm']['eps_diluted']
-               fcf_per_share = Financial_data['ttm']['fcf_per_share']
-               Dividend_ttm = Financial_data['ttm']['cff_dividend_paid'] 
-               Dividend_per_share_ttm =  Financial_data['ttm']['dividends'] 
-               fcf_ttm = Financial_data['ttm']['fcf']/1000000000 
-               ROE_TTM =Financial_data['ttm']['roe']*100  
-               ROIC_TTM =Financial_data['ttm']['roic']*100   
-               EBITDA_MARGIN_TTM =Financial_data['ttm']['ebitda_margin']*100   
-               ROA_TTM =Financial_data['ttm']['roa']*100          
-               netincome_ttm = Financial_data['ttm']['net_income']/1000000000
-               revenue_ttm = Financial_data['ttm']['revenue']/1000000000
-               shares_eop_ttm=(Financial_data['ttm']['shares_eop'])/1000000000
-               current_Operating_cash_Flow =Financial_data['ttm']['cf_cfo']
-               Revenue_ttm = (Financial_data['ttm']['revenue'])
-               date_quarter = quarterly_data['period_end_date'][-10:] 
-               date_annual = annual_data['period_end_date'][-10:] 
-               Stock_description=data["data"]["metadata"]["description"]
-               stock_sector=data["data"]["metadata"]["sector"]
-               cik=data["data"]["metadata"]["CIK"]
-               shares_basic_annual_one = annual_data['shares_basic'][-1:]
-               shares_basic_annual_one = annual_data['shares_diluted'][-1:]
-               shares_basic_annual_funf_unpacked = annual_data['shares_basic'][-5:]
+                    Financial_data = data['data']['financials']
+                    annual_data = Financial_data['annual']
+                    quarterly_data = Financial_data['quarterly']
+                    
+                    # Store TTM metrics (keeping your exact variable names)
+                    eps_diluted_ttm = Financial_data['ttm']['eps_diluted']
+                    fcf_per_share = Financial_data['ttm']['fcf_per_share']
+                    Dividend_ttm = Financial_data['ttm']['cff_dividend_paid']
+                    Dividend_per_share_ttm = Financial_data['ttm']['dividends']
+                    fcf_ttm = Financial_data['ttm']['fcf']/1000000000
+                    ROE_TTM = Financial_data['ttm']['roe']*100
+                    ROIC_TTM = Financial_data['ttm']['roic']*100
+                    EBITDA_MARGIN_TTM = Financial_data['ttm']['ebitda_margin']*100
+                    ROA_TTM = Financial_data['ttm']['roa']*100
+                    netincome_ttm = Financial_data['ttm']['net_income']/1000000000
+                    revenue_ttm = Financial_data['ttm']['revenue']/1000000000
+                    shares_eop_ttm = Financial_data['ttm']['shares_eop']/1000000000
+                    current_Operating_cash_Flow = Financial_data['ttm']['cf_cfo']
+                    Revenue_ttm = Financial_data['ttm']['revenue']
+                    
+                    # Store time series data
+                    date_quarter = quarterly_data['period_end_date'][-10:]
+                    date_annual = annual_data['period_end_date'][-10:]
+                    
+                    # Store metadata
+                    Stock_description = data["data"]["metadata"]["description"]
+                    stock_sector = data["data"]["metadata"]["sector"]
+                    cik = data["data"]["metadata"]["CIK"]
 
-               
-            
+                    # Store complete data structures
+                    st.session_state[f'{ticker}_annual_data'] = annual_data
+                    st.session_state[f'{ticker}_quarterly_data'] = quarterly_data
+                    st.session_state[f'{ticker}_Financial_data'] = Financial_data
 
-            
+                    # Store all values in session state (keeping your exact names)
+                    st.session_state[f'{ticker}_eps_diluted_ttm'] = eps_diluted_ttm
+                    st.session_state[f'{ticker}_fcf_per_share'] = fcf_per_share
+                    st.session_state[f'{ticker}_Dividend_ttm'] = Dividend_ttm
+                    st.session_state[f'{ticker}_Dividend_per_share_ttm'] = Dividend_per_share_ttm
+                    st.session_state[f'{ticker}_fcf_ttm'] = fcf_ttm
+                    st.session_state[f'{ticker}_ROE_TTM'] = ROE_TTM
+                    st.session_state[f'{ticker}_ROIC_TTM'] = ROIC_TTM
+                    st.session_state[f'{ticker}_EBITDA_MARGIN_TTM'] = EBITDA_MARGIN_TTM
+                    st.session_state[f'{ticker}_ROA_TTM'] = ROA_TTM
+                    st.session_state[f'{ticker}_netincome_ttm'] = netincome_ttm
+                    st.session_state[f'{ticker}_revenue_ttm'] = revenue_ttm
+                    st.session_state[f'{ticker}_shares_eop_ttm'] = shares_eop_ttm
+                    st.session_state[f'{ticker}_current_Operating_cash_Flow'] = current_Operating_cash_Flow
+                    st.session_state[f'{ticker}_Revenue_ttm'] = Revenue_ttm
+                    st.session_state[f'{ticker}_date_quarter'] = date_quarter
+                    st.session_state[f'{ticker}_date_annual'] = date_annual
+                    st.session_state[f'{ticker}_Stock_description'] = Stock_description
+                    st.session_state[f'{ticker}_stock_sector'] = stock_sector
+                    st.session_state[f'{ticker}_cik'] = cik
+                    st.session_state[f'{ticker}_financial_data_stored'] = True
+
+                    return (
+                         eps_diluted_ttm,
+                         fcf_per_share,
+                         Dividend_ttm,
+                         Dividend_per_share_ttm,
+                         fcf_ttm,
+                         ROE_TTM,
+                         ROIC_TTM,
+                         EBITDA_MARGIN_TTM,
+                         ROA_TTM,
+                         netincome_ttm,
+                         revenue_ttm,
+                         shares_eop_ttm,
+                         current_Operating_cash_Flow,
+                         Revenue_ttm,
+                         date_quarter,
+                         date_annual,
+                         Stock_description,
+                         stock_sector,
+                         cik,
+                         annual_data,
+                         quarterly_data,
+                         Financial_data
+                    )
+
+
+               (
+               eps_diluted_ttm,
+               fcf_per_share,
+               Dividend_ttm,
+               Dividend_per_share_ttm,
+               fcf_ttm,
+               ROE_TTM,
+               ROIC_TTM,
+               EBITDA_MARGIN_TTM,
+               ROA_TTM,
+               netincome_ttm,
+               revenue_ttm,
+               shares_eop_ttm,
+               current_Operating_cash_Flow,
+               Revenue_ttm,
+               date_quarter,
+               date_annual,
+               Stock_description,
+               stock_sector,
+               cik,
+               annual_data,
+               quarterly_data,
+               Financial_data
+               ) = store_financial_data(data, ticker)
+
 
                #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
                #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
@@ -8686,6 +8793,7 @@ if selected == "Stock Analysis Tool":
 
           ###################################################################################################
                          EndPrice_annual_10_unpacked = EndPrice_annual_21_unpacked[-10:]
+                         shares_basic_annual_funf_unpacked=shares_basic_annual_10_unpacked[-5:]
 
 
                          Average_net_income_annual_funf_Billion_Million = (
@@ -8750,8 +8858,6 @@ if selected == "Stock Analysis Tool":
                               Revenue_growth_5years=sum(Revenue_growth_5years)/len(Revenue_growth_5years)
                               Revenue_growth_5years = (Revenue_growth_5years*100)
 
-
-                              #print("Revenue_growth_10quarter_unpacked",Revenue_growth_10quarter_unpacked)
 
                               Revenue_growth_10years = annual_data['revenue_growth'][-10:]
                               Revenue_growth_10years=sum(Revenue_growth_10years)/len(Revenue_growth_10years)
@@ -9236,7 +9342,6 @@ if selected == "Stock Analysis Tool":
                          Dividends_per_share_growth_annual10_unpacked = Dividends_per_share_growth_annual_21_unpacked[-10:]
 
                          shares_diluted_annual_1 =(sum(shares_diluted_annual21_unpacked[-1:])/len(shares_diluted_annual21_unpacked[-1:]))/ 1000000000
-                         print("shares_diluted_annual_1",shares_diluted_annual_1)
                          #############################################################################################################################
 
                     
@@ -9285,7 +9390,6 @@ if selected == "Stock Analysis Tool":
                               else:
                                         try:
                                              Dividend_10_CAGR = (pow((value_at_index_last / value_at_index_11), 0.1) - 1) * 100
-                                             #CAGR = round(CAGR, 2)
 
                                              if isinstance(Dividend_10_CAGR, complex):
                                                        Dividend_10_CAGR = 0  # Set CAGR to 0 if it's a complex number
@@ -12452,12 +12556,10 @@ if selected == "Stock Analysis Tool":
 
                                                   average_fcf_Annual_DCF1 = rounded_fcf_Annual_five/1000000000
                                                   average_fcf_Annual_DCF2 = rounded_fcf_Annual_five/1000000000
-                                                  print("last 5 years FCF:",rounded_fcf_Annual_five/1000000000)
                                              else:
 
                                                   average_fcf_Annual_DCF1=average_fcf_Annual_one
                                                   average_fcf_Annual_DCF2=average_fcf_Annual_one
-                                                  print("last FCF:",average_fcf_Annual_one)
 
 
                                              discounted_values = [] 
@@ -12496,6 +12598,7 @@ if selected == "Stock Analysis Tool":
                                              print("Total_Debt_from_all_calc",(Total_Debt_from_all_calc/1000000000))
                                              print("Total_cash_last_years",Total_cash_last_years)
                                              Equity_value_ = total_present_value+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
+
                                              Intrinsic_value =Equity_value_/shares_diluted_annual_1
 
                                              #Euro_equivalent = Intrinsic_value*usd_to_eur_rate
@@ -12575,24 +12678,25 @@ if selected == "Stock Analysis Tool":
 
                                              Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
                                         
-                                             average_sum1 = Multiples_valuation1 / 2
+                                             average_sum1 = Multiples_valuation1 / 2.0
                                              average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
                                              
                                              #st.write(average_sum_both1,converted_amount)
 
 
                                              Multiples_valuation2 =Euro_equivalent2+Euro_equivalent_graham_valuation2
+
                                              average_sum2 = Multiples_valuation2 / 2
                                              average_sum_both2=round(average_sum2 *(1-Margin_of_safety3/100),2)
 
                                              Middle_multiple_value = average_sum_both1+average_sum_both2
-                                             average_Middle_multiple_value =round(Middle_multiple_value/2,2)
+                                             average_Middle_multiple_value =round((Middle_multiple_value/2.0),2)
 
 
                                              low_DCF=(Euro_equivalent*(1-Margin_of_safety1/100))
                                              high_DCF=(Euro_equivalent2*(1-Margin_of_safety3/100))
 
-                                             Average_Middle_DCF=round((low_DCF+high_DCF)/2)
+                                             Average_Middle_DCF=round(((low_DCF+high_DCF)/2),2)
 
                                              st.markdown("""
                                              <style>
@@ -12919,11 +13023,11 @@ if selected == "Stock Analysis Tool":
                                    coln2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {five_yrs_Nettomarge}%</div>", unsafe_allow_html=True)
                                    coln3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Net Profit Margin: <br> {Net_income_margin_10}%</div>", unsafe_allow_html=True)
 
-                                   colf1,colf2,colf3,colf9,colf10,colf11 = st.columns(6)
+                                   # colf1,colf2,colf3,colf9,colf10,colf11 = st.columns(6)
 
-                                   colf1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_1:.2f}%</div>", unsafe_allow_html=True)
-                                   colf2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
-                                   colf3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_10}%</div>", unsafe_allow_html=True)      
+                                   # colf1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_1:.2f}%</div>", unsafe_allow_html=True)
+                                   # colf2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_5}%</div>", unsafe_allow_html=True)
+                                   # colf3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>FCF Margin: <br> {FCF_Margin_10}%</div>", unsafe_allow_html=True)      
 
                                    colcf1,colcf2,colcf3,colcf9,colcf10,colcf11 = st.columns(6)
 
@@ -12962,9 +13066,9 @@ if selected == "Stock Analysis Tool":
                                    Growth_rate__net_profit_middle = float(coln10.text_input(" ", value=0,key="Growth_rate__net_profit_middle23", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
                                    Growth_rate__net_profit_high = float(coln11.text_input(" ", value=0,key="Growth_rate__net_profit_high23", placeholder="Enter (e.g. 5)").replace(',', '.'))
 
-                                   Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0,key="Growth_rate_fcf_margin_LOW24", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
-                                   Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0,key="Growth_rate_fcf_margin_middle24", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
-                                   Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0,key="Growth_rate_fcf_margin_high24", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   #Growth_rate_fcf_margin_LOW = float(colf9.text_input(" ", value=0,key="Growth_rate_fcf_margin_LOW24", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   #Growth_rate_fcf_margin_middle = float(colf10.text_input(" ", value=0,key="Growth_rate_fcf_margin_middle24", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
+                                   #Growth_rate_fcf_margin_high = float(colf11.text_input(" ", value=0,key="Growth_rate_fcf_margin_high24", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
 
                                    Growth_rate_P_OCF_low = float(colcf9.text_input(" ", value=0,key="Growth_rate_P_OCF_low22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
                                    Growth_rate_P_OCF_middle = float(colcf10.text_input(" ", value=0,key="Growth_rate_P_OCF_middle22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
@@ -12988,14 +13092,14 @@ if selected == "Stock Analysis Tool":
                               
                               # -----------------------------LOW-------------
                               
-                                   average_FCF_Profit_margin_low=((Growth_rate_fcf_margin_LOW+Growth_rate_net_profit_LOW)/2)/100
+                                   average_Profit_margin_low=(Growth_rate_net_profit_LOW)/100
 
                                    average_PFCF_POCF_low=(Growth_rate_P_OCF_low+Growth_rate_P_FCF_low)/2
 
                                    Revenue_assumption_low=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_LOW/100),My_assumption)
                                              #
 
-                                   Assumption_low=(Revenue_assumption_low*average_FCF_Profit_margin_low)*average_PFCF_POCF_low
+                                   Assumption_low=(Revenue_assumption_low*average_Profit_margin_low)*average_PFCF_POCF_low
                                    Assumption_low_inklu_shares_outstanding_low =Assumption_low/shares_diluted_annual_1
 
                                    Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
@@ -13006,13 +13110,13 @@ if selected == "Stock Analysis Tool":
                                         
                               
                               # -----------------------------MIDDLE-------------
-                                   average_FCF_Profit_margin_mid=((Growth_rate_fcf_margin_middle+Growth_rate__net_profit_middle)/2)/100
+                                   average_Profit_margin_mid=(Growth_rate__net_profit_middle)/100
 
                                    average_PFCF_POCF_mid=(Growth_rate_P_OCF_middle+Growth_rate_P_FCF_middle)/2
 
                                    Revenue_assumption_mid=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_middle/100),My_assumption)
 
-                                   Assumption_mid=(Revenue_assumption_mid*average_FCF_Profit_margin_mid)*average_PFCF_POCF_mid
+                                   Assumption_mid=(Revenue_assumption_mid*average_Profit_margin_mid)*average_PFCF_POCF_mid
 
                                    Assumption_mid_inklu_shares_outstanding_mid =Assumption_mid/shares_diluted_annual_1
 
@@ -13026,13 +13130,13 @@ if selected == "Stock Analysis Tool":
                                         
                               # -----------------------------HIGH-------------
 
-                                   average_FCF_Profit_margin_high=((Growth_rate_fcf_margin_high+Growth_rate__net_profit_high)/2)/100
+                                   average_Profit_margin_high=(Growth_rate__net_profit_high)/100
 
                                    average_PFCF_POCF_high=(Growth_rate_P_OCF_high+Growth_rate_P_FCF_high)/2
 
                                    Revenue_assumption_high=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_high/100),My_assumption)
 
-                                   Assumption_high=(Revenue_assumption_high*average_FCF_Profit_margin_high)*average_PFCF_POCF_high
+                                   Assumption_high=(Revenue_assumption_high*average_Profit_margin_high)*average_PFCF_POCF_high
 
                                    Assumption_high_inklu_shares_outstanding_high =Assumption_high/shares_diluted_annual_1
 
@@ -13217,7 +13321,7 @@ if selected == "Stock Analysis Tool":
                                                        
                                                        total = pd.DataFrame({
                                                        'Period End Date': Period_end_dates_quarter,
-                                                       'Revenue growth': Revenue_growth_10quarter_unpacked,
+                                                       'Revenue growth Quarter': Revenue_growth_10quarter_unpacked,
                                                        'Net Income growth': NetIncome_growth_quarter_10_unpacked,
                                                        'Net Interest Income growth': Net_interest_Income_quarter_10_growth_unpacked,
                                                        'FCF growth': FCF_growth_quarter_10_unpacked,
@@ -13245,8 +13349,7 @@ if selected == "Stock Analysis Tool":
 
                                                        # Create a DataFrame for the metrics
                                                        metrics = [
-
-                                                       ('Revenue growth ', Revenue_growth_10quarter_unpacked),
+                                                       ('Revenue growth Quarter', Revenue_growth_10quarter_unpacked),
                                                        ('Net Income growth', NetIncome_growth_quarter_10_unpacked),
                                                        ('Net Interest Income growth', Net_interest_Income_quarter_10_growth_unpacked),
                                                        ('FCF growth', FCF_growth_quarter_10_unpacked),
@@ -13256,8 +13359,8 @@ if selected == "Stock Analysis Tool":
                                                        ('Shares diluted',shares_diluted_quarter_growth_10_unpacked),
                                                        ('Operating Margin',operating_margin_quater10_unpacked),
                                                        ('Gross Margin',gross_margin_quarter10_unpacked), 
-                                                       ('Book Value', Book_Value_growth_quarter_10_unpacked),
                                                        ('Debt/Equity',debt_equity_quarter_10_unpacked),
+                                                       ('Book Value', Book_Value_growth_quarter_10_unpacked),
                                                        ('Price to Sales', Price_to_sales_quarter_10_unpacked),
                                                        ('Price to Tangible Book', Price_TBV_quarter10_unpacked),
                                                        ('EBITDA growth', EBITDA_growth_quarter_10_unpacked),
@@ -13279,7 +13382,7 @@ if selected == "Stock Analysis Tool":
                                                             if not isinstance(metric_data, list):
                                                                  metric_data = [metric_data]  # Convert non-iterable values to lists
 
-                                                            if metric_name in ('Revenue growth', 'Net Income growth','Net Interest Income growth', 'FCF growth', 'EPS growth','FCF Margin','EBITDA Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
+                                                            if metric_name in ('Revenue growth Quarter', 'Net Income growth','Net Interest Income growth', 'FCF growth', 'EPS growth','FCF Margin','EBITDA Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
                                                                  formatted_data = ["{:.2f}%".format(data * 100) for data in metric_data]
                                                                
                                                             elif metric_name == 'Book Value':
@@ -13301,7 +13404,6 @@ if selected == "Stock Analysis Tool":
                                                        )
                                                        )
                                                                       
-
 
 
                with st.container():
