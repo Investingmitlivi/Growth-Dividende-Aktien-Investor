@@ -8461,7 +8461,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_eps_basic_annual_5_unpacked'],
                                              st.session_state[f'{ticker}_eps_growth_10yrs'],
                                              st.session_state[f'{ticker}_eps_basic_annual_10_unpacked'],
-                                             st.session_state[f'{ticker}_eps_diluted_annual_10_unpacked'],
+                                             st.session_state[f'{ticker}_eps_diluted_annual_21_unpacked'],
                                              st.session_state[f'{ticker}_Eps_diluted_quarterly_10_unpacked'],
                                              st.session_state[f'{ticker}_eps_basic_quarterly_10_unpacked'])
                               
@@ -8485,7 +8485,7 @@ if selected == "Stock Analysis Tool":
 
                               eps_basic_annual_10_unpacked = annual_data['eps_basic'][-10:]
 
-                              eps_diluted_annual_10_unpacked = annual_data['eps_diluted'][-10:]
+                              eps_diluted_annual_21_unpacked = annual_data['eps_diluted'][-21:]
 
                               Eps_diluted_quarterly_10_unpacked = quarterly_data['eps_diluted'][-10:]
 
@@ -8501,23 +8501,24 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_eps_basic_annual_5_unpacked'] = eps_basic_annual_5_unpacked
                               st.session_state[f'{ticker}_eps_growth_10yrs'] = EPS_growth_annual_10yrs_unpacked
                               st.session_state[f'{ticker}_eps_basic_annual_10_unpacked'] = eps_basic_annual_10_unpacked
-                              st.session_state[f'{ticker}_eps_diluted_annual_10_unpacked'] = eps_diluted_annual_10_unpacked
+                              st.session_state[f'{ticker}_eps_diluted_annual_21_unpacked'] = eps_diluted_annual_21_unpacked
                               st.session_state[f'{ticker}_Eps_diluted_quarterly_10_unpacked'] = Eps_diluted_quarterly_10_unpacked
                               st.session_state[f'{ticker}_eps_basic_quarterly_10_unpacked'] = eps_basic_quarterly_10_unpacked
                          
 
                               return (EPS_last_average, EPS_growth_3years, EPS_growth_5yrs, eps_basic_annual_5_unpacked,
                                    EPS_growth_annual_10yrs_unpacked,eps_basic_annual_10_unpacked,
-                                   eps_diluted_annual_10_unpacked,Eps_diluted_quarterly_10_unpacked,eps_basic_quarterly_10_unpacked)
+                                   eps_diluted_annual_21_unpacked,Eps_diluted_quarterly_10_unpacked,eps_basic_quarterly_10_unpacked)
 
 
                          (EPS_last_average, EPS_growth_3years,EPS_growth_5yrs,eps_basic_annual_5_unpacked,EPS_growth_annual_10yrs_unpacked, eps_basic_annual_10_unpacked,
-                         eps_diluted_annual_10_unpacked,Eps_diluted_quarterly_10_unpacked,eps_basic_quarterly_10_unpacked
+                         eps_diluted_annual_21_unpacked,Eps_diluted_quarterly_10_unpacked,eps_basic_quarterly_10_unpacked
                          ) = calculate_eps_growth(annual_data,quarterly_data, ticker)
           ###################################################################################################             
 
                          EPS_growth_10yrs = (sum(EPS_growth_annual_10yrs_unpacked)/len(EPS_growth_annual_10yrs_unpacked)*100)
                          Average_eps_basic_annual_five = sum(eps_basic_annual_5_unpacked)/len(eps_basic_annual_5_unpacked) 
+                         eps_diluted_annual_10_unpacked = eps_diluted_annual_21_unpacked[-10:]
 
                     
           ###################################################################################################             
@@ -8645,7 +8646,7 @@ if selected == "Stock Analysis Tool":
                               if f'{ticker}_net_income_last' in st.session_state:
                                    return (st.session_state[f'{ticker}_net_income_last'],
                                              st.session_state[f'{ticker}_net_income_annual_funf_unpacked'],
-                                             st.session_state[f'{ticker}_net_income_annual_10_unpacked'],
+                                             st.session_state[f'{ticker}_net_income_annual_21_unpacked'],
                                              st.session_state[f'{ticker}_net_income_five_years'],
                                              st.session_state[f'{ticker}_net_income_quarter_10_unpacked'],
                                              
@@ -8683,7 +8684,7 @@ if selected == "Stock Analysis Tool":
 
                               net_income_annual_funf_unpacked = annual_data['net_income'][-5:] 
 
-                              net_income_annual_10_unpacked =annual_data['net_income'][-10:]
+                              net_income_annual_21_unpacked =annual_data['net_income'][-21:]
 
 
                               net_income_annual_funf = annual_data['net_income'][-5:] 
@@ -8724,7 +8725,7 @@ if selected == "Stock Analysis Tool":
 
                               st.session_state[f'{ticker}_net_income_last'] = round_net_income_annual_one
                               st.session_state[f'{ticker}_net_income_annual_funf_unpacked'] = net_income_annual_funf_unpacked
-                              st.session_state[f'{ticker}_net_income_annual_10_unpacked'] = net_income_annual_10_unpacked
+                              st.session_state[f'{ticker}_net_income_annual_20_unpacked'] = net_income_annual_21_unpacked
                               st.session_state[f'{ticker}_net_income_five_years'] = Average_net_income_annual_funf
                               st.session_state[f'{ticker}_net_income_quarter_10_unpacked'] =net_income_quarter_10_unpacked
                               st.session_state[f'{ticker}_price_to_fcf_annual21_unpacked'] = price_to_fcf_annual21_unpacked
@@ -8757,7 +8758,7 @@ if selected == "Stock Analysis Tool":
 
                
 
-                              return (round_net_income_annual_one,net_income_annual_funf_unpacked, net_income_annual_10_unpacked,
+                              return (round_net_income_annual_one,net_income_annual_funf_unpacked, net_income_annual_21_unpacked,
                                    Average_net_income_annual_funf,net_income_quarter_10_unpacked,
                                    price_to_fcf_annual21_unpacked,date_annual_21yrs,Price_TBV_quarter10_unpacked,pe_annual_5_unpacked,
                                         pe_annual_10_unpacked, 
@@ -8774,7 +8775,7 @@ if selected == "Stock Analysis Tool":
                                         shares_basic_quarterly_10_unpacked
                                         )
 
-                         (round_net_income_annual_one, net_income_annual_funf_unpacked,net_income_annual_10_unpacked,
+                         (round_net_income_annual_one, net_income_annual_funf_unpacked,net_income_annual_21_unpacked,
                          Average_net_income_annual_funf,net_income_quarter_10_unpacked,price_to_fcf_annual21_unpacked,date_annual_21yrs,
                          Price_TBV_quarter10_unpacked,pe_annual_5_unpacked,
                               pe_annual_10_unpacked, 
@@ -8790,10 +8791,11 @@ if selected == "Stock Analysis Tool":
                               shares_diluted_quarter_10_unpacked,
                               shares_basic_quarterly_10_unpacked
                               ) = calculate_net_income_averages(annual_data,quarterly_data, ticker)
-
+                         
           ###################################################################################################
                          EndPrice_annual_10_unpacked = EndPrice_annual_21_unpacked[-10:]
                          shares_basic_annual_funf_unpacked=shares_basic_annual_10_unpacked[-5:]
+                         net_income_annual_10_unpacked=net_income_annual_21_unpacked[-10:]
 
 
                          Average_net_income_annual_funf_Billion_Million = (
@@ -13558,17 +13560,17 @@ if selected == "Stock Analysis Tool":
                                                   EPS_next_year = 0
 
                                              # Format the data
-                                             eps_diluted_annual_10 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_10_unpacked]
-                                             net_income_annual_10 = ["{:.2f}B".format(value/1e9) for value in net_income_annual_10_unpacked]
+                                             eps_diluted_annual_21 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_21_unpacked]
+                                             net_income_annual_21 = ["{:.2f}B".format(value/1e9) for value in net_income_annual_21_unpacked]
 
                                              # Create DataFrame
                                              data = pd.DataFrame({
-                                                  'Date': date_annual + ['TTM', str(next_year)],
-                                                  'EPS': eps_diluted_annual_10 + [f"$ {TTM:.2f}", f"$ {EPS_next_year:.2f}"],
-                                                  'EPS_float': eps_diluted_annual_10_unpacked + [TTM, EPS_next_year],
-                                                  'Net Income (B)': [float(val.rstrip('B')) for val in net_income_annual_10] + [None, None],
-                                                  'Net Income Label': net_income_annual_10 + ['', ''],
-                                                  'Year': [int(d[:4]) for d in date_annual] + [current_year, next_year]  # Add year column for filtering
+                                                  'Date': date_annual_21yrs + ['TTM', str(next_year)],
+                                                  'EPS': eps_diluted_annual_21 + [f"$ {TTM:.2f}", f"$ {EPS_next_year:.2f}"],
+                                                  'EPS_float': eps_diluted_annual_21_unpacked + [TTM, EPS_next_year],
+                                                  'Net Income (B)': [float(val.rstrip('B')) for val in net_income_annual_21] + [None, None],
+                                                  'Net Income Label': net_income_annual_21 + ['', ''],
+                                                  'Year': [int(d[:4]) for d in date_annual_21yrs] + [current_year, next_year]  # Add year column for filtering
                                              })
 
                                              # Add date range slider
@@ -13927,19 +13929,8 @@ if selected == "Stock Analysis Tool":
                                    'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked,
                                    'Research & Development':Research_Dev_annual_10_unpacked
                                    })
-                                 
 
                                    fig = go.Figure()
-
-                                   # Add traces with legendonly visibility
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['Research & Development'],
-                                   name='Research & Development',
-                                   visible=True,  # Default visible
-                                   customdata=data['Research & Development'],
-                                   hovertemplate='<b>%{x}</b><br>Research & Development: %{customdata}<extra></extra>'
-                                   ))
 
                                    fig.add_trace(go.Bar(
                                    x=data['Date'],
@@ -13951,10 +13942,38 @@ if selected == "Stock Analysis Tool":
                                    hovertemplate='<b>%{x}</b><br>Operating Cash Flow:%{customdata}<extra></extra>'
                                    ))
 
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Net Income'],
+                                   name='Net Income',
+                                   marker_color='indigo',
+                                   visible=True,  # Default visible
+                                   customdata=data['Net Income'],
+                                   hovertemplate='<b>%{x}</b><br>Net Income: %{customdata}<extra></extra>'
+                                   ))
+                                   
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Free Cash Flow'],
+                                   name='Free Cash Flow',
+                                   marker_color='olive',
+                                   visible=True,  # Default visible
+                                   customdata=data['Free Cash Flow'],
+                                   hovertemplate='<b>%{x}</b><br>Free Cash Flow: %{customdata}<extra></extra>'
+                                   ))
 
-                                     #hovertemplate='<b>%{x}</b><br>Umsatz pro Aktie: %{y:,.2f}<extra></extra>',
-                                      #  selector={'type': 'bar'}
-                                       # )
+                                  
+
+                                   # Add traces with legendonly visibility
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Research & Development'],
+                                   name='Research & Development',
+                                   visible=True,  # Default visible
+                                   customdata=data['Research & Development'],
+                                   hovertemplate='<b>%{x}</b><br>Research & Development: %{customdata}<extra></extra>'
+                                   ))
+
 
 
                                    fig.add_trace(go.Bar(
@@ -13967,25 +13986,7 @@ if selected == "Stock Analysis Tool":
                                    hovertemplate='<b>%{x}</b><br>CapEx: %{customdata}<extra></extra>'
                                    ))
 
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['Free Cash Flow'],
-                                   name='Free Cash Flow',
-                                   marker_color='olive',
-                                   visible=True,  # Default visible
-                                   customdata=data['Free Cash Flow'],
-                                   hovertemplate='<b>%{x}</b><br>Free Cash Flow: %{customdata}<extra></extra>'
-                                   ))
 
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['Net Income'],
-                                   name='Net Income',
-                                   marker_color='indigo',
-                                   visible=True,  # Default visible
-                                   customdata=data['Net Income'],
-                                   hovertemplate='<b>%{x}</b><br>Net Income: %{customdata}<extra></extra>'
-                                   ))
 
                                    fig.add_trace(go.Bar(
                                    x=data['Date'],
@@ -15545,41 +15546,87 @@ if selected == "Stock Analysis Tool":
                with st.container():
                     with news:
                          def fetch_stock_news(stock_info):
-               
                               try:
-                                   news = stock_info.news[:10]
-                                   return news  # Get the top ten news articles
+                                   news = stock_info.news[:10]  # Get the top ten news articles
+                                   return news if news and any('title' in item for item in news) else None
                               except Exception as e:
-                                   st.error(f"No news available for this stock: {e}")
+                                   st.error(f"Error fetching news: {e}")
                                    return None
-                    
+
                          def display_news(stock_info):
-                              ticker = stock_info.ticker  # Assuming stock_info is from yf.Ticker(ticker)
+                              ticker = stock_info.ticker
                               if f'{ticker}_news' not in st.session_state:
-                                   # Fetch news and store it in session state
                                    st.session_state[f'{ticker}_news'] = fetch_stock_news(stock_info)
                               
                               news = st.session_state[f'{ticker}_news']
-                              try:
-                                   if news:
-                                        with st.container():
-                                             for i, item in enumerate(news, 1):
-                                                  headline = item['title'] #december
-                                                  link = item['link']
-                                                  st.write(f"Headline {i}: {headline}")
-                                                  st.write(f"[Read more]({link})")
-                                   else:
-                                        st.error("No news available for this stock.")
-                              except Exception as e:
-                                   st.error("No news available for this stock.")
-
-
-                         # Display the news
+                              
+                              if not news:
+                                   st.warning("No valid news data available for this stock.")
+                                   return
+                              
+                              st.subheader("Latest News")
+                              
+                              valid_news_count = 0
+                              for i, item in enumerate(news, 1):
+                                   # Skip items that are completely empty
+                                   if not item:
+                                        continue
+                                        
+                                   with st.container():
+                                        st.markdown("<div class='news-card'>", unsafe_allow_html=True)
+                                        
+                                        # Title with better fallback
+                                        title = item.get('title')
+                                        if not title:
+                                             # Try alternative title fields if main title is missing
+                                             title = item.get('headline') or item.get('description') or "News Update"
+                                        
+                                        st.markdown(f"<div class='news-title'>{i}. {title}</div>", unsafe_allow_html=True)
+                                        
+                                        # Publisher info
+                                        publisher = item.get('publisher', 'Unknown source')
+                                        
+                                        # Date handling
+                                        publish_time = ''
+                                        time_fields = ['providerPublishTime', 'pubDate', 'publishedAt']
+                                        for field in time_fields:
+                                             if field in item:
+                                                  try:
+                                                       publish_time = datetime.fromtimestamp(item[field]).strftime('%Y-%m-%d %H:%M')
+                                                       break
+                                                  except:
+                                                       continue
+                                        
+                                        if publish_time:
+                                             st.markdown(f"<div class='news-source'>{publisher} | {publish_time}</div>", unsafe_allow_html=True)
+                                        else:
+                                             st.markdown(f"<div class='news-source'>{publisher}</div>", unsafe_allow_html=True)
+                                        
+                                        # Thumbnail with more robust checking
+                                        thumbnail_url = None
+                                        if 'thumbnail' in item:
+                                             try:
+                                                  resolutions = item['thumbnail'].get('resolutions', [{}])
+                                                  if resolutions and isinstance(resolutions, list):
+                                                       thumbnail_url = resolutions[0].get('url')
+                                             except:
+                                                  pass
+                                        
+                                        if thumbnail_url:
+                                             st.image(thumbnail_url, width=200)
+                                        
+                                        # Link handling
+                                        link = item.get('link', item.get('url', '#'))
+                                        if link != '#':
+                                             st.markdown(f"[Read more]({link})", unsafe_allow_html=True)
+                                        
+                                        st.markdown("</div>", unsafe_allow_html=True)
+                                        valid_news_count += 1
+                              
+                              if valid_news_count == 0:
+                                   st.warning("No complete news items available for this stock.")
+                                                  #display_news(stock_info)
                          display_news(stock_info)
-
-          
-
-
 
      
           else:
