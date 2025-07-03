@@ -8725,7 +8725,7 @@ if selected == "Stock Analysis Tool":
 
                               st.session_state[f'{ticker}_net_income_last'] = round_net_income_annual_one
                               st.session_state[f'{ticker}_net_income_annual_funf_unpacked'] = net_income_annual_funf_unpacked
-                              st.session_state[f'{ticker}_net_income_annual_20_unpacked'] = net_income_annual_21_unpacked
+                              st.session_state[f'{ticker}_net_income_annual_21_unpacked'] = net_income_annual_21_unpacked
                               st.session_state[f'{ticker}_net_income_five_years'] = Average_net_income_annual_funf
                               st.session_state[f'{ticker}_net_income_quarter_10_unpacked'] =net_income_quarter_10_unpacked
                               st.session_state[f'{ticker}_price_to_fcf_annual21_unpacked'] = price_to_fcf_annual21_unpacked
@@ -12910,10 +12910,16 @@ if selected == "Stock Analysis Tool":
                                         t = t / 100  # Convert to decimal
 
                                         implied_growth = find_growth_rate(fcf, r, t, years, Market_cap_rDCF)
-                                        current_price = get_current_price(ticker) 
+                                        color = "red" if implied_growth < 0 else "green"
 
-                                        #st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
-                                        st.markdown(f"Implied FCF Growth Rate: <span style='color: green;'>**{implied_growth*100:.3f}%**</span>", unsafe_allow_html=True)
+                                        # Display the formatted text using st.markdown
+                                        st.markdown(
+                                             f"Implied FCF Growth Rate: <span style='color: {color};'>**{implied_growth*100:.3f}%**</span>",
+                                             unsafe_allow_html=True
+                                             )
+
+                                       # #st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
+                                        #st.markdown(f"Implied FCF Growth Rate: <span style='color: green;'>**{implied_growth*100:.3f}%**</span>", unsafe_allow_html=True)
                                         #st.markdown(f"Current Price: <span style='color: green;'>**$ {current_price:.2f}**</span>", unsafe_allow_html=True)
                                         col1, col2 = st.columns(2)
                                         with col1:
@@ -13914,10 +13920,12 @@ if selected == "Stock Analysis Tool":
                # 
                #                 
                                    try:
-                                        Research_Dev_annual_10_unpacked    = Research_Dev_annual_10_unpacked   
+                                        Research_Dev_annual_10_unpacked    = Research_Dev_annual_10_unpacked 
+                                        StockBased_Compansation_annual_10_annual =StockBased_Compansation_annual_10_unpacked  
 
                                    except Exception as e:    
                                         Research_Dev_annual_10_unpacked =  [0]*len_10_annual
+                                        StockBased_Compansation_annual_10_annual =  [0]*len_10_annual
 
 
                                    data = pd.DataFrame({
@@ -13927,7 +13935,8 @@ if selected == "Stock Analysis Tool":
                                    'CapEx': [round(abs(x), 2) for x in Capex_annual_10_unpacked ],
                                    'Net Income': net_income_annual_10_unpacked,
                                    'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked,
-                                   'Research & Development':Research_Dev_annual_10_unpacked
+                                   'Research & Development':Research_Dev_annual_10_unpacked,
+                                   'Stock Based Compansation':StockBased_Compansation_annual_10_annual
                                    })
 
                                    fig = go.Figure()
@@ -13962,6 +13971,15 @@ if selected == "Stock Analysis Tool":
                                    hovertemplate='<b>%{x}</b><br>Free Cash Flow: %{customdata}<extra></extra>'
                                    ))
 
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Stock Based Compansation'],
+                                   name='Stock Based Compansation',
+                                   #marker_color='olive',
+                                   visible=True,  # Default visible
+                                   customdata=data['Stock Based Compansation'],
+                                   hovertemplate='<b>%{x}</b><br>Stock Based Compansation: %{customdata}<extra></extra>'
+                                   ))
                                   
 
                                    # Add traces with legendonly visibility
@@ -15493,26 +15511,29 @@ if selected == "Stock Analysis Tool":
 
 
                with st.container():
-                    use_container_width=True
                     with Retirement_Calculator:
 
 
-                         st.image('DCF Update.png', caption = 'DCF Calculation')
+                         # Inject custom CSS to center images
+                         st.markdown(
+                         """
+                         <style>
+                         .stImage {
+                              display: flex;
+                              justify-content: center;
+                         }
+                         </style>
+                         """,
+                         unsafe_allow_html=True
+                         )
 
-                         st.image('Terminal-Value.png', caption = 'Terminal Value')
-
-
-                         st.image('Multiples of Earnings.png', caption = "Multiple of Earnings Valuation")
-
-
-
+                         # Your original image code (now centered)
+                         st.image('DCF Update.png', caption='DCF Calculation')
+                         st.image('Terminal-Value.png', caption='Terminal Value')
+                         st.image('Multiples of Earnings.png', caption="Multiple of Earnings Valuation")
                          st.image('NPV.png', caption='Net Present Value')
-
-
-
-                         st.image('DDM.png', caption='Das Dividend Discount Model basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden') 
-
-                         st.image('CAGR.png',caption='CAGR')  
+                         st.image('DDM.png', caption='Das Dividend Discount Model basiert auf der Annahme, dass der heutige Kurs einer Aktie dem Barwert aller zukünftigen Dividenden entspricht, wenn diese auf den heutigen Wert abgezinst werden')
+                         st.image('CAGR.png', caption='CAGR')
 
                          
 
