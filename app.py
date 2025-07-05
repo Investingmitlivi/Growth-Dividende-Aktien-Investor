@@ -13472,6 +13472,7 @@ if selected == "Stock Analysis Tool":
                                                   hovertemplate='%{y:.2f}%',
                                                   visible="legendonly"
                                              ))
+                                             
 
                                              # Configure layout
                                              fig.update_layout(
@@ -13947,9 +13948,10 @@ if selected == "Stock Analysis Tool":
                                    name='Operating Cash Flow',
                                    marker_color='darkred',
                                    visible=True,  # Default visible
-                                   customdata=data['Operating Cash Flow'],
-                                   hovertemplate='<b>%{x}</b><br>Operating Cash Flow:%{customdata}<extra></extra>'
+                                   customdata=data['Operating Cash Flow']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Operating Cash Flow: %{customdata}B<extra></extra>'
                                    ))
+                                   #hovertemplate='<b>%{x}</b><br>Operating Cash Flow: %{customdata:.2f}<extra></extra>'
 
                                    fig.add_trace(go.Bar(
                                    x=data['Date'],
@@ -13957,8 +13959,8 @@ if selected == "Stock Analysis Tool":
                                    name='Net Income',
                                    marker_color='indigo',
                                    visible=True,  # Default visible
-                                   customdata=data['Net Income'],
-                                   hovertemplate='<b>%{x}</b><br>Net Income: %{customdata}<extra></extra>'
+                                   customdata=data['Net Income']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Net Income: %{customdata}B<extra></extra>'
                                    ))
                                    
                                    fig.add_trace(go.Bar(
@@ -13967,8 +13969,8 @@ if selected == "Stock Analysis Tool":
                                    name='Free Cash Flow',
                                    marker_color='olive',
                                    visible=True,  # Default visible
-                                   customdata=data['Free Cash Flow'],
-                                   hovertemplate='<b>%{x}</b><br>Free Cash Flow: %{customdata}<extra></extra>'
+                                   customdata=data['Free Cash Flow']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Free Cash Flow: %{customdata}B<extra></extra>'
                                    ))
 
                                    fig.add_trace(go.Bar(
@@ -13977,8 +13979,8 @@ if selected == "Stock Analysis Tool":
                                    name='Stock Based Compansation',
                                    #marker_color='olive',
                                    visible=True,  # Default visible
-                                   customdata=data['Stock Based Compansation'],
-                                   hovertemplate='<b>%{x}</b><br>Stock Based Compansation: %{customdata}<extra></extra>'
+                                   customdata=data['Stock Based Compansation']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Stock Based Compansation: %{customdata}B<extra></extra>'
                                    ))
                                   
 
@@ -13988,8 +13990,8 @@ if selected == "Stock Analysis Tool":
                                    y=data['Research & Development'],
                                    name='Research & Development',
                                    visible=True,  # Default visible
-                                   customdata=data['Research & Development'],
-                                   hovertemplate='<b>%{x}</b><br>Research & Development: %{customdata}<extra></extra>'
+                                   customdata=data['Research & Development']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Research & Development: %{customdata}B<extra></extra>'
                                    ))
 
 
@@ -14000,8 +14002,8 @@ if selected == "Stock Analysis Tool":
                                    name='CapEx',
                                    marker_color='black',
                                    visible=True,  # Default visible
-                                   customdata=data['CapEx'],
-                                   hovertemplate='<b>%{x}</b><br>CapEx: %{customdata}<extra></extra>'
+                                   customdata=data['CapEx']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>CapEx: %{customdata}B<extra></extra>'
                                    ))
 
 
@@ -14012,8 +14014,8 @@ if selected == "Stock Analysis Tool":
                                    name='Dividends Paid',
                                    marker_color='green',
                                    visible=True,  # Default visible
-                                   customdata=data['Dividends'],
-                                   hovertemplate='<b>%{x}</b><br>Dividends: %{customdata}<extra></extra>'
+                                   customdata=data['Dividends']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Dividends: %{customdata}B<extra></extra>'
                                    ))
                                    
                                    fig.update_layout(
@@ -15512,21 +15514,6 @@ if selected == "Stock Analysis Tool":
 
                with st.container():
                     with Retirement_Calculator:
-
-
-                         # Inject custom CSS to center images
-                         st.markdown(
-                         """
-                         <style>
-                         .stImage {
-                              display: flex;
-                              justify-content: center;
-                         }
-                         </style>
-                         """,
-                         unsafe_allow_html=True
-                         )
-
                          # Your original image code (now centered)
                          st.image('DCF Update.png', caption='DCF Calculation')
                          st.image('Terminal-Value.png', caption='Terminal Value')
