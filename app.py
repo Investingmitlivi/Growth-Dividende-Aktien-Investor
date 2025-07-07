@@ -12873,6 +12873,8 @@ if selected == "Stock Analysis Tool":
                                    , FCF 10Y CAGR: <span style='color: green;'>**{FCF_Cagr_10}%**</span>
                                    , FCF 5Y CAGR: <span style='color: green;'>**{FCF_5_CAGR}%**</span>
                                    , FCF Growth YOY: <span style='color: green;'>**{Average_fcf_growth_ten}%**</span>
+                                   , 5Y FCF Growth YOY: <span style='color: green;'>**{Average_fcf_growth_five}**</span>
+                                   , 3Y FCF Growth YOY: <span style='color: green;'>**{Average_fcf_growth_3years}**</span>
                                    , FCF Margin 10Y: <span style='color: green;'>**{FCF_Margin_10}%**</span>
                                    , FCF Margin 5Y: <span style='color: green;'>**{FCF_Margin_5}%**</span>
                                    , FCF Margin 1Y: <span style='color: green;'>**{FCF_Margin_1:.2f}%**</span>
