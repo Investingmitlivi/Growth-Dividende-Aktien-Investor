@@ -7864,10 +7864,11 @@ if selected == "Stock Analysis Tool":
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
-               ticker = ticker_mapping.get(ticker, ticker)
                ticker = ticker_mapping_1.get(ticker, ticker)
-               ticker = ticker_mapping_2.get(ticker, ticker)
                ticker = ticker_mapping_SEK.get(ticker, ticker)
+               ticker = ticker_mapping.get(ticker, ticker)
+               ticker = ticker_mapping_2.get(ticker, ticker)
+               
                stock_info = yf.Ticker(ticker)
 
 
@@ -7992,7 +7993,7 @@ if selected == "Stock Analysis Tool":
                                    unsafe_allow_html=True,
                               )
 
-                         if ticker in ticker_mapping_SEK.values():
+                         elif ticker in ticker_mapping_SEK.values():
                               st.markdown(
                                    f"""
                                    <div style="text-align: center; width: 100%;">
