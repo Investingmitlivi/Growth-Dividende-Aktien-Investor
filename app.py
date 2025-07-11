@@ -7597,6 +7597,8 @@ if selected == "Stock Analysis Tool":
                          'RHHBY':'Roche Holding AG',
                          'WKL:NL':'Wolters Kluwer N.V',
                          'AS':'Amer Sports, Inc',
+                         'BULL':'Webull Corporation',
+                         'VIT.B:SE':'Vitec Software Group AB (publ)',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7836,7 +7838,9 @@ if selected == "Stock Analysis Tool":
                'BRK.B': 'BRK-B',
                }
 
-
+               ticker_mapping_SEK = {
+               'VIT.B:SE':'VIT-B.ST',
+               }
 
                ticker_mapping = {
                'ADS:DE': 'ADS.DE',
@@ -7848,6 +7852,7 @@ if selected == "Stock Analysis Tool":
                'SIE:DE':'SIE.DE',
                'FER:NL':'8ZQ.F',
                'ENX:FR':'ENX.PA',
+               'VIT.B:SE':'VIT-B.ST',
                }
 
                ticker_mapping_2 = {
@@ -7862,6 +7867,7 @@ if selected == "Stock Analysis Tool":
                ticker = ticker_mapping.get(ticker, ticker)
                ticker = ticker_mapping_1.get(ticker, ticker)
                ticker = ticker_mapping_2.get(ticker, ticker)
+               ticker = ticker_mapping_SEK.get(ticker, ticker)
                stock_info = yf.Ticker(ticker)
 
 
@@ -7973,17 +7979,7 @@ if selected == "Stock Analysis Tool":
 
 
                     with middle:
-                         # st.markdown(
-                         #      f"""
-                         #      <div style="text-align: center; width: 100%;">
-                         #           Current Price: <span style='{green_style}'>{formatted_price_usd}</span> &nbsp;&nbsp;
-                         #           Aktueller Preis: <span style='{green_style}'>{formatted_price_eur}</span> &nbsp;&nbsp;
-                         #           {percentage_text}
-                         #      </div>
-                         #      """,
-                         #      unsafe_allow_html=True,
-                         # )
-                         #formatted_price_usd = f"{current_price:.2f} €"
+         
 
                          # Ausgabe basierend auf Mapping
                          if ticker in ticker_mapping.values():
@@ -7991,6 +7987,16 @@ if selected == "Stock Analysis Tool":
                                    f"""
                                    <div style="text-align: center; width: 100%;">
                                         Aktueller Preis: <span style='{green_style}'>{current_price:.2f} €</span> {percentage_text}
+                                   </div>
+                                   """,
+                                   unsafe_allow_html=True,
+                              )
+
+                         if ticker in ticker_mapping_SEK.values():
+                              st.markdown(
+                                   f"""
+                                   <div style="text-align: center; width: 100%;">
+                                        Aktueller Preis: <span style='{green_style}'>{current_price:.2f} SEK</span> {percentage_text}
                                    </div>
                                    """,
                                    unsafe_allow_html=True,
@@ -8024,17 +8030,20 @@ if selected == "Stock Analysis Tool":
                     current_price = get_current_price(ticker)
                     #st.session_state.usd_to_eur_rate = 1  # Get current price in EUR
                     converted_amount = "{:.2f}".format(current_price * 1)
-                    st.session_state.usd_to_eur_rate = 1  # No conversion needed  
+                    st.session_state.usd_to_eur_rate = 1  # No conversion needed 
+
+               if ticker in ticker_mapping_SEK.values():
+                    current_price = get_current_price(ticker)
+                    #st.session_state.usd_to_eur_rate = 1  # Get current price in EUR
+                    converted_amount = "{:.2f}".format(current_price * 1)
+                    st.session_state.usd_to_eur_rate = 1  
 
                if ticker in ticker_mapping_2.values():  # If ticker is in mapped values (EUR-denominated)
                     current_price = get_current_price(ticker)
-                    #st.session_state.usd_to_eur_rate = 1  # Get current price in EUR
-                    #converted_amount = "{:.2f}".format(current_price * 1)
                     converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
                     st.session_state.usd_to_eur_rate = 1  # No conversion needed  
                     
-               else:  # For non-mapped tickers (assumed to be USD-denominated)
-                    #usd_to_eur_rate=usd_to_eur_rate 
+               else:  
                     current_price = get_current_price(ticker)  # Get current price in USD
                     converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
                     st.session_state.usd_to_eur_rate = get_exchange_rate(base_currency, target_currency)
