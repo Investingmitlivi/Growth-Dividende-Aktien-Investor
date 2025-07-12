@@ -8329,25 +8329,7 @@ if selected == "Stock Analysis Tool":
                     with Metric:  
 
                          def get_market_cap(stock_info, ticker):
-                              """
-                              Retrieves and caches market capitalization and valuation metrics for a given stock ticker.
-                              
-                              Args:
-                                   stock_info: yfinance Ticker object or similar data source
-                                   ticker: stock ticker symbol (e.g., 'AAPL')
-                                   
-                              Returns:
-                                   tuple: (
-                                        market_cap_billion, 
-                                        market_cap_formatted,
-                                        pe_ratio,
-                                        pe_formatted,
-                                        forward_pe,
-                                        forward_pe_formatted,
-                                        peg_ratio,
-                                        peg_formatted
-                                   )
-                              """
+
                               # Check session state first
                               cache_key = f'{ticker}_valuation_data'
                               if cache_key in st.session_state:
@@ -8362,7 +8344,9 @@ if selected == "Stock Analysis Tool":
                                    'forward_pe': None,
                                    'forward_pe_formatted': "N/A",
                                    'peg_ratio': None,
-                                   'peg_formatted': "N/A"
+                                   'peg_formatted': "N/A",
+                                   'enterprise_value_billion': None,  # New
+                                   'enterprise_value_formatted': "N/A"
                               }
                               
                               try:
@@ -8378,7 +8362,16 @@ if selected == "Stock Analysis Tool":
                                              if metrics['market_cap_billion'] >= 1000 
                                              else f"{metrics['market_cap_billion']:.2f}B"
                                         )
-                                   
+                                           # Enterprise Value (Market Cap + Debt - Cash)
+                                   enterprise_value = info.get('enterpriseValue')
+                                   if enterprise_value:
+                                        metrics['enterprise_value_billion'] = enterprise_value / 1_000_000_000
+                                        metrics['enterprise_value_formatted'] = (
+                                             f"{metrics['enterprise_value_billion'] / 1000:.2f}T"
+                                             if metrics['enterprise_value_billion'] >= 1000
+                                             else f"{metrics['enterprise_value_billion']:.2f}B"
+                                        )
+
                                    # Valuation Ratios
                                    metrics['pe_ratio'] = info.get('trailingPE')
                                    metrics['pe_formatted'] = f"{metrics['pe_ratio']:.2f}" if metrics['pe_ratio'] else "N/A"
@@ -8422,8 +8415,19 @@ if selected == "Stock Analysis Tool":
                                                   if metrics['market_cap_billion'] >= 1000 
                                                   else f"{metrics['market_cap_billion']:.2f}B"
                                              )
+                                             # Estimate enterprise value if possible
+                                             total_debt = info.get('totalDebt', 0)
+                                             cash = info.get('cash', 0)
+                                             enterprise_value = market_cap + total_debt - cash
+                                             metrics['enterprise_value_billion'] = enterprise_value / 1_000_000_000
+                                             metrics['enterprise_value_formatted'] = (
+                                                  f"{metrics['enterprise_value_billion'] / 1000:.2f}T"
+                                                  if metrics['enterprise_value_billion'] >= 1000
+                                                  else f"{metrics['enterprise_value_billion']:.2f}B"
+                                             )
                                    except:
                                         pass
+                                
                               
                               # Prepare return tuple
                               result = (
@@ -8434,7 +8438,9 @@ if selected == "Stock Analysis Tool":
                                    metrics['forward_pe'],
                                    metrics['forward_pe_formatted'],
                                    metrics['peg_ratio'],
-                                   metrics['peg_formatted']
+                                   metrics['peg_formatted'],
+                                   metrics['enterprise_value_billion'],  # New
+                                   metrics['enterprise_value_formatted']
                               )
                               
                               # Cache results
@@ -8450,16 +8456,19 @@ if selected == "Stock Analysis Tool":
                          forward_pe,
                          forward_pe_formatted,
                          peg_ratio,
-                         peg_formatted
+                         peg_formatted,
+                         enterprise_value_billion, 
+                         enterprise_value_formatted  # New
                          ) = get_market_cap(stock_info, ticker)
 
                          # Assign to variables
                          Marketcap = market_cap_billion
                          Marketcap_in_Billion = market_cap_formatted
                          Marketcap_in_million = Marketcap * 1000  # Convert billions to millions
+                         Enterprise_value = enterprise_value_billion
+                         Enterprise_value_formatted = enterprise_value_formatted
 
-                         # Print/use the metrics
-                        
+
           ###################################################################################################             
 
                          def calculate_eps_growth(annual_data,quarterly_data, ticker):
@@ -8830,8 +8839,7 @@ if selected == "Stock Analysis Tool":
                               else:
                                    Price_to_OCF_10.append("N/A")  # Formatted string for display
 
-                       
-
+                   
          
           ###################################################################################################
 
@@ -10134,7 +10142,8 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_forwardPE'],
                                              st.session_state[f'{ticker}_RSI'],
                                              st.session_state[f'{ticker}_PEG'],
-                                             #st.session_state[f'{ticker}_Beta'],
+                                             st.session_state[f'{ticker}_Enterprise_Value'],
+                                             st.session_state[f'{ticker}_EV_EBITDA'],
                                              st.session_state[f'{ticker}_Moving_200'],
                                              st.session_state[f'{ticker}_Moving_50'],
                                              st.session_state[f'{ticker}_Target_Price'],
@@ -10158,6 +10167,8 @@ if selected == "Stock Analysis Tool":
                                         RSI = quote.fundamental_df.at[0, "RSI (14)"]
                                         PEG = quote.fundamental_df.at[0, "PEG"]
                                        # Beta = quote.fundamental_df.at[0, "Beta"]
+                                        Enterprise_Value = quote.fundamental_df.at[0, "Enterprise Value"]
+                                        EV_EBITDA= quote.fundamental_df.at[0, "EV/EBITDA"]
                                         Moving_200 = quote.fundamental_df.at[0, "SMA200"]
                                         Moving_50 = quote.fundamental_df.at[0, "SMA50"]
                                         Target_Price = quote.fundamental_df.at[0, "Target Price"]
@@ -10176,6 +10187,8 @@ if selected == "Stock Analysis Tool":
                                         forwardPE = forward_pe_formatted
                                         RSI = "{:.2f}".format(0.00)
                                         PEG = "{:.2f}".format(0.00)
+                                        Enterprise_Value = "{:.2f}".format(0.00)
+                                        EV_EBITDA= "{:.2f}".format(0.00)
                                        # Beta = beta
                                         Moving_200 = "{:.2f}".format(0.00)
                                         Moving_50 = "{:.2f}".format(0.00)
@@ -10194,6 +10207,8 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_RSI'] = RSI
                                    st.session_state[f'{ticker}_PEG'] = PEG
                                    #st.session_state[f'{ticker}_Beta'] = Beta
+                                   st.session_state[f'{ticker}_Enterprise_Value'] = Enterprise_Value
+                                   st.session_state[f'{ticker}_EV_EBITDA'] = EV_EBITDA
                                    st.session_state[f'{ticker}_Moving_200'] = Moving_200
                                    st.session_state[f'{ticker}_Moving_50'] = Moving_50
                                    st.session_state[f'{ticker}_Target_Price'] = Target_Price
@@ -10206,12 +10221,12 @@ if selected == "Stock Analysis Tool":
                                    st.session_state[f'{ticker}_Earnings_next_5_yrs'] = Earnings_next_5_yrs
                                    st.session_state[f'{ticker}_debt_equity_ttm'] = debt_equity_ttm
 
-                                   return (forwardPE, RSI, PEG,Moving_200, Moving_50, 
+                                   return (forwardPE, RSI, PEG,Enterprise_Value,EV_EBITDA,Moving_200, Moving_50, 
                                         Target_Price, Dividend_TTM, Dividend_Est,
                                         Earnings_this_yr, Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, 
                                         Earnings_next_5_yrs, debt_equity_ttm)
 
-                              (forwardPE, RSI, PEG, Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est,Earnings_this_yr, 
+                              (forwardPE, RSI, PEG, Enterprise_Value,EV_EBITDA,Moving_200, Moving_50, Target_Price, Dividend_TTM, Dividend_Est,Earnings_this_yr, 
     
                           Earnings_next_yr_in_prozent, Earnings_next_yr_in_value, Earnings_next_5_yrs, debt_equity_ttm) = unpack_and_store_fundamental_data(quote, ticker)
 
@@ -10220,6 +10235,8 @@ if selected == "Stock Analysis Tool":
                               RSI = "NA"
                               PEG = "NA"
                               #Beta = beta
+                              Enterprise_Value = "{:.2f}".format(0.00)
+                              EV_EBITDA= "{:.2f}".format(0.00)
                               Moving_200 = "NA"
                               Moving_50 = "NA"
                               Target_Price ="{:.2f}".format(0.00)
@@ -10557,8 +10574,9 @@ if selected == "Stock Analysis Tool":
 
                               try:
                                    # Calculate Enterprise value
-                                   Enterprise_value = ((Marketcap) + (Total_Debt_from_all_calc/1000000000) - Total_cash_last_years)
-                                   Enterprise_value_in_Billion = "{:.2f}T".format(Enterprise_value / 1000) if abs(Enterprise_value) >= 1000 else "{:,.2f}B".format(Enterprise_value)
+                                   
+                                   Enterprise_value = Enterprise_value
+                                   Enterprise_value_in_Billion = Enterprise_value_formatted
                                    Debt_to_EBITDA = "{:.2f}".format((Total_Debt_from_all_calc / 1000000000) / Ebita_ttm)
                                    Ebita_ttm_Billion = (
                                         f"{Ebita_ttm / 1000:.2f}T" if abs(Ebita_ttm) >= 1000 else
@@ -10569,8 +10587,8 @@ if selected == "Stock Analysis Tool":
                                    
 
                               except Exception as e:
-                                   Enterprise_value = "N/A"
-                                   Enterprise_value_in_Billion = "N/A"
+                                   Enterprise_value = ((Marketcap) + (Total_Debt_from_all_calc/1000000000) - Total_cash_last_years)
+                                   Enterprise_value_in_Billion = "{:.2f}T".format(Enterprise_value / 1000) if abs(Enterprise_value) >= 1000 else "{:,.2f}B".format(Enterprise_value)
                                    Debt_to_EBITDA = "{:.2f}".format(0.00)
                                    Ebita_ttm_Billion = "{:.2f}".format(0.00)
 
@@ -10690,7 +10708,7 @@ if selected == "Stock Analysis Tool":
                          'Debt/EBITDA': [Debt_to_EBITDA],
                          'Debt/Equity': [debt_equity_ttm],
                          'Revenue (TTM)': [revenue_ttm],      
-                         '5 YR Net Income': [Average_net_income_annual_funf_Billion_Million], 
+                         '5Y Net Income': [Average_net_income_annual_funf_Billion_Million], 
                          'Net Income (TTM)': [netincome_ttm], 
                          'PEG': [PEG],
 
@@ -10698,78 +10716,80 @@ if selected == "Stock Analysis Tool":
                          #'Forward P/E': [forward_pe_formatted], 
                          'P/E (TTM)': [pe_ttm],
                          #'P/E (TTM)': [pe_formatted],
-                         '5 YR P/E': [pe_five_],
-                         '10 YR P/E': [average_PE_historical],
+                         '5Y P/E': [pe_five_],
+                         '10Y P/E': [average_PE_historical],
                          'Operating Cashflow (TTM)': [current_Operating_cash_Flow_Value], 
                          'Price/OCF (TTM)': [P_OCF_ttm],  
-                         '5 YR Price/OCF ': f"{P_OCF_5}",  
-                         '10 YR Price/OCF': f"{P_OCF_10}",  
-                         '5 YR Gross Profit Margin': [five_yrs_average_gross_margin],
+                         '5Y Price/OCF ': f"{P_OCF_5}",  
+                         '10Y Price/OCF': f"{P_OCF_10}",  
+                         '5Y Gross Profit Margin': [five_yrs_average_gross_margin],
                          'Gross Profit Margin (TTM)': [average_gross_margin_quater1],
                          }
 
 
                          data2 = {
                          'FCF Yield': [fcf_yield_ttm],
-                         '5 YR Dividend Yield': [Dividend_yield_average], 
+                         '5Y Dividend Yield': [Dividend_yield_average], 
                          'Dividend Yield': [Dividend_per_share_yield],
                          'Total Shareholder Return': [Share_holder_yield],
                          'Dividend Paid (TTM)': [Dividend_ttm], 
                          'Dividend/Share (TTM)': f"{Dividend_TTM}",
                          'Dividend Estimate': f" {Dividend_Est}",
                          #'Dividend Ex-Date': [Dividend_Ex_Date],
-                         '5 YR Avg FCF': [average_FCF_annual_five_we], 
+                         '5Y Avg. FCF': [average_FCF_annual_five_we], 
                          'Free Cash Flow (TTM)': [fcf_ttm],
                          'Price/FCF (TTM)': [pfcf_ttm], 
-                         '5 YR Avg Price/FCF': [pfcf_funf],
-                         '10 YR Avg Price/FCF': [pfcf_ten],
-                         '5 YR Operating Margin': [five_yrs_average_operating_margin],
+                         '5Y Avg. Price/FCF': [pfcf_funf],
+                         '10Y Avg. Price/FCF': [pfcf_ten],
+                         '5Y Operating Margin': [five_yrs_average_operating_margin],
                          'Operating Margin': [average_operating_margin1_quarter],
-                         '5 YR Net Profit Margin': f"{five_yrs_Nettomarge}%",
+                         '5Y Net Profit Margin': f"{five_yrs_Nettomarge}%",
                          'Net Profit Margin': [Net_margin_ttm],
-                         '5 YR FCF Margin': f"{FCF_Margin_5}%",
+                         '5Y FCF Margin': f"{FCF_Margin_5}%",
                          'FCF Margin': ' {:.2f}%'.format(FCF_Margin_1)
                          }
 
                          data3 = {
                          'P/S': [Price_to_sales_last],
-                         '5 YR P/S': [P_sales_5],
-                         '10 YR P/S': [P_sales_10],
+                         '5Y P/S': [P_sales_5],
+                         '10Y P/S': [P_sales_10],
                          'P/B': '{:.2f}'.format(PBVPS),
-                         '5 YR P/B': [average_price_to_book_annual_5],
-                         '10 YR P/B':[average_price_to_book],
+                         '5Y P/B': [average_price_to_book_annual_5],
+                         '10Y P/B':[average_price_to_book],
                          'ROA': ["{:.5}%".format(ROA_TTM)],
-                         '5 YR ROE': ["{:.5}%".format(five_ROE)],
+                         '5Y ROE': ["{:.5}%".format(five_ROE)],
                          'ROE': [ROE_ttm],
-                         '5 YR ROIC': [Average_ROIC_funf],
+                         '5Y ROIC': [Average_ROIC_funf],
                          'ROIC': ["{:.5}%".format(ROIC_TTM)],
-                         '5 YR ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
+                         '5Y ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
                          'ROCE': [ "{:.2f}%".format(One_YR_ROCE)],
                          f'ATH ({format_date(st.session_state.all_time_high_date)})': f"$ {st.session_state.all_time_high_price:.2f}",
                          f'52WK LOW ({format_date(st.session_state.fifty_two_week_low_date)})': f"$ {st.session_state.fifty_two_week_low:.2f}",
-                         'Analyst Target Price': [f"$ {Target_Price}"],
-                         'Current price': ["$ {:.2f}".format(current_price)],
-                         'RSI (14)': [RSI],
+                         
+                         
                          }
           
 
                          data4 = {
                          
-                         'EPS Estimate this YR': f"{Earnings_this_yr}",
-                         'EPS Estimate next YR': f" {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
-                         'EPS Estimate 5 YR (per annum)': [Earnings_next_5_yrs],
-                         'EPS CAGR 10 YR': f"{EPS_Cagr_10}%",
-                         'EPS CAGR 5 YR': f"{EPS_5_CAGR}% ",
-                         'Revenue CAGR 10 YR': f"{Revenue_Cagr_10}%",
-                         'Revenue CAGR 5 YR': f"{Revenue_5_CAGR}%",
-                         'FCF CAGR 10 YR': f"{FCF_Cagr_10}%",
-                         'FCF CAGR 5 YR': f"{FCF_5_CAGR}%",
-                         'Dividend CAGR 10 YR': f"{Dividend_10_CAGR}%",
-                         'Dividend CAGR 5 YR': f"{Dividend_5_CAGR}%",
-                         'Net Interest Income CAGR 10 YR': f"{Net_interest_Income_annual_Cagr_10 }%",
-                         'Net Interest Income CAGR 5 YR': f"{Net_interest_Income_annual_Cagr_5 }%",
+                         'EPS Estimate this Y': f"{Earnings_this_yr}",
+                         'EPS Estimate next Y': f" {Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})",
+                         'EPS Estimate 5Y': [Earnings_next_5_yrs],
+                         'EPS CAGR 10Y': f"{EPS_Cagr_10}%",
+                         'EPS CAGR 5Y': f"{EPS_5_CAGR}% ",
+                         'Revenue CAGR 10Y': f"{Revenue_Cagr_10}%",
+                         'Revenue CAGR 5Y': f"{Revenue_5_CAGR}%",
+                         'FCF CAGR 10Y': f"{FCF_Cagr_10}%",
+                         'FCF CAGR 5Y': f"{FCF_5_CAGR}%",
+                         'Dividend CAGR 10Y': f"{Dividend_10_CAGR}%",
+                         'Dividend CAGR 5Y': f"{Dividend_5_CAGR}%",
+                         'Net Interest Income 10Y': f"{Net_interest_Income_annual_Cagr_10 }%",
+                         'Net Interest Income 5Y': f"{Net_interest_Income_annual_Cagr_5 }%",
                          '50 SMA': [Moving_50],
-                         '200 SMA': [Moving_200]
+                         '200 SMA': [Moving_200],
+                         'RSI (14)': [RSI],
+                         'Analyst Target Price': [f"$ {Target_Price}"],
+                         'Current price': ["$ {:.2f}".format(current_price)],
                          
                          }
 
@@ -12505,7 +12525,7 @@ if selected == "Stock Analysis Tool":
 
                                         col4.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS 5Y CAGR:<br> {EPS_5_CAGR}%</div>", unsafe_allow_html=True)
 
-                                        col5.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS next 5 YR (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
+                                        col5.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>EPS next 5Y (per annum):<br> {Earnings_next_5_yrs}</div>", unsafe_allow_html=True)
 
 
                                    #to add space
@@ -12518,10 +12538,10 @@ if selected == "Stock Analysis Tool":
                                              st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Growth YOY: <br> {Average_fcf_growth_ten}%</div>", unsafe_allow_html=True)
                                              
                                         with col2:    
-                                             st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>5 YR FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
+                                             st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>5Y FCF Growth YOY:<br> {Average_fcf_growth_five}<br></div>", unsafe_allow_html=True)
                                    
                                         with col3:    
-                                             st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>3 YR FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
+                                             st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>3Y FCF Growth YOY: <br> {Average_fcf_growth_3years}</div>", unsafe_allow_html=True)
 
                                         with col4:    
                                              st.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color:white;'>FCF Margin 10Y:<br> {FCF_Margin_10}%<br></div>", unsafe_allow_html=True)
@@ -13026,7 +13046,7 @@ if selected == "Stock Analysis Tool":
 
                                    col1, col2, col3, col4, col5, col6 = st.columns(6)
 
-                                   for col, label in zip([col1, col2, col3, col4, col5, col6], ["1YR:", "5YR:", "10YR:", "LOW", "MID", "HIGH"]):
+                                   for col, label in zip([col1, col2, col3, col4, col5, col6], ["1Y:", "5Y:", "10Y:", "LOW", "MID", "HIGH"]):
                                         with col:
                                              st.markdown(f"<div style='text-align: center;'>{label}</div>", unsafe_allow_html=True)
 
@@ -13545,12 +13565,12 @@ if selected == "Stock Analysis Tool":
                                                        <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
                                                             <div class='metrics-container' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
                                                                  <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                                      <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10 YEAR: </span>
+                                                                      <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10Y: </span>
                                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_Cagr_10}%</span>
                                                                  </div>
                                                                  <div class='divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
                                                                  <div class='metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                                      <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YEAR: : </span>
+                                                                      <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5Y: : </span>
                                                                       <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Revenue_5_CAGR}%</span>
                                                                  </div>
                                                                  <div class='divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
@@ -13693,12 +13713,12 @@ if selected == "Stock Analysis Tool":
                                                   <div style='text-align: center; border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw; width: 95%;'>
                                                        <div class='eps-metrics-container' style='display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;'>
                                                             <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                                 <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10YR EPS: </span>
+                                                                 <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10Y EPS: </span>
                                                                  <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{EPS_Cagr_10}%</span>
                                                             </div>
                                                             <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
                                                             <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                                 <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YR: </span>
+                                                                 <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5Y: </span>
                                                                  <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{EPS_5_CAGR}%</span>
                                                             </div>
                                                             <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
@@ -13708,7 +13728,7 @@ if selected == "Stock Analysis Tool":
                                                             </div>
                                                             <div class='eps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
                                                             <div class='eps-metric-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                                 <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Next YR: </span>
+                                                                 <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>Next Y: </span>
                                                                  <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{Earnings_next_yr_in_value} ({Earnings_next_yr_in_prozent})</span>
                                                             </div>
                                                        </div>
@@ -13884,7 +13904,7 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.5vw; border-radius: 8px; margin-bottom: 0.5vw;'>
                                              <div class='revps-container' style='display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;'>
                                                   <div class='revps-item' style='padding: 0 0.5vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5 YR CAGR: </span>
+                                                       <span style='font-size: clamp(10px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5Y CAGR: </span>
                                                        <span style='font-size: clamp(12px, 1.5vw, 16px); font-weight: bold;'>{Revenue_per_share_5_cagr}%</span>
                                                   </div>
                                                   <div class='revps-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.3vw;'></div>
@@ -14235,16 +14255,16 @@ if selected == "Stock Analysis Tool":
                                              <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
                                                   <div class='yield-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
                                                        <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 10 CAGR:</span>
+                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 10Y CAGR:</span>
                                                             <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_average_annual_10}</span>
                                                        </div>
                                                        <div class='yield-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
                                                        <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 5 CAGR:  </span>
+                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Divi/Share 5Y CAGR:  </span>
                                                             <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividends_per_share_growth_last_5_years_growth}</span>
                                                        </div>
                                                        <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Yield:</span>
+                                                            <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Yield:</span>
                                                             <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Dividend_yield_average}</span>
                                                        </div> <div class='yield-item' style='padding: 0 0.8vw; white-space: nowrap;'>
                                                             <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Yield:</span>
@@ -14321,7 +14341,7 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
                                              <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
                                                   <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Y/Y: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Y/Y: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{ebitda_Margin_annual_5_average}%</span>
                                                   </div>
                                                   <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
@@ -14401,7 +14421,7 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
                                              <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
                                                   <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Y/Y: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Y/Y: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{debt_equity_annual_5_average}%</span>
                                                   </div>
                                                   <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
@@ -14485,7 +14505,7 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
                                              <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
                                                   <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Y/Y: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Y/Y: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Debt_to_assets_annual_5_average}%</span>
                                                   </div>
                                                   <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
@@ -14594,7 +14614,7 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
                                              <div class='roic-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
                                                   <div class='roic-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR ROIC Y/Y: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y ROIC Y/Y: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Average_ROIC_funf}</span>
                                                   </div>
                                                   <div class='roic-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
@@ -14642,7 +14662,7 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
                                              <div class='roe-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
                                                   <div class='roe-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR ROE Y/Y: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y ROE Y/Y: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_ROE}%</span>
                                                   </div>
                                                   <div class='roe-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
@@ -14739,7 +14759,7 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
                                              <div class='gross-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
                                                   <div class='gross-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Gross Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Gross Margin Y/Y: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_yrs_average_gross_margin}</span>
                                                   </div>
                                                   <div class='gross-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
@@ -14789,7 +14809,7 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
                                              <div class='operating-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
                                                   <div class='operating-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Operating Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Operating Margin Y/Y: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_yrs_average_operating_margin}</span>
                                                   </div>
                                                   <div class='operating-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
@@ -14890,7 +14910,7 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
                                              <div class='fcf-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
                                                   <div class='fcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR FCF Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y FCF Margin Y/Y: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{FCF_Margin_5}%</span>
                                                   </div>
                                                   <div class='fcf-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
@@ -14939,7 +14959,7 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
                                              <div class='net-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
                                                   <div class='net-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5 YR Net Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Net Margin Y/Y: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_yrs_Nettomarge}%</span>
                                                   </div>
                                                   <div class='net-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
@@ -15079,12 +15099,12 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
                                              <div class='pe-container' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
                                                   <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/E: </span>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10Y P/E: </span>
                                                        <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{average_PE_historical}</span>
                                                   </div>
                                                   <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
                                                   <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/E: </span>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5Y P/E: </span>
                                                        <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{pe_five_}</span>
                                                   </div>
                                                   <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
@@ -15128,12 +15148,12 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
                                              <div class='pfcf-container' style='display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;'>
                                                   <div class='pfcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/FCF: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10Y P/FCF: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{pfcf_ten}</span>
                                                   </div>
                                                   <div class='pfcf-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
                                                   <div class='pfcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/FCF: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y P/FCF: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{pfcf_funf}</span>
                                                   </div>
                                                   <div class='pfcf-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
@@ -15226,12 +15246,12 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
                                              <div class='pe-container' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
                                                   <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/S: </span>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10Y P/S: </span>
                                                        <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{P_sales_10}</span>
                                                   </div>
                                                   <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
                                                   <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/S: </span>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5Y P/S: </span>
                                                        <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{P_sales_5}</span>
                                                   </div>
                                                   <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
@@ -15319,12 +15339,12 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
                                              <div class='pe-container' style='display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;'>
                                                   <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/OCF: </span>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>10Y P/OCF: </span>
                                                        <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{P_OCF_10}</span>
                                                   </div>
                                                   <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
                                                   <div class='pe-item' style='padding: 0 0.6vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/OCF: </span>
+                                                       <span style='font-size: clamp(9px, 1.1vw, 13px); font-style: italic; color: dodgerblue;'>5Y P/OCF: </span>
                                                        <span style='font-size: clamp(12px, 1.4vw, 16px); font-weight: bold;'>{P_OCF_5}</span>
                                                   </div>
                                                   <div class='pe-divider' style='border-left: 1px solid #e0e0e0; height: 16px; margin: 0 0.2vw;'></div>
@@ -15453,12 +15473,12 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
                                              <div class='ptbv-container' style='display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;'>
                                                   <div class='ptbv-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/TBV: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10Y P/TBV: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Average_Price_to_tangible_book}</span>
                                                   </div>
                                                   <div class='ptbv-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
                                                   <div class='ptbv-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/TBV: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y P/TBV: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Average_Price_to_tangible_book_5}</span>
                                                   </div>
                                                   <div class='ptbv-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
@@ -15498,12 +15518,12 @@ if selected == "Stock Analysis Tool":
                                         <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
                                              <div class='pb-container' style='display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;'>
                                                   <div class='pb-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10YR P/B: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>10Y P/B: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{average_price_to_book}</span>
                                                   </div>
                                                   <div class='pfcf-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
                                                   <div class='pfcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5YR P/B: </span>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y P/B: </span>
                                                        <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{average_price_to_book_annual_5}</span>
                                                   </div>
                                                   <div class='pb-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
