@@ -121,27 +121,84 @@ config = {'displayModeBar': False}
 
 global ticker, name, symbol
 
-base_currency = "USD"  # Example
-target_currency = "EUR"  # Example
+# base_currency = "USD"  
+# target_currency = "EUR" 
+# base_currency_2 ="DKK" 
+# base_currency_3 ="SEK" 
 
 
-def get_exchange_rate(base_currency, target_currency):
-                         try:
-                              url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
-                              response = requests.get(url)
-                              data = response.json()
-                              exchange_rate = data['rates'][target_currency]
-                              return exchange_rate
+# def get_exchange_rate(base_currency, target_currency):
+#                          try:
+#                               url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
+#                               response = requests.get(url)
+#                               data = response.json()
+#                               exchange_rate = data['rates'][target_currency]
+#                               return exchange_rate
                          
-                         except Exception as e:
-                              url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
-                              response = requests.get(url)
-                              data = response.json()
-                              exchange_rate = data['rates'][target_currency]
-                              return exchange_rate
+#                          except Exception as e:
+#                               url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
+#                               response = requests.get(url)
+#                               data = response.json()
+#                               exchange_rate = data['rates'][target_currency]
+#                               return exchange_rate
 
-                         # Get the exchange rate for USD to EUR
-usd_to_eur_rate = get_exchange_rate("USD", "EUR")
+#                          # Get the exchange rate for USD to EUR
+# usd_to_eur_rate = get_exchange_rate("USD", "EUR")
+
+
+base_currency = "USD"  
+target_currency = "EUR" 
+base_currency_2 = "DKK" 
+base_currency_3 = "SEK" 
+
+@st.cache_data(show_spinner=False,ttl=86400) #24hors
+def get_exchange_rate(base_currency, target_currency):
+    DKK_EUR_FIXED_RATE = 7.46038
+    
+    # Handle direct DKK-EUR conversions without API calls
+    if (base_currency == "DKK" and target_currency == "EUR"):
+        return 1 / DKK_EUR_FIXED_RATE
+    elif (base_currency == "EUR" and target_currency == "DKK"):
+        return DKK_EUR_FIXED_RATE
+    
+    try:
+        # Primary API - Frankfurter (same as original)
+        url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
+        response = requests.get(url)
+        data = response.json()
+        exchange_rate = data['rates'][target_currency]
+        return exchange_rate
+     
+    except Exception as e:
+        try:
+            # Fallback API (same as original)
+            url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
+            response = requests.get(url)
+            data = response.json()
+            exchange_rate = data['rates'][target_currency]
+            
+            # Special handling for SEK-EUR if rate looks incorrect
+            if base_currency == "SEK" and target_currency == "EUR" and exchange_rate == 1:
+                url = f"https://api.exchangerate-api.com/v4/latest/EUR"
+                response = requests.get(url)
+                data = response.json()
+                exchange_rate = 1 / data['rates']['SEK']
+                
+            return exchange_rate
+            
+        except Exception as e:
+            # Final fallback for Scandinavian currencies
+            if base_currency == "SEK" and target_currency == "EUR":
+                return 0.087  # Approximate SEK-EUR rate as fallback
+            return None
+
+# Example usage maintaining original format:
+usd_to_eur_rate = get_exchange_rate("USD", "EUR")  # Original functionality
+dkk_to_eur_rate = get_exchange_rate("DKK", "EUR")  # Using base_currency_2
+sek_to_eur_rate = get_exchange_rate("SEK", "EUR")  # Using base_currency_3
+eur_to_dkk_rate = get_exchange_rate("EUR", "DKK")  # Reverse conversion
+
+
 
 
 selected = option_menu(
@@ -7599,6 +7656,7 @@ if selected == "Stock Analysis Tool":
                          'AS':'Amer Sports, Inc',
                          'BULL':'Webull Corporation',
                          'VIT.B:SE':'Vitec Software Group AB (publ)',
+                         'LOTB:BE':'Lotus Bakeries',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7834,39 +7892,45 @@ if selected == "Stock Analysis Tool":
                     st.write(styled_link, unsafe_allow_html=True)
                #.............................................................................................
                ticker_mapping_1 = {
-               'BRK.A': 'BRK-A',
-               'BRK.B': 'BRK-B',
+                    'BRK.A': 'BRK-A',
+                    'BRK.B': 'BRK-B',
                }
 
                ticker_mapping_SEK = {
-               'VIT.B:SE':'VIT-B.ST',
+                    'VIT.B:SE':'VIT-B.ST',
+               }
+               ticker_mapping_DKK = {
+                    'NOVO.B:DK':'NOVOB.DK',   # Added example DKK ticker
+                    'CARL.B:DK':'CARL-B.CO',
                }
 
-               ticker_mapping = {
-               'ADS:DE': 'ADS.DE',
-               'MUX:DE':'MUX.DE',
-               'MBB:DE':'MBB.DE',
-               'KRI:GR':'AO2.F',
-               'SAN:FR':'SAN.PA',
-               'FLOW:NL':'FLOW.AS',
-               'SIE:DE':'SIE.DE',
-               'FER:NL':'8ZQ.F',
-               'ENX:FR':'ENX.PA',
-               'VIT.B:SE':'VIT-B.ST',
+               ticker_mapping_Eur = {
+                    'ADS:DE': 'ADS.DE',
+                    'MUX:DE':'MUX.DE',
+                    'MBB:DE':'MBB.DE',
+                    'KRI:GR':'AO2.F',
+                    'SAN:FR':'SAN.PA',
+                    'FLOW:NL':'FLOW.AS',
+                    'SIE:DE':'SIE.DE',
+                    'FER:NL':'8ZQ.F',
+                    'ENX:FR':'ENX.PA',
+                    'LOTB:BE':'LOTB.BR',
+                  
                }
 
                ticker_mapping_2 = {
-               'ASML:NL':'ASML',
-               'NOVO.B:DK':'NVO',
-               'MC:FR':'LVMHF',
-               'CVC:NL':'CVCCF',
-               'WKL:NL':'WOLTF',
+                    'ASML:NL':'ASML',
+                    'NOVO.B:DK':'NVO',
+                    'MC:FR':'LVMHF',
+                    'CVC:NL':'CVCCF',
+                    'WKL:NL':'WOLTF',
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
                ticker = ticker_mapping_1.get(ticker, ticker)
                ticker = ticker_mapping_SEK.get(ticker, ticker)
-               ticker = ticker_mapping.get(ticker, ticker)
+               ticker = ticker_mapping_DKK.get(ticker, ticker)  # Added DKK mapping
+               ticker = ticker_mapping_Eur.get(ticker, ticker)
                ticker = ticker_mapping_2.get(ticker, ticker)
                
                stock_info = yf.Ticker(ticker)
@@ -7983,7 +8047,7 @@ if selected == "Stock Analysis Tool":
          
 
                          # Ausgabe basierend auf Mapping
-                         if ticker in ticker_mapping.values():
+                         if ticker in ticker_mapping_Eur.values():
                               st.markdown(
                                    f"""
                                    <div style="text-align: center; width: 100%;">
@@ -7994,10 +8058,22 @@ if selected == "Stock Analysis Tool":
                               )
 
                          elif ticker in ticker_mapping_SEK.values():
+                              
                               st.markdown(
                                    f"""
                                    <div style="text-align: center; width: 100%;">
-                                        Aktueller Preis: <span style='{green_style}'>{current_price:.2f} SEK</span> {percentage_text}
+                                        Current Price: <span style='{green_style}'>{current_price:.2f} SEK</span> 
+                                        Aktueller Preis: <span style='{green_style}'>{(current_price*sek_to_eur_rate):.2f} €</span> 
+                                        {percentage_text}
+                                   </div>
+                                   """,
+                                   unsafe_allow_html=True,
+                              )
+                         elif ticker in ticker_mapping_DKK.values():  # Added DKK display
+                              st.markdown(
+                                   f"""
+                                   <div style="text-align: center; width: 100%;">
+                                        Aktueller Preis: <span style='{green_style}'>{current_price:.2f} DKK</span> {percentage_text}
                                    </div>
                                    """,
                                    unsafe_allow_html=True,
@@ -8022,34 +8098,35 @@ if selected == "Stock Analysis Tool":
                #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
 
 
-               # Initialize usd_to_eur_rate at the beginning (before any conditionals)
                if 'usd_to_eur_rate' not in st.session_state:
-                    st.session_state.usd_to_eur_rate = get_exchange_rate(base_currency, target_currency) # Implement this function
+                    st.session_state.usd_to_eur_rate = get_exchange_rate("USD", "EUR")
+               if 'sek_to_eur_rate' not in st.session_state:
+                    st.session_state.sek_to_eur_rate = get_exchange_rate("SEK", "EUR")
+               if 'dkk_to_eur_rate' not in st.session_state:
+                    st.session_state.dkk_to_eur_rate = get_exchange_rate("DKK", "EUR")
+
+               current_price = get_current_price(ticker)
                
 
-               if ticker in ticker_mapping.values():  # If ticker is in mapped values (EUR-denominated)
-                    current_price = get_current_price(ticker)
-                    #st.session_state.usd_to_eur_rate = 1  # Get current price in EUR
+               if ticker in ticker_mapping_Eur.values():  # If ticker is in mapped values (EUR-denominated)
                     converted_amount = "{:.2f}".format(current_price * 1)
-                    st.session_state.usd_to_eur_rate = 1  # No conversion needed 
+                    st.session_state.current_rate= 1  # No conversion needed 
 
-               if ticker in ticker_mapping_SEK.values():
-                    current_price = get_current_price(ticker)
-                    #st.session_state.usd_to_eur_rate = 1  # Get current price in EUR
-                    converted_amount = "{:.2f}".format(current_price * 1)
-                    st.session_state.usd_to_eur_rate = 1  
+               elif ticker in ticker_mapping_SEK.values():
+                    converted_amount = "{:.2f}".format(current_price * st.session_state.sek_to_eur_rate)
+                    st.session_state.current_rate = st.session_state.sek_to_eur_rate
 
-               if ticker in ticker_mapping_2.values():  # If ticker is in mapped values (EUR-denominated)
-                    current_price = get_current_price(ticker)
+               elif ticker in ticker_mapping_2.values():  # If ticker is in mapped values (EUR-denominated)
                     converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
-                    st.session_state.usd_to_eur_rate = 1  # No conversion needed  
+                    st.session_state.current_rate = 1  # No conversion needed  
                     
+               elif ticker in ticker_mapping_DKK.values():  # If ticker is in mapped values (EUR-denominated)
+                    converted_amount = "{:.2f}".format(current_price * st.session_state.dkk_to_eur_rate)
+                    st.session_state.current_rate = st.session_state.dkk_to_eur_rate
                else:  
-                    current_price = get_current_price(ticker)  # Get current price in USD
-                    converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
-                    st.session_state.usd_to_eur_rate = get_exchange_rate(base_currency, target_currency)
-                    
-
+                    converted_amount = "{:.2f}".format(current_price * st.session_state.usd_to_eur_rate)
+                    st.session_state.current_rate = st.session_state.usd_to_eur_rate
+                                        
 
                ########################
           
@@ -12634,7 +12711,7 @@ if selected == "Stock Analysis Tool":
                                              Intrinsic_value =Equity_value_/shares_diluted_annual_1
 
                                              #Euro_equivalent = Intrinsic_value*usd_to_eur_rate
-                                             Euro_equivalent = Intrinsic_value*st.session_state.usd_to_eur_rate 
+                                             Euro_equivalent = Intrinsic_value*st.session_state.current_rate
 
                                         
 
@@ -12675,7 +12752,7 @@ if selected == "Stock Analysis Tool":
                                              Intrinsic_value2 =Equity_value2/shares_diluted_annual_1
 
                                              #Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
-                                             Euro_equivalent2 = Intrinsic_value2*st.session_state.usd_to_eur_rate 
+                                             Euro_equivalent2 = Intrinsic_value2*st.session_state.current_rate
                                              
 
                                         
@@ -12694,7 +12771,7 @@ if selected == "Stock Analysis Tool":
                                              graham_valuation = (EPS_last_average_graham * (7+1.5 * Growth_rate1) * 4.4)/ st.session_state["Average_10years_treasury_rate"]
                                              
                                              #Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
-                                             Euro_equivalent_graham_valuation = graham_valuation*st.session_state.usd_to_eur_rate 
+                                             Euro_equivalent_graham_valuation = graham_valuation*st.session_state.current_rate
                                                   #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
                                              # Display the result
                                         # .   ...........................................Graham 2.Estimate.........................................   
@@ -12702,7 +12779,7 @@ if selected == "Stock Analysis Tool":
                                              graham_valuation2 = (EPS_last_average_graham2 * (7+1.5*Growth_rate2)*4.4)/ st.session_state["Average_10years_treasury_rate"]
                                         
                                              #Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
-                                             Euro_equivalent_graham_valuation2 = graham_valuation2*st.session_state.usd_to_eur_rate 
+                                             Euro_equivalent_graham_valuation2 = graham_valuation2*st.session_state.current_rate
 
 
                                         #........................................................................................
@@ -13146,7 +13223,7 @@ if selected == "Stock Analysis Tool":
 
 
                                    #Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
-                                   Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*st.session_state.usd_to_eur_rate) 
+                                   Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*st.session_state.current_rate) 
                                         
                               
                               # -----------------------------MIDDLE-------------
@@ -13164,7 +13241,7 @@ if selected == "Stock Analysis Tool":
                                    
 
                                    #Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*usd_to_eur_rate)
-                                   Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*st.session_state.usd_to_eur_rate) 
+                                   Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*st.session_state.current_rate) 
                                         
 
                                         
@@ -13183,7 +13260,7 @@ if selected == "Stock Analysis Tool":
                                    Assumption_high_inklu_shares_outstanding_MarginofSafety_high=Assumption_high_inklu_shares_outstanding_high*(1-(Margin_of_safety_high/100))
                                    
                                    #Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*usd_to_eur_rate)
-                                   Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*st.session_state.usd_to_eur_rate) 
+                                   Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*st.session_state.current_rate) 
                                         
 
 
