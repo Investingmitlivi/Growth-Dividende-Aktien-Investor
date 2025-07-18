@@ -121,84 +121,53 @@ config = {'displayModeBar': False}
 
 global ticker, name, symbol
 
-# base_currency = "USD"  
-# target_currency = "EUR" 
-# base_currency_2 ="DKK" 
-# base_currency_3 ="SEK" 
-
-
-# def get_exchange_rate(base_currency, target_currency):
-#                          try:
-#                               url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
-#                               response = requests.get(url)
-#                               data = response.json()
-#                               exchange_rate = data['rates'][target_currency]
-#                               return exchange_rate
-                         
-#                          except Exception as e:
-#                               url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
-#                               response = requests.get(url)
-#                               data = response.json()
-#                               exchange_rate = data['rates'][target_currency]
-#                               return exchange_rate
-
-#                          # Get the exchange rate for USD to EUR
-# usd_to_eur_rate = get_exchange_rate("USD", "EUR")
-
 
 base_currency = "USD"  
 target_currency = "EUR" 
 base_currency_2 = "DKK" 
 base_currency_3 = "SEK" 
+base_currency_4 = "PLN" 
 
-@st.cache_data(show_spinner=False,ttl=86400) #24hors
+@st.cache_data(show_spinner=False, ttl=86400)  # 24 hour cache
 def get_exchange_rate(base_currency, target_currency):
-    DKK_EUR_FIXED_RATE = 7.46038
+    """
+    Get exchange rate from specified currency to EUR
+    Supports: USD, DKK, SEK, PLN → EUR
+    """
+    # Fixed conversion rates for known pairs
+    FIXED_RATES = {
+        "DKK": 7.46038,  # 1 EUR = 7.46038 DKK
+        "SEK": 0.087,    # 1 SEK ≈ 0.087 EUR (fallback)
+        "PLN": 0.22      # 1 PLN ≈ 0.22 EUR (fallback)
+    }
     
-    # Handle direct DKK-EUR conversions without API calls
-    if (base_currency == "DKK" and target_currency == "EUR"):
-        return 1 / DKK_EUR_FIXED_RATE
-    elif (base_currency == "EUR" and target_currency == "DKK"):
-        return DKK_EUR_FIXED_RATE
+    # If we have a fixed rate for this currency
+    if base_currency in FIXED_RATES and target_currency == "EUR":
+        if base_currency == "DKK":
+            return 1 / FIXED_RATES["DKK"]  # DKK→EUR needs inverse
+        return FIXED_RATES[base_currency]  # SEK/PLN→EUR are direct
     
     try:
-        # Primary API - Frankfurter (same as original)
-        url = f"https://api.frankfurter.app/latest?amount=1&from={base_currency}&to={target_currency}"
-        response = requests.get(url)
+        # Try primary API (Frankfurter)
+        url = f"https://api.frankfurter.app/latest?from={base_currency}&to={target_currency}"
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
         data = response.json()
-        exchange_rate = data['rates'][target_currency]
-        return exchange_rate
-     
+        return data['rates'][target_currency]
+    
     except Exception as e:
-        try:
-            # Fallback API (same as original)
-            url = f"https://api.exchangerate-api.com/v4/latest/{base_currency}"
-            response = requests.get(url)
-            data = response.json()
-            exchange_rate = data['rates'][target_currency]
-            
-            # Special handling for SEK-EUR if rate looks incorrect
-            if base_currency == "SEK" and target_currency == "EUR" and exchange_rate == 1:
-                url = f"https://api.exchangerate-api.com/v4/latest/EUR"
-                response = requests.get(url)
-                data = response.json()
-                exchange_rate = 1 / data['rates']['SEK']
-                
-            return exchange_rate
-            
-        except Exception as e:
-            # Final fallback for Scandinavian currencies
-            if base_currency == "SEK" and target_currency == "EUR":
-                return 0.087  # Approximate SEK-EUR rate as fallback
-            return None
+        # If API fails, use fixed rates if available
+        if base_currency in FIXED_RATES and target_currency == "EUR":
+            if base_currency == "DKK":
+                return 1 / FIXED_RATES["DKK"]
+            return FIXED_RATES[base_currency]
+        return None
 
-# Example usage maintaining original format:
-usd_to_eur_rate = get_exchange_rate("USD", "EUR")  # Original functionality
-dkk_to_eur_rate = get_exchange_rate("DKK", "EUR")  # Using base_currency_2
-sek_to_eur_rate = get_exchange_rate("SEK", "EUR")  # Using base_currency_3
-eur_to_dkk_rate = get_exchange_rate("EUR", "DKK")  # Reverse conversion
-
-
+# Get your required rates
+usd_to_eur_rate = get_exchange_rate("USD", "EUR")  # USD → EUR
+dkk_to_eur_rate = get_exchange_rate("DKK", "EUR")  # DKK → EUR
+sek_to_eur_rate = get_exchange_rate("SEK", "EUR")  # SEK → EUR
+pln_to_eur_rate = get_exchange_rate("PLN", "EUR")  # PLN → EUR
 
 
 selected = option_menu(
@@ -719,8 +688,6 @@ if selected == "Stock Analysis Tool":
                          'A':'Agilent Technologies Inc. ',
                          'AA':'Alcoa Corporation ',
                          'AACG':'ATA Creativity Global ',
-                         'AACI':'Armada Acquisition Corp. I ',
-                         'AACIW':'Armada Acquisition Corp. I ',
                          'AACT':'Ares Acquisition Corporation II ',
                          'AADI':'Aadi Bioscience Inc. ',
                          'AAIC':'Arlington Asset Investment Corp ',
@@ -7657,6 +7624,7 @@ if selected == "Stock Analysis Tool":
                          'BULL':'Webull Corporation',
                          'VIT.B:SE':'Vitec Software Group AB (publ)',
                          'LOTB:BE':'Lotus Bakeries',
+                         'BDX:PL':'Budimex S.A.',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7718,17 +7686,13 @@ if selected == "Stock Analysis Tool":
                
                @st.cache_data(show_spinner=False, ttl=3600)
                def store_financial_data(data, ticker):
-                    """
-                    Stores all financial data in session state for caching and reuse
-                    Returns tuple of all stored values
-                    """
+
                     if f'{ticker}_financial_data_stored' in st.session_state:
                          return (
                               st.session_state.get(f'{ticker}_eps_diluted_ttm'),
                               st.session_state.get(f'{ticker}_fcf_per_share'),
                               st.session_state.get(f'{ticker}_Dividend_ttm'),
                               st.session_state.get(f'{ticker}_Dividend_per_share_ttm'),
-                              st.session_state.get(f'{ticker}_fcf_ttm'),
                               st.session_state.get(f'{ticker}_ROE_TTM'),
                               st.session_state.get(f'{ticker}_ROIC_TTM'),
                               st.session_state.get(f'{ticker}_EBITDA_MARGIN_TTM'),
@@ -7737,6 +7701,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state.get(f'{ticker}_revenue_ttm'),
                               st.session_state.get(f'{ticker}_shares_eop_ttm'),
                               st.session_state.get(f'{ticker}_current_Operating_cash_Flow'),
+                              st.session_state.get(f'{ticker}_Capex_ttm'),
                               st.session_state.get(f'{ticker}_Revenue_ttm'),
                               st.session_state.get(f'{ticker}_date_quarter'),
                               st.session_state.get(f'{ticker}_date_annual'),
@@ -7757,7 +7722,6 @@ if selected == "Stock Analysis Tool":
                     fcf_per_share = Financial_data['ttm']['fcf_per_share']
                     Dividend_ttm = Financial_data['ttm']['cff_dividend_paid']
                     Dividend_per_share_ttm = Financial_data['ttm']['dividends']
-                    fcf_ttm = Financial_data['ttm']['fcf']/1000000000
                     ROE_TTM = Financial_data['ttm']['roe']*100
                     ROIC_TTM = Financial_data['ttm']['roic']*100
                     EBITDA_MARGIN_TTM = Financial_data['ttm']['ebitda_margin']*100
@@ -7766,6 +7730,7 @@ if selected == "Stock Analysis Tool":
                     revenue_ttm = Financial_data['ttm']['revenue']/1000000000
                     shares_eop_ttm = Financial_data['ttm']['shares_eop']/1000000000
                     current_Operating_cash_Flow = Financial_data['ttm']['cf_cfo']
+                    Capex_ttm = Financial_data['ttm']['cfi_ppe_purchases']
                     Revenue_ttm = Financial_data['ttm']['revenue']
                     
                     # Store time series data
@@ -7787,7 +7752,6 @@ if selected == "Stock Analysis Tool":
                     st.session_state[f'{ticker}_fcf_per_share'] = fcf_per_share
                     st.session_state[f'{ticker}_Dividend_ttm'] = Dividend_ttm
                     st.session_state[f'{ticker}_Dividend_per_share_ttm'] = Dividend_per_share_ttm
-                    st.session_state[f'{ticker}_fcf_ttm'] = fcf_ttm
                     st.session_state[f'{ticker}_ROE_TTM'] = ROE_TTM
                     st.session_state[f'{ticker}_ROIC_TTM'] = ROIC_TTM
                     st.session_state[f'{ticker}_EBITDA_MARGIN_TTM'] = EBITDA_MARGIN_TTM
@@ -7796,6 +7760,7 @@ if selected == "Stock Analysis Tool":
                     st.session_state[f'{ticker}_revenue_ttm'] = revenue_ttm
                     st.session_state[f'{ticker}_shares_eop_ttm'] = shares_eop_ttm
                     st.session_state[f'{ticker}_current_Operating_cash_Flow'] = current_Operating_cash_Flow
+                    st.session_state[f'{ticker}_Capex_ttm'] = Capex_ttm
                     st.session_state[f'{ticker}_Revenue_ttm'] = Revenue_ttm
                     st.session_state[f'{ticker}_date_quarter'] = date_quarter
                     st.session_state[f'{ticker}_date_annual'] = date_annual
@@ -7809,7 +7774,6 @@ if selected == "Stock Analysis Tool":
                          fcf_per_share,
                          Dividend_ttm,
                          Dividend_per_share_ttm,
-                         fcf_ttm,
                          ROE_TTM,
                          ROIC_TTM,
                          EBITDA_MARGIN_TTM,
@@ -7818,6 +7782,7 @@ if selected == "Stock Analysis Tool":
                          revenue_ttm,
                          shares_eop_ttm,
                          current_Operating_cash_Flow,
+                         Capex_ttm,
                          Revenue_ttm,
                          date_quarter,
                          date_annual,
@@ -7835,7 +7800,7 @@ if selected == "Stock Analysis Tool":
                fcf_per_share,
                Dividend_ttm,
                Dividend_per_share_ttm,
-               fcf_ttm,
+               
                ROE_TTM,
                ROIC_TTM,
                EBITDA_MARGIN_TTM,
@@ -7844,6 +7809,7 @@ if selected == "Stock Analysis Tool":
                revenue_ttm,
                shares_eop_ttm,
                current_Operating_cash_Flow,
+               Capex_ttm,
                Revenue_ttm,
                date_quarter,
                date_annual,
@@ -7854,6 +7820,9 @@ if selected == "Stock Analysis Tool":
                quarterly_data,
                Financial_data
                ) = store_financial_data(data, ticker)
+
+               fcf_ttm =current_Operating_cash_Flow+Capex_ttm
+               fcf_ttm = fcf_ttm/1000000000
 
 
                #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
@@ -7900,9 +7869,14 @@ if selected == "Stock Analysis Tool":
                     'VIT.B:SE':'VIT-B.ST',
                }
                ticker_mapping_DKK = {
-                    'NOVO.B:DK':'NOVOB.DK',   # Added example DKK ticker
+                    'NOVO.B:DK':'NOVO-B.CO',   # Added example DKK ticker
                     'CARL.B:DK':'CARL-B.CO',
                }
+
+               ticker_mapping_PLN = {
+                    'BDX:PL':'BDX.WA',
+               }
+
 
                ticker_mapping_Eur = {
                     'ADS:DE': 'ADS.DE',
@@ -7915,21 +7889,22 @@ if selected == "Stock Analysis Tool":
                     'FER:NL':'8ZQ.F',
                     'ENX:FR':'ENX.PA',
                     'LOTB:BE':'LOTB.BR',
+                    'WKL:NL':'WKL.AS',
                   
                }
 
                ticker_mapping_2 = {
                     'ASML:NL':'ASML',
-                    'NOVO.B:DK':'NVO',
+                   # 'NOVO.B:DK':'NVO',
                     'MC:FR':'LVMHF',
                     'CVC:NL':'CVCCF',
-                    'WKL:NL':'WOLTF',
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
                ticker = ticker_mapping_1.get(ticker, ticker)
                ticker = ticker_mapping_SEK.get(ticker, ticker)
-               ticker = ticker_mapping_DKK.get(ticker, ticker)  # Added DKK mapping
+               ticker = ticker_mapping_DKK.get(ticker, ticker)
+               ticker = ticker_mapping_PLN.get(ticker, ticker) 
                ticker = ticker_mapping_Eur.get(ticker, ticker)
                ticker = ticker_mapping_2.get(ticker, ticker)
                
@@ -8073,7 +8048,21 @@ if selected == "Stock Analysis Tool":
                               st.markdown(
                                    f"""
                                    <div style="text-align: center; width: 100%;">
-                                        Aktueller Preis: <span style='{green_style}'>{current_price:.2f} DKK</span> {percentage_text}
+                                        Aktueller Preis: <span style='{green_style}'>{current_price:.2f} DKK</span> 
+                                        Aktueller Preis: <span style='{green_style}'>{(current_price*dkk_to_eur_rate):.2f} €</span> 
+                                        {percentage_text}
+                                   </div>
+                                   """,
+                                   unsafe_allow_html=True,
+                              )
+
+                         elif ticker in ticker_mapping_PLN.values():  # Added DKK display
+                              st.markdown(
+                                   f"""
+                                   <div style="text-align: center; width: 100%;">
+                                        Aktueller Preis: <span style='{green_style}'>{current_price:.2f} PLN</span> 
+                                        Aktueller Preis: <span style='{green_style}'>{(current_price*pln_to_eur_rate):.2f} €</span> 
+                                        {percentage_text}
                                    </div>
                                    """,
                                    unsafe_allow_html=True,
@@ -8104,6 +8093,8 @@ if selected == "Stock Analysis Tool":
                     st.session_state.sek_to_eur_rate = get_exchange_rate("SEK", "EUR")
                if 'dkk_to_eur_rate' not in st.session_state:
                     st.session_state.dkk_to_eur_rate = get_exchange_rate("DKK", "EUR")
+               if 'pln_to_eur_rate' not in st.session_state:
+                    st.session_state.pln_to_eur_rate = get_exchange_rate("PLN", "EUR")
 
                current_price = get_current_price(ticker)
                
@@ -8123,6 +8114,10 @@ if selected == "Stock Analysis Tool":
                elif ticker in ticker_mapping_DKK.values():  # If ticker is in mapped values (EUR-denominated)
                     converted_amount = "{:.2f}".format(current_price * st.session_state.dkk_to_eur_rate)
                     st.session_state.current_rate = st.session_state.dkk_to_eur_rate
+
+               elif ticker in ticker_mapping_PLN.values():  # If ticker is in mapped values (EUR-denominated)
+                    converted_amount = "{:.2f}".format(current_price * st.session_state.pln_to_eur_rate)
+                    st.session_state.current_rate = st.session_state.pln_to_eur_rate
                else:  
                     converted_amount = "{:.2f}".format(current_price * st.session_state.usd_to_eur_rate)
                     st.session_state.current_rate = st.session_state.usd_to_eur_rate
@@ -8621,40 +8616,27 @@ if selected == "Stock Analysis Tool":
                          def calculate_fcf_averages(annual_data,quarterly_data, ticker):
                               if f'{ticker}_fcf_last' in st.session_state:
                                    return (st.session_state[f'{ticker}_fcf_last'],
-                                        #st.session_state[f'{ticker}_fcf_five_years'],
-                                        st.session_state[f'{ticker}_fcf_ten_years'],
-                                        st.session_state[f'{ticker}_FCF_annual_five_unpacked'],
-                                        st.session_state[f'{ticker}_fcf_ten_years_unpacked'],
-
                                         st.session_state[f'{ticker}_FCF_quarter_10_unpacked'],
-
                                         st.session_state[f'{ticker}_debt_to_asset_annual_10_unpacked'],
                                         st.session_state[f'{ticker}_debt_to_asset_quarter_10_unpacked'],
-
                                         st.session_state[f'{ticker}_fcf_growth_annual_3_unpacked'],
                                         st.session_state[f'{ticker}_fcf_growth_annual_5_unpacked'],
-                                        st.session_state[f'{ticker}_fcf_growth_annual_10_unpacked']
+                                        st.session_state[f'{ticker}_fcf_growth_annual_10_unpacked'],
+                                        st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_10_unpacked'],
+                                        st.session_state[f'{ticker}_Capex_annual_10']
+
+
                                         
                                         )
 
                               FCF_annual1_unpacked =annual_data['fcf'][-1:]
-
-
-
-                              FCF_annual_ten =annual_data['fcf'][-10:]
-                              rounded_fcf_Annual_ten = float((sum(FCF_annual_ten) / len(FCF_annual_ten)))
-
-                              FCF_annual_five_unpacked =annual_data['fcf'][-5:]
-
-                              FCF_annual_ten_unpacked =annual_data['fcf'][-10:]
-
                               FCF_quarter_10_unpacked =quarterly_data['fcf'][-10:]
-
-
                               fcf_growth_annual_3_unpacked =annual_data['fcf_growth'][-3:]
-
                               fcf_growth_annual_5_unpacked =annual_data['fcf_growth'][-5:]
                               fcf_growth_annual_10_unpacked =annual_data['fcf_growth'][-10:]
+                              Net_Operating_CashFlow_annual_10_unpacked = annual_data['cf_cfo'][-10:]
+                              Capex_annual_10_unpacked = annual_data['cfi_ppe_purchases'][-10:]
+
 
 
                               try:
@@ -8669,9 +8651,6 @@ if selected == "Stock Analysis Tool":
 
 
                               st.session_state[f'{ticker}_fcf_last'] = FCF_annual1_unpacked
-                              st.session_state[f'{ticker}_fcf_ten_years'] = rounded_fcf_Annual_ten
-                              st.session_state[f'{ticker}_FCF_annual_five_unpacked'] = FCF_annual_five_unpacked
-                              st.session_state[f'{ticker}_fcf_ten_years_unpacked'] = FCF_annual_ten_unpacked
 
                               st.session_state[f'{ticker}_FCF_quarter_10_unpacked'] = FCF_quarter_10_unpacked
 
@@ -8681,18 +8660,25 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_fcf_growth_annual_3_unpacked'] = fcf_growth_annual_3_unpacked
                               st.session_state[f'{ticker}_fcf_growth_annual_5_unpacked'] = fcf_growth_annual_5_unpacked
                               st.session_state[f'{ticker}_fcf_growth_annual_10_unpacked'] = fcf_growth_annual_10_unpacked
+                              st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_10_unpacked']= Net_Operating_CashFlow_annual_10_unpacked
+                              st.session_state[f'{ticker}_Capex_annual_10'] = Capex_annual_10_unpacked
 
-                              return (FCF_annual1_unpacked, rounded_fcf_Annual_ten,FCF_annual_five_unpacked,
-                                      FCF_annual_ten_unpacked,FCF_quarter_10_unpacked,
+
+
+                              return (FCF_annual1_unpacked, FCF_quarter_10_unpacked,
                                         Debt_to_assets_annual_10_unpacked,Debt_to_assets_quartar_10_unpacked,
-                                        fcf_growth_annual_3_unpacked,fcf_growth_annual_5_unpacked,fcf_growth_annual_10_unpacked)
+                                        fcf_growth_annual_3_unpacked,fcf_growth_annual_5_unpacked,
+                                        fcf_growth_annual_10_unpacked,Net_Operating_CashFlow_annual_10_unpacked,Capex_annual_10_unpacked)
 
                               # Assuming `annual_data` and `ticker` are defined elsewhere
-                         (FCF_annual1_unpacked, rounded_fcf_Annual_ten,FCF_annual_five_unpacked,FCF_annual_ten_unpacked,
+                         (FCF_annual1_unpacked,
                           FCF_quarter_10_unpacked,Debt_to_assets_annual_10_unpacked,Debt_to_assets_quartar_10_unpacked,
                           fcf_growth_annual_3_unpacked,fcf_growth_annual_5_unpacked,
-                          fcf_growth_annual_10_unpacked) = calculate_fcf_averages(annual_data,quarterly_data, ticker)
+                          fcf_growth_annual_10_unpacked,Net_Operating_CashFlow_annual_10_unpacked,Capex_annual_10_unpacked) = calculate_fcf_averages(annual_data,quarterly_data, ticker)
           ###################################################################################################
+                         FCF_annual_ten_unpacked = np.array(Net_Operating_CashFlow_annual_10_unpacked) + np.array(Capex_annual_10_unpacked)
+
+                         FCF_annual_five_unpacked = FCF_annual_ten_unpacked[-5:]
                          rounded_fcf_Annual_five = (sum(FCF_annual_five_unpacked) / len(FCF_annual_five_unpacked))
                          Average_fcf_growth_3years =  "{:.2f}%".format(((sum(fcf_growth_annual_3_unpacked) / len(fcf_growth_annual_3_unpacked)))*100)
 
@@ -8758,7 +8744,7 @@ if selected == "Stock Analysis Tool":
 
                                              st.session_state[f'{ticker}_EndPrice_annual_21_unpacked'],
                                              st.session_state[f'{ticker}_market_cap_annual_10_unpacked'],
-                                             st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_10_unpacked'],
+                                             
                                              st.session_state[f'{ticker}_revenue_5years'],
                                              st.session_state[f'{ticker}_len_5_annual'],
 
@@ -8800,7 +8786,7 @@ if selected == "Stock Analysis Tool":
 
                               EndPrice_annual_21_unpacked = annual_data['period_end_price'][-21:]
                               market_cap_annual_10_unpacked = annual_data['market_cap'][-10:]
-                              Net_Operating_CashFlow_annual_10_unpacked = annual_data['cf_cfo'][-10:]
+                              
 
                               Revenue_annual_5_unpacked = annual_data['revenue'][-5:]
 
@@ -8835,7 +8821,6 @@ if selected == "Stock Analysis Tool":
 
                               st.session_state[f'{ticker}_EndPrice_annual_21_unpacked']= EndPrice_annual_21_unpacked
                               st.session_state[f'{ticker}_market_cap_annual_10_unpacked']=market_cap_annual_10_unpacked
-                              st.session_state[f'{ticker}_Net_Operating_CashFlow_annual_10_unpacked']= Net_Operating_CashFlow_annual_10_unpacked
                               st.session_state[f'{ticker}_revenue_5years'] = Revenue_annual_5_unpacked
                               st.session_state[f'{ticker}_len_5_annual'] =len_5_annual
 
@@ -8861,7 +8846,6 @@ if selected == "Stock Analysis Tool":
                                         TBVPS_quater1_unpacked,
                                         BVPS_quater1_unpacked,
                                         EndPrice_annual_21_unpacked,market_cap_annual_10_unpacked,
-                                        Net_Operating_CashFlow_annual_10_unpacked,
                                         Revenue_annual_5_unpacked,len_5_annual,
                                         Revenue_annual_10_unpacked,len_10_annual,
                                         Revenue_quarter_10_unpacked,len_10_quarter,                                             
@@ -8878,7 +8862,6 @@ if selected == "Stock Analysis Tool":
                               TBVPS_quater1_unpacked,
                               BVPS_quater1_unpacked,
                               EndPrice_annual_21_unpacked,market_cap_annual_10_unpacked,
-                              Net_Operating_CashFlow_annual_10_unpacked,
                               Revenue_annual_5_unpacked,len_5_annual,
                               Revenue_annual_10_unpacked,len_10_annual,
                               Revenue_quarter_10_unpacked,len_10_quarter,
@@ -9040,7 +9023,6 @@ if selected == "Stock Analysis Tool":
                               Dividend_per_share_cagr_10_quarter= round((Dividend_per_share_cagr_10_quarter*100),2)
 
                               Divdend_per_share_ttm =Financial_data['ttm']['dividends']
-                              print("Divdend_per_share_ttm",Divdend_per_share_ttm)
 
                               try:
                                    debt_assets_ttm =Financial_data['ttm']['debt_to_assets']                                  
@@ -9740,7 +9722,6 @@ if selected == "Stock Analysis Tool":
                               if f'{ticker}_Changes_in_working_capital_annual_10' in st.session_state:
                                    # If the data already exists in session state, return the unpacked values
                                    return (st.session_state[f'{ticker}_Changes_in_working_capital_annual_10'],
-                                             st.session_state[f'{ticker}_Capex_annual_10'],
                                              st.session_state[f'{ticker}_Purchase_of_Investment_annual_10'],
                                              st.session_state[f'{ticker}_Sale_maturity_of_Investments_annual_10'],
                                              st.session_state[f'{ticker}_Net_investing_CashFlow_annual_10'],
@@ -9774,7 +9755,6 @@ if selected == "Stock Analysis Tool":
                               # Unpacking annual data (last 10 years)
      
                               Changes_in_working_capital_annual_10_unpacked = annual_data['cfo_change_in_working_capital'][-10:]
-                              Capex_annual_10_unpacked = annual_data['cfi_ppe_purchases'][-10:]
                               Purchase_of_Investment_annual_10_unpacked = annual_data['cfi_investment_purchases'][-10:]
                               Sale_maturity_of_Investments_annual_10_unpacked = annual_data['cfi_investment_sales'][-10:]
                               Net_investing_CashFlow_annual_10_unpacked = annual_data['cf_cfi'][-10:]
@@ -9827,7 +9807,6 @@ if selected == "Stock Analysis Tool":
 
                               # Store annual data in session state
                               st.session_state[f'{ticker}_Changes_in_working_capital_annual_10'] = Changes_in_working_capital_annual_10_unpacked
-                              st.session_state[f'{ticker}_Capex_annual_10'] = Capex_annual_10_unpacked
                               st.session_state[f'{ticker}_Purchase_of_Investment_annual_10'] = Purchase_of_Investment_annual_10_unpacked
                               st.session_state[f'{ticker}_Sale_maturity_of_Investments_annual_10'] = Sale_maturity_of_Investments_annual_10_unpacked
                               st.session_state[f'{ticker}_Net_investing_CashFlow_annual_10'] = Net_investing_CashFlow_annual_10_unpacked
@@ -9860,7 +9839,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_Net_Financing_cashFlow_quarter_10'] = Net_Financing_cashFlow_quarter_10_unpacked
                               st.session_state[f'{ticker}_Net_change_in_cash_quarter_10'] = Net_change_in_cash_quarter_10_unpacked
 
-                              return (Changes_in_working_capital_annual_10_unpacked,Capex_annual_10_unpacked,
+                              return (Changes_in_working_capital_annual_10_unpacked,
                                         Purchase_of_Investment_annual_10_unpacked, Sale_maturity_of_Investments_annual_10_unpacked,
                                         Net_investing_CashFlow_annual_10_unpacked, Insurance_Reduction_of_DebtNet_annual_10_unpacked,
                                         Debt_issued_annual_10_unpacked, Debt_repaid_annual_10_unpacked,
@@ -9877,7 +9856,7 @@ if selected == "Stock Analysis Tool":
                                         Repurchase_of_common_Preferred_stock_quarter_10_unpacked, Net_Financing_cashFlow_quarter_10_unpacked,
                                         Net_change_in_cash_quarter_10_unpacked)
                          
-                         (Changes_in_working_capital_annual_10_unpacked,Capex_annual_10_unpacked,
+                         (Changes_in_working_capital_annual_10_unpacked,
                                         Purchase_of_Investment_annual_10_unpacked, Sale_maturity_of_Investments_annual_10_unpacked,
                                         Net_investing_CashFlow_annual_10_unpacked, Insurance_Reduction_of_DebtNet_annual_10_unpacked,
                                         Debt_issued_annual_10_unpacked, Debt_repaid_annual_10_unpacked,
@@ -10632,8 +10611,7 @@ if selected == "Stock Analysis Tool":
 
 
                          def calculate_financial_metrics(ticker, Marketcap, Total_Debt_from_all_calc, Total_cash_last_years, 
-                                                            Ebita_ttm, revenue_ttm, Dividend_ttm, netincome_ttm, 
-                                                            fcf_ttm, current_Operating_cash_Flow):
+                                                            Ebita_ttm, revenue_ttm, Dividend_ttm, netincome_ttm):
                               # Check if financial metrics are already in session state
                               if f'{ticker}_Enterprise_value' in st.session_state:
                                    return (
@@ -10644,9 +10622,7 @@ if selected == "Stock Analysis Tool":
                                         st.session_state[f'{ticker}_revenue_ttm'],
                                         st.session_state[f'{ticker}_Dividend_ttm'],
                                         st.session_state[f'{ticker}_netincome_ttm'],
-                                        st.session_state[f'{ticker}_fcf_ttm'],
-                                        st.session_state[f'{ticker}_current_Operating_cash_Flow_Value'],
-                                        st.session_state[f'{ticker}_P_OCF_ttm']
+
                                    )
 
                               try:
@@ -10681,17 +10657,10 @@ if selected == "Stock Analysis Tool":
                               netincome_ttm *= 1000000000
                               netincome_ttm = "{:.2f}B".format(netincome_ttm / 1000000000) if abs(netincome_ttm) >= 1000000000 else "{:,.1f}M".format(netincome_ttm / 1000000)
 
-                              fcf_ttm *= 1000000000
-                              fcf_ttm = "{:.2f}B".format(fcf_ttm / 1000000000) if abs(fcf_ttm) >= 1000000000 else "{:,.1f}M".format(fcf_ttm / 1000000)
-
-                              current_Operating_cash_Flow_Value = "{:.2f}B".format(current_Operating_cash_Flow / 1000000000) if abs(current_Operating_cash_Flow) >= 1000000000 else "{:,.1f}M".format(current_Operating_cash_Flow / 1000000)
                               
 
 
-                              if current_Operating_cash_Flow != 0:
-                                   P_OCF_ttm = "{:.2f}".format(Marketcap / (current_Operating_cash_Flow / 1000000000))
-                              else:
-                                   P_OCF_ttm = "-"
+
 
                               # Store calculated values in session_state
                               st.session_state[f'{ticker}_Enterprise_value'] = Enterprise_value
@@ -10701,9 +10670,6 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_revenue_ttm'] = revenue_ttm
                               st.session_state[f'{ticker}_Dividend_ttm'] = Dividend_ttm
                               st.session_state[f'{ticker}_netincome_ttm'] = netincome_ttm
-                              st.session_state[f'{ticker}_fcf_ttm'] = fcf_ttm
-                              st.session_state[f'{ticker}_current_Operating_cash_Flow_Value'] = current_Operating_cash_Flow_Value
-                              st.session_state[f'{ticker}_P_OCF_ttm'] = P_OCF_ttm
 
                               return (
                                    Enterprise_value,
@@ -10712,10 +10678,7 @@ if selected == "Stock Analysis Tool":
                                    Ebita_ttm_Billion,
                                    revenue_ttm,
                                    Dividend_ttm,
-                                   netincome_ttm,
-                                   fcf_ttm,
-                                   current_Operating_cash_Flow_Value,
-                                   P_OCF_ttm
+                                   netincome_ttm
                               )
 
                          (Enterprise_value,
@@ -10724,15 +10687,18 @@ if selected == "Stock Analysis Tool":
                                    Ebita_ttm_Billion,
                                    revenue_ttm,
                                    Dividend_ttm,
-                                   netincome_ttm,
-                                   fcf_ttm,
-                                   current_Operating_cash_Flow_Value,
-                                   P_OCF_ttm)=calculate_financial_metrics(ticker, Marketcap, Total_Debt_from_all_calc, Total_cash_last_years, 
-                                                            Ebita_ttm,revenue_ttm, Dividend_ttm, netincome_ttm, 
-                                                            fcf_ttm, current_Operating_cash_Flow)
+                                   netincome_ttm
+                                   )=calculate_financial_metrics(ticker, Marketcap, Total_Debt_from_all_calc, Total_cash_last_years, 
+                                                            Ebita_ttm,revenue_ttm, Dividend_ttm, netincome_ttm)
 
           ############################################################################
-                       
+                         fcf_ttm *= 1000000000
+                         fcf_ttm = "{:.2f}B".format(fcf_ttm / 1000000000) if abs(fcf_ttm) >= 1000000000 else "{:,.1f}M".format(fcf_ttm / 1000000)
+                         current_Operating_cash_Flow_Value = "{:.2f}B".format(current_Operating_cash_Flow / 1000000000) if abs(current_Operating_cash_Flow) >= 1000000000 else "{:,.1f}M".format(current_Operating_cash_Flow / 1000000)
+                         if current_Operating_cash_Flow != 0:
+                              P_OCF_ttm = "{:.2f}".format(Marketcap / (current_Operating_cash_Flow / 1000000000))
+                         else:
+                              P_OCF_ttm = "-"
 
 
           #################################################################################
@@ -12181,21 +12147,15 @@ if selected == "Stock Analysis Tool":
                     with Pillar_Analysis: 
 
 
-                         if fcf_ttm == 0: 
+                         Dividend_ttm = Financial_data['ttm']['cff_dividend_paid']/1000000000  
+                         fcf_ttm_Pillar_Analysis = (current_Operating_cash_Flow+Capex_ttm ) /1000000000  
+                              
+                         try:
+                              one_FCF_annual_payout = round((abs(Dividend_ttm)/fcf_ttm_Pillar_Analysis)*100,2)
 
-
-                                   fcf_ttm = 0
-
-                         else:
-                                   Dividend_ttm = Financial_data['ttm']['cff_dividend_paid']/1000000000  
-                                   fcf_ttm = Financial_data['ttm']['fcf']/1000000000  
-                                
-                                   try:
-                                        one_FCF_annual_payout = round((abs(Dividend_ttm)/fcf_ttm)*100,2)
-
-                                   except ZeroDivisionError:
-                                        
-                                        one_FCF_annual_payout=0.00
+                         except ZeroDivisionError:
+                              
+                              one_FCF_annual_payout=0.00
 
                               
                               
@@ -12975,7 +12935,7 @@ if selected == "Stock Analysis Tool":
                               """)
                               with st.form("reverse_dcf_form"):
                                    st.markdown(
-                                   f"""<span style='color: green;'>{name}:</span> FCF (TTM): <span style='color: green;'>**{fcf_ttm:.2f} B**</span> 
+                                   f"""<span style='color: green;'>{name}:</span> FCF (TTM): <span style='color: green;'>**{fcf_ttm}**</span> 
                                    , Market Cap (intraday): <span style='color: green;'>**{Marketcap_in_Billion}**</span>
                                    , FCF 10Y CAGR: <span style='color: green;'>**{FCF_Cagr_10}%**</span>
                                    , FCF 5Y CAGR: <span style='color: green;'>**{FCF_5_CAGR}%**</span>
@@ -13027,16 +12987,13 @@ if selected == "Stock Analysis Tool":
                                              unsafe_allow_html=True
                                              )
 
-                                       # #st.write(f"Implied Growth Rate: {implied_growth*100:.3f}%")
-                                        #st.markdown(f"Implied FCF Growth Rate: <span style='color: green;'>**{implied_growth*100:.3f}%**</span>", unsafe_allow_html=True)
-                                        #st.markdown(f"Current Price: <span style='color: green;'>**$ {current_price:.2f}**</span>", unsafe_allow_html=True)
                                         col1, col2 = st.columns(2)
                                         with col1:
                                              
                                              st.write("### Interpretation")
                                              st.write(f"""
                                              - The implied growth rate of **{implied_growth*100:.3f}%** means the company's Free Cash Flow 
-                                                  needs to grow at this rate annually for the next **{years}** years to justify the current share price.
+                                                  needs to grow/decrease at this rate annually for the next **{years}** years to justify the current share price.
                                              - After year {years}, the growth is assumed to slow to the terminal growth rate of {t*100:.1f}%.
                                              - If this growth rate seems unrealistically high compared to historical performance or industry standards, 
                                                   the stock might be overvalued.
