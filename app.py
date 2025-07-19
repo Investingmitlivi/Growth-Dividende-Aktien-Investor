@@ -8203,7 +8203,8 @@ if selected == "Stock Analysis Tool":
 
 
           ############################################################################################################
-               
+
+
                @st.cache_data(show_spinner=False, ttl=3600)
                def calculate_stock_performance(ticker):
                     period_mapping = {
@@ -8228,11 +8229,20 @@ if selected == "Stock Analysis Tool":
                                    start_price = hist['Close'].iloc[0]
                                    end_price = hist['Close'].iloc[-1]
                                    performance = ((end_price - start_price) / start_price) * 100
-                                   performances[period_label] = f"{performance:.2f}%"
+                                   performances[period_label] = {
+                                        "value": performance,
+                                        "formatted": f"{performance:.2f}%"
+                                   }
                               else:
-                                   performances[period_label] = "No data"
+                                   performances[period_label] = {
+                                        "value": None,
+                                        "formatted": "No data"
+                                   }
                          except Exception as e:
-                              performances[period_label] = f"Error: {str(e)}"
+                              performances[period_label] = {
+                                   "value": None,
+                                   "formatted": f"Error: {str(e)}"
+                              }
                     
                     return performances, period_mapping
 
@@ -8244,18 +8254,22 @@ if selected == "Stock Analysis Tool":
                          st.error(f"Error fetching data: {str(e)}")
                          return None
 
-               def create_figure(detailed_data):
+               def create_figure(detailed_data, is_negative):
                     if detailed_data is None or detailed_data.empty:
                          return None
                          
                     fig = go.Figure()
+
+                    # Set colors based on performance
+                    fill_color = 'darkred' if is_negative else 'green'
+                    line_color = 'rgba(139, 0, 0, 0.7)' if is_negative else 'rgba(0, 139, 0, 0.7)'
 
                     # Add the area fill
                     fig.add_trace(go.Scatter(
                          x=detailed_data.index,
                          y=detailed_data['Close'],
                          fill='tozeroy',
-                         fillcolor='green',
+                         fillcolor=fill_color,
                          line_color='rgba(0, 0, 0, 0)',
                          showlegend=False
                     ))
@@ -8264,7 +8278,7 @@ if selected == "Stock Analysis Tool":
                     fig.add_trace(go.Scatter(
                          x=detailed_data.index,
                          y=detailed_data['Close'],
-                         line=dict(color='rgba(34, 139, 34, 0.7)', width=4),
+                         line=dict(color=line_color, width=4),
                          showlegend=False
                     ))
 
@@ -8317,7 +8331,7 @@ if selected == "Stock Analysis Tool":
                          reverse_mapping = {v: k for k, v in period_mapping.items()}
                          
                          # Create options for the menu
-                         options = [f"{label} ({performances.get(label, 'N/A')})" 
+                         options = [f"{label} ({performances.get(label, {}).get('formatted', 'N/A')})" 
                                    for label in period_mapping.values()]
                          
                          # Set default period if not set
@@ -8329,9 +8343,7 @@ if selected == "Stock Analysis Tool":
                          try:
                               default_index = list(period_mapping.values()).index(st.session_state.selected_period)
                          except ValueError:
-
                               default_index = 6
-
                          except Exception:
                               default_index = 0
 
@@ -8353,10 +8365,16 @@ if selected == "Stock Analysis Tool":
                          # Get the corresponding period code
                          period_code = reverse_mapping.get(selected_period, "5y")
                          
+                         # Check if performance is negative
+                         is_negative = False
+                         performance_data = performances.get(selected_period, {})
+                         if performance_data.get("value") is not None:
+                              is_negative = performance_data["value"] < 0
+                         
                          # Get data and display chart
                          detailed_data = get_detailed_data(ticker, period_code)
                          if detailed_data is not None and not detailed_data.empty:
-                              fig = create_figure(detailed_data)
+                              fig = create_figure(detailed_data, is_negative)
                               if fig:
                                    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
                          else:
@@ -8365,8 +8383,6 @@ if selected == "Stock Analysis Tool":
                # Example usage
                if __name__ == "__main__":
                     display_stock_chart(ticker)
-
-
           ###############################################################################################
 
 
@@ -10617,7 +10633,6 @@ if selected == "Stock Analysis Tool":
                               if f'{ticker}_Enterprise_value' in st.session_state:
                                    return (
                                         st.session_state[f'{ticker}_Enterprise_value_in_Billion'],
-                                        st.session_state[f'{ticker}_Ebita_ttm_Billion'],
                                         st.session_state[f'{ticker}_revenue_ttm'],
                                         st.session_state[f'{ticker}_Dividend_ttm'],
                                         st.session_state[f'{ticker}_netincome_ttm'],
