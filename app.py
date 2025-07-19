@@ -15617,7 +15617,7 @@ if selected == "Stock Analysis Tool":
 
 
 
-
+                         @st.cache_data(show_spinner=False, ttl=86400)  # 24 hour cache
                          def main():
                               
                               # Data from the PowerPoint slide
