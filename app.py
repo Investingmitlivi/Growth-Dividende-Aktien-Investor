@@ -13,6 +13,7 @@ import os
 import secrets
 import math
 import re
+import matplotlib.pyplot as plt
 
 
 
@@ -15614,8 +15615,57 @@ if selected == "Stock Analysis Tool":
 
                          st.write(short_description)
 
-                    
-                                        
+
+
+
+                         def main():
+                              
+                              # Data from the PowerPoint slide
+                              categories = {
+                                   "Shareholder Distribution": {
+                                        "Reinvest In Business": 9,
+                                        "Acquire A Company": 12,
+                                        "Share Buybacks": 8,
+                                        "Dividends": 15
+                                   },
+                                   "Debt Repayment": 50
+                              }
+
+                              st.title("Capital Allocation Strategy")
+
+                              # Create columns for better layout
+                              col1, col2 = st.columns([1, 2])
+                              
+                              with col1:
+                                   # Display the data in a table
+                                   st.write("**Allocation Percentages:**")
+                                   for category, percentage in categories["Shareholder Distribution"].items():
+                                        st.write(f"- {category}: {percentage}%")
+                                   st.write(f"- Debt Repayment: {categories['Debt Repayment']}%")
+
+                              with col2:
+                                   # Prepare data for pie chart
+                                   labels = list(categories["Shareholder Distribution"].keys()) + ["Debt Repayment"]
+                                   sizes = list(categories["Shareholder Distribution"].values()) + [categories["Debt Repayment"]]
+                                   colors = ['#ff9999','#66b3ff','#99ff99','#ffcc99','#c2c2f0']
+                                   
+                                   # Create smaller pie chart
+                                   fig, ax = plt.subplots(figsize=(3, 3))  # Reduced figure size
+                                   ax.pie(sizes, 
+                                             labels=labels, 
+                                             autopct='%1.1f%%', 
+                                             colors=colors,
+                                             startangle=90, 
+                                             wedgeprops=dict(width=0.3),
+                                             textprops={'fontsize': 8})  # Smaller text
+                                   
+                                   ax.axis('equal')  # Equal aspect ratio
+                                   
+                                   # Display the chart
+                                   st.pyplot(fig, use_container_width=False)
+
+                         if __name__ == "__main__":
+                              main()         
 
                with st.container():
                     with news:
