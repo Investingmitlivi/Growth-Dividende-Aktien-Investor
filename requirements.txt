@@ -43,6 +43,7 @@ libcst==1.1.0
 lxml==5.3.0
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
+matplotlib==3.10.3
 mdurl==0.1.2
 msgpack==1.1.0
 multitasking==0.0.11
