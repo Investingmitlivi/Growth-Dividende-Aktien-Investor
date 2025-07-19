@@ -10612,13 +10612,11 @@ if selected == "Stock Analysis Tool":
 
 
                          def calculate_financial_metrics(ticker, Marketcap, Total_Debt_from_all_calc, Total_cash_last_years, 
-                                                            Ebita_ttm, revenue_ttm, Dividend_ttm, netincome_ttm):
+                                                            revenue_ttm, Dividend_ttm, netincome_ttm):
                               # Check if financial metrics are already in session state
                               if f'{ticker}_Enterprise_value' in st.session_state:
                                    return (
-                                        st.session_state[f'{ticker}_Enterprise_value'],
                                         st.session_state[f'{ticker}_Enterprise_value_in_Billion'],
-                                        st.session_state[f'{ticker}_Debt_to_EBITDA'],
                                         st.session_state[f'{ticker}_Ebita_ttm_Billion'],
                                         st.session_state[f'{ticker}_revenue_ttm'],
                                         st.session_state[f'{ticker}_Dividend_ttm'],
@@ -10631,20 +10629,11 @@ if selected == "Stock Analysis Tool":
                                    
                                    Enterprise_value = Enterprise_value
                                    Enterprise_value_in_Billion = Enterprise_value_formatted
-                                   Debt_to_EBITDA = "{:.2f}".format((Total_Debt_from_all_calc / 1000000000) / Ebita_ttm)
-                                   Ebita_ttm_Billion = (
-                                        f"{Ebita_ttm / 1000:.2f}T" if abs(Ebita_ttm) >= 1000 else
-                                        f"{Ebita_ttm:,.2f}B" if abs(Ebita_ttm) >= 1 else
-                                        f"{Ebita_ttm * 1000:,.2f}M"  # Now with decimals (e.g., "123.45M")
-                                        )
-
                                    
 
                               except Exception as e:
                                    Enterprise_value = ((Marketcap) + (Total_Debt_from_all_calc/1000000000) - Total_cash_last_years)
                                    Enterprise_value_in_Billion = "{:.2f}T".format(Enterprise_value / 1000) if abs(Enterprise_value) >= 1000 else "{:,.2f}B".format(Enterprise_value)
-                                   Debt_to_EBITDA = "{:.2f}".format(0.00)
-                                   Ebita_ttm_Billion = "{:.2f}".format(0.00)
 
                               revenue_ttm *= 1000000000
                               if revenue_ttm != 0.00 or Dividend_ttm > 0:
@@ -10666,8 +10655,6 @@ if selected == "Stock Analysis Tool":
                               # Store calculated values in session_state
                               st.session_state[f'{ticker}_Enterprise_value'] = Enterprise_value
                               st.session_state[f'{ticker}_Enterprise_value_in_Billion'] = Enterprise_value_in_Billion
-                              st.session_state[f'{ticker}_Debt_to_EBITDA'] = Debt_to_EBITDA
-                              st.session_state[f'{ticker}_Ebita_ttm_Billion'] = Ebita_ttm_Billion
                               st.session_state[f'{ticker}_revenue_ttm'] = revenue_ttm
                               st.session_state[f'{ticker}_Dividend_ttm'] = Dividend_ttm
                               st.session_state[f'{ticker}_netincome_ttm'] = netincome_ttm
@@ -10675,8 +10662,6 @@ if selected == "Stock Analysis Tool":
                               return (
                                    Enterprise_value,
                                    Enterprise_value_in_Billion,
-                                   Debt_to_EBITDA,
-                                   Ebita_ttm_Billion,
                                    revenue_ttm,
                                    Dividend_ttm,
                                    netincome_ttm
@@ -10684,13 +10669,20 @@ if selected == "Stock Analysis Tool":
 
                          (Enterprise_value,
                                    Enterprise_value_in_Billion,
-                                   Debt_to_EBITDA,
-                                   Ebita_ttm_Billion,
                                    revenue_ttm,
                                    Dividend_ttm,
                                    netincome_ttm
                                    )=calculate_financial_metrics(ticker, Marketcap, Total_Debt_from_all_calc, Total_cash_last_years, 
-                                                            Ebita_ttm,revenue_ttm, Dividend_ttm, netincome_ttm)
+                                                            revenue_ttm, Dividend_ttm, netincome_ttm)
+                         
+
+
+                         try:
+                              Debt_to_EBITDA = "{:.2f}".format((Total_Debt_from_all_calc / 1000000000) / Ebita_ttm)
+
+                         except Exception:
+
+                              Debt_to_EBITDA = "{:.2f}".format(0.00)
 
           ############################################################################
                          fcf_ttm *= 1000000000
