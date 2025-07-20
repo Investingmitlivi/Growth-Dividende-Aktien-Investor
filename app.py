@@ -8893,6 +8893,15 @@ if selected == "Stock Analysis Tool":
                               ) = calculate_net_income_averages(annual_data,quarterly_data, ticker)
                          
           ###################################################################################################
+
+
+
+                         Capex_revenue_ratio_10_annual_unpacked = np.abs(np.array(Capex_annual_10_unpacked)) / np.array(Revenue_annual_10_unpacked)
+                         Capex_revenue_ratio_10_annual_unpacked = np.round(Capex_revenue_ratio_10_annual_unpacked * 1, 4)
+                         Capex_revenue_ratio_10_annual_unpacked =Capex_revenue_ratio_10_annual_unpacked.tolist()
+                         
+
+                         
                          EndPrice_annual_10_unpacked = EndPrice_annual_21_unpacked[-10:]
                          shares_basic_annual_funf_unpacked=shares_basic_annual_10_unpacked[-5:]
                          net_income_annual_10_unpacked=net_income_annual_21_unpacked[-10:]
@@ -9895,6 +9904,11 @@ if selected == "Stock Analysis Tool":
                                         Net_change_in_cash_quarter_10_unpacked) =unpack_data_Cashflow_statement(annual_data, quarterly_data, ticker)
 
           ###################################################################################################
+                         Capex_revenue_ratio_10_quartal_unpacked= np.abs(np.array(Capex_quarter_10_unpacked))/np.array(Revenue_quarter_10_unpacked)
+                         Capex_revenue_ratio_10_quartal_unpacked = np.round(Capex_revenue_ratio_10_quartal_unpacked * 1, 4)
+                         Capex_revenue_ratio_10_quartal_unpacked=Capex_revenue_ratio_10_quartal_unpacked.tolist()
+                         
+
 
 
           ###################################################################################################
@@ -10636,6 +10650,7 @@ if selected == "Stock Analysis Tool":
                               # Check if financial metrics are already in session state
                               if f'{ticker}_Enterprise_value' in st.session_state:
                                    return (
+                                        st.session_state[f'{ticker}_Enterprise_value'],
                                         st.session_state[f'{ticker}_Enterprise_value_in_Billion'],
                                         st.session_state[f'{ticker}_revenue_ttm'],
                                         st.session_state[f'{ticker}_Dividend_ttm'],
@@ -13296,7 +13311,6 @@ if selected == "Stock Analysis Tool":
                         # if __name__ == "__main__":
                              # main()
 
-
 #####################################################################################################################################################          
                with st.container(): 
                     use_container_width=True             
@@ -13307,6 +13321,14 @@ if selected == "Stock Analysis Tool":
                               #    Annual,Quarterly = st.tabs(["Annual","Quarterly"])
                                    
                          with Annual:
+                                   def safe_float(val):
+                                        try:
+                                             if isinstance(val, (np.ndarray, pd.Series)):
+                                                  return float(val[0])
+                                             return float(val)
+                                        except Exception:
+                                             return np.nan
+
                                    
                                    Period_end_dates_annual = annual_data['period_end_date'][-len_10_annual:]
                                    index = range(len(Period_end_dates_annual))
@@ -13335,6 +13357,7 @@ if selected == "Stock Analysis Tool":
                                    'Dividend per share growth ':Dividends_per_share_growth_annual10_unpacked,
                                    'FCF per share':fcf_per_share_annual_10_unpacked,
                                    'Revenue per share':revenue_per_share_annual_10_unpacked,
+                                   'CapEx to Revenue Ratio':Capex_revenue_ratio_10_annual_unpacked,
                                    'Payout ratio': Payout_ratio_annual_10_unpacked,
                                    'ROIC':ROIC_annual_10_unpacked,
                                    'ROE':ROE_annual_10_unpacked
@@ -13366,9 +13389,11 @@ if selected == "Stock Analysis Tool":
                                    ('Dividend per share growth',Dividends_per_share_growth_annual10_unpacked),
                                    ('FCF per share',fcf_per_share_annual_10_unpacked),
                                    ('Revenue per share',revenue_per_share_annual_10_unpacked),
+                                   ('CapEx to Revenue Ratio',Capex_revenue_ratio_10_annual_unpacked),
                                    ('Payout ratio', Payout_ratio_annual_10_unpacked),
                                    ('ROIC',ROIC_annual_10_unpacked ),
                                    ('ROE',ROE_annual_10_unpacked)
+                                   
                                    
                               
                                    ]
@@ -13378,8 +13403,14 @@ if selected == "Stock Analysis Tool":
                                         if not isinstance(metric_data, list):
                                              metric_data = [metric_data]  # Convert non-iterable values to lists
 
-                                        if metric_name in ('Revenue growth', 'Net Income growth','Net Interest Income growth','FCF growth', 'EPS growth','FCF Margin','EBITDA Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
+                                        if metric_name in ('Revenue growth', 'Net Income growth','Net Interest Income growth','FCF growth', 
+                                                           'EPS growth','FCF Margin','EBITDA Margin','Shares diluted','Operating Margin',
+                                                           'Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth',
+                                                           'CapEx to Revenue Ratio','Payout ratio','ROIC','ROE'):
                                              formatted_data = ["{:.2f}%".format(data * 100) for data in metric_data]
+                                             #formatted_data = ["{:.2f}%".format(safe_float(data) * 100) for data in metric_data]
+
+
                                         elif metric_name == 'Book Value':
                                              formatted_data = ["{:.2f}B".format(data / 1_000_000_000) for data in metric_data]
 
@@ -13388,6 +13419,8 @@ if selected == "Stock Analysis Tool":
                                         else:
                                              #formatted_data = ["{:.2f}".format(data) for data in metric_data]
                                              formatted_data = ["{:.2f}".format(data) for data in metric_data]
+                                             #formatted_data = ["{:.2f}".format(float(data) if not isinstance(data, (np.ndarray, pd.Series)) else float(data[0])) for data in metric_data]
+
 
                                         merged_data[metric_name] = formatted_data
 
@@ -13427,7 +13460,8 @@ if selected == "Stock Analysis Tool":
                                                        'Dividend per share':Dividend_per_share_quarter_10_unpacked,
                                                        'Dividend per share growth':Dividend_per_share_growth_quarter_10_unpacked,
                                                        'FCF per share':fcf_per_share_quarter_10_unpacked,
-                                                       'Revenue per share':revenue_per_share_quarter_10_unpacked, 
+                                                       'Revenue per share':revenue_per_share_quarter_10_unpacked,
+                                                       'CapEx to Revenue Ratio':Capex_revenue_ratio_10_quartal_unpacked,
                                                        'Payout ratio': Payout_ratio_quarter_10_unpacked,
                                                        'ROIC':ROIC_quarter_10_unpacked,
                                                        'ROE':ROE_quarter_10_unpacked
@@ -13455,7 +13489,8 @@ if selected == "Stock Analysis Tool":
                                                        ('Dividend per share',Dividend_per_share_quarter_10_unpacked),
                                                        ('Dividend per share growth',Dividend_per_share_growth_quarter_10_unpacked),
                                                        ('FCF per share',fcf_per_share_quarter_10_unpacked),
-                                                       ('Revenue per share',revenue_per_share_quarter_10_unpacked), 
+                                                       ('Revenue per share',revenue_per_share_quarter_10_unpacked),
+                                                       ('CapEx to Revenue Ratio',Capex_revenue_ratio_10_quartal_unpacked),
                                                        ('Payout ratio', Payout_ratio_quarter_10_unpacked),
                                                        ('ROIC',ROIC_quarter_10_unpacked),
                                                        ('ROE',ROE_quarter_10_unpacked)
@@ -13468,7 +13503,10 @@ if selected == "Stock Analysis Tool":
                                                             if not isinstance(metric_data, list):
                                                                  metric_data = [metric_data]  # Convert non-iterable values to lists
 
-                                                            if metric_name in ('Revenue growth Quarter', 'Net Income growth','Net Interest Income growth', 'FCF growth', 'EPS growth','FCF Margin','EBITDA Margin','Shares diluted','Operating Margin','Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth','Payout ratio','ROIC','ROE'):
+                                                            if metric_name in ('Revenue growth Quarter', 'Net Income growth','Net Interest Income growth', 
+                                                                               'FCF growth', 'EPS growth','FCF Margin','EBITDA Margin','Shares diluted',
+                                                                               'Operating Margin','Gross Margin','Debt/Equity','EBITDA growth',
+                                                                               'Dividend per share growth','CapEx to Revenue Ratio','Payout ratio','ROIC','ROE'):
                                                                  formatted_data = ["{:.2f}%".format(data * 100) for data in metric_data]
                                                                
                                                             elif metric_name == 'Book Value':
