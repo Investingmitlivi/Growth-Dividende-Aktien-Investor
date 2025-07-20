@@ -7626,6 +7626,8 @@ if selected == "Stock Analysis Tool":
                          'VIT.B:SE':'Vitec Software Group AB (publ)',
                          'LOTB:BE':'Lotus Bakeries',
                          'BDX:PL':'Budimex S.A.',
+                         'MBG:DE':'Mercedes-Benz Group AG',
+                         'VOW3:DE':'Volkswagen AG ',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7891,6 +7893,8 @@ if selected == "Stock Analysis Tool":
                     'ENX:FR':'ENX.PA',
                     'LOTB:BE':'LOTB.BR',
                     'WKL:NL':'WKL.AS',
+                    'MBG:DE':'MBG.DE',
+                    'VOW3:DE':'VOW3.DE',
                   
                }
 
