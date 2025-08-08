@@ -13715,7 +13715,7 @@ if selected == "Stock Analysis Tool":
                                                   'Date': date_annual_21yrs + ['TTM', str(next_year)],
                                                   'EPS': eps_diluted_annual_21 + [f"$ {TTM:.2f}", f"$ {EPS_next_year:.2f}"],
                                                   'EPS_float': eps_diluted_annual_21_unpacked + [TTM, EPS_next_year],
-                                                  'Net Income (B)': [float(val.rstrip('B')) for val in net_income_annual_21] + [None, None],
+                                                  'Net Income': [float(val.rstrip('B')) for val in net_income_annual_21] + [None, None],
                                                   'Net Income Label': net_income_annual_21 + ['', ''],
                                                   'Year': [int(d[:4]) for d in date_annual_21yrs] + [current_year, next_year]  # Add year column for filtering
                                              })
@@ -13756,8 +13756,8 @@ if selected == "Stock Analysis Tool":
                                              if len(filtered_data[:-2]) > 0:  # Only add if we have historical data
                                                   fig1.add_trace(go.Scatter(
                                                        x=filtered_data['Date'][:-2],
-                                                       y=filtered_data['Net Income (B)'][:-2],
-                                                       name='Net Income (B)',
+                                                       y=filtered_data['Net Income'][:-2],
+                                                       name='Net Income',
                                                        line=dict(color='red', width=2),
                                                        yaxis='y2',
                                                         mode='lines+markers+text',  # Add text mode
@@ -13780,7 +13780,7 @@ if selected == "Stock Analysis Tool":
                                                        side='right',
                                                        tickprefix='$',
                                                        ticksuffix='B',
-                                                       range=[0, max(filtered_data['Net Income (B)'].dropna()) * 1.1] if len(filtered_data['Net Income (B)'].dropna()) > 0 else None
+                                                       range=[0, max(filtered_data['Net Income'].dropna()) * 1.1] if len(filtered_data['Net Income'].dropna()) > 0 else None
                                                   ),
                                                   xaxis_type='category',
                                                   hovermode='x unified',
