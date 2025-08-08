@@ -129,7 +129,8 @@ base_currency_2 = "DKK"
 base_currency_3 = "SEK" 
 base_currency_4 = "PLN" 
 
-@st.cache_data(show_spinner=False, ttl=86400)  # 24 hour cache
+#@st.cache_data(show_spinner=False, ttl=86400)  # 24 hour cache
+@st.cache_data(show_spinner=False, ttl=43200)  # 12 hour cache
 def get_exchange_rate(base_currency, target_currency):
     """
     Get exchange rate from specified currency to EUR
@@ -7628,6 +7629,7 @@ if selected == "Stock Analysis Tool":
                          'BDX:PL':'Budimex S.A.',
                          'MBG:DE':'Mercedes-Benz Group AG',
                          'VOW3:DE':'Volkswagen AG ',
+                         'PLSQF':'Plus500 Ltd',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7900,7 +7902,6 @@ if selected == "Stock Analysis Tool":
 
                ticker_mapping_2 = {
                     'ASML:NL':'ASML',
-                   # 'NOVO.B:DK':'NVO',
                     'MC:FR':'LVMHF',
                     'CVC:NL':'CVCCF',
                }
@@ -10735,6 +10736,29 @@ if selected == "Stock Analysis Tool":
                                df = df.rename(columns={i: " " for i in df.columns})  # Remove column headers
                                return df
 #--------------------------------------------------------------
+                         # def style_dataframe(df):
+                         #      """Stylt das DataFrame mit Farben für negative Werte und Kopfzeilenanpassungen."""
+                              
+                         #      def highlight_negative(val):
+                         #           """Färbt negative Werte grün."""
+                         #           if isinstance(val, (int, float)) and val < 0:
+                         #                return 'color: green'
+                         #           return ''  
+
+                         #      # Wendet das Styling an
+                         #      styled_df = df.style.map(lambda x: highlight_negative(x)) \
+                         #           .set_table_styles([
+                         #                {'selector': 'th.col0',  # Erste Spaltenüberschrift (Index-Spalte)
+                         #                'props': [('background-color', 'white'), 
+                         #                          ('color', 'white'),
+                         #                          ('text-align', 'left')]},
+                         #                {'selector': 'th:not(.col0)',  # Andere Spaltenüberschriften
+                         #                'props': [('color', '#2E8B57'), 
+                         #                          ('text-align', 'left')]},
+                         #           ], overwrite=False).hide(axis='index')  # Index ausblenden
+                              
+                         #      return styled_df
+                         
                          def style_dataframe(df):
                               """Stylt das DataFrame mit Farben für negative Werte und Kopfzeilenanpassungen."""
                               
@@ -10745,7 +10769,7 @@ if selected == "Stock Analysis Tool":
                                    return ''  
 
                               # Wendet das Styling an
-                              styled_df = df.style.map(lambda x: highlight_negative(x)) \
+                              styled_df = df.style.applymap(highlight_negative) \
                                    .set_table_styles([
                                         {'selector': 'th.col0',  # Erste Spaltenüberschrift (Index-Spalte)
                                         'props': [('background-color', 'white'), 
@@ -10833,8 +10857,8 @@ if selected == "Stock Analysis Tool":
                          'ROIC': ["{:.5}%".format(ROIC_TTM)],
                          '5Y ROCE': [ "{:.2f}%".format(five_yrs_ROCE)],
                          'ROCE': [ "{:.2f}%".format(One_YR_ROCE)],
-                         f'ATH ({format_date(st.session_state.all_time_high_date)})': f"$ {st.session_state.all_time_high_price:.2f}",
-                         f'52WK LOW ({format_date(st.session_state.fifty_two_week_low_date)})': f"$ {st.session_state.fifty_two_week_low:.2f}",
+                         f'ATH ({format_date(st.session_state.all_time_high_date)})': f" {st.session_state.all_time_high_price:.2f}",
+                         f'52WK LOW ({format_date(st.session_state.fifty_two_week_low_date)})': f" {st.session_state.fifty_two_week_low:.2f}",
                          
                          
                          }
@@ -10858,8 +10882,8 @@ if selected == "Stock Analysis Tool":
                          '50 SMA': [Moving_50],
                          '200 SMA': [Moving_200],
                          'RSI (14)': [RSI],
-                         'Analyst Target Price': [f"$ {Target_Price}"],
-                         'Current price': ["$ {:.2f}".format(current_price)],
+                         'Analyst Target Price': [f" {Target_Price}"],
+                         'Current price': [" {:.2f}".format(current_price)],
                          
                          }
 
@@ -13540,7 +13564,7 @@ if selected == "Stock Analysis Tool":
                                         @st.fragment
                                         def display_revenue_chart():
                                              # Format revenue data
-                                             revenue_annual21 = ["{:.2f}B".format(value/1e9) for value in revenue_annual21_unpacked]
+                                             revenue_annual21 = ["{:.2f}".format(value/1e9) for value in revenue_annual21_unpacked]
                                              revenue_growth_annual21 = ["{:.2f}%".format(value*100) for value in revenue_growth_annual21_unpacked]
 
                                              # Create DataFrame
@@ -13684,7 +13708,7 @@ if selected == "Stock Analysis Tool":
 
                                              # Format the data
                                              eps_diluted_annual_21 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_21_unpacked]
-                                             net_income_annual_21 = ["{:.2f}B".format(value/1e9) for value in net_income_annual_21_unpacked]
+                                             net_income_annual_21 = ["{:.2f}".format(value/1e9) for value in net_income_annual_21_unpacked]
 
                                              # Create DataFrame
                                              data = pd.DataFrame({
@@ -13736,7 +13760,9 @@ if selected == "Stock Analysis Tool":
                                                        name='Net Income (B)',
                                                        line=dict(color='red', width=2),
                                                        yaxis='y2',
-                                                       mode='lines+markers',
+                                                        mode='lines+markers+text',  # Add text mode
+                                                       text=filtered_data['Net Income Label'][:-2],  # Use the formatted labels
+                                                       textposition='top center',  # Position text above the markers
                                                        hovertemplate='%{y:.2f}B',
                                                        visible="legendonly"
                                                   ))
@@ -15714,7 +15740,118 @@ if selected == "Stock Analysis Tool":
                                    st.pyplot(fig, use_container_width=False)
 
                          if __name__ == "__main__":
-                              main()         
+                              main()    
+ ############################################                             
+
+                         # Custom CSS
+                         st.markdown("""
+                         <style>
+                         .main {
+                              max-width: 800px;
+                         }
+                         h1 {
+                              color: #2c3e50;
+                              text-align: center;
+                              border-bottom: 2px solid #3498db;
+                              padding-bottom: 10px;
+                         }
+                         </style>
+                         """, unsafe_allow_html=True)
+
+                         # Title
+                         st.title("PRODUCT LIFE CYCLE")
+
+                         # Generate life cycle data with fixed parameters
+                         def generate_life_cycle():
+                              # Fixed parameters
+                              intro_length = 1      # 1 year
+                              growth_rate = 0.5     # 0.50 growth rate
+                              maturity_length = 3   # 3 years
+                              decline_rate = 0.3    # 0.30 decline rate
+                              
+                              # Introduction phase (0 to 0.4 over 1 year)
+                              intro = np.linspace(0, 0.4, int(intro_length*10))
+                              
+                              # Growth phase (exponential growth from 0.4)
+                              growth = 0.4 * np.exp(growth_rate * np.arange(0, 20, 0.1))
+                              growth = growth[:20]
+                              
+                              # Maturity phase (plateau at peak)
+                              maturity = np.full(int(maturity_length*10), growth[-1])
+                              
+                              # Decline phase
+                              decline = growth[-1] * np.exp(-decline_rate * np.arange(0, 20, 0.1))
+                              decline = decline[:20]
+                              
+                              # Combine all phases
+                              cycle = np.concatenate([intro, growth, maturity, decline])
+                              
+                              # Create time axis
+                              time = np.linspace(0, len(cycle)/10, len(cycle))
+                              
+                              return pd.DataFrame({'Time (Years)': time, 'Sales/Revenue': cycle})
+
+                         # Generate data with fixed parameters
+                         df = generate_life_cycle()
+
+                         # Plot the life cycle
+                         fig, ax = plt.subplots(figsize=(10, 6))
+                         ax.plot(df['Time (Years)'], df['Sales/Revenue'], linewidth=3, color='#3498db')
+
+                         # Add phase annotations
+                         phases = {
+                         'INTRODUCTION': (0, 1),
+                         'GROWTH': (1, 3),
+                         'MATURITY': (3, 6),
+                         'DECLINE': (6, df['Time (Years)'].max())
+                         }
+
+                         colors = ['#2ecc71', '#f39c12', '#e74c3c', '#9b59b6']
+                         for i, (phase, (start, end)) in enumerate(phases.items()):
+                              mid = (start + end) / 2
+                              ax.axvspan(start, end, alpha=0.1, color=colors[i])
+                              ax.text(mid, df['Sales/Revenue'].max() * 0.9, phase, 
+                                        ha='center', va='center', fontsize=12, fontweight='bold', color=colors[i])
+
+                         # Add horizontal line at 0.4
+                         ax.axhline(y=0.4, color='gray', linestyle='--', alpha=0.5)
+                         ax.text(df['Time (Years)'].max()*0.9, 0.41, '0.4', color='gray')
+
+                         ax.set_title("Product Life Cycle Curve", fontsize=16, pad=20)
+                         ax.set_xlabel("Time (Years)", fontsize=12)
+                         ax.set_ylabel("Sales/Revenue", fontsize=12)
+                         ax.set_yticks(list(ax.get_yticks()) + [0.4])  # Ensure 0.4 is marked
+                         ax.grid(True, alpha=0.3)
+                         plt.tight_layout()
+
+                         # Display the plot
+                         st.pyplot(fig)
+
+                         # Phase explanations
+                         st.markdown("---")
+                         cols = st.columns(4)
+                         phase_info = {
+                         "INTRODUCTION": "1 year duration\nSales grow to 0.4",
+                         "GROWTH": "2 years duration\nGrowth rate = 0.50",
+                         "MATURITY": "3 years duration\nPeak sales period",
+                         "DECLINE": "Decline rate = 0.30\nProduct phase-out"
+                         }
+
+                         for i, (phase, info) in enumerate(phase_info.items()):
+                              with cols[i]:
+                                   st.markdown(f"### {phase}")
+                                   st.info(info)
+
+                         # Display fixed parameters
+                         st.markdown("### Fixed Parameters:")
+                         st.markdown("""
+                         - **Introduction Phase:** 1 year (sales grow to 0.4)
+                         - **Growth Rate:** 0.50 (2 year growth phase)
+                         - **Maturity Phase:** 3 years
+                         - **Decline Rate:** 0.30
+                         """)
+
+ ########################################################################################################################################                             
 
                with st.container():
                     with news:
