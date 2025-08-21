@@ -13608,7 +13608,10 @@ if selected == "Stock Analysis Tool":
                                                   name='Revenue Growth',
                                                   line=dict(color='red', width=2),
                                                   yaxis='y2',
-                                                  mode='lines+markers',
+                                                  #mode='lines+markers',
+                                                  mode='lines+markers+text',  # Add text mode
+                                                  text=[f"{value:.2f}%" for value in data_filtered['Revenue Growth %']],  # Add % sign to text labels
+                                                  textposition='top center',  # Position text above the markers
                                                   hovertemplate='%{y:.2f}%',
                                                   visible="legendonly"
                                              ))
@@ -13760,7 +13763,7 @@ if selected == "Stock Analysis Tool":
                                                        name='Net Income',
                                                        line=dict(color='red', width=2),
                                                        yaxis='y2',
-                                                        mode='lines+markers+text',  # Add text mode
+                                                       mode='lines+markers+text',  # Add text mode
                                                        text=filtered_data['Net Income Label'][:-2],  # Use the formatted labels
                                                        textposition='top center',  # Position text above the markers
                                                        hovertemplate='%{y:.2f}B',
