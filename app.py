@@ -7830,8 +7830,7 @@ if selected == "Stock Analysis Tool":
                fcf_ttm = fcf_ttm/1000000000
 
 
-               #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
-               #Net_Purchases_of_Property_Equipment =annual_data['cfi_ppe_purchases'][-5:] 
+ 
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
                date_list_annual = [period_end_date for period_end_date in date_annual]      
                
@@ -8089,8 +8088,7 @@ if selected == "Stock Analysis Tool":
                if __name__ == "__main__":
                     main()
 
-               #current_price = get_current_price(ticker)  # Get current price
-               #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
+
 
 
                if 'usd_to_eur_rate' not in st.session_state:
@@ -10736,28 +10734,7 @@ if selected == "Stock Analysis Tool":
                                df = df.rename(columns={i: " " for i in df.columns})  # Remove column headers
                                return df
 #--------------------------------------------------------------
-                         # def style_dataframe(df):
-                         #      """Stylt das DataFrame mit Farben für negative Werte und Kopfzeilenanpassungen."""
-                              
-                         #      def highlight_negative(val):
-                         #           """Färbt negative Werte grün."""
-                         #           if isinstance(val, (int, float)) and val < 0:
-                         #                return 'color: green'
-                         #           return ''  
-
-                         #      # Wendet das Styling an
-                         #      styled_df = df.style.map(lambda x: highlight_negative(x)) \
-                         #           .set_table_styles([
-                         #                {'selector': 'th.col0',  # Erste Spaltenüberschrift (Index-Spalte)
-                         #                'props': [('background-color', 'white'), 
-                         #                          ('color', 'white'),
-                         #                          ('text-align', 'left')]},
-                         #                {'selector': 'th:not(.col0)',  # Andere Spaltenüberschriften
-                         #                'props': [('color', '#2E8B57'), 
-                         #                          ('text-align', 'left')]},
-                         #           ], overwrite=False).hide(axis='index')  # Index ausblenden
-                              
-                         #      return styled_df
+ 
                          
                          def style_dataframe(df):
                               """Stylt das DataFrame mit Farben für negative Werte und Kopfzeilenanpassungen."""
@@ -13170,17 +13147,10 @@ if selected == "Stock Analysis Tool":
                                    col1,col2,colx,cola, colb, colc= st.columns(6)
                                    col1.write('')               
                                    col2.write('')
-                                   #st.write(current_price)
-                                   #converted_amount = "{:.2f}".format(current_price * usd_to_eur_rate)
-                                   #col1.write(f'Current Price: <span style="color: green;">{converted_amount} &euro;</span>', unsafe_allow_html=True) 
-
-                                   #colx.write('')
+                                
                                    colx.write(f"<div style='background-color:#4b71ff;padding: 10px; border-radius: 5px; color: white;'>Desired Rate of Return: <br><br>{''}</div>", unsafe_allow_html=True)
 
-                                   #st.write("")
-                                   #colx.write('')
-                                   #colx.write(f"Multiple of Earnings Valuation:")
-                              
+                   
                                    
                                    Growth_rate_revenue_LOW = float(colr9.text_input(" ", value=0,key="Growth_rate_revenue_LOW22", placeholder="Enter (e.g. 5.0)").replace(',', '.'))
 
@@ -13608,7 +13578,6 @@ if selected == "Stock Analysis Tool":
                                                   name='Revenue Growth',
                                                   line=dict(color='red', width=2),
                                                   yaxis='y2',
-                                                  #mode='lines+markers',
                                                   mode='lines+markers+text',  # Add text mode
                                                   text=[f"{value:.2f}%" for value in data_filtered['Revenue Growth %']],  # Add % sign to text labels
                                                   textposition='top center',  # Position text above the markers
@@ -13855,7 +13824,7 @@ if selected == "Stock Analysis Tool":
                          #-------------------------------------------------------------------------------------------------
                          # Get the current year and calculate next year
                           
-                                   nav_per_share = [equity / shares if shares != 0 else None
+                                   nav_per_share = [round(equity / shares, 2) if shares != 0 else None
                                                   for equity, shares in zip(Total_Equity_annual, shares_diluted_annual21_unpacked[-10:])]
                                    
               
@@ -13938,13 +13907,16 @@ if selected == "Stock Analysis Tool":
                                         name='Free Cash Flow pro Aktie',
                                         line=dict(color='red', width=2),
                                         yaxis='y2',
-                                        mode='lines+markers',
+                                        #mode='lines+markers',
+                                        mode='lines+markers+text',  # Add text mode
+                                        text=data['Free Cash Flow per Share'],
+                                        textfont=dict(color='white'),  # Add color to the text (change 'blue' to any color you prefer)
+                                        textposition='bottom center',  # Position text above the markers
                                         customdata=data[['Date', 'Revenue_text', 'FCF_text', 'NAV_text']].values,
                                         hovertemplate=(
                                              "<b>%{x}</b><br>"
                                              "Umsatz pro Aktie: %{customdata[1]}<br>"
                                              "Free Cash Flow pro Aktie: %{customdata[2]}<br>"
-                                             #"NAV pro Aktie: %{customdata[3]}<br>"
                                              "<extra></extra>"
                                         ),
                                         visible="legendonly"
@@ -13957,7 +13929,10 @@ if selected == "Stock Analysis Tool":
                                         name='NAV pro Aktie',
                                         line=dict(color='darkred', width=2),
                                         yaxis='y2',
-                                        mode='lines+markers',
+                                        mode='lines+markers+text',  # Add text mode
+                                        text=data['NAV per Share'],    
+                                        textfont=dict(color='black'),  # Add color to the text (change 'blue' to any color you prefer)
+                                        textposition='bottom center',  # Position text above the markers
                                         customdata=data[['Date', 'Revenue_text', 'FCF_text', 'NAV_text']].values,
                                         hovertemplate=(
                                              "<b>%{x}</b><br>"
@@ -14279,7 +14254,10 @@ if selected == "Stock Analysis Tool":
                                              name='Dividend Growth',
                                              line=dict(color='darkred', width=2),
                                              yaxis='y2',
-                                             mode='lines+markers',
+                                             mode='lines+markers+text',  # Add text mode
+                                             textposition='top center',  # Position text above the markers
+                                             textfont=dict(color='black'),  # Add color to the text (change 'blue' to any color you prefer)
+                                             text=[f"{value:.2f}%" for value in data_filtered['Dividend Growth %'].str.rstrip('%').astype(float)],  # Add % sign to text labels  
                                              hovertemplate='%{y:.2f}%',
                                              visible="legendonly"
                                              ))
@@ -14291,7 +14269,10 @@ if selected == "Stock Analysis Tool":
                                              name='Dividend Yield',
                                              line=dict(color='red', width=2),
                                              yaxis='y3',
-                                             mode='lines+markers',
+                                             mode='lines+markers+text',  # Add text mode
+                                             textposition='top center',  # Position text above the markers
+                                             textfont=dict(color='black'),  # Add color to the text (change 'blue' to any color you prefer)
+                                             text=[f"{value:.2f}%" for value in data_filtered['Dividend Yield %']],  # Add % sign to text labels
                                              hovertemplate='%{y:.2f}%',
                                              visible="legendonly"
                                              ))
@@ -14892,7 +14873,7 @@ if selected == "Stock Analysis Tool":
 
 
                                    with col2:
-# Operating Margin Box
+
                                         st.markdown(f"""
                                         <style>
                                              @media (max-width: 768px) {{
