@@ -13580,6 +13580,7 @@ if selected == "Stock Analysis Tool":
                                                   yaxis='y2',
                                                   mode='lines+markers+text',  # Add text mode
                                                   text=[f"{value:.2f}%" for value in data_filtered['Revenue Growth %']],  # Add % sign to text labels
+                                                  textfont=dict(color='black'),  # Add color to the text (change 'blue' to any color you prefer)
                                                   textposition='top center',  # Position text above the markers
                                                   hovertemplate='%{y:.2f}%',
                                                   visible="legendonly"
@@ -13734,6 +13735,7 @@ if selected == "Stock Analysis Tool":
                                                        yaxis='y2',
                                                        mode='lines+markers+text',  # Add text mode
                                                        text=filtered_data['Net Income Label'][:-2],  # Use the formatted labels
+                                                       textfont=dict(color='black'),  # Add color to the text (change 'blue' to any color you prefer)
                                                        textposition='top center',  # Position text above the markers
                                                        hovertemplate='%{y:.2f}B',
                                                        visible="legendonly"
