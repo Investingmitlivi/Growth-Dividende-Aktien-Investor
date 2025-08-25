@@ -13623,7 +13623,10 @@ if selected == "Stock Analysis Tool":
                                                   ),
                                                   hovermode='x unified'
                                              )
-
+                                             fig.update_layout(
+                                             dragmode=False, 
+                                             )
+                                             
                                              # Custom hover template
                                              fig.update_traces(
                                                   selector={'type': 'bar'},
@@ -13776,7 +13779,10 @@ if selected == "Stock Analysis Tool":
                                                        x=1
                                                   )
                                              )
-
+                                             fig1.update_layout(
+                                             dragmode=False, 
+                                             )
+                                             
                                              # Visual styling
                                              fig1.update_traces(marker_color='#1f77b4', selector={'name': 'EPS_float'})
                                              fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
