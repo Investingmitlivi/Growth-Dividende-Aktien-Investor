@@ -118,7 +118,17 @@ except ValueError:
 fig = go.Figure()
 
 
-config = {'displayModeBar': False}
+#config = {'displayModeBar': False}
+config = {
+    'displayModeBar': True,  # Ensure mode bar is visible
+    'modeBarButtonsToRemove': [
+        'zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
+        'autoScale2d', 'resetScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian',
+        'toggleSpikelines', 'drawline', 'drawopenpath', 'drawclosedpath', 'drawcircle',
+        'drawrect', 'eraseshape', 'saveImg'
+    ],
+    'displaylogo': False  # Removes "produced with plotly.js" logo and text
+}
 
 global ticker, name, symbol
 
@@ -352,7 +362,7 @@ if selected == "Home":
                          fig2.update_layout(
                               dragmode=False,  # Disable dragging for zooming
                               )
-                         st.plotly_chart(fig2,use_container_width=True,config={'displayModeBar': False})
+                         st.plotly_chart(fig2,use_container_width=True,config=config)
 
                          
                          # Automatically generate the PDF and provide a download link icon
@@ -462,7 +472,7 @@ if selected == "Home":
                          )
 
                          # Display the Plotly chart with mode bar hidden
-                         st.plotly_chart(fig,use_container_width=True,config={'displayModeBar': False})   
+                         st.plotly_chart(fig,use_container_width=True,config=config)   
 
                     # Additional information
                     st.markdown("""
@@ -8379,7 +8389,7 @@ if selected == "Stock Analysis Tool":
                          if detailed_data is not None and not detailed_data.empty:
                               fig = create_figure(detailed_data, is_negative)
                               if fig:
-                                   st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+                                   st.plotly_chart(fig, use_container_width=True, config=config)
                          else:
                               st.warning("No data available for the selected period")
 
@@ -13074,7 +13084,7 @@ if selected == "Stock Analysis Tool":
                                                   template="plotly_white",
                                                   dragmode=False,  # Disable dragging for zooming
                                              )
-                                             st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+                                             st.plotly_chart(fig, use_container_width=True, config=config)
 
                                    # Call the `simple_chart` function to display the plot
                                    simple_chart_rDCF()
@@ -14567,11 +14577,7 @@ if selected == "Stock Analysis Tool":
                                         xaxis_type='category' 
                                         )
 
-                         
-                                   
-                 
 
-                                   
                                         st.markdown(f"""
                                         <style>
                                              @media (max-width: 768px) {{
