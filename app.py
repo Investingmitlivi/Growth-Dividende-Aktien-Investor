@@ -258,10 +258,6 @@ if selected == "Home":
                          mime="application/pdf"  # MIME type for PDF files
                     )
 
-                    
-
-
-
 #########################################################################################################################
           col1,col2 = st.columns(2)
           # Function to format currency
@@ -516,6 +512,7 @@ if selected == "Home":
           st.write("[Superinvestor Portfolios >](https://valuesider.com/)")
           st.write("[Superinvestor Portfolios 13F fillings >](https://dataroma.com/m/home.php)")
           st.write("[Hedge Fund Manager 13F Portfolio >](https://hedgefollow.com/)")
+          st.write("[Fundstrat Holdings (Tom Lee)>](https://grannyshots.com/holdings/)")
 
           st.write("[Shiller S&P 500 PE ratio, Price to Sales ratio, Earnings etc >](https://www.multpl.com/shiller-pe)")
           st.write("[BERKSHIRE HATHAWAY INC.SHAREHOLDER LETTERS>](https://www.berkshirehathaway.com/letters/letters.html)")
