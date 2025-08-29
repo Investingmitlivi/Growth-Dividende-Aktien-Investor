@@ -9531,13 +9531,16 @@ if selected == "Stock Analysis Tool":
                                    
 
                                    value_at_index_last = FCF_annual_ten_unpacked[-1]
+
+                                   
                               except Exception as e:
                                    # If there's an error (e.g., insufficient data), set both to 0
                                    value_at_index_6 = 0
                                    value_at_index_last = 0
 
                               try:
-                                   if value_at_index_6 == 0:
+                                   #if value_at_index_6 == 0:
+                                   if value_at_index_6 <= 0 or value_at_index_last <= 0:
                                         # If value at index -6 is 0, CAGR is 0
                                         FCF_5_CAGR = "{:.2f}".format(0.00)
                                    else:
@@ -9582,7 +9585,8 @@ if selected == "Stock Analysis Tool":
                                    value_at_index_last = 0
 
                               try:
-                                   if value_at_index_6 == 0:
+                                   #if value_at_index_6 == 0:
+                                   if value_at_index_6 <= 0 or value_at_index_last <= 0:
                                         # If value at index -6 is 0, CAGR is 0
                                         EPS_5_CAGR = "{:.2f}".format(0.00)
                                    else:
