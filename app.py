@@ -9160,7 +9160,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_EBITDA_growth_annual_10'] ,
                                              st.session_state[f'{ticker}_Price_to_book_annual_5'] ,
                                              st.session_state[f'{ticker}_Price_to_book_annual_10'] ,
-                                             st.session_state[f'{ticker}_fcf_per_share_annual_10'] ,
+                                             st.session_state[f'{ticker}_fcf_per_share_annual_21'] ,
                                              st.session_state[f'{ticker}_revenue_per_share_annual_10'] ,
                                              st.session_state[f'{ticker}_Payout_ratio_annual_10'],
                                              st.session_state[f'{ticker}_NetIncome_growth_annual_10'] ,
@@ -9233,7 +9233,7 @@ if selected == "Stock Analysis Tool":
                               EBITDA_growth_annual_10_unpacked = annual_data['ebitda_growth'][-10:]
                               Price_to_book_5_annual_unpacked = annual_data['price_to_book'][-5:]
                               Price_to_book_10_annual_unpacked = annual_data['price_to_book'][-10:]
-                              fcf_per_share_annual_10_unpacked = annual_data['fcf_per_share'][-10:]
+                              fcf_per_share_annual_21_unpacked = annual_data['fcf_per_share'][-21:]
                               revenue_per_share_annual_10_unpacked = annual_data['revenue_per_share'][-10:]
                               Payout_ratio_annual_10_unpacked = annual_data['payout_ratio'][-10:]
                               NetIncome_growth_annual_10_unpacked = annual_data['net_income_growth'][-10:]
@@ -9292,7 +9292,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_EBITDA_growth_annual_10'] = EBITDA_growth_annual_10_unpacked
                               st.session_state[f'{ticker}_Price_to_book_annual_5'] = Price_to_book_5_annual_unpacked
                               st.session_state[f'{ticker}_Price_to_book_annual_10'] = Price_to_book_10_annual_unpacked
-                              st.session_state[f'{ticker}_fcf_per_share_annual_10'] = fcf_per_share_annual_10_unpacked
+                              st.session_state[f'{ticker}_fcf_per_share_annual_21'] = fcf_per_share_annual_21_unpacked
                               st.session_state[f'{ticker}_revenue_per_share_annual_10'] = revenue_per_share_annual_10_unpacked
                               st.session_state[f'{ticker}_Payout_ratio_annual_10'] = Payout_ratio_annual_10_unpacked
                               st.session_state[f'{ticker}_NetIncome_growth_annual_10'] = NetIncome_growth_annual_10_unpacked
@@ -9331,7 +9331,7 @@ if selected == "Stock Analysis Tool":
                                    FCF_Margin_annual_10unpacked, FCF_Margin_5, FCF_Margin_1,
                                    debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,Price_to_tangible_book_annual_5_unpacked,
                                    EBITDA_growth_annual_10_unpacked, Price_to_book_5_annual_unpacked,Price_to_book_10_annual_unpacked, 
-                                   fcf_per_share_annual_10_unpacked, revenue_per_share_annual_10_unpacked,
+                                   fcf_per_share_annual_21_unpacked, revenue_per_share_annual_10_unpacked,
                                    Payout_ratio_annual_10_unpacked, NetIncome_growth_annual_10_unpacked,
                                    Book_Value_growth_annual_10_unpacked, Price_to_sales_annual_10_unpacked,
                                    Price_to_earnings_annual_10_unpacked, shares_diluted_annual_growth_10_unpacked,
@@ -9354,7 +9354,7 @@ if selected == "Stock Analysis Tool":
                          FCF_Margin_annual_10unpacked, FCF_Margin_5, FCF_Margin_1,
                          debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,Price_to_tangible_book_annual_5_unpacked,
                          EBITDA_growth_annual_10_unpacked,Price_to_book_5_annual_unpacked,Price_to_book_10_annual_unpacked, 
-                         fcf_per_share_annual_10_unpacked, revenue_per_share_annual_10_unpacked,
+                         fcf_per_share_annual_21_unpacked, revenue_per_share_annual_10_unpacked,
                          Payout_ratio_annual_10_unpacked, NetIncome_growth_annual_10_unpacked,
                          Book_Value_growth_annual_10_unpacked, Price_to_sales_annual_10_unpacked,
                          Price_to_earnings_annual_10_unpacked, shares_diluted_annual_growth_10_unpacked,
@@ -9370,6 +9370,8 @@ if selected == "Stock Analysis Tool":
                          shares_diluted_quarter_growth_10_unpacked, Dividend_per_share_growth_quarter_10_unpacked,
                          gross_margin_quarter1_unpacked,gross_margin_quarter10_unpacked) = calculate_financial_ratios(annual_data, quarterly_data, ticker)
           ###################################################################################################
+
+                         fcf_per_share_annual_10_unpacked   =  fcf_per_share_annual_21_unpacked [-10:]  
                          FCF_Margin_10 =(sum(FCF_Margin_annual_10unpacked)/len(FCF_Margin_annual_10unpacked))*100
                          Net_income_margin_1 = sum(Net_income_margin_1)/len(Net_income_margin_1)
 
@@ -12774,6 +12776,7 @@ if selected == "Stock Analysis Tool":
                                              DCF_Graham_low_Euro_equivalent = DCF_Graham_low*st.session_state.current_rate
 
                                              return_on_investment_DCF_Graham_low = ((DCF_Graham_low - current_price) / current_price) * 100
+                                            
 
                                              low_DCF=(Intrinsic_value*(1-Margin_of_safety1/100))
                                              low_DCF_Euro_equivalent=low_DCF*st.session_state.current_rate
@@ -12787,11 +12790,15 @@ if selected == "Stock Analysis Tool":
 
                                              return_on_investment_DCF_Graham_high= ((DCF_Graham_high - current_price) / current_price) * 100
 
+
+
                                              high_DCF=(Intrinsic_value2*(1-Margin_of_safety3/100))
                                              high_DCF_Euro_equivalent=high_DCF*st.session_state.current_rate
 
                     
                                              return_on_investment_DCF_high = ((high_DCF - current_price) / current_price) * 100
+
+
 
                                              Average_DCF_low_high=((low_DCF+high_DCF)/2)
                                              Average_DCF_low_high_Euro_equivalent=Average_DCF_low_high*st.session_state.current_rate
@@ -13247,10 +13254,20 @@ if selected == "Stock Analysis Tool":
                                    # Keep as float
                                    return_on_investment_Revenue_high = ((Assumption_high_inklu_shares_outstanding_MarginofSafety_high - current_price) / current_price) * 100
                                    Revenue_high_Euro = Assumption_high_inklu_shares_outstanding_MarginofSafety_high * st.session_state.current_rate
+
+
+                                   print("Assumption_low_inklu_shares_outstanding_MarginofSafety_low",Assumption_low_inklu_shares_outstanding_MarginofSafety_low)
+                                   print("return_on_investment_Revenue_low",return_on_investment_Revenue_low)
+
+                                   print("Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid",Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid)
+                                   print("return_on_investment_Revenue_mid",return_on_investment_Revenue_mid)
+
+
+                                   print("Assumption_high_inklu_shares_outstanding_MarginofSafety_high",Assumption_high_inklu_shares_outstanding_MarginofSafety_high)
+                                   print("return_on_investment_Revenue_high",return_on_investment_Revenue_high)
+                                   
                                    # CSS for styling
                                    st.markdown("""
-
-                                   
                                    <style>
                                    .positive-value {
                                    color: green;
@@ -14211,7 +14228,7 @@ if selected == "Stock Analysis Tool":
                                    with col1:
                                         @st.fragment
                                         def display_dividend_analysis():
-                                   
+
                                              Dividend_per_share_21 = ["{:.2f}".format(float(value)) for value in Dividend_per_share_annual_21_unpacked] + ["{:.2f}".format(float(Dividend_TTM_extract_value))]
                                              try:
                                                   EndPrice_annual_21 = ["{:.2f}".format(float(value)) for value in EndPrice_annual_21_unpacked] + [ "{:.2f}".format(float(Dividend_TTM_extract_value) / (float(Dividend_per_share_yield_no_percentage) / 100))]
@@ -14246,7 +14263,27 @@ if selected == "Stock Analysis Tool":
                                              # Averages
                                              Dividends_per_share_growth_average_annual_10 = "{:.2f}%".format(sum(Dividends_per_share_growth_annual10_unpacked) / len(Dividends_per_share_growth_annual10_unpacked) * 100)
                                              Dividends_per_share_growth_last_5_years_growth = "{:.2f}%".format(sum(Dividends_per_share_growth_annual10_unpacked[-5:]) / 5 * 100)
+                                             
+                                             
+                                             # --- Start of new FCF Yield calculation code ---
+                                             fcf_yield_21_list = []
+                                             for fcf, price in zip(fcf_per_share_annual_21_unpacked, EndPrice_annual_21_unpacked):
+                                                  try:
+                                                       fcf_yield = (fcf / price) * 100
+                                                       fcf_yield_21_list.append("{:.2f}%".format(fcf_yield))
+                                                  except (ZeroDivisionError, TypeError):
+                                                       fcf_yield_21_list.append("N/A")
 
+                                             # Add TTM FCF Yield
+                                             try:
+                                                  #fcf_yield_ttm = "{:.2f}%".format((fcf_per_share/fcf_per_share)*100)
+                                                  fcf_yield_ttm = (fcf_per_share / float(current_price)) * 100
+                                                  fcf_yield_21_list.append("{:.2f}".format(fcf_yield_ttm))
+                                             except (ZeroDivisionError, TypeError, ValueError):
+                                                  fcf_yield_21_list.append("N/A")
+
+                                             # Convert FCF yield to numeric
+                                             fcf_yield_numeric = [float(val.strip('%')) if val != "N/A" else None for val in fcf_yield_21_list]
 
                                              # Add 'TTM' to dates
                                              date_full = date_annual_21yrs + ["TTM"]
@@ -14257,7 +14294,8 @@ if selected == "Stock Analysis Tool":
                                              'Dividend per Share': [float(val.lstrip('$')) for val in Dividend_per_share],
                                              'Dividend Label': Dividend_per_share,
                                              'Dividend Growth %': Dividends_per_share_growth_annual_21,
-                                             'Dividend Yield %': dividend_yield_numeric
+                                             'Dividend Yield %': dividend_yield_numeric,
+                                             'FCF Yield %': fcf_yield_numeric
                                              })
 
                                              # Select date range via slider
@@ -14309,6 +14347,22 @@ if selected == "Stock Analysis Tool":
                                              visible="legendonly"
                                              ))
 
+                                             # Add FCF Yield % as line
+                                             fig1.add_trace(go.Scatter(
+                                             x=data_filtered['Date'],
+                                             y=data_filtered['FCF Yield %'],
+                                             name='FCF Yield',
+                                             line=dict(color='green', width=2),
+                                             yaxis='y4',
+                                             mode='lines+markers+text',
+                                             textposition='top center',
+                                             textfont=dict(color='black'),
+                                             text=[f"{value:.2f}%" for value in data_filtered['FCF Yield %']],
+                                             hovertemplate='%{y:.2f}%',
+                                             visible="legendonly"
+                                             ))
+
+
                                              # Layout with 3 y-axes
                                              fig1.update_layout(
                                              yaxis=dict(
@@ -14328,8 +14382,17 @@ if selected == "Stock Analysis Tool":
                                                   overlaying='y',
                                                   anchor='free',
                                                   side='left',
-                                                  position=0.05,
+                                                  #position=0.05,
                                                   showgrid=False
+                                             ),
+
+                                             yaxis4=dict(
+                                             #title='FCF Yield (%)',
+                                             overlaying='y',
+                                             anchor='free',
+                                             side='left',
+                                             #position=0.10,
+                                             showgrid=False
                                              ),
                                              dragmode=False,
                                              xaxis_type='category',
