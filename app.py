@@ -7637,6 +7637,7 @@ if selected == "Stock Analysis Tool":
                          'MBG:DE':'Mercedes-Benz Group AG',
                          'VOW3:DE':'Volkswagen AG ',
                          'PLSQF':'Plus500 Ltd',
+                         'RACE:IT':'Ferrari NV',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7874,6 +7875,7 @@ if selected == "Stock Analysis Tool":
                ticker_mapping_1 = {
                     'BRK.A': 'BRK-A',
                     'BRK.B': 'BRK-B',
+                    
                }
 
                ticker_mapping_SEK = {
@@ -7903,6 +7905,8 @@ if selected == "Stock Analysis Tool":
                     'WKL:NL':'WKL.AS',
                     'MBG:DE':'MBG.DE',
                     'VOW3:DE':'VOW3.DE',
+                    'RACE:IT':'RACE',
+
                   
                }
 
@@ -10333,21 +10337,21 @@ if selected == "Stock Analysis Tool":
 
                          except Exception as e:
                               forwardPE = forward_pe_formatted
-                              RSI = "NA"
-                              PEG = "NA"
+                              RSI = "n/a"
+                              PEG = "n/a"
                               #Beta = beta
                               Enterprise_Value = "{:.2f}".format(0.00)
                               EV_EBITDA= "{:.2f}".format(0.00)
-                              Moving_200 = "NA"
-                              Moving_50 = "NA"
+                              Moving_200 = "n/a"
+                              Moving_50 = "n/a"
                               Target_Price ="{:.2f}".format(0.00)
                               Dividend_TTM =Divdend_per_share_ttm
-                              Dividend_Est = "NA"
+                              Dividend_Est = "n/a"
                               #Dividend_Ex_Date = "{:.2f}".format(0.00)
-                              Earnings_this_yr = "NA"
+                              Earnings_this_yr = "n/a"
                               Earnings_next_yr_in_prozent ="-"
-                              Earnings_next_yr_in_value = "NA"
-                              Earnings_next_5_yrs = "NA"
+                              Earnings_next_yr_in_value = "n/a"
+                              Earnings_next_5_yrs = "n/a"
                               debt_equity_ttm = "{:.2f}".format(0.0)
 
                              
@@ -10370,8 +10374,8 @@ if selected == "Stock Analysis Tool":
                               Price_to_sales_last = "{:.2f}".format(Marketcap/(Revenue_ttm/1000000000))
                               Net_margin_ttm ="{:.2f}%".format((Net_income_margin_1)*100)
                          else:
-                              Price_to_sales_last = "NA"
-                              Net_margin_ttm="NA"
+                              Price_to_sales_last = "n/a"
+                              Net_margin_ttm="n/a"
 ###############################################################################################################                              
                          try:
                          # Try to split and extract value from Dividend_TTM
@@ -12357,7 +12361,7 @@ if selected == "Stock Analysis Tool":
                               share = "🔴" 
                               fcf = "🔴"
                          try:
-                              if Average_ROIC_funf == 'NA' or float(Average_ROIC_funf[:-1]) < 9:
+                              if Average_ROIC_funf == 'n/a' or float(Average_ROIC_funf[:-1]) < 9:
                                         roic = "🔴"  
                               else:
                                         roic= "🟢"  
@@ -12554,7 +12558,7 @@ if selected == "Stock Analysis Tool":
                          st.write("")
                          col5, col6, col7, col8 = st.columns(4)
 
-                         if Average_ROIC_funf == 'NA':
+                         if Average_ROIC_funf == 'n/a':
                               Average_ROIC_funf = 0.0
 ############################################################################################################################                             
 
@@ -12703,16 +12707,10 @@ if selected == "Stock Analysis Tool":
 
 
 
-                                             print("Total_Debt_from_all_calc",(Total_Debt_from_all_calc/1000000000))
-                                             print("Total_cash_last_years",Total_cash_last_years)
+
                                              Equity_value_ = total_present_value+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
 
                                              Intrinsic_value =Equity_value_/shares_diluted_annual_1
-
-                                             #Euro_equivalent = Intrinsic_value*usd_to_eur_rate
-                                             Euro_equivalent = Intrinsic_value*st.session_state.current_rate
-
-                                        
 
                                    #----------------------------------------------------------2:Growth rate Estimate------------------------------------------------------------------------
 
@@ -12749,13 +12747,8 @@ if selected == "Stock Analysis Tool":
 
                                              Equity_value2 = total_present_value2+Total_cash_last_years-(Total_Debt_from_all_calc/1000000000)
                                              Intrinsic_value2 =Equity_value2/shares_diluted_annual_1
-
-                                             #Euro_equivalent2 = Intrinsic_value2*usd_to_eur_rate
-                                             Euro_equivalent2 = Intrinsic_value2*st.session_state.current_rate
-                                             
-
-                                        
-                                             #------------------------------------------Graham 1.Estimate--------------------------------------------------------------
+                                                                                     
+                                           #------------------------------------------Graham 1.Estimate--------------------------------------------------------------
 
                                              
                                              
@@ -12767,44 +12760,51 @@ if selected == "Stock Analysis Tool":
                                                   EPS_last_average_graham =EPS_last_average
                                                   EPS_last_average_graham2 =EPS_last_average
 
-                                             graham_valuation = (EPS_last_average_graham * (7+1.5 * Growth_rate1) * 4.4)/ st.session_state["Average_10years_treasury_rate"]
-                                             
-                                             #Euro_equivalent_graham_valuation = graham_valuation*usd_to_eur_rate
-                                             Euro_equivalent_graham_valuation = graham_valuation*st.session_state.current_rate
-                                                  #print(f"{graham_valuation} USD is approximately {Euro_equivalent_graham_valuation:.2f} EUR")
-                                             # Display the result
+                                             graham_valuation_low = (EPS_last_average_graham * (7+1.5 * Growth_rate1) * 4.4)/ st.session_state["Average_10years_treasury_rate"]
+
+
                                         # .   ...........................................Graham 2.Estimate.........................................   
                                         
-                                             graham_valuation2 = (EPS_last_average_graham2 * (7+1.5*Growth_rate2)*4.4)/ st.session_state["Average_10years_treasury_rate"]
-                                        
-                                             #Euro_equivalent_graham_valuation2 = graham_valuation2*usd_to_eur_rate
-                                             Euro_equivalent_graham_valuation2 = graham_valuation2*st.session_state.current_rate
-
+                                             graham_valuation_high = (EPS_last_average_graham2 * (7+1.5*Growth_rate2)*4.4)/ st.session_state["Average_10years_treasury_rate"]
 
                                         #........................................................................................
 
+                                             #Euro_equivalent = Intrinsic_value*st.session_state.current_rate
+                                             DCF_Graham_low = (((graham_valuation_low + Intrinsic_value)/2)*(1-Margin_of_safety1/100))
+                                             DCF_Graham_low_Euro_equivalent = DCF_Graham_low*st.session_state.current_rate
 
-                                             Multiples_valuation1 =Euro_equivalent + Euro_equivalent_graham_valuation
-                                        
-                                             average_sum1 = Multiples_valuation1 / 2.0
-                                             average_sum_both1 =  round(average_sum1*(1-Margin_of_safety1/100),2)
+                                             return_on_investment_DCF_Graham_low = ((DCF_Graham_low - current_price) / current_price) * 100
+
+                                             low_DCF=(Intrinsic_value*(1-Margin_of_safety1/100))
+                                             low_DCF_Euro_equivalent=low_DCF*st.session_state.current_rate
+                                             return_on_investment_DCF_low = ((low_DCF - current_price) / current_price) * 100  
+
+
+
+                                             #Euro_equivalent2 = Intrinsic_value2*st.session_state.current_rate
+                                             DCF_Graham_high = (((graham_valuation_high + Intrinsic_value2)/2)*(1-Margin_of_safety3/100))
+                                             DCF_Graham_high_Euro_equivalent = DCF_Graham_high*st.session_state.current_rate
+
+                                             return_on_investment_DCF_Graham_high= ((DCF_Graham_high - current_price) / current_price) * 100
+
+                                             high_DCF=(Intrinsic_value2*(1-Margin_of_safety3/100))
+                                             high_DCF_Euro_equivalent=high_DCF*st.session_state.current_rate
+
+                    
+                                             return_on_investment_DCF_high = ((high_DCF - current_price) / current_price) * 100
+
+                                             Average_DCF_low_high=((low_DCF+high_DCF)/2)
+                                             Average_DCF_low_high_Euro_equivalent=Average_DCF_low_high*st.session_state.current_rate
+                                             return_on_investment_Average_DCF_low_high= ((Average_DCF_low_high - current_price) / current_price) * 100
+
+
+
+                                             Average_valuation_DCF_Graham_low_high_Euro_equivalent = (DCF_Graham_low_Euro_equivalent + DCF_Graham_high_Euro_equivalent)/2
+                                             Average_DCF_Graham_high_low = (DCF_Graham_low + DCF_Graham_high)/2
+                                             return_on_investment_Average_DCF_Graham_high_low = ((Average_DCF_Graham_high_low - current_price) / current_price) * 100
+
                                              
-                                             #st.write(average_sum_both1,converted_amount)
 
-
-                                             Multiples_valuation2 =Euro_equivalent2+Euro_equivalent_graham_valuation2
-
-                                             average_sum2 = Multiples_valuation2 / 2
-                                             average_sum_both2=round(average_sum2 *(1-Margin_of_safety3/100),2)
-
-                                             Middle_multiple_value = average_sum_both1+average_sum_both2
-                                             average_Middle_multiple_value =round((Middle_multiple_value/2.0),2)
-
-
-                                             low_DCF=(Euro_equivalent*(1-Margin_of_safety1/100))
-                                             high_DCF=(Euro_equivalent2*(1-Margin_of_safety3/100))
-
-                                             Average_Middle_DCF=round(((low_DCF+high_DCF)/2),2)
 
                                              st.markdown("""
                                              <style>
@@ -12815,11 +12815,9 @@ if selected == "Stock Analysis Tool":
                                              font-family: Arial, sans-serif;
                                              }
                                              .valuation-table th {
-                                             background-color: #4b71ff;
-                                             color: white;
+                                             background-color: #f2f2f2;
                                              padding: 12px;
                                              text-align: center;
-                                             font-weight: bold;
                                              }
                                              .valuation-table td {
                                              padding: 12px;
@@ -12838,11 +12836,9 @@ if selected == "Stock Analysis Tool":
                                              }
                                              .positive-value {
                                              color: #2e7d32;
-                                             font-weight: bold;
                                              }
                                              .negative-value {
                                              color: #c62828;
-                                             font-weight: bold;
                                              }
                                              .method-column {
                                              text-align: left;
@@ -12864,28 +12860,43 @@ if selected == "Stock Analysis Tool":
                                              <!-- Benjamin Graham + DCF Row -->
                                              <tr>
                                              <td class="method-column">Benjamin Graham + DCF</td>
-                                             <td class="{"positive-value" if float(average_sum_both1) > float(converted_amount) else "negative-value"}">
-                                                  {average_sum_both1} €
+                                             <td class="{"positive-value" if float(DCF_Graham_low_Euro_equivalent) > float(converted_amount) else "negative-value"}">
+                                                  {DCF_Graham_low_Euro_equivalent:.2f} €
+                                                  <span class="{'positive-value' if return_on_investment_DCF_Graham_low > 0 else 'negative-value'}">
+                                                       ({return_on_investment_DCF_Graham_low:.2f}%)
+                                                  </span>
                                              </td>
-                                             <td class="{"positive-value" if float(average_Middle_multiple_value) > float(converted_amount) else "negative-value"}">
-                                                  {average_Middle_multiple_value} €
+                                             <td class="{"positive-value" if float(Average_valuation_DCF_Graham_low_high_Euro_equivalent) > float(converted_amount) else "negative-value"}">
+                                                  {Average_valuation_DCF_Graham_low_high_Euro_equivalent:.2f} €
+                                                  <span class="{'positive-value' if return_on_investment_Average_DCF_Graham_high_low > 0 else 'negative-value'}">
+                                                       ({return_on_investment_Average_DCF_Graham_high_low:.2f}%)
                                              </td>
-                                             <td class="{"positive-value" if float(average_sum_both2) > float(converted_amount) else "negative-value"}">
-                                                  {average_sum_both2} €
+                                             <td class="{"positive-value" if float(DCF_Graham_high_Euro_equivalent) > float(converted_amount) else "negative-value"}">
+                                                  {DCF_Graham_high_Euro_equivalent:.2f} €
+                                                  <span class="{'positive-value' if return_on_investment_DCF_Graham_high > 0 else 'negative-value'}">
+                                                       ({return_on_investment_DCF_Graham_high:.2f}%)
                                              </td>
                                              </tr>
 
                                              <!-- DCF Analysis Row -->
                                              <tr>
                                              <td class="method-column">Discounted Cash Flow (DCF)</td>
-                                             <td class="{"positive-value" if float(low_DCF) > float(converted_amount) else "negative-value"}">
-                                                  {low_DCF:.2f} €
+                                             <td class="{"positive-value" if float(low_DCF_Euro_equivalent) > float(converted_amount) else "negative-value"}">
+                                                  {low_DCF_Euro_equivalent:.2f} €
+                                                  <span class="{'positive-value' if return_on_investment_DCF_low > 0 else 'negative-value'}">
+                                                       ({return_on_investment_DCF_low:.2f}%)
+                                                  </span>
                                              </td>
-                                             <td class="{"positive-value" if float(Average_Middle_DCF) > float(converted_amount) else "negative-value"}">
-                                                  {Average_Middle_DCF:.2f} €
+                                             <td class="{"positive-value" if float(Average_DCF_low_high_Euro_equivalent) > float(converted_amount) else "negative-value"}">
+                                                  {Average_DCF_low_high_Euro_equivalent:.2f} €
+                                                  <span class="{'positive-value' if return_on_investment_Average_DCF_low_high > 0 else 'negative-value'}">
+                                                       ({return_on_investment_Average_DCF_low_high:.2f}%)
                                              </td>
-                                             <td class="{"positive-value" if float(high_DCF) > float(converted_amount) else "negative-value"}">
-                                                  {high_DCF:.2f} €
+                                             <td class="{"positive-value" if float(high_DCF_Euro_equivalent) > float(converted_amount) else "negative-value"}">
+                                                  {high_DCF_Euro_equivalent:.2f} €
+                                                  <span class="{'positive-value' if return_on_investment_DCF_high > 0 else 'negative-value'}">
+                                                       ({return_on_investment_DCF_high:.2f}%)
+                                                  </span>
                                              </td>
                                              </tr>
                                              </table>
@@ -12989,7 +13000,7 @@ if selected == "Stock Analysis Tool":
                               
                                    unsafe_allow_html=True
                                    )
-                                   col1, col2 = st.columns(2)
+                                   col1, col3 ,col2= st.columns(3)
 
                                    with col1:
                                         #fcf = st.number_input("Current FCF in Billion USD:", value=0.00, key="fcf_input",help="Enter Free Cash Flow value")
@@ -13001,6 +13012,10 @@ if selected == "Stock Analysis Tool":
 
                               
                                         years =10
+
+                                   with col3: 
+                                        st.write("")
+                                        st.write("")
                                    with col2:
                                         #t = st.number_input("Terminal Growth Rate (%):", value=2.5, format="%.1f")
                                         t = float(col2.text_input("Terminal Growth Rate (%):", value=2.5,key="Terminal_Growth_Rate",help="Enter Terminal Growth Rate").replace(',', '.'))
@@ -13195,122 +13210,120 @@ if selected == "Stock Analysis Tool":
                               if submit_button:
                                    st.session_state.converted_amount = converted_amount
 
-                              
-                              # -----------------------------LOW-------------
-                              
-                                   average_Profit_margin_low=(Growth_rate_net_profit_LOW)/100
-
-                                   average_PFCF_POCF_low=(Growth_rate_P_OCF_low+Growth_rate_P_FCF_low)/2
-
-                                   Revenue_assumption_low=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_LOW/100),My_assumption)
-                                             #
-
-                                   Assumption_low=(Revenue_assumption_low*average_Profit_margin_low)*average_PFCF_POCF_low
-                                   Assumption_low_inklu_shares_outstanding_low =Assumption_low/shares_diluted_annual_1
-
-                                   Assumption_low_inklu_shares_outstanding_MarginofSafety_low=Assumption_low_inklu_shares_outstanding_low*(1-(Margin_of_safety_low/100))
 
 
-                                   #Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*usd_to_eur_rate)
-                                   Revenue_low_Euro = "{:.2f}".format(Assumption_low_inklu_shares_outstanding_MarginofSafety_low*st.session_state.current_rate) 
-                                        
-                              
-                              # -----------------------------MIDDLE-------------
-                                   average_Profit_margin_mid=(Growth_rate__net_profit_middle)/100
+                                   # -----------------------------LOW-------------
+                                   average_Profit_margin_low = (Growth_rate_net_profit_LOW) / 100
+                                   average_PFCF_POCF_low = (Growth_rate_P_OCF_low + Growth_rate_P_FCF_low) / 2
+                                   Revenue_assumption_low = average_revenue_annual_ttm * pow(1 + (Growth_rate_revenue_LOW / 100), My_assumption)
+                                   Assumption_low = (Revenue_assumption_low * average_Profit_margin_low) * average_PFCF_POCF_low
+                                   Assumption_low_inklu_shares_outstanding_low = Assumption_low / shares_diluted_annual_1
+                                   Assumption_low_inklu_shares_outstanding_MarginofSafety_low = Assumption_low_inklu_shares_outstanding_low * (1 - (Margin_of_safety_low / 100))
 
-                                   average_PFCF_POCF_mid=(Growth_rate_P_OCF_middle+Growth_rate_P_FCF_middle)/2
+                                   # Keep as float
+                                   return_on_investment_Revenue_low = ((Assumption_low_inklu_shares_outstanding_MarginofSafety_low - current_price) / current_price) * 100
+                                   Revenue_low_Euro = Assumption_low_inklu_shares_outstanding_MarginofSafety_low * st.session_state.current_rate
 
-                                   Revenue_assumption_mid=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_middle/100),My_assumption)
+                                   # -----------------------------MIDDLE-------------
+                                   average_Profit_margin_mid = (Growth_rate__net_profit_middle) / 100
+                                   average_PFCF_POCF_mid = (Growth_rate_P_OCF_middle + Growth_rate_P_FCF_middle) / 2
+                                   Revenue_assumption_mid = average_revenue_annual_ttm * pow(1 + (Growth_rate_revenue_middle / 100), My_assumption)
+                                   Assumption_mid = (Revenue_assumption_mid * average_Profit_margin_mid) * average_PFCF_POCF_mid
+                                   Assumption_mid_inklu_shares_outstanding_mid = Assumption_mid / shares_diluted_annual_1
+                                   Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid = Assumption_mid_inklu_shares_outstanding_mid * (1 - (Margin_of_safety_mid / 100))
 
-                                   Assumption_mid=(Revenue_assumption_mid*average_Profit_margin_mid)*average_PFCF_POCF_mid
+                                   # Keep as float
+                                   return_on_investment_Revenue_mid = ((Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid - current_price) / current_price) * 100
+                                   Revenue_mid_Euro = Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid * st.session_state.current_rate
 
-                                   Assumption_mid_inklu_shares_outstanding_mid =Assumption_mid/shares_diluted_annual_1
+                                   # -----------------------------HIGH-------------
+                                   average_Profit_margin_high = (Growth_rate__net_profit_high) / 100
+                                   average_PFCF_POCF_high = (Growth_rate_P_OCF_high + Growth_rate_P_FCF_high) / 2
+                                   Revenue_assumption_high = average_revenue_annual_ttm * pow(1 + (Growth_rate_revenue_high / 100), My_assumption)
+                                   Assumption_high = (Revenue_assumption_high * average_Profit_margin_high) * average_PFCF_POCF_high
+                                   Assumption_high_inklu_shares_outstanding_high = Assumption_high / shares_diluted_annual_1
+                                   Assumption_high_inklu_shares_outstanding_MarginofSafety_high = Assumption_high_inklu_shares_outstanding_high * (1 - (Margin_of_safety_high / 100))
 
-                                   Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid=Assumption_mid_inklu_shares_outstanding_mid*(1-(Margin_of_safety_mid/100))
-                                   
-
-                                   #Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*usd_to_eur_rate)
-                                   Revenue_mid_Euro = "{:.2f}".format(Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid*st.session_state.current_rate) 
-                                        
-
-                                        
-                              # -----------------------------HIGH-------------
-
-                                   average_Profit_margin_high=(Growth_rate__net_profit_high)/100
-
-                                   average_PFCF_POCF_high=(Growth_rate_P_OCF_high+Growth_rate_P_FCF_high)/2
-
-                                   Revenue_assumption_high=average_revenue_annual_ttm*pow(1+(Growth_rate_revenue_high/100),My_assumption)
-
-                                   Assumption_high=(Revenue_assumption_high*average_Profit_margin_high)*average_PFCF_POCF_high
-
-                                   Assumption_high_inklu_shares_outstanding_high =Assumption_high/shares_diluted_annual_1
-
-                                   Assumption_high_inklu_shares_outstanding_MarginofSafety_high=Assumption_high_inklu_shares_outstanding_high*(1-(Margin_of_safety_high/100))
-                                   
-                                   #Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*usd_to_eur_rate)
-                                   Revenue_high_Euro = "{:.2f}".format(Assumption_high_inklu_shares_outstanding_MarginofSafety_high*st.session_state.current_rate) 
-                                        
-
-
+                                   # Keep as float
+                                   return_on_investment_Revenue_high = ((Assumption_high_inklu_shares_outstanding_MarginofSafety_high - current_price) / current_price) * 100
+                                   Revenue_high_Euro = Assumption_high_inklu_shares_outstanding_MarginofSafety_high * st.session_state.current_rate
+                                   # CSS for styling
                                    st.markdown("""
+
+                                   
                                    <style>
+                                   .positive-value {
+                                   color: green;
+                                   }
+                                   .negative-value {
+                                   color: red;
+                                   }
                                    .valuation-table {
-                                        width: 100%;
-                                        border-collapse: collapse;
-                                        margin-top: 20px;
+                                   width: 100%;
+                                   border-collapse: collapse;
+                                   }
+                                   .valuation-table th, .valuation-table td {
+                                   border: 1px solid #ddd;
+                                   padding: 8px;
+                                   text-align: center;
                                    }
                                    .valuation-table th {
-                                        background-color: #4b71ff;
-                                        color: white;
-                                        padding: 10px;
-                                        text-align: center;
-                                   }
-                                   .valuation-table td {
-                                        padding: 10px;
-                                        text-align: center;
-                                        border: 1px solid #ddd;
+                                   background-color: #f2f2f2;
                                    }
                                    </style>
                                    """, unsafe_allow_html=True)
-
                                    # Create the table
                                    table_html = f"""
                                    <table class="valuation-table">
                                    <tr>
-                                        <th>Scenario</th>
-                                        <th>Projected Value (€)</th>
-                                        <th>vs Current Price</th>
+                                   <th>Scenario</th>
+                                   <th>Projected Value (€)</th>
+                                   <th>vs Current Price</th>
                                    </tr>
                                    <tr>
-                                        <td>Low Estimate</td>
-                                        <td style='color: {"red" if float(Revenue_low_Euro) < float(converted_amount) else "green"}'>{Revenue_low_Euro} €</td>
-                                        <td>{"Undervalued" if float(Revenue_low_Euro) > float(converted_amount) else "Overvalued"}</td>
+                                   <td>Low Estimate</td>
+                                   <td style='color: {"green" if Revenue_low_Euro > float(converted_amount) else "red"}'>
+                                        {Revenue_low_Euro:.2f} € 
+                                        <span class="{'positive-value' if return_on_investment_Revenue_low > 0 else 'negative-value'}">
+                                             ({return_on_investment_Revenue_low:.2f}%)
+                                        </span>
+                                   </td>
+                                   <td>{"Undervalued" if Revenue_low_Euro > float(converted_amount) else "Overvalued"}</td>
                                    </tr>
                                    <tr>
-                                        <td>Mid Estimate</td>
-                                        <td style='color: {"red" if float(Revenue_mid_Euro) < float(converted_amount) else "green"}'>{Revenue_mid_Euro} €</td>
-                                        <td>{"Undervalued" if float(Revenue_mid_Euro) > float(converted_amount) else "Overvalued"}</td>
+                                   <td>Mid Estimate</td>
+                                   <td style='color: {"green" if Revenue_mid_Euro > float(converted_amount) else "red"}'>
+                                        {Revenue_mid_Euro:.2f} € 
+                                        <span class="{'positive-value' if return_on_investment_Revenue_mid > 0 else 'negative-value'}">
+                                             ({return_on_investment_Revenue_mid:.2f}%)
+                                        </span>
+                                   </td>
+                                   <td>{"Undervalued" if Revenue_mid_Euro > float(converted_amount) else "Overvalued"}</td>
                                    </tr>
                                    <tr>
-                                        <td>High Estimate</td>
-                                        <td style='color: {"red" if float(Revenue_high_Euro) < float(converted_amount) else "green"}'>{Revenue_high_Euro} €</td>
-                                        <td>{"Undervalued" if float(Revenue_high_Euro) > float(converted_amount) else "Overvalued"}</td>
+                                   <td>High Estimate</td>
+                                   <td style='color: {"green" if Revenue_high_Euro > float(converted_amount) else "red"}'>
+                                        {Revenue_high_Euro:.2f} € 
+                                        <span class="{'positive-value' if return_on_investment_Revenue_high > 0 else 'negative-value'}">
+                                             ({return_on_investment_Revenue_high:.2f}%)
+                                        </span>
+                                   </td>
+                                   <td>{"Undervalued" if Revenue_high_Euro > float(converted_amount) else "Overvalued"}</td>
                                    </tr>
                                    </table>
                                    """
 
+                                   # Render the table
                                    st.markdown(table_html, unsafe_allow_html=True)
 
-                                   # Optional: Add current price reference
+                                   # Current price reference
                                    st.markdown(f"""
                                    <div style="text-align: left; margin-top: 15px;">
-                                   <strong>Current Price:</strong> <span style="color: green; font-weight: bold;">{converted_amount} €</span>
+                                   <strong>Current Price:</strong> <span style="color: green; font-weight: bold;">{float(converted_amount):.2f} €</span>
                                    </div>
                                    """, unsafe_allow_html=True)
 
-
-                         #def main():
+                              #def main():
                               
                          display_growth_rate_form()
                         # if __name__ == "__main__":
