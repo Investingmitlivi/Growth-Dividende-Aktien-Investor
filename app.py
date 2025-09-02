@@ -12576,11 +12576,14 @@ if selected == "Stock Analysis Tool":
                                    return fcf/ ((1 + wacc / 100) ** year)
 
                               @st.fragment
-                              def simple_chart(fig, present_values_df_horizontal,average_fcf_values1, average_fcf_values2, npv_result, npv_result2):
+                              def simple_chart(fig, present_values_df_horizontal,fcf_df_horizontal,average_fcf_values1, average_fcf_values2, npv_result, npv_result2):
                                    if st.form_submit_button(label="Display FCF Calculation"):
-                                        st.plotly_chart(fig,use_container_width=True, config=config)
-
-                                        st.dataframe(present_values_df_horizontal,use_container_width=True)
+                                        #st.plotly_chart(fig,use_container_width=True, config=config)
+                                        #st.dataframe(fcf_df_horizontal)
+                                        #st.dataframe(present_values_df_horizontal,use_container_width=True)
+                                        st.table(fcf_df_horizontal)
+                                        st.table(present_values_df_horizontal)
+                                        
                
 
                               #@st.cache_data(show_spinner=False,ttl=3600) 
@@ -12703,6 +12706,7 @@ if selected == "Stock Analysis Tool":
 
                                                        # Add the Terminal Value (PV) into the present_values_base_case array
                                                        present_values_base_case.append(Terminal_Value_pv)
+                                                       
 
                                                        # Calculate the total sum of present values (including Terminal Value)
                                                        total_present_value = sum(present_values_base_case)
@@ -12736,6 +12740,9 @@ if selected == "Stock Analysis Tool":
 
                                                        # Discount the Terminal Value to its present value
                                                        Terminal_Value_pv2 = Terminal_Value2 / ((1 + WACC / 100) ** FCF_discount_in_years)
+
+                                                       
+
 
                                                        # Add the Terminal Value (PV) into the present_values_base_case array
                                                        present_values_bullish_case.append(Terminal_Value_pv2)
@@ -12929,13 +12936,16 @@ if selected == "Stock Analysis Tool":
 
                                              # Save average FCF values to a DataFrame for plotting
                                              fcf_df = pd.DataFrame({
-                                                  'Year': range(1, FCF_discount_in_years+1),
+                                                  #'Year': range(1, FCF_discount_in_years+1),
                                                   #'Year': [str(i) for i in range(1, FCF_discount_in_years)] + ['Terminal Value'],  # Label the last year as "Terminal Value"
-                                                  'Discounted Cash Flow (Base Case)': average_fcf_values1,
-                                                  'Discounted Cash Flow (Bullish Case)': average_fcf_values2
-                                                  
+                                                  #'Discounted Cash Flow (Base Case)': average_fcf_values1,
+                                                  #'Discounted Cash Flow (Bullish Case)': average_fcf_values2
+                                                  'Year': [str(i) for i in range(1, FCF_discount_in_years)] + ['Terminal Value'],
+                                                  'Discounted Cash Flow (Base Case)': average_fcf_values1 [:-1]+ [Terminal_Value],
+                                                  'Discounted Cash Flow (Bullish Case)': average_fcf_values2 [:-1]+ [Terminal_Value2]
+                                                                                                    
                                              })
-
+                                             fcf_df_horizontal = fcf_df.set_index('Year').T   
 
                                                                       # Plot the chart using Plotly as a bar chart
                                              fig = px.bar(fcf_df, x='Year', y=['Discounted Cash Flow (Base Case)', 'Discounted Cash Flow (Bullish Case)'],
@@ -12954,7 +12964,7 @@ if selected == "Stock Analysis Tool":
                                              )
 
                                              # Call the chart display function
-                                             simple_chart(fig, present_values_df_horizontal,average_fcf_values1, average_fcf_values2,Equity_value_, total_present_value2)
+                                             simple_chart(fig, present_values_df_horizontal,fcf_df_horizontal,average_fcf_values1, average_fcf_values2,Equity_value_, total_present_value2)
 
 
                                         
