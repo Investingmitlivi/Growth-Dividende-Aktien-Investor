@@ -7638,6 +7638,7 @@ if selected == "Stock Analysis Tool":
                          'VOW3:DE':'Volkswagen AG ',
                          'PLSQF':'Plus500 Ltd',
                          'RACE:IT':'Ferrari NV',
+                         'TEM':'Tempus AI, Inc',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -10475,14 +10476,18 @@ if selected == "Stock Analysis Tool":
                               
                               AverageEndPrice_annual5 = 0.0
           
-
-                         if len(Divdends_paid_annual_5_unpacked) >= 5:
-                              Divdend_per_share_yield_average =sum(Divdends_paid_annual_5_unpacked) / len(Divdends_paid_annual_5_unpacked)
-                              Dividend_yield_average ="{:.2f}%".format(abs((Divdend_per_share_yield_average)/AverageEndPrice_annual5)*100)
-                              
-
-                         else:
+                         try:
+                              if len(Divdends_paid_annual_5_unpacked) >= 5:
+                                   Divdend_per_share_yield_average =sum(Divdends_paid_annual_5_unpacked) / len(Divdends_paid_annual_5_unpacked)
+                                   Dividend_yield_average ="{:.2f}%".format(abs((Divdend_per_share_yield_average)/AverageEndPrice_annual5)*100)
                                    
+
+                              else:
+                                        
+                                   Dividend_yield_average ="{:.2f}%".format(0.00)
+
+                         except Exception as e:
+
                               Dividend_yield_average ="{:.2f}%".format(0.00)
 
 
@@ -12936,10 +12941,7 @@ if selected == "Stock Analysis Tool":
 
                                              # Save average FCF values to a DataFrame for plotting
                                              fcf_df = pd.DataFrame({
-                                                  #'Year': range(1, FCF_discount_in_years+1),
-                                                  #'Year': [str(i) for i in range(1, FCF_discount_in_years)] + ['Terminal Value'],  # Label the last year as "Terminal Value"
-                                                  #'Discounted Cash Flow (Base Case)': average_fcf_values1,
-                                                  #'Discounted Cash Flow (Bullish Case)': average_fcf_values2
+
                                                   'Year': [str(i) for i in range(1, FCF_discount_in_years)] + ['Terminal Value'],
                                                   'Discounted Cash Flow (Base Case)': average_fcf_values1 [:-1]+ [Terminal_Value],
                                                   'Discounted Cash Flow (Bullish Case)': average_fcf_values2 [:-1]+ [Terminal_Value2]
@@ -14352,7 +14354,8 @@ if selected == "Stock Analysis Tool":
                                              mode='lines+markers+text',  # Add text mode
                                              textposition='top center',  # Position text above the markers
                                              textfont=dict(color='black'),  # Add color to the text (change 'blue' to any color you prefer)
-                                             text=[f"{value:.2f}%" for value in data_filtered['Dividend Yield %']],  # Add % sign to text labels
+                                             #text=[f"{value:.2f}%" for value in data_filtered['Dividend Yield %']],  # Add % sign to text labels
+                                             text=[f"{value:.2f}%" if value is not None else "N/A" for value in data_filtered['Dividend Yield %']],
                                              hovertemplate='%{y:.2f}%',
                                              visible="legendonly"
                                              ))
