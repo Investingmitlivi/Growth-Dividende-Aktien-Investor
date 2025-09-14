@@ -7838,6 +7838,10 @@ if selected == "Stock Analysis Tool":
                fcf_ttm =current_Operating_cash_Flow+Capex_ttm
                fcf_ttm = fcf_ttm/1000000000
 
+               print("shares_eop_ttm",shares_eop_ttm)
+               shares_dilted_ttm = Financial_data['ttm']['shares_diluted']
+               print("shares_dilted_ttm",shares_dilted_ttm)
+
 
  
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
@@ -9466,7 +9470,6 @@ if selected == "Stock Analysis Tool":
                          shares_diluted_annual_1 =(sum(shares_diluted_annual21_unpacked[-1:])/len(shares_diluted_annual21_unpacked[-1:]))/ 1000000000
                          #############################################################################################################################
 
-                    
 
                          try:
                               value_at_index_6 = dividendPaidInTheLast21Years_unpacked[-6]
@@ -14297,6 +14300,14 @@ if selected == "Stock Analysis Tool":
                                              # Convert FCF yield to numeric
                                              fcf_yield_numeric = [float(val.strip('%')) if val != "N/A" else None for val in fcf_yield_21_list]
 
+                                                 # --- NEW: Buyback Yield calculation ---
+                                             shares_diluted_annual21_unpacked_full = shares_diluted_annual21_unpacked + [shares_eop_ttm*1000000000]  # append TTM
+                                             df_shares = pd.DataFrame(shares_diluted_annual21_unpacked_full, columns=['Shares'])
+                                             df_shares['Buyback_Yield_%'] = (df_shares['Shares'].shift(1) - df_shares['Shares']) / df_shares['Shares'].shift(1) * 100
+                                             df_shares['Buyback_Yield_%'] = df_shares['Buyback_Yield_%'].fillna(0).round(2)
+                                             buyback_yield_list = df_shares['Buyback_Yield_%'].tolist()
+
+
                                              # Add 'TTM' to dates
                                              date_full = date_annual_21yrs + ["TTM"]
 
@@ -14307,7 +14318,8 @@ if selected == "Stock Analysis Tool":
                                              'Dividend Label': Dividend_per_share,
                                              'Dividend Growth %': Dividends_per_share_growth_annual_21,
                                              'Dividend Yield %': dividend_yield_numeric,
-                                             'FCF Yield %': fcf_yield_numeric
+                                             'FCF Yield %': fcf_yield_numeric,
+                                             'Buyback Yield %': buyback_yield_list 
                                              })
 
                                              # Select date range via slider
@@ -14375,37 +14387,57 @@ if selected == "Stock Analysis Tool":
                                              visible="legendonly"
                                              ))
 
+                                                 # --- ADD: Buyback Yield % as line ---
+                                             fig1.add_trace(go.Scatter(
+                                                  x=data_filtered['Date'],
+                                                  y=data_filtered['Buyback Yield %'],
+                                                  name='Buyback Yield',
+                                                  line=dict(color='black', width=2),
+                                                  yaxis='y5',
+                                                  mode='lines+markers+text',
+                                                  textposition='top center',
+                                                  textfont=dict(color='black'),
+                                                  text=[f"{value:.2f}%" for value in data_filtered['Buyback Yield %']],
+                                                  hovertemplate='%{y:.2f}%',
+                                                  visible="legendonly"
+                                             ))
 
-                                             # Layout with 3 y-axes
                                              fig1.update_layout(
                                              yaxis=dict(
                                                   title='Dividend per Share ➔ Dividend Yield (%)',
-                                                  #tickprefix='$',
                                                   rangemode='tozero',
                                                   showgrid=False
                                              ),
                                              yaxis2=dict(
-                                                  title='Dividend Growth (%)',
+                                                  #title='Dividend Growth (%)',
                                                   overlaying='y',
-                                                  side='right',
+                                                  #side='right',
                                                   showgrid=False,
                                                   range=[0, max(data_filtered['Dividend Growth %'].str.rstrip('%').astype(float)) * 1.1]
                                              ),
                                              yaxis3=dict(
+                                                  #title='Dividend Yield (%)',
                                                   overlaying='y',
                                                   anchor='free',
-                                                  side='left',
-                                                  #position=0.05,
+                                                  #side='left',
+                                                  #position=0.0,  # linke Achse ganz links
                                                   showgrid=False
                                              ),
-
                                              yaxis4=dict(
-                                             #title='FCF Yield (%)',
-                                             overlaying='y',
-                                             anchor='free',
-                                             side='left',
-                                             #position=0.10,
-                                             showgrid=False
+                                                  #title='FCF Yield (%)',
+                                                  overlaying='y',
+                                                  anchor='free',
+                                                  #side='left',
+                                                  #position=0.05,  # etwas rechts von yaxis3
+                                                  showgrid=False
+                                             ),
+                                             yaxis5=dict(
+                                                  #title='Buyback Yield (%)',
+                                                  overlaying='y',
+                                                  anchor='free',
+                                                  #side='right',
+                                                  #position=0.95,  # rechts, innerhalb des [0,1] Bereichs
+                                                  showgrid=False
                                              ),
                                              dragmode=False,
                                              xaxis_type='category',
@@ -14423,9 +14455,11 @@ if selected == "Stock Analysis Tool":
                                              )
                                              )
 
+
                                              # Hover formatting
                                              fig1.update_traces(
                                              selector={'type': 'bar'},
+                                             
                                              hovertemplate='<b>%{x}</b><br>Dividend: %{customdata:.2f}<extra></extra>',
                                              customdata=data_filtered['Dividend per Share']
                                              )
