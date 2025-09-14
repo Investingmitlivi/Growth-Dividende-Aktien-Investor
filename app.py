@@ -7838,11 +7838,6 @@ if selected == "Stock Analysis Tool":
                fcf_ttm =current_Operating_cash_Flow+Capex_ttm
                fcf_ttm = fcf_ttm/1000000000
 
-               print("shares_eop_ttm",shares_eop_ttm)
-               shares_dilted_ttm = Financial_data['ttm']['shares_diluted']
-               print("shares_dilted_ttm",shares_dilted_ttm)
-
-
  
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
                date_list_annual = [period_end_date for period_end_date in date_annual]      
@@ -13626,6 +13621,14 @@ if selected == "Stock Analysis Tool":
                                                   labels={'Revenue (B)': 'Revenue (Billions)'},
                                                   text='Revenue Label'
                                              )
+                                                                                     # Add legend entry for Dividend per Share
+                                             fig.update_traces(
+                                             selector={'type': 'bar'},
+                                             name="Revenue (B)",   # <- Legendenname hinzufügen
+                                             showlegend=True,             # <- in der Legende anzeigen
+                                             visible=True                 # <- per Default sichtbar
+                                             )
+
 
                                              # Add growth line
                                              fig.add_trace(go.Scatter(
@@ -13773,10 +13776,15 @@ if selected == "Stock Analysis Tool":
                                              ]
 
                                              # Create base figure with filtered data
-                                             fig1 = px.bar(filtered_data, x='Date', y='EPS_float',
+                                             fig1 = px.bar(
+                                                  filtered_data, 
+                                                  x='Date', 
+                                                  y='EPS_float',
                                                   labels={'EPS_float': 'EPS'},
                                                   #text='EPS',  # This displays the formatted EPS values
                                                   text_auto='.2f')  # Auto-format text with 2 decimals
+
+                                                  
 
                                                                     # Configure text position inside bars
                                              fig1.update_traces(textposition='inside', 
@@ -13957,6 +13965,15 @@ if selected == "Stock Analysis Tool":
                                         custom_data=['Date', 'Revenue_text', 'FCF_text', 'NAV_text']
                                         )
 
+                                                                                # Add legend entry for Dividend per Share
+                                        fig1.update_traces(
+                                        selector={'type': 'bar'},
+                                        name="Revenue per Share",   # <- Legendenname hinzufügen
+                                        showlegend=True,             # <- in der Legende anzeigen
+                                        visible=True                 # <- per Default sichtbar
+                                        )
+
+
                                         # Set default hover template for bars (Revenue only)
                                         fig1.update_traces(
                                         hovertemplate='<b>%{x}</b><br>Umsatz pro Aktie: %{y:,.2f}<extra></extra>',
@@ -13974,7 +13991,7 @@ if selected == "Stock Analysis Tool":
                                         #mode='lines+markers',
                                         mode='lines+markers+text',  # Add text mode
                                         text=data['Free Cash Flow per Share'],
-                                        textfont=dict(color='white'),  # Add color to the text (change 'blue' to any color you prefer)
+                                        textfont=dict(color='black'),  # Add color to the text (change 'blue' to any color you prefer)
                                         textposition='bottom center',  # Position text above the markers
                                         customdata=data[['Date', 'Revenue_text', 'FCF_text', 'NAV_text']].values,
                                         hovertemplate=(
@@ -14341,6 +14358,14 @@ if selected == "Stock Analysis Tool":
                                              text='Dividend Label'
                                              )
 
+                                             # Add legend entry for Dividend per Share
+                                             fig1.update_traces(
+                                             selector={'type': 'bar'},
+                                             name="Dividend per Share",   # <- Legendenname hinzufügen
+                                             showlegend=True,             # <- in der Legende anzeigen
+                                             visible=True                 # <- per Default sichtbar
+                                             )
+
                                              # Add Dividend Growth % as line
                                              fig1.add_trace(go.Scatter(
                                              x=data_filtered['Date'],
@@ -14456,15 +14481,18 @@ if selected == "Stock Analysis Tool":
                                              )
 
 
-                                             # Hover formatting
+                                             # # Hover formatting
+                                             # fig1.update_traces(
+                                             # selector={'type': 'bar'},
+                                             
+                                             # hovertemplate='<b>%{x}</b><br>Dividend: %{customdata:.2f}<extra></extra>',
+                                             # customdata=data_filtered['Dividend per Share']
+                                             # )
                                              fig1.update_traces(
                                              selector={'type': 'bar'},
-                                             
-                                             hovertemplate='<b>%{x}</b><br>Dividend: %{customdata:.2f}<extra></extra>',
-                                             customdata=data_filtered['Dividend per Share']
+                                             visible=True   # wichtig: NICHT "legendonly"
                                              )
-
-                
+                                                            
  
                                              st.markdown(f"""
                                              <style>
