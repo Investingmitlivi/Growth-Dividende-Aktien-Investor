@@ -7639,6 +7639,8 @@ if selected == "Stock Analysis Tool":
                          'PLSQF':'Plus500 Ltd',
                          'RACE:IT':'Ferrari NV',
                          'TEM':'Tempus AI, Inc',
+                         'QUEST:GR':'Quest Holdings S.A',
+                         'PROF:GR':'Profile Systems & Software SA',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7906,6 +7908,8 @@ if selected == "Stock Analysis Tool":
                     'MBG:DE':'MBG.DE',
                     'VOW3:DE':'VOW3.DE',
                     'RACE:IT':'RACE',
+                    'QUEST:GR':'9IVA.F',
+                    'PROF:GR':'PROF.AT',
 
                   
                }
@@ -8275,7 +8279,7 @@ if selected == "Stock Analysis Tool":
                     fig = go.Figure()
 
                     # Set colors based on performance
-                    fill_color = 'darkred' if is_negative else 'green'
+                    fill_color = 'indianred' if is_negative else 'green'
                     line_color = 'rgba(139, 0, 0, 0.7)' if is_negative else 'rgba(0, 139, 0, 0.7)'
 
                     # Add the area fill
@@ -8345,7 +8349,7 @@ if selected == "Stock Analysis Tool":
                          reverse_mapping = {v: k for k, v in period_mapping.items()}
                          
                          # Create options for the menu
-                         options = [f"{label} ({performances.get(label, {}).get('formatted', 'N/A')})" 
+                         options = [f"{label} ({performances.get(label, {}).get('formatted', 'n/a')})" 
                                    for label in period_mapping.values()]
                          
                          # Set default period if not set
@@ -8441,15 +8445,15 @@ if selected == "Stock Analysis Tool":
                               # Initialize default values
                               metrics = {
                                    'market_cap_billion': None,
-                                   'market_cap_formatted': "N/A",
+                                   'market_cap_formatted': "n/a",
                                    'pe_ratio': None,
-                                   'pe_formatted': "N/A",
+                                   'pe_formatted': "n/a",
                                    'forward_pe': None,
-                                   'forward_pe_formatted': "N/A",
+                                   'forward_pe_formatted': "n/a",
                                    'peg_ratio': None,
-                                   'peg_formatted': "N/A",
+                                   'peg_formatted': "n/a",
                                    'enterprise_value_billion': None,  # New
-                                   'enterprise_value_formatted': "N/A"
+                                   'enterprise_value_formatted': "n/a"
                               }
                               
                               try:
@@ -8477,14 +8481,14 @@ if selected == "Stock Analysis Tool":
 
                                    # Valuation Ratios
                                    metrics['pe_ratio'] = info.get('trailingPE')
-                                   metrics['pe_formatted'] = f"{metrics['pe_ratio']:.2f}" if metrics['pe_ratio'] else "N/A"
+                                   metrics['pe_formatted'] = f"{metrics['pe_ratio']:.2f}" if metrics['pe_ratio'] else "n/a"
                                    
                                    metrics['forward_pe'] = info.get('forwardPE')
-                                   metrics['forward_pe_formatted'] = f"{metrics['forward_pe']:.2f}" if metrics['forward_pe'] else "N/A"
+                                   metrics['forward_pe_formatted'] = f"{metrics['forward_pe']:.2f}" if metrics['forward_pe'] else "n/a"
                                    
                                    # Add PEG Ratio
                                    metrics['peg_ratio'] = info.get('pegRatio')
-                                   metrics['peg_formatted'] = f"{metrics['peg_ratio']:.2f}" if metrics['peg_ratio'] else "N/A"
+                                   metrics['peg_formatted'] = f"{metrics['peg_ratio']:.2f}" if metrics['peg_ratio'] else "n/a"
                                    
                               except Exception as primary_error:
                                    # Fallback to alternative data sources
@@ -8937,7 +8941,7 @@ if selected == "Stock Analysis Tool":
                                    Price_to_OCF_10_numeric.append(ratio)  # Keep numeric for calculations
                                    Price_to_OCF_10.append("{:.2f}".format(ratio))  # Formatted string
                               else:
-                                   Price_to_OCF_10.append("N/A")  # Formatted string for display
+                                   Price_to_OCF_10.append("n/a")  # Formatted string for display
 
                    
          
@@ -10538,7 +10542,7 @@ if selected == "Stock Analysis Tool":
                               Average_ROIC_funf = "-"
                               average_FCF_annual_five_we = "{:.2f}".format(0.0)
                               five_ROE = "0.00"
-                              pe_five_ = "N/A"
+                              pe_five_ = "n/a"
                               pfcf_funf = "-"
                               P_OCF_5 = "-"
                               KCV = "{:.2f}".format(0.0)
@@ -14277,10 +14281,10 @@ if selected == "Stock Analysis Tool":
                                                        yield_ = div_float / price_float * 100
                                                        dividend_yield_21_list.append("{:.2f}%".format(yield_))
                                                   else:
-                                                       dividend_yield_21_list.append("N/A")
+                                                       dividend_yield_21_list.append("n/a")
 
                                              # Convert yield to numeric
-                                             dividend_yield_numeric = [float(val.strip('%')) if val != "N/A" else None for val in dividend_yield_21_list]
+                                             dividend_yield_numeric = [float(val.strip('%')) if val != "n/a" else None for val in dividend_yield_21_list]
 
                                              # Formatted Dividend per Share with $
                                              Dividend_per_share = ["{:.2f}".format(float(value)) for value in Dividend_per_share_annual_21_unpacked] + ["{:.2f}".format(float(Dividend_TTM_extract_value))]
@@ -14304,7 +14308,7 @@ if selected == "Stock Analysis Tool":
                                                        fcf_yield = (fcf / price) * 100
                                                        fcf_yield_21_list.append("{:.2f}%".format(fcf_yield))
                                                   except (ZeroDivisionError, TypeError):
-                                                       fcf_yield_21_list.append("N/A")
+                                                       fcf_yield_21_list.append("n/a")
 
                                              # Add TTM FCF Yield
                                              try:
@@ -14312,10 +14316,10 @@ if selected == "Stock Analysis Tool":
                                                   fcf_yield_ttm = (fcf_per_share / float(current_price)) * 100
                                                   fcf_yield_21_list.append("{:.2f}".format(fcf_yield_ttm))
                                              except (ZeroDivisionError, TypeError, ValueError):
-                                                  fcf_yield_21_list.append("N/A")
+                                                  fcf_yield_21_list.append("n/a")
 
                                              # Convert FCF yield to numeric
-                                             fcf_yield_numeric = [float(val.strip('%')) if val != "N/A" else None for val in fcf_yield_21_list]
+                                             fcf_yield_numeric = [float(val.strip('%')) if val != "n/a" else None for val in fcf_yield_21_list]
 
                                                  # --- NEW: Buyback Yield calculation ---
                                              shares_diluted_annual21_unpacked_full = shares_diluted_annual21_unpacked + [shares_eop_ttm*1000000000]  # append TTM
@@ -14392,7 +14396,7 @@ if selected == "Stock Analysis Tool":
                                              textposition='top center',  # Position text above the markers
                                              textfont=dict(color='black'),  # Add color to the text (change 'blue' to any color you prefer)
                                              #text=[f"{value:.2f}%" for value in data_filtered['Dividend Yield %']],  # Add % sign to text labels
-                                             text=[f"{value:.2f}%" if value is not None else "N/A" for value in data_filtered['Dividend Yield %']],
+                                             text=[f"{value:.2f}%" if value is not None else "n/a" for value in data_filtered['Dividend Yield %']],
                                              hovertemplate='%{y:.2f}%',
                                              visible="legendonly"
                                              ))
