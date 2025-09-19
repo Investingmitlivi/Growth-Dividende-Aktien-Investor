@@ -9479,7 +9479,7 @@ if selected == "Stock Analysis Tool":
                          try:
                               
                               if value_at_index_6 == 0 or value_at_index_last ==0:
-                                   Dividend_5_CAGR = 0
+                                   Dividend_5_CAGR = "{:.2f}".format(0.00)
 
                               else:
                                         try:
@@ -9487,16 +9487,16 @@ if selected == "Stock Analysis Tool":
                                              #CAGR = round(CAGR, 2)
 
                                              if isinstance(Dividend_5_CAGR, complex):
-                                                       Dividend_5_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                                                       Dividend_5_CAGR = "{:.2f}".format(0.00)  # Set CAGR to 0 if it's a complex number
                                              else:
                                                   Dividend_5_CAGR = "{:.2f}".format(Dividend_5_CAGR)
 
                                         except Exception as e:
-                                             Dividend_5_CAGR = 0
+                                             Dividend_5_CAGR = "{:.2f}".format(0.00)
 
                          except Exception as e:  
 
-                              Dividend_5_CAGR =0; 
+                              Dividend_5_CAGR ="{:.2f}".format(0.00); 
                     
      #.................................10  Dividend CAGR............................................                    
 
@@ -9509,23 +9509,23 @@ if selected == "Stock Analysis Tool":
                          try:
                               
                               if value_at_index_11 == 0 or value_at_index_last == 0:
-                                   Dividend_10_CAGR = 0
+                                   Dividend_10_CAGR = "{:.2f}".format(0.00)
 
                               else:
                                         try:
                                              Dividend_10_CAGR = (pow((value_at_index_last / value_at_index_11), 0.1) - 1) * 100
 
                                              if isinstance(Dividend_10_CAGR, complex):
-                                                       Dividend_10_CAGR = 0  # Set CAGR to 0 if it's a complex number
+                                                       Dividend_10_CAGR = "{:.2f}".format(0.00) # Set CAGR to 0 if it's a complex number
                                              else:
                                                   Dividend_10_CAGR = "{:.2f}".format(Dividend_10_CAGR, 2)
 
                                         except Exception as e:
-                                             Dividend_10_CAGR = 0
+                                             Dividend_10_CAGR = "{:.2f}".format(0.00)
 
                          except Exception as e:  
 
-                              Dividend_10_CAGR =0; 
+                              Dividend_10_CAGR ="{:.2f}".format(0.00); 
 
 
           ###################################################################################################
