@@ -7641,6 +7641,8 @@ if selected == "Stock Analysis Tool":
                          'TEM':'Tempus AI, Inc',
                          'QUEST:GR':'Quest Holdings S.A',
                          'PROF:GR':'Profile Systems & Software SA',
+                         'RBRK':'Rubrik, Inc',
+                         'SEZL':'Sezzle Inc.',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -8446,15 +8448,18 @@ if selected == "Stock Analysis Tool":
                               metrics = {
                                    'market_cap_billion': None,
                                    'market_cap_formatted': "n/a",
+                                   'enterprise_value_billion': None,
+                                   'enterprise_value_formatted': "n/a",
                                    'pe_ratio': None,
                                    'pe_formatted': "n/a",
                                    'forward_pe': None,
                                    'forward_pe_formatted': "n/a",
                                    'peg_ratio': None,
                                    'peg_formatted': "n/a",
-                                   'enterprise_value_billion': None,  # New
-                                   'enterprise_value_formatted': "n/a"
+                                   'shares_diluted': None,
+                                   'shares_diluted_formatted': "n/a"
                               }
+
                               
                               try:
                                    # Primary data source - yfinance
@@ -8489,6 +8494,15 @@ if selected == "Stock Analysis Tool":
                                    # Add PEG Ratio
                                    metrics['peg_ratio'] = info.get('pegRatio')
                                    metrics['peg_formatted'] = f"{metrics['peg_ratio']:.2f}" if metrics['peg_ratio'] else "n/a"
+
+                                   shares_diluted = info.get('sharesDiluted')
+                                   if shares_diluted:
+                                        metrics['shares_diluted'] = shares_diluted
+                                        metrics['shares_diluted_formatted'] = (
+                                             f"{shares_diluted / 1_000_000_000:.2f}B" if shares_diluted >= 1_000_000_000
+                                             else f"{shares_diluted / 1_000_000:.2f}M"
+                                        )
+                                        
                                    
                               except Exception as primary_error:
                                    # Fallback to alternative data sources
@@ -8547,7 +8561,9 @@ if selected == "Stock Analysis Tool":
                                    metrics['peg_ratio'],
                                    metrics['peg_formatted'],
                                    metrics['enterprise_value_billion'],  # New
-                                   metrics['enterprise_value_formatted']
+                                   metrics['enterprise_value_formatted'],
+                                   metrics['shares_diluted'],
+                                   metrics['shares_diluted_formatted']
                               )
                               
                               # Cache results
@@ -8565,7 +8581,9 @@ if selected == "Stock Analysis Tool":
                          peg_ratio,
                          peg_formatted,
                          enterprise_value_billion, 
-                         enterprise_value_formatted  # New
+                         enterprise_value_formatted,
+                         shares_diluted,
+                         shares_diluted_formatted  # New
                          ) = get_market_cap(stock_info, ticker)
 
                          # Assign to variables
