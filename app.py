@@ -14371,70 +14371,74 @@ if selected == "Stock Analysis Tool":
                                              end_idx = date_full.index(selected_range[1]) + 1
                                              data_filtered = data.iloc[start_idx:end_idx]
 
+                                             # Calculate y-axis range based on dividend values
+                                             max_dividend = max(data_filtered['Dividend per Share'])
+                                             y_axis_step = max(0.1, round(max_dividend / 10, 1))  # Ensure step is at least 0.1
+                                             y_axis_max = max_dividend * 1.1  # Add 10% padding
+
                                              # Plotly bar chart
                                              fig1 = px.bar(
-                                             data_filtered,
-                                             x='Date',
-                                             y='Dividend per Share',
-                                             labels={'Dividend per Share': 'Amount'},
-                                             text='Dividend Label'
+                                                  data_filtered,
+                                                  x='Date',
+                                                  y='Dividend per Share',
+                                                  labels={'Dividend per Share': 'Amount'},
+                                                  text='Dividend Label'
                                              )
 
                                              # Add legend entry for Dividend per Share
                                              fig1.update_traces(
-                                             selector={'type': 'bar'},
-                                             name="Dividend per Share",   # <- Legendenname hinzufügen
-                                             showlegend=True,             # <- in der Legende anzeigen
-                                             visible=True                 # <- per Default sichtbar
+                                                  selector={'type': 'bar'},
+                                                  name="Dividend per Share",
+                                                  showlegend=True,
+                                                  visible=True
                                              )
 
                                              # Add Dividend Growth % as line
                                              fig1.add_trace(go.Scatter(
-                                             x=data_filtered['Date'],
-                                             y=data_filtered['Dividend Growth %'].str.rstrip('%').astype(float),
-                                             name='Dividend Growth',
-                                             line=dict(color='darkred', width=2),
-                                             yaxis='y2',
-                                             mode='lines+markers+text',  # Add text mode
-                                             textposition='top center',  # Position text above the markers
-                                             textfont=dict(color='black'),  # Add color to the text (change 'blue' to any color you prefer)
-                                             text=[f"{value:.2f}%" for value in data_filtered['Dividend Growth %'].str.rstrip('%').astype(float)],  # Add % sign to text labels  
-                                             hovertemplate='%{y:.2f}%',
-                                             visible="legendonly"
+                                                  x=data_filtered['Date'],
+                                                  y=data_filtered['Dividend Growth %'].str.rstrip('%').astype(float),
+                                                  name='Dividend Growth',
+                                                  line=dict(color='darkred', width=2),
+                                                  yaxis='y2',
+                                                  mode='lines+markers+text',
+                                                  textposition='top center',
+                                                  textfont=dict(color='black'),
+                                                  text=[f"{value:.2f}%" for value in data_filtered['Dividend Growth %'].str.rstrip('%').astype(float)],
+                                                  hovertemplate='%{y:.2f}%',
+                                                  visible="legendonly"
                                              ))
 
                                              # Add Dividend Yield % as line
                                              fig1.add_trace(go.Scatter(
-                                             x=data_filtered['Date'],
-                                             y=data_filtered['Dividend Yield %'],
-                                             name='Dividend Yield',
-                                             line=dict(color='red', width=2),
-                                             yaxis='y3',
-                                             mode='lines+markers+text',  # Add text mode
-                                             textposition='top center',  # Position text above the markers
-                                             textfont=dict(color='black'),  # Add color to the text (change 'blue' to any color you prefer)
-                                             #text=[f"{value:.2f}%" for value in data_filtered['Dividend Yield %']],  # Add % sign to text labels
-                                             text=[f"{value:.2f}%" if value is not None else "n/a" for value in data_filtered['Dividend Yield %']],
-                                             hovertemplate='%{y:.2f}%',
-                                             visible="legendonly"
+                                                  x=data_filtered['Date'],
+                                                  y=data_filtered['Dividend Yield %'],
+                                                  name='Dividend Yield',
+                                                  line=dict(color='red', width=2),
+                                                  yaxis='y3',
+                                                  mode='lines+markers+text',
+                                                  textposition='top center',
+                                                  textfont=dict(color='black'),
+                                                  text=[f"{value:.2f}%" if value is not None else "n/a" for value in data_filtered['Dividend Yield %']],
+                                                  hovertemplate='%{y:.2f}%',
+                                                  visible="legendonly"
                                              ))
 
                                              # Add FCF Yield % as line
                                              fig1.add_trace(go.Scatter(
-                                             x=data_filtered['Date'],
-                                             y=data_filtered['FCF Yield %'],
-                                             name='FCF Yield',
-                                             line=dict(color='green', width=2),
-                                             yaxis='y4',
-                                             mode='lines+markers+text',
-                                             textposition='top center',
-                                             textfont=dict(color='black'),
-                                             text=[f"{value:.2f}%" for value in data_filtered['FCF Yield %']],
-                                             hovertemplate='%{y:.2f}%',
-                                             visible="legendonly"
+                                                  x=data_filtered['Date'],
+                                                  y=data_filtered['FCF Yield %'],
+                                                  name='FCF Yield',
+                                                  line=dict(color='green', width=2),
+                                                  yaxis='y4',
+                                                  mode='lines+markers+text',
+                                                  textposition='top center',
+                                                  textfont=dict(color='black'),
+                                                  text=[f"{value:.2f}%" for value in data_filtered['FCF Yield %']],
+                                                  hovertemplate='%{y:.2f}%',
+                                                  visible="legendonly"
                                              ))
 
-                                                 # --- ADD: Buyback Yield % as line ---
+                                             # --- ADD: Buyback Yield % as line ---
                                              fig1.add_trace(go.Scatter(
                                                   x=data_filtered['Date'],
                                                   y=data_filtered['Buyback Yield %'],
@@ -14450,41 +14454,45 @@ if selected == "Stock Analysis Tool":
                                              ))
 
                                              fig1.update_layout(
-                                             yaxis=dict(
-                                                  title='Dividend per Share ➔ Dividend Yield (%)',
-                                                  rangemode='tozero',
-                                                  showgrid=False
-                                             ),
+                                                  yaxis=dict(
+                                                       title='Dividend per Share ➔ Dividend Yield (%)',
+                                                       rangemode='tozero',
+                                                       showgrid=False,
+                                                       tickmode='linear',
+                                                       dtick=y_axis_step,  # Set tick interval based on dividend values
+                                                       range=[0, y_axis_max]  # Set range based on dividend values
+                                                  ),
                                              yaxis2=dict(
-                                                  #title='Dividend Growth (%)',
                                                   overlaying='y',
-                                                  #side='right',
                                                   showgrid=False,
-                                                  range=[0, max(data_filtered['Dividend Growth %'].str.rstrip('%').astype(float)) * 1.1]
+                                                  range=[0, max(data_filtered['Dividend Growth %'].str.rstrip('%').astype(float)) * 1.1],
+                                                  showticklabels=False,  # Hide tick labels for dividend growth axis
+                                                  showline=False,        # Hide axis line
+                                                  zeroline=False         # Hide zero line
                                              ),
                                              yaxis3=dict(
-                                                  #title='Dividend Yield (%)',
                                                   overlaying='y',
                                                   anchor='free',
-                                                  #side='left',
-                                                  #position=0.0,  # linke Achse ganz links
-                                                  showgrid=False
+                                                  showgrid=False,
+                                                  showticklabels=False,  # Hide tick labels for dividend growth axis
+                                                  showline=False,        # Hide axis line
+                                                  zeroline=False         # Hide zero line
                                              ),
                                              yaxis4=dict(
-                                                  #title='FCF Yield (%)',
                                                   overlaying='y',
                                                   anchor='free',
-                                                  #side='left',
-                                                  #position=0.05,  # etwas rechts von yaxis3
-                                                  showgrid=False
+                                                  showgrid=False,
+                                                  showticklabels=False,  # Hide tick labels for dividend growth axis
+                                                  showline=False,        # Hide axis line
+                                                  zeroline=False         # Hide zero line
                                              ),
                                              yaxis5=dict(
-                                                  #title='Buyback Yield (%)',
                                                   overlaying='y',
                                                   anchor='free',
-                                                  #side='right',
-                                                  #position=0.95,  # rechts, innerhalb des [0,1] Bereichs
-                                                  showgrid=False
+                                                  showgrid=False,
+                                                  showticklabels=False,  # Hide tick labels for dividend growth axis
+                                                  showline=False,        # Hide axis line
+                                                  zeroline=False         # Hide zero line
                                              ),
                                              dragmode=False,
                                              xaxis_type='category',
@@ -14492,8 +14500,8 @@ if selected == "Stock Analysis Tool":
                                                   orientation="h",
                                                   yanchor="bottom",
                                                   y=1.02,
-                                                  xanchor="right",
-                                                  x=1
+                                                  xanchor="center",  # Changed from "right" to "center"
+                                                  x=0.5  # Center the legend
                                              ),
                                              hovermode='x unified',
                                              hoverlabel=dict(
@@ -14502,19 +14510,10 @@ if selected == "Stock Analysis Tool":
                                              )
                                              )
 
-
-                                             # # Hover formatting
-                                             # fig1.update_traces(
-                                             # selector={'type': 'bar'},
-                                             
-                                             # hovertemplate='<b>%{x}</b><br>Dividend: %{customdata:.2f}<extra></extra>',
-                                             # customdata=data_filtered['Dividend per Share']
-                                             # )
                                              fig1.update_traces(
-                                             selector={'type': 'bar'},
-                                             visible=True   # wichtig: NICHT "legendonly"
-                                             )
-                                                            
+                                                  selector={'type': 'bar'},
+                                                  visible=True
+                                             )                                                
  
                                              st.markdown(f"""
                                              <style>

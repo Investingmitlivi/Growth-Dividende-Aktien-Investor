@@ -92,7 +92,7 @@ six==1.16.0
 smmap==5.0.1
 soupsieve==2.6
 stocknews==0.9.11
-streamlit>=1.26.0,==1.47.1
+streamlit>=1.26.0,==1.49.1
 streamlit-option-menu==0.3.13
 tenacity==8.5.0
 threadpoolctl==3.5.0
