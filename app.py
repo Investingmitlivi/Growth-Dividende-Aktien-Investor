@@ -139,6 +139,8 @@ base_currency_2 = "DKK"
 base_currency_3 = "SEK" 
 base_currency_4 = "PLN" 
 
+
+
 #@st.cache_data(show_spinner=False, ttl=86400)  # 24 hour cache
 @st.cache_data(show_spinner=False, ttl=43200)  # 12 hour cache
 def get_exchange_rate(base_currency, target_currency):
@@ -13606,7 +13608,7 @@ if selected == "Stock Analysis Tool":
                                    with col1:
                                         @st.fragment
                                         def display_revenue_chart():
-                                             # Format revenue data
+                                        # Format revenue data
                                              revenue_annual21 = ["{:.2f}".format(value/1e9) for value in revenue_annual21_unpacked]
                                              revenue_growth_annual21 = ["{:.2f}%".format(value*100) for value in revenue_growth_annual21_unpacked]
 
@@ -13643,14 +13645,14 @@ if selected == "Stock Analysis Tool":
                                                   labels={'Revenue (B)': 'Revenue (Billions)'},
                                                   text='Revenue Label'
                                              )
-                                                                                     # Add legend entry for Dividend per Share
+                                             
+                                             # Add legend entry for Dividend per Share
                                              fig.update_traces(
-                                             selector={'type': 'bar'},
-                                             name="Revenue (B)",   # <- Legendenname hinzufügen
-                                             showlegend=True,             # <- in der Legende anzeigen
-                                             visible=True                 # <- per Default sichtbar
+                                                  selector={'type': 'bar'},
+                                                  name="Revenue (B)",   # <- Legendenname hinzufügen
+                                                  showlegend=True,             # <- in der Legende anzeigen
+                                                  visible=True                 # <- per Default sichtbar
                                              )
-
 
                                              # Add growth line
                                              fig.add_trace(go.Scatter(
@@ -13667,8 +13669,22 @@ if selected == "Stock Analysis Tool":
                                                   visible="legendonly"
                                              ))
                                              
+                                             # Calculate dynamic Y-axis range for revenue growth
+                                             if not data_filtered.empty:
+                                                  growth_min = min(data_filtered['Revenue Growth %'])
+                                                  growth_max = max(data_filtered['Revenue Growth %'])
+                                                  
+                                                  # Add some padding to the range (10% padding)
+                                                  padding = (growth_max - growth_min) * 0.1
+                                                  growth_range = [growth_min - padding, growth_max + padding]
+                                                  
+                                                  # Ensure minimum range doesn't go below 0 if all values are positive
+                                                  if growth_min >= 0:
+                                                       growth_range[0] = max(0, growth_range[0])
+                                             else:
+                                                  growth_range = [0, 1]
 
-                                             # Configure layout
+                                             # Configure layout with centered legend
                                              fig.update_layout(
                                                   yaxis=dict(
                                                        title='Revenue (Billions)',
@@ -13681,7 +13697,7 @@ if selected == "Stock Analysis Tool":
                                                        title='Growth Rate (%)',
                                                        overlaying='y',
                                                        side='right',
-                                                       range=[0, max(data_filtered['Revenue Growth %']) * 1.1] if not data_filtered.empty else [0, 1],
+                                                       range=growth_range,  # Use dynamic range
                                                        showgrid=False
                                                   ),
                                                   xaxis_type='category',
@@ -13689,13 +13705,15 @@ if selected == "Stock Analysis Tool":
                                                        orientation="h",
                                                        yanchor="bottom",
                                                        y=1.02,
-                                                       xanchor="right",
-                                                       x=1
+                                                       xanchor="center",  # Changed from "right" to "center"
+                                                       x=0.5             # Changed from 1 to 0.5 to center
                                                   ),
-                                                  hovermode='x unified'
+                                                  hovermode='x unified',
+                                                  margin=dict(t=50)  # Add top margin for the legend
                                              )
+                                             
                                              fig.update_layout(
-                                             dragmode=False, 
+                                                  dragmode=False, 
                                              )
                                              
                                              # Custom hover template
@@ -13703,8 +13721,7 @@ if selected == "Stock Analysis Tool":
                                                   selector={'type': 'bar'},
                                                   hovertemplate='<b>%{x}</b><br>Revenue: %{y:.2f}B<extra></extra>'
                                              )
-
-                                        
+                                             
                                              st.markdown(f"""
                                                        <style>
                                                             @media (max-width: 768px) {{
@@ -13851,13 +13868,15 @@ if selected == "Stock Analysis Tool":
                                                        orientation="h",
                                                        yanchor="bottom",
                                                        y=1.02,
-                                                       xanchor="right",
-                                                       x=1
+                                                       xanchor="center",
+                                                       x=0.5
                                                   )
                                              )
                                              fig1.update_layout(
                                              dragmode=False, 
                                              )
+
+                                             
                                              
                                              # Visual styling
                                              fig1.update_traces(marker_color='#1f77b4', selector={'name': 'EPS_float'})
@@ -14062,8 +14081,8 @@ if selected == "Stock Analysis Tool":
                                              orientation="h",
                                              yanchor="bottom",
                                              y=1.02,
-                                             xanchor="right",
-                                             x=1
+                                             xanchor="center",
+                                             x=0.5
                                         )
                                         )
                                         st.markdown(f"""
