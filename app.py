@@ -7657,8 +7657,10 @@ if selected == "Stock Analysis Tool":
 
 
                if selected_ticker:
-                    ticker = ticker_symbol_name.get(selected_ticker) 
+                    ticker = ticker_symbol_name.get(selected_ticker).upper()  # Convert to uppercase here
                     name, symbol = selected_ticker.split(' : ')
+
+
 
                #............................... api key.................
           
