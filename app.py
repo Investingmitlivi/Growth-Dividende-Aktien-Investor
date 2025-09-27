@@ -8444,7 +8444,6 @@ if selected == "Stock Analysis Tool":
                          
 
                with st.container():
-
                     with Metric:  
 
                          def get_market_cap(stock_info, ticker):
@@ -10990,7 +10989,6 @@ if selected == "Stock Analysis Tool":
 
                
                with st.container():
-                    use_container_width=True
                     with Financials:
                          Income_Statement, Balance_Sheet, Cash_Flow = st.tabs(["Income Statement", "Balance Sheet", "Cash Flow"])
                #...........................................................................
@@ -12223,7 +12221,6 @@ if selected == "Stock Analysis Tool":
 
                #def display_pillar_analysis():
                with st.container():
-                    use_container_width=True
                     with Pillar_Analysis: 
 
 
@@ -13172,8 +13169,6 @@ if selected == "Stock Analysis Tool":
                                    
                
                with st.container():
-                    
-                    #use_container_width=True
                     with Multiple_Valuation:        
                          @st.fragment                         
 
@@ -13400,7 +13395,6 @@ if selected == "Stock Analysis Tool":
 
 #####################################################################################################################################################          
                with st.container(): 
-                    use_container_width=True             
                     with Key_ratios:
                          Annual, Quarter = st.tabs(["Annual", "Quarterly"])
 
@@ -13618,7 +13612,6 @@ if selected == "Stock Analysis Tool":
 
 
                with st.container():
-                    #use_container_width=True
                     with Charts:
                               Annual, Quarter = st.tabs(["Annual", "Quarterly"])
                               with Annual:
