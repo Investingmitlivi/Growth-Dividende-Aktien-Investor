@@ -8436,11 +8436,11 @@ if selected == "Stock Analysis Tool":
                     unsafe_allow_html=True
                          )
                                                             
-               tabs = ["Key Statistics", "Financials", "12 Pillar Stock Screener", "Discounted Cash Flow (DCF)", 
-                    "Reversed DCF (rDCF)", "Multiple of Earnings Valuation", "Charts", "Key Ratios", "Calculator", "AI Summary","Top 10 News"]
+               tabs = ["Key Statistics","Financials","12 Pillar Stock Screener","Discounted Cash Flow (DCF)",
+                       "Reversed DCF (rDCF)","Multiple of Earnings Valuation","Charts","Key Ratios","Calculator","AI Summary","Top 10 News"]
 
                # Create tabs
-               Metric, Financials, Pillar_Analysis, Stock_Analyser, Reversed_DCF, Multiple_Valuation, Charts, Key_ratios, Retirement_Calculator,AI_Summary, news = st.tabs(tabs)
+               Metric,Financials,Pillar_Analysis,Stock_Analyser,Reversed_DCF,Multiple_Valuation,Charts,Key_ratios,Retirement_Calculator,AI_Summary,news = st.tabs(tabs)
                          
 
                with st.container():
