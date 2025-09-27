@@ -14,6 +14,12 @@ import secrets
 import math
 import re
 import matplotlib.pyplot as plt
+import PyPDF2
+import io
+from openai import OpenAI
+import tiktoken
+import os
+from typing import Optional, List, Tuple
 
 
 
@@ -8431,10 +8437,10 @@ if selected == "Stock Analysis Tool":
                          )
                                                             
                tabs = ["Key Statistics", "Financials", "12 Pillar Stock Screener", "Discounted Cash Flow (DCF)", 
-                    "Reversed DCF (rDCF)", "Multiple of Earnings Valuation", "Charts", "Key Ratios", "Calculator", "Top 10 News"]
+                    "Reversed DCF (rDCF)", "Multiple of Earnings Valuation", "Charts", "Key Ratios", "Calculator", "AI Summary","Top 10 News"]
 
                # Create tabs
-               Metric, Financials, Pillar_Analysis, Stock_Analyser, Reversed_DCF, Multiple_Valuation, Charts, Key_ratios, Retirement_Calculator, news = st.tabs(tabs)
+               Metric, Financials, Pillar_Analysis, Stock_Analyser, Reversed_DCF, Multiple_Valuation, Charts, Key_ratios, Retirement_Calculator,AI_Summary, news = st.tabs(tabs)
                          
 
                with st.container():
@@ -12890,67 +12896,77 @@ if selected == "Stock Analysis Tool":
                                              </style>
                                              """, unsafe_allow_html=True)
 
-                                             # Create the valuation table
+                                             # Create the valuation table (excluding the Benjamin Graham + DCF row)
                                              table_html = f"""
                                              <table class="valuation-table">
                                              <tr>
-                                             <th>Method</th>
-                                             <th>Low Estimate</th>
-                                             <th>Mid Estimate</th>
-                                             <th>High Estimate</th>
+                                                  <th>Method</th>
+                                                  <th>Low Estimate</th>
+                                                  <th>Mid Estimate</th>
+                                                  <th>High Estimate</th>
                                              </tr>
-
-                                             <!-- Benjamin Graham + DCF Row -->
-                                             <tr>
-                                             <td class="method-column">Benjamin Graham + DCF</td>
-                                             <td class="{"positive-value" if float(DCF_Graham_low_Euro_equivalent) > float(converted_amount) else "negative-value"}">
-                                                  {DCF_Graham_low_Euro_equivalent:.2f} €
-                                                  <span class="{'positive-value' if return_on_investment_DCF_Graham_low > 0 else 'negative-value'}">
-                                                       ({return_on_investment_DCF_Graham_low:.2f}%)
-                                                  </span>
-                                             </td>
-                                             <td class="{"positive-value" if float(Average_valuation_DCF_Graham_low_high_Euro_equivalent) > float(converted_amount) else "negative-value"}">
-                                                  {Average_valuation_DCF_Graham_low_high_Euro_equivalent:.2f} €
-                                                  <span class="{'positive-value' if return_on_investment_Average_DCF_Graham_high_low > 0 else 'negative-value'}">
-                                                       ({return_on_investment_Average_DCF_Graham_high_low:.2f}%)
-                                             </td>
-                                             <td class="{"positive-value" if float(DCF_Graham_high_Euro_equivalent) > float(converted_amount) else "negative-value"}">
-                                                  {DCF_Graham_high_Euro_equivalent:.2f} €
-                                                  <span class="{'positive-value' if return_on_investment_DCF_Graham_high > 0 else 'negative-value'}">
-                                                       ({return_on_investment_DCF_Graham_high:.2f}%)
-                                             </td>
-                                             </tr>
-
                                              <!-- DCF Analysis Row -->
                                              <tr>
-                                             <td class="method-column">Discounted Cash Flow (DCF)</td>
-                                             <td class="{"positive-value" if float(low_DCF_Euro_equivalent) > float(converted_amount) else "negative-value"}">
-                                                  {low_DCF_Euro_equivalent:.2f} €
-                                                  <span class="{'positive-value' if return_on_investment_DCF_low > 0 else 'negative-value'}">
-                                                       ({return_on_investment_DCF_low:.2f}%)
-                                                  </span>
-                                             </td>
-                                             <td class="{"positive-value" if float(Average_DCF_low_high_Euro_equivalent) > float(converted_amount) else "negative-value"}">
-                                                  {Average_DCF_low_high_Euro_equivalent:.2f} €
-                                                  <span class="{'positive-value' if return_on_investment_Average_DCF_low_high > 0 else 'negative-value'}">
-                                                       ({return_on_investment_Average_DCF_low_high:.2f}%)
-                                             </td>
-                                             <td class="{"positive-value" if float(high_DCF_Euro_equivalent) > float(converted_amount) else "negative-value"}">
-                                                  {high_DCF_Euro_equivalent:.2f} €
-                                                  <span class="{'positive-value' if return_on_investment_DCF_high > 0 else 'negative-value'}">
-                                                       ({return_on_investment_DCF_high:.2f}%)
-                                                  </span>
-                                             </td>
+                                                  <td class="method-column">Discounted Cash Flow (DCF)</td>
+                                                  <td class="{'positive-value' if float(low_DCF_Euro_equivalent) > float(converted_amount) else 'negative-value'}">
+                                                       {low_DCF_Euro_equivalent:.2f} €
+                                                       <span class="{'positive-value' if return_on_investment_DCF_low > 0 else 'negative-value'}">
+                                                            ({return_on_investment_DCF_low:.2f}%)
+                                                       </span>
+                                                  </td>
+                                                  <td class="{'positive-value' if float(Average_DCF_low_high_Euro_equivalent) > float(converted_amount) else 'negative-value'}">
+                                                       {Average_DCF_low_high_Euro_equivalent:.2f} €
+                                                       <span class="{'positive-value' if return_on_investment_Average_DCF_low_high > 0 else 'negative-value'}">
+                                                            ({return_on_investment_Average_DCF_low_high:.2f}%)
+                                                       </span>
+                                                  </td>
+                                                  <td class="{'positive-value' if float(high_DCF_Euro_equivalent) > float(converted_amount) else 'negative-value'}">
+                                                       {high_DCF_Euro_equivalent:.2f} €
+                                                       <span class="{'positive-value' if return_on_investment_DCF_high > 0 else 'negative-value'}">
+                                                            ({return_on_investment_DCF_high:.2f}%)
+                                                       </span>
+                                                  </td>
                                              </tr>
                                              </table>
-
-                                             <div style="text-align: right; margin-top: 15px;">
-                                             <span class="current-price-highlight">
-                                             <strong>Current Price:</strong> {converted_amount} €
-                                             </span>
-                                             </div>
                                              """
                                              st.markdown(table_html, unsafe_allow_html=True)
+
+                                             # Create an expander for the Benjamin Graham + DCF row
+                                             with st.expander(''):
+                                                  expander_table_html = f"""
+                                                  <table class="valuation-table">
+                                                       <tr>
+                                                            <td class="method-column">Benjamin Graham + DCF</td>
+                                                            <td class="{'positive-value' if float(DCF_Graham_low_Euro_equivalent) > float(converted_amount) else 'negative-value'}">
+                                                                 {DCF_Graham_low_Euro_equivalent:.2f} €
+                                                                 <span class="{'positive-value' if return_on_investment_DCF_Graham_low > 0 else 'negative-value'}">
+                                                                      ({return_on_investment_DCF_Graham_low:.2f}%)
+                                                                 </span>
+                                                            </td>
+                                                            <td class="{'positive-value' if float(Average_valuation_DCF_Graham_low_high_Euro_equivalent) > float(converted_amount) else 'negative-value'}">
+                                                                 {Average_valuation_DCF_Graham_low_high_Euro_equivalent:.2f} €
+                                                                 <span class="{'positive-value' if return_on_investment_Average_DCF_Graham_high_low > 0 else 'negative-value'}">
+                                                                      ({return_on_investment_Average_DCF_Graham_high_low:.2f}%)
+                                                                 </span>
+                                                            </td>
+                                                            <td class="{'positive-value' if float(DCF_Graham_high_Euro_equivalent) > float(converted_amount) else 'negative-value'}">
+                                                                 {DCF_Graham_high_Euro_equivalent:.2f} €
+                                                                 <span class="{'positive-value' if return_on_investment_DCF_Graham_high > 0 else 'negative-value'}">
+                                                                      ({return_on_investment_DCF_Graham_high:.2f}%)
+                                                                 </span>
+                                                            </td>
+                                                       </tr>
+                                                  </table>
+                                                  """
+                                                  st.markdown(expander_table_html, unsafe_allow_html=True)
+                                                  # Display current price
+                                             st.markdown(f"""
+                                             <div style="text-align: right; margin-top: 15px;">
+                                                  <span class="current-price-highlight">
+                                                       <strong>Current Price:</strong> {converted_amount} €
+                                                  </span>
+                                             </div>
+                                             """, unsafe_allow_html=True)
 
                                              present_values_df = pd.DataFrame({
                                              #'Year': range(1, FCF_discount_in_years + 1),
@@ -16043,8 +16059,386 @@ if selected == "Stock Analysis Tool":
                          - **Decline Rate:** 0.30
                          """)
 
- ########################################################################################################################################                             
+ ######################################################################################################################################## 
+               with st.container():
+                    with AI_Summary:
 
+                         def configure_page():                         
+                         # Custom CSS for better styling
+                              st.markdown("""
+                              <style>
+                                   .main-header {
+                                        text-align: center;
+                                        color: #1f77b4;
+                                        margin-bottom: 30px;
+                                   }
+                                   .upload-section {
+                                        border: 2px dashed #cccccc;
+                                        border-radius: 10px;
+                                        padding: 20px;
+                                        text-align: center;
+                                        margin: 20px 0;
+                                   }
+                                   .summary-box {
+                                        background-color: #f0f2f6;
+                                        border-radius: 10px;
+                                        padding: 20px;
+                                        margin: 20px 0;
+                                   }
+                                   .info-box {
+                                        background-color: #e8f4fd;
+                                        border-left: 4px solid #1f77b4;
+                                        padding: 15px;
+                                        margin: 15px 0;
+                                   }
+                              </style>
+                              """, unsafe_allow_html=True)
+
+                         def count_tokens(text: str, model: str = "gpt-3.5-turbo") -> int:
+                              """Count the number of tokens in a text string."""
+                              try:
+                                   encoding = tiktoken.encoding_for_model(model)
+                                   return len(encoding.encode(text))
+                              except:
+                                   # Fallback estimation: roughly 4 characters per token
+                                   return len(text) // 4
+
+                         def extract_text_from_pdf(pdf_file) -> Optional[str]:
+                              """Extract text content from uploaded PDF file."""
+                              try:
+                                   pdf_reader = PyPDF2.PdfReader(pdf_file)
+                                   text = ""
+                                   
+                                   for page_num in range(len(pdf_reader.pages)):
+                                        page = pdf_reader.pages[page_num]
+                                        text += page.extract_text() + "\n"
+                                   
+                                   return text.strip()
+                              except Exception as e:
+                                   st.error(f"Error extracting text from PDF: {str(e)}")
+                                   return None
+
+                         def chunk_text(text: str, max_tokens: int = 3000) -> List[str]:
+                              """Split text into chunks that fit within token limits."""
+                              words = text.split()
+                              chunks = []
+                              current_chunk = []
+                              current_tokens = 0
+                              
+                              for word in words:
+                                   word_tokens = count_tokens(word + " ")
+                                   
+                                   if current_tokens + word_tokens > max_tokens and current_chunk:
+                                        chunks.append(" ".join(current_chunk))
+                                        current_chunk = [word]
+                                        current_tokens = word_tokens
+                                   else:
+                                        current_chunk.append(word)
+                                        current_tokens += word_tokens
+                              
+                              if current_chunk:
+                                   chunks.append(" ".join(current_chunk))
+                              
+                              return chunks
+
+                         def get_summary_prompts() -> dict:
+                              """Return dictionary of summary prompt templates."""
+                              return {
+                                   "Brief": "Provide a brief summary (2-3 sentences) of the following text:",
+                                   "Detailed": "Provide a detailed summary covering the main points and key details of the following text:",
+                                   "Bullet Points": "Summarize the following text using bullet points for the main ideas:",
+                                   "Executive Summary": "Create an executive summary highlighting the key findings, conclusions, and recommendations:",
+                                   "Custom": "Summarize the following text:"
+                              }
+
+                         def summarize_single_chunk(client: OpenAI, text: str, prompt: str) -> Optional[str]:
+                              """Summarize a single chunk of text."""
+                              try:
+                                   response = client.chat.completions.create(
+                                        model="gpt-3.5-turbo",
+                                        messages=[
+                                             {"role": "system", "content": "You are a helpful assistant that creates clear, concise summaries."},
+                                             {"role": "user", "content": f"{prompt}\n\n{text}"}
+                                        ],
+                                        max_tokens=1000,
+                                        temperature=0.3
+                                   )
+                                   return response.choices[0].message.content
+                              except Exception as e:
+                                   st.error(f"Error summarizing chunk: {str(e)}")
+                                   return None
+
+                         def summarize_multiple_chunks(client: OpenAI, chunks: List[str], final_prompt: str) -> Optional[str]:
+                              """Summarize multiple chunks of text."""
+                              chunk_summaries = []
+                              
+                              for i, chunk in enumerate(chunks):
+                                   st.info(f"Processing chunk {i+1}/{len(chunks)}...")
+                                   try:
+                                        response = client.chat.completions.create(
+                                             model="gpt-3.5-turbo",
+                                             messages=[
+                                                  {"role": "system", "content": "You are a helpful assistant that creates clear, concise summaries."},
+                                                  {"role": "user", "content": f"Summarize this section of a document:\n\n{chunk}"}
+                                             ],
+                                             max_tokens=500,
+                                             temperature=0.3
+                                        )
+                                        chunk_summaries.append(response.choices[0].message.content)
+                                   except Exception as e:
+                                        st.error(f"Error processing chunk {i+1}: {str(e)}")
+                                        return None
+                         
+                              # Combine chunk summaries into final summary
+                              combined_text = "\n\n".join(chunk_summaries)
+                              try:
+                                   final_response = client.chat.completions.create(
+                                        model="gpt-3.5-turbo",
+                                        messages=[
+                                             {"role": "system", "content": "You are a helpful assistant that creates clear, comprehensive summaries."},
+                                             {"role": "user", "content": f"{final_prompt}\n\nHere are summaries of different sections of a document. Please create a cohesive final summary:\n\n{combined_text}"}
+                                        ],
+                                        max_tokens=1000,
+                                        temperature=0.3
+                                   )
+                                   return final_response.choices[0].message.content
+                              except Exception as e:
+                                   st.error(f"Error creating final summary: {str(e)}")
+                                   return None
+
+                         def summarize_text(text: str, api_key: str, summary_type: str, custom_prompt: str = "") -> Optional[str]:
+                              """Generate AI summary of the text using OpenAI API."""
+                              try:
+                                   client = OpenAI(api_key=api_key)
+                                   prompts = get_summary_prompts()
+                                   
+                                   # Use custom prompt if provided, otherwise use predefined prompt
+                                   if summary_type == "Custom" and custom_prompt:
+                                        base_prompt = custom_prompt
+                                   else:
+                                        base_prompt = prompts.get(summary_type, prompts["Brief"])
+                                   
+                                   # Handle long documents by chunking
+                                   chunks = chunk_text(text, max_tokens=3000)
+                                   
+                                   if len(chunks) == 1:
+                                        return summarize_single_chunk(client, text, base_prompt)
+                                   else:
+                                        return summarize_multiple_chunks(client, chunks, base_prompt)
+                                        
+                              except Exception as e:
+                                   st.error(f"Error initializing OpenAI client: {str(e)}")
+                                   return None
+                         col1,col2,col3,col4 = st.columns(4)
+                         #@st.fragment
+                         def render_sidebar() -> Tuple[str, str, str]:
+                              """Render sidebar with configuration options and return values."""
+                              #with st.sidebar:
+                              st.header("⚙️ Configuration")
+                              
+                              # API Key - try environment variable first, then user input
+                              api_key = os.getenv("OPENAI_API_KEY") or os.getenv("openai_key")
+                              
+                              if not api_key:
+                                   api_key = st.text_input(
+                                        "OpenAI API Key",
+                                        type="password",
+                                        help="Enter your OpenAI API key to use the summarization feature"
+                                   )
+                              else:
+                                   st.success("✅ API Key loaded from environment")
+                              
+                              # Summary type selection
+                              summary_type = st.selectbox(
+                                   "Summary Type",
+                                   ["Brief", "Detailed", "Bullet Points", "Executive Summary", "Custom"],
+                                   help="Choose the type of summary you want"
+                              )
+                              
+                              # Custom prompt for custom summary type
+                              custom_prompt = ""
+                              if summary_type == "Custom":
+                                   custom_prompt = st.text_area(
+                                        "Custom Prompt",
+                                        placeholder="Enter your custom summarization prompt here...",
+                                        help="Provide specific instructions for how you want the text summarized"
+                                   )
+                              
+                              render_sidebar_info()
+                                   
+                              return api_key, summary_type, custom_prompt
+
+                         def render_sidebar_info():
+                              """Render informational content in sidebar."""
+                              st.markdown("---")
+                              st.markdown("### ℹ️ How it works")
+                              st.markdown("""
+                              1. Upload your PDF file
+                              2. Choose summary type
+                              3. Click 'Generate Summary'
+                              4. Get your AI summary!
+                              """)
+
+                         @st.fragment
+                         def handle_file_upload() -> Optional[object]:
+                              """Handle PDF file upload and display file information."""
+                              st.markdown('<div class="upload-section">', unsafe_allow_html=True)
+                              st.subheader("📁 Upload PDF")
+                              
+                              uploaded_file = st.file_uploader(
+                                   "Choose a PDF file",
+                                   type="pdf",
+                                   help="Select a PDF file to summarize"
+                              )
+                              
+                              if uploaded_file:
+                                   st.success(f"✅ File uploaded: {uploaded_file.name}")
+                                   file_size = len(uploaded_file.getvalue()) / 1024 / 1024  # Size in MB
+                                   st.info(f"File size: {file_size:.2f} MB")
+                              
+                              st.markdown('</div>', unsafe_allow_html=True)
+                              return uploaded_file
+
+                         def validate_inputs(uploaded_file, api_key: str, summary_type: str, custom_prompt: str) -> bool:
+                              """Validate user inputs and show appropriate error messages."""
+                              if not uploaded_file:
+                                   st.error("Please upload a PDF file first!")
+                                   return False
+                              elif not api_key:
+                                   st.error("Please enter your OpenAI API key!")
+                                   return False
+                              elif summary_type == "Custom" and not custom_prompt.strip():
+                                   st.error("Please enter a custom prompt!")
+                                   return False
+                              return True
+
+                         @st.fragment
+                         def process_pdf_and_generate_summary(uploaded_file, api_key: str, summary_type: str, custom_prompt: str):
+                              """Process PDF file and generate AI summary."""
+                              with st.spinner("Extracting text from PDF..."):
+                                   extracted_text = extract_text_from_pdf(uploaded_file)
+                              
+                              if not extracted_text:
+                                   return
+                              
+                              st.success(f"✅ Extracted {len(extracted_text)} characters")
+                              
+                              with st.spinner("Generating AI summary..."):
+                                   summary = summarize_text(extracted_text, api_key, summary_type, custom_prompt)
+                              
+                              if summary:
+                                   st.session_state.current_summary = summary
+                                   st.session_state.current_text = extracted_text
+                                   st.success("✅ Summary generated successfully!")
+                              else:
+                                   st.error("Failed to generate summary. Please check your API key and try again.")
+
+                         def calculate_document_stats(original_text: str, summary_text: str) -> dict:
+                              """Calculate and return document statistics."""
+                              return {
+                                   "original_chars": len(original_text),
+                                   "original_words": len(original_text.split()),
+                                   "summary_chars": len(summary_text),
+                                   "compression_ratio": len(summary_text) / len(original_text) * 100
+                              }
+
+                         @st.fragment
+                         def display_results(uploaded_file):
+                              """Display summary results and statistics."""
+                              st.subheader("📄 Results")
+                              
+                              if hasattr(st.session_state, 'current_summary') and st.session_state.current_summary:
+                                   # Display summary
+                                   st.markdown('<div class="summary-box">', unsafe_allow_html=True)
+                                   st.subheader("🤖 AI Summary")
+                                   st.write(st.session_state.current_summary)
+                                   st.markdown('</div>', unsafe_allow_html=True)
+                                   
+                                   # Download button
+                                   filename = f"summary_{uploaded_file.name if uploaded_file else 'document'}.txt"
+                                   st.download_button(
+                                        label="💾 Download Summary",
+                                        data=st.session_state.current_summary,
+                                        file_name=filename,
+                                        mime="text/plain"
+                                   )
+                                   
+                                   # Display statistics
+                                   if hasattr(st.session_state, 'current_text'):
+                                        stats = calculate_document_stats(
+                                             st.session_state.current_text, 
+                                             st.session_state.current_summary
+                                        )
+                                        display_document_statistics(stats)
+                              else:
+                                   st.info("👆 Upload a PDF file and click 'Generate Summary' to see results here.")
+
+                         @st.fragment
+                         def display_document_statistics(stats: dict):
+                              """Display document statistics in an info box."""
+                              st.markdown('<div class="info-box">', unsafe_allow_html=True)
+                              st.markdown("**📊 Document Statistics:**")
+                              st.markdown(f"- Original text: {stats['original_chars']} characters")
+                              st.markdown(f"- Original text: ~{stats['original_words']} words")
+                              st.markdown(f"- Summary: {stats['summary_chars']} characters")
+                              st.markdown(f"- Compression ratio: {stats['compression_ratio']:.1f}%")
+                              st.markdown('</div>', unsafe_allow_html=True)
+
+                         @st.fragment
+                         def handle_summary_generation(uploaded_file, api_key: str, summary_type: str, custom_prompt: str):
+                              """Handle the summary generation process with fragment optimization."""
+                              # Generate summary button
+                              if st.button("🚀 Generate Summary", type="primary", use_container_width=True):
+                                   if validate_inputs(uploaded_file, api_key, summary_type, custom_prompt):
+                                        process_pdf_and_generate_summary(uploaded_file, api_key, summary_type, custom_prompt)
+
+                         def render_header():
+                              """Render the main header and description."""
+                              st.markdown('<h1 class="main-header">🤖 AI PDF Summarizer</h1>', unsafe_allow_html=True)
+                              st.markdown("Upload a PDF document and get an AI-generated summary in seconds!")
+
+                         def render_footer():
+                              """Render the footer with credits and notes."""
+                              st.markdown("---")
+                              st.markdown("""
+                              <div style='text-align: center; color: #666666;'>
+                                   <p>Built with Streamlit • Powered by OpenAI GPT • Made with ❤️</p>
+                                   <p><small>Note: Your API key is not stored and is only used for the current session.</small></p>
+                              </div>
+                              """, unsafe_allow_html=True)
+
+                         def main():
+                              """Main application function."""
+                              # Configure page
+                              configure_page()
+                              
+                              # Render header
+                              render_header()
+                              
+                              # Render sidebar and get configuration
+                              api_key, summary_type, custom_prompt = render_sidebar()
+                              
+                              # Main content area with two columns
+                              col1, col2 = st.columns([1, 2])
+                              
+                              with col1:
+                                   # Handle file upload
+                                   uploaded_file = handle_file_upload()
+                                   
+                                   # Handle summary generation
+                                   handle_summary_generation(uploaded_file, api_key, summary_type, custom_prompt)
+                              
+                              with col2:
+                                   # Display results
+                                   display_results(uploaded_file)
+                              
+                              # Render footer
+                              render_footer()
+
+                         if __name__ == "__main__":
+                              main()  
+
+##########################################################################
                with st.container():
                     with news:
                          def fetch_stock_news(stock_info):
