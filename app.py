@@ -15862,7 +15862,140 @@ if selected == "Stock Analysis Tool":
                                         st.plotly_chart(fig12,use_container_width=True,config=config)
                #.........
 
+                              with Quarter:
+                                       # 
+               #                 
+                                   try:
+                                        #Research_Dev_annual_10_unpacked    = Research_Dev_annual_10_unpacked 
+                                        Research_Dev_quarter_10  = Research_Dev_quarter_10_unpacked
+                                        #StockBased_Compansation_annual_10_annual =StockBased_Compansation_annual_10_unpacked  
+                                        StockBased_Compansation_quarter_10 = StockBased_Compansation_quarter_10_unpacked
 
+                                   except Exception as e:    
+                                        Research_Dev_quarter_10 =  [0]*len_10_quarter
+                                        StockBased_Compansation_quarter_10 =  [0]*len_10_quarter
+
+                                   
+                                   data = pd.DataFrame({
+                                   'Date': date_quarter,
+                                   'Dividends': [round(abs(x), 2) for x in Cash_Dividends_paid_Total_quarter_10_unpacked],
+                                   'Free Cash Flow': FCF_quarter_10_unpacked,
+                                   'CapEx': [round(abs(x), 2) for x in Capex_quarter_10_unpacked ],
+                                   'Net Income': net_income_quarter_10_unpacked,
+                                   'Operating Cash Flow': Net_Operating_CashFlow_quarter_10_unpacked,
+                                   'Research & Development':Research_Dev_quarter_10,
+                                   'Stock Based Compansation':StockBased_Compansation_quarter_10
+                                   })
+
+                                   fig = go.Figure()
+
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Operating Cash Flow'],
+                                   name='Operating Cash Flow',
+                                   marker_color='darkred',
+                                   visible=True,  # Default visible
+                                   customdata=data['Operating Cash Flow']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Operating Cash Flow: %{customdata}B<extra></extra>'
+                                   ))
+                                   #hovertemplate='<b>%{x}</b><br>Operating Cash Flow: %{customdata:.2f}<extra></extra>'
+
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Net Income'],
+                                   name='Net Income',
+                                   marker_color='indigo',
+                                   visible=True,  # Default visible
+                                   customdata=data['Net Income']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Net Income: %{customdata}B<extra></extra>'
+                                   ))
+                                   
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Free Cash Flow'],
+                                   name='Free Cash Flow',
+                                   marker_color='olive',
+                                   visible=True,  # Default visible
+                                   customdata=data['Free Cash Flow']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Free Cash Flow: %{customdata}B<extra></extra>'
+                                   ))
+
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Stock Based Compansation'],
+                                   name='Stock Based Compansation',
+                                   #marker_color='olive',
+                                   visible=True,  # Default visible
+                                   customdata=data['Stock Based Compansation']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Stock Based Compansation: %{customdata}B<extra></extra>'
+                                   ))
+                                  
+
+                                   # Add traces with legendonly visibility
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Research & Development'],
+                                   name='Research & Development',
+                                   visible=True,  # Default visible
+                                   customdata=data['Research & Development']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Research & Development: %{customdata}B<extra></extra>'
+                                   ))
+
+
+
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['CapEx'],
+                                   name='CapEx',
+                                   marker_color='black',
+                                   visible=True,  # Default visible
+                                   customdata=data['CapEx']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>CapEx: %{customdata}B<extra></extra>'
+                                   ))
+
+
+
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['Dividends'],
+                                   name='Dividends Paid',
+                                   marker_color='green',
+                                   visible=True,  # Default visible
+                                   customdata=data['Dividends']/ 1e9,
+                                   hovertemplate='<b>%{x}</b><br>Dividends: %{customdata}B<extra></extra>'
+                                   ))
+                                   
+                                   fig.update_layout(
+                                   xaxis_type='category' 
+                                   )
+                                   
+
+                           
+                                   fig.update_layout(
+                                        barmode='group', xaxis_title='Date',
+                                                  #title=title_text
+                                                  )
+                                                       # Update legend placement
+                                   fig.update_layout(
+                                   legend=dict (
+                                   orientation="h",
+                                   yanchor="top",
+                                   y=1.1,
+                                   xanchor="center",
+                                   x=0.5
+                                   )
+                                   )
+
+                                   fig.update_traces(texttemplate='%{y}', textposition='inside')
+                                   
+
+                                   fig.update_layout(
+                                   dragmode=False, 
+                                   )
+                                                                 
+
+                                   st.plotly_chart(fig,use_container_width=True,config=config)
+                                   #with col2:
                                         
 
                #...........................................................................................................
