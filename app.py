@@ -8940,9 +8940,16 @@ if selected == "Stock Analysis Tool":
                          Capex_revenue_ratio_10_annual_unpacked = np.abs(np.array(Capex_annual_10_unpacked)) / np.array(Revenue_annual_10_unpacked)
                          Capex_revenue_ratio_10_annual_unpacked = np.round(Capex_revenue_ratio_10_annual_unpacked * 1, 4)
                          Capex_revenue_ratio_10_annual_unpacked =Capex_revenue_ratio_10_annual_unpacked.tolist()
-                         
 
+
+
+                         Capex_CashFlow_ratio_10_annual_unpacked = np.abs(np.array(Capex_annual_10_unpacked)) / np.array(Net_Operating_CashFlow_annual_10_unpacked)
                          
+                         Capex_CashFlow_ratio_10_annual_unpacked = np.round(Capex_CashFlow_ratio_10_annual_unpacked * 1, 4)
+                         Capex_CashFlow_ratio_10_annual_unpacked = Capex_CashFlow_ratio_10_annual_unpacked.tolist()
+
+                    
+                        
                          EndPrice_annual_10_unpacked = EndPrice_annual_21_unpacked[-10:]
                          shares_basic_annual_funf_unpacked=shares_basic_annual_10_unpacked[-5:]
                          net_income_annual_10_unpacked=net_income_annual_21_unpacked[-10:]
@@ -9953,9 +9960,11 @@ if selected == "Stock Analysis Tool":
                          Capex_revenue_ratio_10_quartal_unpacked= np.abs(np.array(Capex_quarter_10_unpacked))/np.array(Revenue_quarter_10_unpacked)
                          Capex_revenue_ratio_10_quartal_unpacked = np.round(Capex_revenue_ratio_10_quartal_unpacked * 1, 4)
                          Capex_revenue_ratio_10_quartal_unpacked=Capex_revenue_ratio_10_quartal_unpacked.tolist()
-                         
 
 
+                         Capex_CashFlow_ratio_10_quartal_unpacked = np.abs(np.array(Capex_quarter_10_unpacked)) / np.array(Net_Operating_CashFlow_quarter_10_unpacked)
+                         Capex_CashFlow_ratio_10_quartal_unpacked = np.round(Capex_CashFlow_ratio_10_quartal_unpacked * 1, 4)
+                         Capex_CashFlow_ratio_10_quartal_unpacked = Capex_CashFlow_ratio_10_quartal_unpacked.tolist()
 
           ###################################################################################################
                          def data_totalCashDebt(quarterly_data, annual_data, Financial_data):
@@ -12216,6 +12225,7 @@ if selected == "Stock Analysis Tool":
 
 
 
+
                     #................................................................................................................................................
 
 
@@ -13439,6 +13449,7 @@ if selected == "Stock Analysis Tool":
                                    'FCF per share':fcf_per_share_annual_10_unpacked,
                                    'Revenue per share':revenue_per_share_annual_10_unpacked,
                                    'CapEx to Revenue Ratio':Capex_revenue_ratio_10_annual_unpacked,
+                                   'CapEx to Cash Flow Ratio':Capex_CashFlow_ratio_10_annual_unpacked,
                                    'Payout ratio': Payout_ratio_annual_10_unpacked,
                                    'ROIC':ROIC_annual_10_unpacked,
                                    'ROE':ROE_annual_10_unpacked
@@ -13471,6 +13482,7 @@ if selected == "Stock Analysis Tool":
                                    ('FCF per share',fcf_per_share_annual_10_unpacked),
                                    ('Revenue per share',revenue_per_share_annual_10_unpacked),
                                    ('CapEx to Revenue Ratio',Capex_revenue_ratio_10_annual_unpacked),
+                                   ('CapEx to Cash Flow Ratio',Capex_CashFlow_ratio_10_annual_unpacked),
                                    ('Payout ratio', Payout_ratio_annual_10_unpacked),
                                    ('ROIC',ROIC_annual_10_unpacked ),
                                    ('ROE',ROE_annual_10_unpacked)
@@ -13487,7 +13499,7 @@ if selected == "Stock Analysis Tool":
                                         if metric_name in ('Revenue growth', 'Net Income growth','Net Interest Income growth','FCF growth', 
                                                            'EPS growth','FCF Margin','EBITDA Margin','Shares diluted','Operating Margin',
                                                            'Gross Margin','Debt/Equity','EBITDA growth','Dividend per share growth',
-                                                           'CapEx to Revenue Ratio','Payout ratio','ROIC','ROE'):
+                                                           'CapEx to Revenue Ratio','CapEx to Cash Flow Ratio','Payout ratio','ROIC','ROE'):
                                              formatted_data = ["{:.2f}%".format(data * 100) for data in metric_data]
                                              #formatted_data = ["{:.2f}%".format(safe_float(data) * 100) for data in metric_data]
 
@@ -13543,6 +13555,7 @@ if selected == "Stock Analysis Tool":
                                                        'FCF per share':fcf_per_share_quarter_10_unpacked,
                                                        'Revenue per share':revenue_per_share_quarter_10_unpacked,
                                                        'CapEx to Revenue Ratio':Capex_revenue_ratio_10_quartal_unpacked,
+                                                       'CapEx to Cash Flow Ratio':Capex_CashFlow_ratio_10_quartal_unpacked,
                                                        'Payout ratio': Payout_ratio_quarter_10_unpacked,
                                                        'ROIC':ROIC_quarter_10_unpacked,
                                                        'ROE':ROE_quarter_10_unpacked
@@ -13572,6 +13585,7 @@ if selected == "Stock Analysis Tool":
                                                        ('FCF per share',fcf_per_share_quarter_10_unpacked),
                                                        ('Revenue per share',revenue_per_share_quarter_10_unpacked),
                                                        ('CapEx to Revenue Ratio',Capex_revenue_ratio_10_quartal_unpacked),
+                                                       ('CapEx to Cash Flow Ratio',Capex_CashFlow_ratio_10_quartal_unpacked),
                                                        ('Payout ratio', Payout_ratio_quarter_10_unpacked),
                                                        ('ROIC',ROIC_quarter_10_unpacked),
                                                        ('ROE',ROE_quarter_10_unpacked)
@@ -13587,7 +13601,7 @@ if selected == "Stock Analysis Tool":
                                                             if metric_name in ('Revenue growth Quarter', 'Net Income growth','Net Interest Income growth', 
                                                                                'FCF growth', 'EPS growth','FCF Margin','EBITDA Margin','Shares diluted',
                                                                                'Operating Margin','Gross Margin','Debt/Equity','EBITDA growth',
-                                                                               'Dividend per share growth','CapEx to Revenue Ratio','Payout ratio','ROIC','ROE'):
+                                                                               'Dividend per share growth','CapEx to Revenue Ratio','CapEx to Cash Flow Ratio','Payout ratio','ROIC','ROE'):
                                                                  formatted_data = ["{:.2f}%".format(data * 100) for data in metric_data]
                                                                
                                                             elif metric_name == 'Book Value':
