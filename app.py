@@ -14,12 +14,7 @@ import secrets
 import math
 import re
 import matplotlib.pyplot as plt
-import PyPDF2
-import io
-from openai import OpenAI
-import tiktoken
-import os
-from typing import Optional, List, Tuple
+
 
 
 
@@ -40,6 +35,12 @@ from google.oauth2.credentials import Credentials
 from fpdf import FPDF
 from PIL import Image
 from scipy import optimize
+import PyPDF2
+import io
+from openai import OpenAI
+import tiktoken
+import os
+from typing import Optional, List, Tuple
 
 
 
@@ -7853,6 +7854,13 @@ if selected == "Stock Analysis Tool":
                fcf_ttm = fcf_ttm/1000000000
 
  
+               try:
+                    Stock_buy_back_ttm=(round((netincome_ttm),2)/round((eps_diluted_ttm),2))*1000000000
+               except Exception as e: 
+                    Stock_buy_back_ttm = shares_eop_ttm*1000000000
+
+                    
+
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
                date_list_annual = [period_end_date for period_end_date in date_annual]      
                
@@ -9426,14 +9434,21 @@ if selected == "Stock Analysis Tool":
 
 
                          try:
+
+                              PBVPS=quote.fundamental_df.at[0, "P/B"]
+
+                         except Exception as e:
                               PBVPS = current_price / BVPS_quater1 if BVPS_quater1 > 0 else 0.00
                               PBVPS = PBVPS if math.isfinite(PBVPS) and PBVPS > 0 else 0.00
+                              PBVPS= "{:.2f}".format(PBVPS)
 
+                         try:
                               PTBVPS=current_price/TBVPS_quater1 if BVPS_quater1 > 0 else 0.00
                               PTBVPS = PTBVPS if math.isfinite(PTBVPS) and PTBVPS > 0 else 0.00
 
+
                          except Exception as e:
-                              PBVPS = 0.00
+
                               PTBVPS = 0.00
 
                          if len_10_annual == 10:
@@ -10277,6 +10292,7 @@ if selected == "Stock Analysis Tool":
                          cash_equiv_quarter1_unpacked
                          ) = data_totalCashDebt(quarterly_data, annual_data, Financial_data)
 
+                     
 
           ###################################################################################################
                          try:
@@ -10610,7 +10626,7 @@ if selected == "Stock Analysis Tool":
                          cash_equiv_quarter1 = ((sum(cash_equiv_quarter1_unpacked) / len(cash_equiv_quarter1_unpacked)) / 1000000000)
                          Total_cash_last_years = (st_investments_quarter1+cash_equiv_quarter1)
 
-                         #print("Total_cash_last_years",Total_cash_last_years)
+              
                     
                     
 
@@ -10884,7 +10900,7 @@ if selected == "Stock Analysis Tool":
                          'P/S': [Price_to_sales_last],
                          '5Y P/S': [P_sales_5],
                          '10Y P/S': [P_sales_10],
-                         'P/B': '{:.2f}'.format(PBVPS),
+                         'P/B': [PBVPS],
                          '5Y P/B': [average_price_to_book_annual_5],
                          '10Y P/B':[average_price_to_book],
                          'ROA': ["{:.5}%".format(ROA_TTM)],
@@ -12736,7 +12752,7 @@ if selected == "Stock Analysis Tool":
                                                   # Calculate present values up to the second-to-last year
                                                   present_values_base_case = [calculate_pv(fcf, WACC, year) for year, fcf in enumerate(average_fcf_values1[:-1], start=1)]
 
-                                                  #print(average_fcf_Annual_DCF1)
+                                            
 
                                                   if i == FCF_discount_in_years - 1:
                                                        second_to_last_discounted_value = discounted_values[-2]  # Access second-to-last element
@@ -13313,15 +13329,6 @@ if selected == "Stock Analysis Tool":
                                    Revenue_high_Euro = Assumption_high_inklu_shares_outstanding_MarginofSafety_high * st.session_state.current_rate
 
 
-                                   print("Assumption_low_inklu_shares_outstanding_MarginofSafety_low",Assumption_low_inklu_shares_outstanding_MarginofSafety_low)
-                                   print("return_on_investment_Revenue_low",return_on_investment_Revenue_low)
-
-                                   print("Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid",Assumption_mid_inklu_shares_outstanding_MarginofSafety_mid)
-                                   print("return_on_investment_Revenue_mid",return_on_investment_Revenue_mid)
-
-
-                                   print("Assumption_high_inklu_shares_outstanding_MarginofSafety_high",Assumption_high_inklu_shares_outstanding_MarginofSafety_high)
-                                   print("return_on_investment_Revenue_high",return_on_investment_Revenue_high)
                                    
                                    # CSS for styling
                                    st.markdown("""
@@ -14383,8 +14390,8 @@ if selected == "Stock Analysis Tool":
                                              # Convert FCF yield to numeric
                                              fcf_yield_numeric = [float(val.strip('%')) if val != "n/a" else None for val in fcf_yield_21_list]
 
-                                                 # --- NEW: Buyback Yield calculation ---
-                                             shares_diluted_annual21_unpacked_full = shares_diluted_annual21_unpacked + [shares_eop_ttm*1000000000]  # append TTM
+
+                                             shares_diluted_annual21_unpacked_full = shares_diluted_annual21_unpacked + [Stock_buy_back_ttm]  # append TTM
                                              df_shares = pd.DataFrame(shares_diluted_annual21_unpacked_full, columns=['Shares'])
                                              df_shares['Buyback_Yield_%'] = (df_shares['Shares'].shift(1) - df_shares['Shares']) / df_shares['Shares'].shift(1) * 100
                                              df_shares['Buyback_Yield_%'] = df_shares['Buyback_Yield_%'].fillna(0).round(2)
@@ -15854,7 +15861,7 @@ if selected == "Stock Analysis Tool":
                                                   <div class='pb-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
                                                   <div class='pb-item' style='padding: 0 0.8vw; white-space: nowrap;'>
                                                        <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current P/B: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{PBVPS:.2f}</span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{PBVPS}</span>
                                                   </div>
                                              </div>
                                         </div>
