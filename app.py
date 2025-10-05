@@ -15005,7 +15005,7 @@ if selected == "Stock Analysis Tool":
                                              </div>
                                              <div class='roe-desc' style='margin-top: 0.5vw; text-align: center;'>
                                                   <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
-                                                  Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften (Investiertes Kapital = Fremdkapital)
+                                                  Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften (Investiertes Kapital = Eigenkapital)
                                                   </span>
                                              </div>
                                         </div>
