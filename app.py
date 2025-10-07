@@ -7652,6 +7652,8 @@ if selected == "Stock Analysis Tool":
                          'PROF:GR':'Profile Systems & Software SA',
                          'RBRK':'Rubrik, Inc',
                          'SEZL':'Sezzle Inc.',
+                         'BMNR':'BitMine Immersion Technologies, Inc.',
+                         'BESI:NL':'BE Semiconductor Industries NV',
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7930,6 +7932,8 @@ if selected == "Stock Analysis Tool":
                     'RACE:IT':'RACE',
                     'QUEST:GR':'9IVA.F',
                     'PROF:GR':'PROF.AT',
+                    'BESI:NL':'BESI.AS',
+                    
 
                   
                }
@@ -7938,6 +7942,7 @@ if selected == "Stock Analysis Tool":
                     'ASML:NL':'ASML',
                     'MC:FR':'LVMHF',
                     'CVC:NL':'CVCCF',
+                    
                }
 
                # Use the dictionary to get the correct ticker or fallback to the original one
@@ -13681,7 +13686,7 @@ if selected == "Stock Analysis Tool":
                                              # Add legend entry for Dividend per Share
                                              fig.update_traces(
                                                   selector={'type': 'bar'},
-                                                  name="Revenue (B)",   # <- Legendenname hinzufügen
+                                                  name="Revenue",   # <- Legendenname hinzufügen
                                                   showlegend=True,             # <- in der Legende anzeigen
                                                   visible=True                 # <- per Default sichtbar
                                              )
