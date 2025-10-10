@@ -7656,6 +7656,7 @@ if selected == "Stock Analysis Tool":
                          'BESI:NL':'BE Semiconductor Industries NV',
                          'DOL:CA':'Dollarama Inc', 
                          'GSY:CA':'goeasy Ltd',
+                         'SHOP':'Shopify Inc.',
 
                     }
  
