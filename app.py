@@ -189,6 +189,7 @@ usd_to_eur_rate = get_exchange_rate("USD", "EUR")  # USD → EUR
 dkk_to_eur_rate = get_exchange_rate("DKK", "EUR")  # DKK → EUR
 sek_to_eur_rate = get_exchange_rate("SEK", "EUR")  # SEK → EUR
 pln_to_eur_rate = get_exchange_rate("PLN", "EUR")  # PLN → EUR
+CAD_to_eur_rate = get_exchange_rate("CAD", "EUR")  # PLN → EUR
 
 
 selected = option_menu(
@@ -7612,7 +7613,6 @@ if selected == "Stock Analysis Tool":
                          'ZYNE':'Zynerba Pharmaceuticals Inc. ',
                          'ZYXI':'Zynex Inc. ',
                          'NPSNY':'Naspers Ltd.',
-                         'EHMEF':'goeasy Ltd',
                          'CNSWF':'Constellation Software Inc.',
                          'SDZNY':'Sandoz Group AG',
                          'LB':'LandBridge Company LLC',
@@ -7654,6 +7654,9 @@ if selected == "Stock Analysis Tool":
                          'SEZL':'Sezzle Inc.',
                          'BMNR':'BitMine Immersion Technologies, Inc.',
                          'BESI:NL':'BE Semiconductor Industries NV',
+                         'DOL:CA':'Dollarama Inc', 
+                         'GSY:CA':'goeasy Ltd',
+
                     }
  
                ticker_symbol_name = {f'{name} : {symbol}': symbol for symbol, name in ticker_symbol_name.items()} 
@@ -7933,9 +7936,7 @@ if selected == "Stock Analysis Tool":
                     'QUEST:GR':'9IVA.F',
                     'PROF:GR':'PROF.AT',
                     'BESI:NL':'BESI.AS',
-                    
-
-                  
+                                     
                }
 
                ticker_mapping_2 = {
@@ -7945,12 +7946,20 @@ if selected == "Stock Analysis Tool":
                     
                }
 
+               ticker_CAD_EUR_mapping = {
+                    'DOL:CA':'DOL.TO',
+                    'GSY:CA':'GSY.TO',
+
+                    
+               }
+
                # Use the dictionary to get the correct ticker or fallback to the original one
                ticker = ticker_mapping_1.get(ticker, ticker)
                ticker = ticker_mapping_SEK.get(ticker, ticker)
                ticker = ticker_mapping_DKK.get(ticker, ticker)
                ticker = ticker_mapping_PLN.get(ticker, ticker) 
                ticker = ticker_mapping_Eur.get(ticker, ticker)
+               ticker = ticker_CAD_EUR_mapping.get(ticker, ticker)
                ticker = ticker_mapping_2.get(ticker, ticker)
                
                stock_info = yf.Ticker(ticker)
@@ -8112,6 +8121,17 @@ if selected == "Stock Analysis Tool":
                                    """,
                                    unsafe_allow_html=True,
                               )
+                         elif ticker in ticker_CAD_EUR_mapping.values():  # Added DKK display
+                              st.markdown(
+                                   f"""
+                                   <div style="text-align: center; width: 100%;">
+                                        Aktueller Preis: <span style='{green_style}'>{current_price:.2f} CAD</span> 
+                                        Aktueller Preis: <span style='{green_style}'>{(current_price*CAD_to_eur_rate):.2f} €</span> 
+                                        {percentage_text}
+                                   </div>
+                                   """,
+                                   unsafe_allow_html=True,
+                              )
                          else:
                               st.markdown(
                                    f"""
@@ -8139,6 +8159,8 @@ if selected == "Stock Analysis Tool":
                     st.session_state.dkk_to_eur_rate = get_exchange_rate("DKK", "EUR")
                if 'pln_to_eur_rate' not in st.session_state:
                     st.session_state.pln_to_eur_rate = get_exchange_rate("PLN", "EUR")
+               if 'CAD_to_eur_rate' not in st.session_state:
+                    st.session_state.CAD_to_eur_rate = get_exchange_rate("CAD", "EUR")
 
                current_price = get_current_price(ticker)
                
@@ -8162,6 +8184,10 @@ if selected == "Stock Analysis Tool":
                elif ticker in ticker_mapping_PLN.values():  # If ticker is in mapped values (EUR-denominated)
                     converted_amount = "{:.2f}".format(current_price * st.session_state.pln_to_eur_rate)
                     st.session_state.current_rate = st.session_state.pln_to_eur_rate
+
+               elif ticker in ticker_CAD_EUR_mapping.values():  # If ticker is in mapped values (EUR-denominated)
+                    converted_amount = "{:.2f}".format(current_price * st.session_state.CAD_to_eur_rate)
+                    st.session_state.current_rate = st.session_state.CAD_to_eur_rate
                else:  
                     converted_amount = "{:.2f}".format(current_price * st.session_state.usd_to_eur_rate)
                     st.session_state.current_rate = st.session_state.usd_to_eur_rate
