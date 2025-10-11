@@ -7713,11 +7713,8 @@ if selected == "Stock Analysis Tool":
 
 
                data= fetch_data_from_api(ticker)
-               #data = response.json()
-               #usage = response.json()
                #st.write(data)
-               #st.write(usage)
-               #response.json()
+
                
                @st.cache_data(show_spinner=False, ttl=3600)
                def store_financial_data(data, ticker):
@@ -7868,7 +7865,9 @@ if selected == "Stock Analysis Tool":
                     
 
                date_list_quarter = [period_end_date for period_end_date in date_quarter]
-               date_list_annual = [period_end_date for period_end_date in date_annual]      
+               date_list_annual = [period_end_date for period_end_date in date_annual]   
+
+
                
                #---------------------------pyfinanz-----------------------------------
                try:
@@ -8988,15 +8987,7 @@ if selected == "Stock Analysis Tool":
                          Capex_CashFlow_ratio_10_annual_unpacked = np.round(Capex_CashFlow_ratio_10_annual_unpacked * 1, 4)
                          Capex_CashFlow_ratio_10_annual_unpacked = Capex_CashFlow_ratio_10_annual_unpacked.tolist()
 
-
-                         FCF_Payout_ratio_10_annual_unpacked = np.abs(np.array(Cash_Dividends_paid_Total_annual_10_unpacked)) / np.array(FCF_annual_ten_unpacked)
-                         FCF_Payout_ratio_10_annual_unpacked = np.round(FCF_Payout_ratio_10_annual_unpacked * 1, 4)
-                         FCF_Payout_ratio_10_annual_unpacked = FCF_Payout_ratio_10_annual_unpacked.tolist()
-
-
-
-
-                    
+   
                         
                          EndPrice_annual_10_unpacked = EndPrice_annual_21_unpacked[-10:]
                          shares_basic_annual_funf_unpacked=shares_basic_annual_10_unpacked[-5:]
@@ -10024,6 +10015,20 @@ if selected == "Stock Analysis Tool":
                          FCF_Payout_ratio_10_quartal_unpacked = np.abs(np.array(Cash_Dividends_paid_Total_quarter_10_unpacked)) / np.array(FCF_quarter_10_unpacked)
                          FCF_Payout_ratio_10_quartal_unpacked = np.round(FCF_Payout_ratio_10_quartal_unpacked * 1, 4)
                          FCF_Payout_ratio_10_quartal_unpacked = FCF_Payout_ratio_10_quartal_unpacked.tolist()
+
+
+
+                         try:
+
+                              FCF_Payout_ratio_10_annual_unpacked = np.abs(np.array(Cash_Dividends_paid_Total_annual_10_unpacked)) / np.array(FCF_annual_ten_unpacked)
+                              FCF_Payout_ratio_10_annual_unpacked = np.round(FCF_Payout_ratio_10_annual_unpacked * 1, 4)
+                              FCF_Payout_ratio_10_annual_unpacked = FCF_Payout_ratio_10_annual_unpacked.tolist()
+
+
+                         except Exception as e:
+
+                              FCF_Payout_ratio_10_annual_unpacked =0.00
+
 
 
           ###################################################################################################
