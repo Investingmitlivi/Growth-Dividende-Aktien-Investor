@@ -13879,7 +13879,6 @@ if selected == "Stock Analysis Tool":
                                                   'Net Income Label': net_income_annual_21 + [float(Net_income_ttm_no_billion), ''],
                                                   'Year': [int(d[:4]) for d in date_annual_21yrs] + [current_year, next_year]
                                              })
-
                                              # Add date range slider
                                              min_year = min(data['Year'][:-2])
                                              max_year = max(data['Year'][:-2])
@@ -13898,6 +13897,34 @@ if selected == "Stock Analysis Tool":
                                                   (data['Year'] <= year_range[1]) |
                                                   (data['Date'].isin(['TTM', str(next_year)]))
                                              ]
+
+                                             # Calculate dynamic ranges for EPS (left axis)
+                                             eps_values = filtered_data['EPS_float'].dropna()
+                                             eps_min = min(eps_values)
+                                             eps_max = max(eps_values)
+                                             
+                                             if eps_min < 0:
+                                                  eps_range_min = eps_min * 1.2  # Add 20% padding for negative values
+                                             else:
+                                                  eps_range_min = 0
+                                             
+                                             eps_range_max = eps_max * 1.1 if eps_max > 0 else eps_max * 0.9
+
+                                             # Calculate dynamic ranges for Net Income (right axis)
+                                             net_income_values = filtered_data['Net Income'].dropna()
+                                             if len(net_income_values) > 0:
+                                                  ni_min = min(net_income_values)
+                                                  ni_max = max(net_income_values)
+                                                  
+                                                  if ni_min < 0:
+                                                       ni_range_min = ni_min * 1.2  # Add 20% padding for negative values
+                                                  else:
+                                                       ni_range_min = 0
+                                                  
+                                                  ni_range_max = ni_max * 1.1 if ni_max > 0 else ni_max * 0.9
+                                             else:
+                                                  ni_range_min = 0
+                                                  ni_range_max = 1
 
                                              # Create empty figure
                                              fig1 = go.Figure()
@@ -13933,15 +13960,20 @@ if selected == "Stock Analysis Tool":
                                              fig1.update_layout(
                                                   yaxis=dict(
                                                        title='EPS ($)',
-                                                       range=[0, max(filtered_data['EPS_float']) * 1.1]
+                                                       range=[eps_range_min, eps_range_max],
+                                                       showgrid=False
+                                                     
                                                   ),
+
                                                   yaxis2=dict(
                                                        title='Net Income (Billions)',
                                                        overlaying='y',
                                                        side='right',
                                                        tickprefix='$',
                                                        ticksuffix='B',
-                                                       range=[0, max(filtered_data['Net Income'].dropna()) * 1.1] if len(filtered_data['Net Income'].dropna()) > 0 else None
+                                                       range=[ni_range_min, ni_range_max],
+                                                       showgrid=False
+                                                     
                                                   ),
                                                   xaxis_type='category',
                                                   hovermode='x unified',
@@ -13951,13 +13983,11 @@ if selected == "Stock Analysis Tool":
                                                        y=1.02,
                                                        xanchor="center",
                                                        x=0.5
-                                                  )
+                                                  ),        
+                                                  dragmode=False,
+                                                       uniformtext_minsize=8,
+                                                       uniformtext_mode='hide',
                                              )
-                                             fig1.update_layout(dragmode=False)
-                                             
-                                             # Visual styling
-                                             fig1.update_traces(marker_color='#1f77b4', selector={'name': 'EPS_float'})
-                                             fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
                                              
                                              st.markdown(f"""
                                                   <style>
