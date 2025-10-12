@@ -10780,6 +10780,7 @@ if selected == "Stock Analysis Tool":
                                         st.session_state[f'{ticker}_revenue_ttm'],
                                         st.session_state[f'{ticker}_Dividend_ttm'],
                                         st.session_state[f'{ticker}_netincome_ttm'],
+                                        st.session_state[f'{ticker}_Net_income_ttm_no_billion']
 
                                    )
 
@@ -10804,6 +10805,8 @@ if selected == "Stock Analysis Tool":
 
                               # Formatting net income, free cash flow, and operating cash flow values
                               netincome_ttm *= 1000000000
+                              Net_income_ttm_no_billion = "{:.2f}".format(netincome_ttm / 1000000000) if abs(netincome_ttm) >= 1000000000 else "{:,.1f}".format(netincome_ttm / 1000000)
+
                               netincome_ttm = "{:.2f}B".format(netincome_ttm / 1000000000) if abs(netincome_ttm) >= 1000000000 else "{:,.1f}M".format(netincome_ttm / 1000000)
 
                               
@@ -10817,24 +10820,26 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_revenue_ttm'] = revenue_ttm
                               st.session_state[f'{ticker}_Dividend_ttm'] = Dividend_ttm
                               st.session_state[f'{ticker}_netincome_ttm'] = netincome_ttm
+                              st.session_state[f'{ticker}_Net_income_ttm_no_billion'] = Net_income_ttm_no_billion
 
                               return (
                                    Enterprise_value,
                                    Enterprise_value_in_Billion,
                                    revenue_ttm,
                                    Dividend_ttm,
-                                   netincome_ttm
+                                   netincome_ttm,
+                                   Net_income_ttm_no_billion
                               )
 
                          (Enterprise_value,
                                    Enterprise_value_in_Billion,
                                    revenue_ttm,
                                    Dividend_ttm,
-                                   netincome_ttm
+                                   netincome_ttm,
+                                   Net_income_ttm_no_billion
                                    )=calculate_financial_metrics(ticker, Marketcap, Total_Debt_from_all_calc, Total_cash_last_years, 
                                                             revenue_ttm, Dividend_ttm, netincome_ttm)
                          
-
 
                          try:
                               Debt_to_EBITDA = "{:.2f}".format((Total_Debt_from_all_calc / 1000000000) / Ebita_ttm)
@@ -13865,21 +13870,20 @@ if selected == "Stock Analysis Tool":
                                              eps_diluted_annual_21 = ["$ {:.2f}".format(value) for value in eps_diluted_annual_21_unpacked]
                                              net_income_annual_21 = ["{:.2f}".format(value/1e9) for value in net_income_annual_21_unpacked]
 
-                                             # Create DataFrame
+                                             # Create DataFrame with TTM Net Income included
                                              data = pd.DataFrame({
                                                   'Date': date_annual_21yrs + ['TTM', str(next_year)],
                                                   'EPS': eps_diluted_annual_21 + [f"$ {TTM:.2f}", f"$ {EPS_next_year:.2f}"],
                                                   'EPS_float': eps_diluted_annual_21_unpacked + [TTM, EPS_next_year],
-                                                  'Net Income': [float(val.rstrip('B')) for val in net_income_annual_21] + [None, None],
-                                                  'Net Income Label': net_income_annual_21 + ['', ''],
-                                                  'Year': [int(d[:4]) for d in date_annual_21yrs] + [current_year, next_year]  # Add year column for filtering
+                                                  'Net Income': [float(val.rstrip('B')) for val in net_income_annual_21] + [float(Net_income_ttm_no_billion), None],
+                                                  'Net Income Label': net_income_annual_21 + [float(Net_income_ttm_no_billion), ''],
+                                                  'Year': [int(d[:4]) for d in date_annual_21yrs] + [current_year, next_year]
                                              })
 
                                              # Add date range slider
-                                             min_year = min(data['Year'][:-2])  # Exclude TTM and next year
+                                             min_year = min(data['Year'][:-2])
                                              max_year = max(data['Year'][:-2])
                                              
-                                        
                                              year_range = st.slider(
                                                   "Select year range:",
                                                   min_value=min_year,
@@ -13892,38 +13896,35 @@ if selected == "Stock Analysis Tool":
                                              filtered_data = data[
                                                   (data['Year'] >= year_range[0]) & 
                                                   (data['Year'] <= year_range[1]) |
-                                                  (data['Date'].isin(['TTM', str(next_year)]))  # Always include TTM and next year
+                                                  (data['Date'].isin(['TTM', str(next_year)]))
                                              ]
 
-                                             # Create base figure with filtered data
-                                             fig1 = px.bar(
-                                                  filtered_data, 
-                                                  x='Date', 
-                                                  y='EPS_float',
-                                                  labels={'EPS_float': 'EPS'},
-                                                  #text='EPS',  # This displays the formatted EPS values
-                                                  text_auto='.2f')  # Auto-format text with 2 decimals
-
-                                                  
-
-                                                                    # Configure text position inside bars
-                                             fig1.update_traces(textposition='inside', 
-                                                                 textfont_size=12,
-                                                                 textfont_color='white',
-                                                                 insidetextanchor='middle')
-
-                                             # Add net income line (only for historical data)
-                                             if len(filtered_data[:-2]) > 0:  # Only add if we have historical data
+                                             # Create empty figure
+                                             fig1 = go.Figure()
+                                             
+                                             # Add EPS bars as a trace (so it can be toggled)
+                                             fig1.add_trace(go.Bar(
+                                                  x=filtered_data['Date'],
+                                                  y=filtered_data['EPS_float'],
+                                                  name='EPS',
+                                                  text=[f"{val:.2f}" for val in filtered_data['EPS_float']],
+                                                  textposition='inside',
+                                                  textfont=dict(size=12, color='white'),
+                                                  hovertemplate='%{y:.2f}<extra></extra>'
+                                             ))
+                                             # Add net income line (including TTM)
+                                             net_income_data = filtered_data[filtered_data['Net Income'].notna()]
+                                             if len(net_income_data) > 0:
                                                   fig1.add_trace(go.Scatter(
-                                                       x=filtered_data['Date'][:-2],
-                                                       y=filtered_data['Net Income'][:-2],
+                                                       x=net_income_data['Date'],
+                                                       y=net_income_data['Net Income'],
                                                        name='Net Income',
                                                        line=dict(color='red', width=2),
                                                        yaxis='y2',
-                                                       mode='lines+markers+text',  # Add text mode
-                                                       text=filtered_data['Net Income Label'][:-2],  # Use the formatted labels
-                                                       textfont=dict(color='black'),  # Add color to the text (change 'blue' to any color you prefer)
-                                                       textposition='top center',  # Position text above the markers
+                                                       mode='lines+markers+text',
+                                                       text=net_income_data['Net Income Label'],
+                                                       textfont=dict(color='black'),
+                                                       textposition='top center',
                                                        hovertemplate='%{y:.2f}B',
                                                        visible="legendonly"
                                                   ))
@@ -13932,7 +13933,6 @@ if selected == "Stock Analysis Tool":
                                              fig1.update_layout(
                                                   yaxis=dict(
                                                        title='EPS ($)',
-                                                       #tickprefix='$',
                                                        range=[0, max(filtered_data['EPS_float']) * 1.1]
                                                   ),
                                                   yaxis2=dict(
@@ -13953,18 +13953,12 @@ if selected == "Stock Analysis Tool":
                                                        x=0.5
                                                   )
                                              )
-                                             fig1.update_layout(
-                                             dragmode=False, 
-                                             )
-
-                                             
+                                             fig1.update_layout(dragmode=False)
                                              
                                              # Visual styling
                                              fig1.update_traces(marker_color='#1f77b4', selector={'name': 'EPS_float'})
                                              fig1.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
-
-
-                                        
+                                             
                                              st.markdown(f"""
                                                   <style>
                                                        @media (max-width: 768px) {{
