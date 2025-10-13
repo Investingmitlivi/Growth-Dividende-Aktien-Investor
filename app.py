@@ -8087,6 +8087,7 @@ if selected == "Stock Analysis Tool":
                               )
 
                          elif ticker in ticker_mapping_SEK.values():
+                              tickerprefix ='SEK'
                               
                               st.markdown(
                                    f"""
@@ -8367,7 +8368,7 @@ if selected == "Stock Analysis Tool":
                               gridcolor='lightgrey',
                               showline=True,
                               linecolor='lightgrey',
-                              tickprefix='$'
+                              tickprefix='',  # Optional: Add "$" if currency is relevant
                          ),
                          margin=dict(l=40, r=40, t=40, b=40),
                          showlegend=False,
@@ -10805,7 +10806,7 @@ if selected == "Stock Analysis Tool":
 
                               # Formatting net income, free cash flow, and operating cash flow values
                               netincome_ttm *= 1000000000
-                              Net_income_ttm_no_billion = "{:.2f}".format(netincome_ttm / 1000000000) if abs(netincome_ttm) >= 1000000000 else "{:,.1f}".format(netincome_ttm / 1000000)
+                              Net_income_ttm_no_billion = "{:.2f}".format(netincome_ttm / 1000000000)
 
                               netincome_ttm = "{:.2f}B".format(netincome_ttm / 1000000000) if abs(netincome_ttm) >= 1000000000 else "{:,.1f}M".format(netincome_ttm / 1000000)
 
@@ -13775,7 +13776,6 @@ if selected == "Stock Analysis Tool":
                                                   yaxis=dict(
                                                        title='Revenue (Billions)',
                                                        ticksuffix='B',
-                                                       tickprefix='$',
                                                        rangemode='tozero',
                                                        showgrid=False
                                                   ),
@@ -13959,7 +13959,7 @@ if selected == "Stock Analysis Tool":
                                              # Configure dual axes
                                              fig1.update_layout(
                                                   yaxis=dict(
-                                                       title='EPS ($)',
+                                                       title='EPS',
                                                        range=[eps_range_min, eps_range_max],
                                                        showgrid=False
                                                      
@@ -13969,7 +13969,7 @@ if selected == "Stock Analysis Tool":
                                                        title='Net Income (Billions)',
                                                        overlaying='y',
                                                        side='right',
-                                                       tickprefix='$',
+                                                       tickprefix='',
                                                        ticksuffix='B',
                                                        range=[ni_range_min, ni_range_max],
                                                        showgrid=False
