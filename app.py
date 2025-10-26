@@ -7925,7 +7925,7 @@ if selected == "Stock Analysis Tool":
                     'WKL:NL':'WKL.AS',
                     'MBG:DE':'MBG.DE',
                     'VOW3:DE':'VOW3.DE',
-                    'RACE:IT':'RACE',
+                    'RACE:IT':'RACE.MI',
                     'QUEST:GR':'9IVA.F',
                     'PROF:GR':'PROF.AT',
                     'BESI:NL':'BESI.AS',
