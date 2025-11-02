@@ -10023,8 +10023,6 @@ if selected == "Stock Analysis Tool":
 
                               FCF_Payout_ratio_10_annual_unpacked =0.00
 
-
-
           ###################################################################################################
                          def data_totalCashDebt(quarterly_data, annual_data, Financial_data):
                               if f'{ticker}_Ebita_ttm' in st.session_state:
@@ -14277,8 +14275,12 @@ if selected == "Stock Analysis Tool":
                                    'Net Income': net_income_annual_10_unpacked,
                                    'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked,
                                    'Research & Development':Research_Dev_annual_10_unpacked,
-                                   'Stock Based Compansation':StockBased_Compansation_annual_10_annual
-                                   })
+                                   'Stock Based Compansation':StockBased_Compansation_annual_10_annual,
+                                   'FCF Payout Ratio': [
+                                   round(abs(x) * 100, 2) 
+                                   for x in FCF_Payout_ratio_10_annual_unpacked] 
+                                  })
+                                   
 
                                    fig = go.Figure()
 
@@ -14317,19 +14319,18 @@ if selected == "Stock Analysis Tool":
                                    x=data['Date'],
                                    y=data['Stock Based Compansation'],
                                    name='Stock Based Compansation',
-                                   #marker_color='olive',
-                                   visible=True,  # Default visible
+                                  
+                                   visible=True,  
                                    customdata=data['Stock Based Compansation']/ 1e9,
                                    hovertemplate='<b>%{x}</b><br>Stock Based Compansation: %{customdata}B<extra></extra>'
                                    ))
                                   
 
-                                   # Add traces with legendonly visibility
                                    fig.add_trace(go.Bar(
                                    x=data['Date'],
                                    y=data['Research & Development'],
                                    name='Research & Development',
-                                   visible=True,  # Default visible
+                                   visible=True,  
                                    customdata=data['Research & Development']/ 1e9,
                                    hovertemplate='<b>%{x}</b><br>Research & Development: %{customdata}B<extra></extra>'
                                    ))
@@ -14341,7 +14342,7 @@ if selected == "Stock Analysis Tool":
                                    y=data['CapEx'],
                                    name='CapEx',
                                    marker_color='black',
-                                   visible=True,  # Default visible
+                                   visible=True, 
                                    customdata=data['CapEx']/ 1e9,
                                    hovertemplate='<b>%{x}</b><br>CapEx: %{customdata}B<extra></extra>'
                                    ))
@@ -14361,14 +14362,22 @@ if selected == "Stock Analysis Tool":
                                    fig.update_layout(
                                    xaxis_type='category' 
                                    )
+
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['FCF Payout Ratio'],
+                                   name='FCF Payout Ratio',
+                                   marker_color='olive',
+                                   visible=True,  
+                                   customdata=data['FCF Payout Ratio'], 
+                                   hovertemplate='<b>%{x}</b><br>FCF Payout Ratio: %{customdata:.2f}%<extra></extra>'
+                                   ))
                                    
 
                            
                                    fig.update_layout(
                                         barmode='group', xaxis_title='Date',
-                                                  #title=title_text
                                                   )
-                                                       # Update legend placement
                                    fig.update_layout(
                                    legend=dict (
                                    orientation="h",
@@ -15933,21 +15942,20 @@ if selected == "Stock Analysis Tool":
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig12,use_container_width=True,config=config)
-               #.........
+               
 
                               with Quarter:
-                                       # 
-               #                 
+                                        
+               
                                    try:
-                                        #Research_Dev_annual_10_unpacked    = Research_Dev_annual_10_unpacked 
                                         Research_Dev_quarter_10  = Research_Dev_quarter_10_unpacked
-                                        #StockBased_Compansation_annual_10_annual =StockBased_Compansation_annual_10_unpacked  
                                         StockBased_Compansation_quarter_10 = StockBased_Compansation_quarter_10_unpacked
 
                                    except Exception as e:    
                                         Research_Dev_quarter_10 =  [0]*len_10_quarter
                                         StockBased_Compansation_quarter_10 =  [0]*len_10_quarter
 
+                                   
                                    
                                    data = pd.DataFrame({
                                    'Date': date_quarter,
@@ -15957,8 +15965,11 @@ if selected == "Stock Analysis Tool":
                                    'Net Income': net_income_quarter_10_unpacked,
                                    'Operating Cash Flow': Net_Operating_CashFlow_quarter_10_unpacked,
                                    'Research & Development':Research_Dev_quarter_10,
-                                   'Stock Based Compansation':StockBased_Compansation_quarter_10
-                                   })
+                                   'Stock Based Compansation':StockBased_Compansation_quarter_10,
+                                   'FCF Payout Ratio': [
+                                   round(abs(x) * 100, 2) 
+                                   for x in FCF_Payout_ratio_10_quartal_unpacked] 
+                                  })
 
                                    fig = go.Figure()
 
@@ -15967,18 +15978,17 @@ if selected == "Stock Analysis Tool":
                                    y=data['Operating Cash Flow'],
                                    name='Operating Cash Flow',
                                    marker_color='darkred',
-                                   visible=True,  # Default visible
+                                   visible=True,  
                                    customdata=data['Operating Cash Flow']/ 1e9,
                                    hovertemplate='<b>%{x}</b><br>Operating Cash Flow: %{customdata}B<extra></extra>'
                                    ))
-                                   #hovertemplate='<b>%{x}</b><br>Operating Cash Flow: %{customdata:.2f}<extra></extra>'
 
                                    fig.add_trace(go.Bar(
                                    x=data['Date'],
                                    y=data['Net Income'],
                                    name='Net Income',
                                    marker_color='indigo',
-                                   visible=True,  # Default visible
+                                   visible=True,  
                                    customdata=data['Net Income']/ 1e9,
                                    hovertemplate='<b>%{x}</b><br>Net Income: %{customdata}B<extra></extra>'
                                    ))
@@ -15988,7 +15998,7 @@ if selected == "Stock Analysis Tool":
                                    y=data['Free Cash Flow'],
                                    name='Free Cash Flow',
                                    marker_color='olive',
-                                   visible=True,  # Default visible
+                                   visible=True, 
                                    customdata=data['Free Cash Flow']/ 1e9,
                                    hovertemplate='<b>%{x}</b><br>Free Cash Flow: %{customdata}B<extra></extra>'
                                    ))
@@ -15997,19 +16007,17 @@ if selected == "Stock Analysis Tool":
                                    x=data['Date'],
                                    y=data['Stock Based Compansation'],
                                    name='Stock Based Compansation',
-                                   #marker_color='olive',
-                                   visible=True,  # Default visible
+                                   visible=True,  
                                    customdata=data['Stock Based Compansation']/ 1e9,
                                    hovertemplate='<b>%{x}</b><br>Stock Based Compansation: %{customdata}B<extra></extra>'
                                    ))
                                   
 
-                                   # Add traces with legendonly visibility
                                    fig.add_trace(go.Bar(
                                    x=data['Date'],
                                    y=data['Research & Development'],
                                    name='Research & Development',
-                                   visible=True,  # Default visible
+                                   visible=True, 
                                    customdata=data['Research & Development']/ 1e9,
                                    hovertemplate='<b>%{x}</b><br>Research & Development: %{customdata}B<extra></extra>'
                                    ))
@@ -16021,7 +16029,7 @@ if selected == "Stock Analysis Tool":
                                    y=data['CapEx'],
                                    name='CapEx',
                                    marker_color='black',
-                                   visible=True,  # Default visible
+                                   visible=True,  
                                    customdata=data['CapEx']/ 1e9,
                                    hovertemplate='<b>%{x}</b><br>CapEx: %{customdata}B<extra></extra>'
                                    ))
@@ -16033,7 +16041,7 @@ if selected == "Stock Analysis Tool":
                                    y=data['Dividends'],
                                    name='Dividends Paid',
                                    marker_color='green',
-                                   visible=True,  # Default visible
+                                   visible=True,  
                                    customdata=data['Dividends']/ 1e9,
                                    hovertemplate='<b>%{x}</b><br>Dividends: %{customdata}B<extra></extra>'
                                    ))
@@ -16042,13 +16050,22 @@ if selected == "Stock Analysis Tool":
                                    xaxis_type='category' 
                                    )
                                    
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['FCF Payout Ratio'],  
+                                   name='FCF Payout Ratio',
+                                   marker_color='olive',
+                                   visible=True,
+                                   hovertemplate='<b>%{x}</b><br>FCF Payout Ratio: %{y:.2f}%<extra></extra>' 
+                                   ))
+                                                                      
+                                   fig.update_layout(
+                                   xaxis_type='category' 
+                                   )
 
-                           
                                    fig.update_layout(
                                         barmode='group', xaxis_title='Date',
-                                                  #title=title_text
-                                                  )
-                                                       # Update legend placement
+                                   )
                                    fig.update_layout(
                                    legend=dict (
                                    orientation="h",
@@ -16068,9 +16085,7 @@ if selected == "Stock Analysis Tool":
                                                                  
 
                                    st.plotly_chart(fig,use_container_width=True,config=config)
-                                   #with col2:
                                         
-
                #...........................................................................................................
   
 
