@@ -7650,6 +7650,8 @@ if selected == "Stock Analysis Tool":
                          'DOL:CA':'Dollarama Inc', 
                          'GSY:CA':'goeasy Ltd',
                          'SHOP':'Shopify Inc.',
+                         'DNP:PL':'Dino Polska SA',
+                         'VAL':'Valaris Ltd',
 
                     }
  
@@ -7908,6 +7910,7 @@ if selected == "Stock Analysis Tool":
 
                ticker_mapping_PLN = {
                     'BDX:PL':'BDX.WA',
+                    'DNP:PL':'DNP.WA',
                }
 
 
