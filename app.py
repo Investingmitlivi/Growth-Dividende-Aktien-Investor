@@ -7652,6 +7652,7 @@ if selected == "Stock Analysis Tool":
                          'SHOP':'Shopify Inc.',
                          'DNP:PL':'Dino Polska SA',
                          'VAL':'Valaris Ltd',
+                         'EQB:CA':'EQB Inc.',
 
                     }
  
@@ -7945,6 +7946,7 @@ if selected == "Stock Analysis Tool":
                ticker_CAD_EUR_mapping = {
                     'DOL:CA':'DOL.TO',
                     'GSY:CA':'GSY.TO',
+                    'EQB:CA':'EQB.TO',
 
                     
                }
@@ -14932,163 +14934,9 @@ if selected == "Stock Analysis Tool":
                                         </div>
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig2, use_container_width=True,config=config)
-         
+     
 
 
-                                        #------------------------------------------------------------------------------------------------------------
-
-                                   try:
-                                        ROIC_annual_10years = ["{:.2f}%".format(ROIC_annual_10_unpacked * 100) for ROIC_annual_10_unpacked in ROIC_annual_10_unpacked]
-                                   except Exception as e:
-                                        ROIC_annual_10years = 0.0
-
-                              
-                                        
-                                   data = pd.DataFrame({
-                                   'Date': date_annual,
-                                   'ROIC': ROIC_annual_10years,
-                                   })
-
-                         
-                                   fig1 = px.bar(data, x='Date', y='ROIC',
-                                             text='ROIC',  # Display the value on top of each bar
-                                             labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                             ) 
-                                   
-                           
-
-                                   fig1.update_layout(
-                                   dragmode=False,  # Disable dragging for zooming
-                                   )
-
-                                   fig1.update_layout(
-                                   xaxis_type='category' 
-                                   )
-
-
-                                   try:
-                                        ROE_annual_10years = ["{:.2f}%".format(ROE_annual_10_unpacked * 100) for ROE_annual_10_unpacked in ROE_annual_10_unpacked]
-                                   except Exception as e:
-                                        ROE_annual_10years = 0.0
-                                        
-                                   data = pd.DataFrame({
-                                   'Date': date_annual,
-                                   'ROE': ROE_annual_10years,
-                                   })
-
-
-                              
-                                   fig2 = px.bar(data, x='Date', y='ROE',
-                                             text='ROE',  # Display the value on top of each bar
-                                             labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                             ) 
-                                   
-   
-
-                                   fig2.update_layout(
-                                   dragmode=False,  # Disable dragging for zooming
-                                   )
-
-                                   fig2.update_layout(
-                                   xaxis_type='category' 
-                                   )
-
-                                   col1, col2 = st.columns(2)
-                                   with col1:
-                                        st.markdown(f"""
-                                        <style>
-                                             @media (max-width: 768px) {{
-                                                  .roic-container {{
-                                                       flex-direction: column;
-                                                       align-items: center;
-                                                       gap: 4px;
-                                                  }}
-                                                  .roic-item {{
-                                                       padding: 3px 0 !important;
-                                                       width: 100%;
-                                                       text-align: center;
-                                                  }}
-                                                  .roic-divider {{
-                                                       border-left: none !important;
-                                                       border-top: 1px solid #e0e0e0;
-                                                       width: 60%;
-                                                       height: 1px !important;
-                                                       margin: 3px auto !important;
-                                                  }}
-                                                  .roic-desc {{
-                                                       margin-top: 3px !important;
-                                                       font-size: 12px !important;
-                                                  }}
-                                             }}
-                                        </style>
-                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
-                                             <div class='roic-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
-                                                  <div class='roic-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y ROIC Y/Y: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Average_ROIC_funf}</span>
-                                                  </div>
-                                                  <div class='roic-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
-                                                  <div class='roic-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current ROIC: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{ROIC_TTM}%</span>
-                                                  </div>
-                                             </div>
-                                             <div class='roic-desc' style='margin-top: 0.5vw; text-align: center;'>
-                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
-                                                  Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften (Summe von Eigenkapital und Fremdkapital)
-                                                  </span>
-                                             </div>
-                                        </div>
-                                        """, unsafe_allow_html=True)
-                                        st.plotly_chart(fig1,use_container_width=True,config=config)
-
-                                   with col2:
-                                        st.markdown(f"""
-                                        <style>
-                                             @media (max-width: 768px) {{
-                                                  .roe-container {{
-                                                       flex-direction: column;
-                                                       align-items: center;
-                                                       gap: 4px;
-                                                  }}
-                                                  .roe-item {{
-                                                       padding: 3px 0 !important;
-                                                       width: 100%;
-                                                       text-align: center;
-                                                  }}
-                                                  .roe-divider {{
-                                                       border-left: none !important;
-                                                       border-top: 1px solid #e0e0e0;
-                                                       width: 60%;
-                                                       height: 1px !important;
-                                                       margin: 3px auto !important;
-                                                  }}
-                                                  .roe-desc {{
-                                                       margin-top: 3px !important;
-                                                       font-size: 12px !important;
-                                                  }}
-                                             }}
-                                        </style>
-                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
-                                             <div class='roe-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
-                                                  <div class='roe-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y ROE Y/Y: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_ROE}%</span>
-                                                  </div>
-                                                  <div class='roe-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
-                                                  <div class='roe-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current ROE: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{ROE_ttm}</span>
-                                                  </div>
-                                             </div>
-                                             <div class='roe-desc' style='margin-top: 0.5vw; text-align: center;'>
-                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
-                                                  Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften (Investiertes Kapital = Eigenkapital)
-                                                  </span>
-                                             </div>
-                                        </div>
-                                        """, unsafe_allow_html=True)
-                                        st.plotly_chart(fig2,use_container_width=True,config=config)
                #-------------------------------------------------------------------------------------------------
 
           
@@ -15387,7 +15235,160 @@ if selected == "Stock Analysis Tool":
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1,use_container_width=True,config=config)
                
-               #........  ...................................................................................................................               
+               #........ ...................................................................................................................              
+                                   try:
+                                        ROIC_annual_10years = ["{:.2f}%".format(ROIC_annual_10_unpacked * 100) for ROIC_annual_10_unpacked in ROIC_annual_10_unpacked]
+                                   except Exception as e:
+                                        ROIC_annual_10years = 0.0
+
+                              
+                                        
+                                   data = pd.DataFrame({
+                                   'Date': date_annual,
+                                   'ROIC': ROIC_annual_10years,
+                                   })
+
+                         
+                                   fig1 = px.bar(data, x='Date', y='ROIC',
+                                             text='ROIC',  # Display the value on top of each bar
+                                             labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                             ) 
+                                   
+                           
+
+                                   fig1.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+
+                                   fig1.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
+
+                                   try:
+                                        ROE_annual_10years = ["{:.2f}%".format(ROE_annual_10_unpacked * 100) for ROE_annual_10_unpacked in ROE_annual_10_unpacked]
+                                   except Exception as e:
+                                        ROE_annual_10years = 0.0
+                                        
+                                   data = pd.DataFrame({
+                                   'Date': date_annual,
+                                   'ROE': ROE_annual_10years,
+                                   })
+
+
+                              
+                                   fig2 = px.bar(data, x='Date', y='ROE',
+                                             text='ROE',  # Display the value on top of each bar
+                                             labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                             ) 
+                                   
+   
+
+                                   fig2.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+
+                                   fig2.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
+                                   col1, col2 = st.columns(2)
+                                   with col1:
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .roic-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .roic-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .roic-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .roic-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='roic-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='roic-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y ROIC Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Average_ROIC_funf}</span>
+                                                  </div>
+                                                  <div class='roic-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='roic-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current ROIC: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{ROIC_TTM}%</span>
+                                                  </div>
+                                             </div>
+                                             <div class='roic-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften (Summe von Eigenkapital und Fremdkapital)
+                                                  </span>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                        st.plotly_chart(fig1,use_container_width=True,config=config)
+
+                                   with col2:
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .roe-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .roe-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .roe-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .roe-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='roe-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='roe-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y ROE Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_ROE}%</span>
+                                                  </div>
+                                                  <div class='roe-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='roe-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current ROE: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{ROE_ttm}</span>
+                                                  </div>
+                                             </div>
+                                             <div class='roe-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Indikator für die Fähigkeit eines Unternehmens, Renditen für das investierte Kapital zu erwirtschaften (Investiertes Kapital = Eigenkapital)
+                                                  </span>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                        st.plotly_chart(fig2,use_container_width=True,config=config) 
+     #...................................................................................................................
                                         #Price_to_earnings=annual_data['price_to_earnings'][-10:]
                                    Price_to_earnings = ["{:.2f}".format(value) for value in Price_to_earnings_annual_10_unpacked]
                                    #Price_to_earnings = "{:.2f}".format((Price_to_earnings))
