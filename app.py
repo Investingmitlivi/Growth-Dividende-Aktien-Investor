@@ -14776,171 +14776,7 @@ if selected == "Stock Analysis Tool":
                                         st.plotly_chart(fig1, use_container_width=True,config=config)
          
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                                   col1, col2 = st.columns(2)
-                                   with col1:
-                              
-                                        try:
-                                             debt_equity_annual_5_unpacked = debt_equity_annual_10_unpacked[-5:]
-                                             debt_equity_annual_5_average = "{:.2f}".format((sum(debt_equity_annual_5_unpacked)/len(debt_equity_annual_5_unpacked))*100)
-                                             debt_equity_annual_10_unpacked = ["{:.2f}%".format(debt_equity_annual_10_unpacked * 100) for debt_equity_annual_10_unpacked in debt_equity_annual_10_unpacked]
-
-                                        except Exception as e:
-                                             debt_equity_annual_10_unpacked = 0.0
-                                             debt_equity_annual_5_average = 0.0
-
-
-                                        data = pd.DataFrame({
-                                        'Date': date_annual,
-                                        'Debt to Equity': debt_equity_annual_10_unpacked,
-                                        })
-
-                                        
-                                        fig1 = px.bar(data, x='Date', y='Debt to Equity',
-                                                       text='Debt to Equity',  # Display the value on top of each bar
-                                                       labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                                       )
-     
-     
-
-                                        fig1.update_layout(
-                                        dragmode=False,  # Disable dragging for zooming
-                                        )
-                                        fig1.update_layout(
-                                        xaxis_type='category' 
-                                        )                                   
-                                        st.markdown(f"""
-                                        <style>
-                                             @media (max-width: 768px) {{
-                                                  .ebitda-container {{
-                                                       flex-direction: column;
-                                                       align-items: center;
-                                                       gap: 4px;
-                                                  }}
-                                                  .ebitda-item {{
-                                                       padding: 3px 0 !important;
-                                                       width: 100%;
-                                                       text-align: center;
-                                                  }}
-                                                  .ebitda-divider {{
-                                                       border-left: none !important;
-                                                       border-top: 1px solid #e0e0e0;
-                                                       width: 60%;
-                                                       height: 1px !important;
-                                                       margin: 3px auto !important;
-                                                  }}
-                                                  .ebitda-desc {{
-                                                       margin-top: 3px !important;
-                                                       font-size: 12px !important;
-                                                  }}
-                                             }}
-                                        </style>
-                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
-                                             <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
-                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Y/Y: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{debt_equity_annual_5_average}%</span>
-                                                  </div>
-                                                  <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
-                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{debt_equity_ttm_prozent}%</span>
-                                                  </div>
-                                             </div>
-                                             <div class='ebitda-desc' style='margin-top: 0.5vw; text-align: center;'>
-                                                  <span style='font-family: Calibri; font-weight: bold; font-size: clamp(10px, 1.1vw, 13px);'>
-                                                  Debt to Equity ➔ zeigt das Verhältnis der Schulden zum Eigenkapital.
-                                                  </span>
-                                             </div>
-                                        </div>
-                                        """, unsafe_allow_html=True)
-                                        st.plotly_chart(fig1, use_container_width=True,config=config)
-         
-                                   with col2:
-                              
-                                        try:
-                                             Debt_to_assets_annual_5_unpacked = Debt_to_assets_annual_10_unpacked[-5:]
-                                             Debt_to_assets_annual_5_average = "{:.2f}".format((sum(Debt_to_assets_annual_5_unpacked)/len(Debt_to_assets_annual_5_unpacked))*100)
-                                             Debt_to_assets_annual_10_unpacked = ["{:.2f}%".format(Debt_to_assets_annual_10_unpacked  * 100) for Debt_to_assets_annual_10_unpacked  in Debt_to_assets_annual_10_unpacked ]
-                                             debt_assets_ttm ="{:.2f}".format(debt_assets_ttm*100)
-                                        except Exception as e:
-                                             Debt_to_assets_annual_10_unpacked  = 0.0
-                                             Debt_to_assets_annual_5_average = 0.0
-                                             debt_assets_ttm = 0.0
-
-                                        data = pd.DataFrame({
-                                        'Date': date_annual,
-                                        'Debt to Assets': Debt_to_assets_annual_10_unpacked ,
-                                        })
-
-                                        
-                                        fig2 = px.bar(data, x='Date', y='Debt to Assets',
-                                                       text='Debt to Assets',  # Display the value on top of each bar
-                                                       labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
-                                                       )
-     
-     
-
-                                        fig2.update_layout(
-                                        dragmode=False,  # Disable dragging for zooming
-                                        )
-                                        fig2.update_layout(
-                                        xaxis_type='category' 
-                                        )
-
-
-                                        st.markdown(f"""
-                                        <style>
-                                             @media (max-width: 768px) {{
-                                                  .ebitda-container {{
-                                                       flex-direction: column;
-                                                       align-items: center;
-                                                       gap: 4px;
-                                                  }}
-                                                  .ebitda-item {{
-                                                       padding: 3px 0 !important;
-                                                       width: 100%;
-                                                       text-align: center;
-                                                  }}
-                                                  .ebitda-divider {{
-                                                       border-left: none !important;
-                                                       border-top: 1px solid #e0e0e0;
-                                                       width: 60%;
-                                                       height: 1px !important;
-                                                       margin: 3px auto !important;
-                                                  }}
-                                                  .ebitda-desc {{
-                                                       margin-top: 3px !important;
-                                                       font-size: 12px !important;
-                                                  }}
-                                             }}
-                                        </style>
-                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
-                                             <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
-                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Y/Y: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Debt_to_assets_annual_5_average}%</span>
-                                                  </div>
-                                                  <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
-                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
-                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current: </span>
-                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{debt_assets_ttm}%</span>
-                                                  </div>
-                                             </div>
-                                             <div class='ebitda-desc' style='margin-top: 0.5vw; text-align: center;'>
-                                                  <span style='font-family: Calibri; font-weight: bold; font-size: clamp(10px, 1.1vw, 13px);'>
-                                                  Debt to Assets ➔ zeigt das Verhältnis der Schulden zum Gesamtvermögen.
-                                                  </span>
-                                             </div>
-                                        </div>
-                                        """, unsafe_allow_html=True)
-                                        st.plotly_chart(fig2, use_container_width=True,config=config)
-     
-
-
-               #-------------------------------------------------------------------------------------------------
-
-          
-                                   
+                               
                                    gross_margin_annual10 = ["{:.2f}%".format(gross_margin_annual10_unpacked * 100) for gross_margin_annual10_unpacked in gross_margin_annual10_unpacked]
                                    data = pd.DataFrame({
                                    'Date': date_annual,
@@ -15235,7 +15071,170 @@ if selected == "Stock Analysis Tool":
                                         """, unsafe_allow_html=True)
                                         st.plotly_chart(fig1,use_container_width=True,config=config)
                
-               #........ ...................................................................................................................              
+               #........ ...................................................................................................................  
+                                   col1, col2 = st.columns(2)
+                                   with col1:
+                              
+                                        try:
+                                             debt_equity_annual_5_unpacked = debt_equity_annual_10_unpacked[-5:]
+                                             debt_equity_annual_5_average = "{:.2f}".format((sum(debt_equity_annual_5_unpacked)/len(debt_equity_annual_5_unpacked))*100)
+                                             debt_equity_annual_10_unpacked = ["{:.2f}%".format(debt_equity_annual_10_unpacked * 100) for debt_equity_annual_10_unpacked in debt_equity_annual_10_unpacked]
+
+                                        except Exception as e:
+                                             debt_equity_annual_10_unpacked = 0.0
+                                             debt_equity_annual_5_average = 0.0
+
+
+                                        data = pd.DataFrame({
+                                        'Date': date_annual,
+                                        'Debt to Equity': debt_equity_annual_10_unpacked,
+                                        })
+
+                                        
+                                        fig1 = px.bar(data, x='Date', y='Debt to Equity',
+                                                       text='Debt to Equity',  # Display the value on top of each bar
+                                                       labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                                       )
+     
+     
+
+                                        fig1.update_layout(
+                                        dragmode=False,  # Disable dragging for zooming
+                                        )
+                                        fig1.update_layout(
+                                        xaxis_type='category' 
+                                        )                                   
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .ebitda-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .ebitda-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .ebitda-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .ebitda-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{debt_equity_annual_5_average}%</span>
+                                                  </div>
+                                                  <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{debt_equity_ttm_prozent}%</span>
+                                                  </div>
+                                             </div>
+                                             <div class='ebitda-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-weight: bold; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Debt to Equity ➔ zeigt das Verhältnis der Schulden zum Eigenkapital.
+                                                  </span>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                        st.plotly_chart(fig1, use_container_width=True,config=config)
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+         
+                                   with col2:
+                              
+                                        try:
+                                             Debt_to_assets_annual_5_unpacked = Debt_to_assets_annual_10_unpacked[-5:]
+                                             Debt_to_assets_annual_5_average = "{:.2f}".format((sum(Debt_to_assets_annual_5_unpacked)/len(Debt_to_assets_annual_5_unpacked))*100)
+                                             Debt_to_assets_annual_10_unpacked = ["{:.2f}%".format(Debt_to_assets_annual_10_unpacked  * 100) for Debt_to_assets_annual_10_unpacked  in Debt_to_assets_annual_10_unpacked ]
+                                             debt_assets_ttm ="{:.2f}".format(debt_assets_ttm*100)
+                                        except Exception as e:
+                                             Debt_to_assets_annual_10_unpacked  = 0.0
+                                             Debt_to_assets_annual_5_average = 0.0
+                                             debt_assets_ttm = 0.0
+
+                                        data = pd.DataFrame({
+                                        'Date': date_annual,
+                                        'Debt to Assets': Debt_to_assets_annual_10_unpacked ,
+                                        })
+
+                                        
+                                        fig2 = px.bar(data, x='Date', y='Debt to Assets',
+                                                       text='Debt to Assets',  # Display the value on top of each bar
+                                                       labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                                       )
+     
+     
+
+                                        fig2.update_layout(
+                                        dragmode=False,  # Disable dragging for zooming
+                                        )
+                                        fig2.update_layout(
+                                        xaxis_type='category' 
+                                        )
+
+
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .ebitda-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .ebitda-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .ebitda-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .ebitda-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='ebitda-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Debt_to_assets_annual_5_average}%</span>
+                                                  </div>
+                                                  <div class='ebitda-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='ebitda-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{debt_assets_ttm}%</span>
+                                                  </div>
+                                             </div>
+                                             <div class='ebitda-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-weight: bold; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Debt to Assets ➔ zeigt das Verhältnis der Schulden zum Gesamtvermögen.
+                                                  </span>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                        st.plotly_chart(fig2, use_container_width=True,config=config)
+     
+
+
+               #-------------------------------------------------------------------------------------------------            
                                    try:
                                         ROIC_annual_10years = ["{:.2f}%".format(ROIC_annual_10_unpacked * 100) for ROIC_annual_10_unpacked in ROIC_annual_10_unpacked]
                                    except Exception as e:
