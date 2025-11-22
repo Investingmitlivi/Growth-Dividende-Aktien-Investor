@@ -14281,9 +14281,8 @@ if selected == "Stock Analysis Tool":
                                    'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked,
                                    'Research & Development':Research_Dev_annual_10_unpacked,
                                    'Stock Based Compansation':StockBased_Compansation_annual_10_annual,
-                                   'FCF Payout Ratio': [
-                                   round(abs(x) * 100, 2) 
-                                   for x in FCF_Payout_ratio_10_annual_unpacked] 
+                                   'FCF Payout Ratio': [round(abs(x) * 100, 2) for x in FCF_Payout_ratio_10_annual_unpacked],
+                                   'CapEx to Cash Flow Ratio':[round(abs(x) * 100, 2) for x in Capex_CashFlow_ratio_10_annual_unpacked],
                                   })
                                    
 
@@ -14376,6 +14375,16 @@ if selected == "Stock Analysis Tool":
                                    visible=True,  
                                    customdata=data['FCF Payout Ratio'], 
                                    hovertemplate='<b>%{x}</b><br>FCF Payout Ratio: %{customdata:.2f}%<extra></extra>'
+                                   ))
+                                   
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['CapEx to Cash Flow Ratio'],
+                                   name='CapEx to Cash Flow Ratio',
+                                   #marker_color='olive',
+                                   visible=True,  
+                                   customdata=data['CapEx to Cash Flow Ratio'], 
+                                   hovertemplate='<b>%{x}</b><br>CapEx to Cash Flow Ratio: %{customdata:.2f}%<extra></extra>'
                                    ))
                                    
 
@@ -15969,9 +15978,8 @@ if selected == "Stock Analysis Tool":
                                    'Operating Cash Flow': Net_Operating_CashFlow_quarter_10_unpacked,
                                    'Research & Development':Research_Dev_quarter_10,
                                    'Stock Based Compansation':StockBased_Compansation_quarter_10,
-                                   'FCF Payout Ratio': [
-                                   round(abs(x) * 100, 2) 
-                                   for x in FCF_Payout_ratio_10_quartal_unpacked] 
+                                   'FCF Payout Ratio': [round(abs(x) * 100, 2) for x in FCF_Payout_ratio_10_quartal_unpacked],
+                                   'CapEx to Cash Flow Ratio': [round(abs(x) * 100, 2) for x in Capex_CashFlow_ratio_10_quartal_unpacked] 
                                   })
 
                                    fig = go.Figure()
@@ -16060,6 +16068,17 @@ if selected == "Stock Analysis Tool":
                                    marker_color='olive',
                                    visible=True,
                                    hovertemplate='<b>%{x}</b><br>FCF Payout Ratio: %{y:.2f}%<extra></extra>' 
+                                   ))
+
+                                                                      
+                                   fig.add_trace(go.Bar(
+                                   x=data['Date'],
+                                   y=data['CapEx to Cash Flow Ratio'],
+                                   name='CapEx to Cash Flow Ratio',
+                                   #marker_color='olive',
+                                   visible=True,  
+                                   customdata=data['CapEx to Cash Flow Ratio'], 
+                                   hovertemplate='<b>%{x}</b><br>CapEx to Cash Flow Ratio: %{customdata:.2f}%<extra></extra>'
                                    ))
                                                                       
                                    fig.update_layout(
