@@ -13286,9 +13286,9 @@ if selected == "Stock Analysis Tool":
 
                                    colcf1,colcf2,colcf3,colcf9,colcf10,colcf11 = st.columns(6)
 
-                                   colcf1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_ttm}</div>", unsafe_allow_html=True)
-                                   colcf2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_5}</div>", unsafe_allow_html=True)
-                                   colcf3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>Price/OCF: <br> {P_OCF_10}</div>", unsafe_allow_html=True)
+                                   colcf1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>P/OCF: <br> {P_OCF_ttm}</div>", unsafe_allow_html=True)
+                                   colcf2.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>P/OCF: <br> {P_OCF_5}</div>", unsafe_allow_html=True)
+                                   colcf3.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>P/OCF: <br> {P_OCF_10}</div>", unsafe_allow_html=True)
 
                                    colfcf1,colfcf2,colfcf3,colfcf9,colfcf10,colfcf11 = st.columns(6)
                                    colfcf1.write(f"<div style='background-color:#4b71ff; padding: 10px; border-radius: 5px; color: white;'>P/E: <br> {pe_ttm}</div>", unsafe_allow_html=True)
