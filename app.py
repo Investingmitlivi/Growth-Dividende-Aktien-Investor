@@ -7654,6 +7654,7 @@ if selected == "Stock Analysis Tool":
                          'VAL':'Valaris Ltd',
                          'EQB:CA':'EQB Inc.',
                          'PUM:DE':'PUMA SE',
+                         'BC8:DE':'Bechtle AG',
 
                     }
  
@@ -7935,6 +7936,7 @@ if selected == "Stock Analysis Tool":
                     'PROF:GR':'PROF.AT',
                     'BESI:NL':'BESI.AS',
                     'PUM:DE':'PUM.DE',
+                    'BC8:DE':'BC8.DE',
                                      
                }
 
