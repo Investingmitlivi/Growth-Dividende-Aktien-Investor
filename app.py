@@ -7653,6 +7653,7 @@ if selected == "Stock Analysis Tool":
                          'DNP:PL':'Dino Polska SA',
                          'VAL':'Valaris Ltd',
                          'EQB:CA':'EQB Inc.',
+                         'PUM:DE':'PUMA SE',
 
                     }
  
@@ -7933,6 +7934,7 @@ if selected == "Stock Analysis Tool":
                     'QUEST:GR':'9IVA.F',
                     'PROF:GR':'PROF.AT',
                     'BESI:NL':'BESI.AS',
+                    'PUM:DE':'PUM.DE',
                                      
                }
 
