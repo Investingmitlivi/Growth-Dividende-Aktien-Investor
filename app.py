@@ -8983,6 +8983,7 @@ if selected == "Stock Analysis Tool":
                          Capex_revenue_ratio_10_annual_unpacked = np.round(Capex_revenue_ratio_10_annual_unpacked * 1, 4)
                          Capex_revenue_ratio_10_annual_unpacked =Capex_revenue_ratio_10_annual_unpacked.tolist()
 
+                         
 
 
                          Capex_CashFlow_ratio_10_annual_unpacked = np.abs(np.array(Capex_annual_10_unpacked)) / np.array(Net_Operating_CashFlow_annual_10_unpacked)
@@ -14266,156 +14267,174 @@ if selected == "Stock Analysis Tool":
 
                #.................................20  Dividend CAGR............................................    
                # 
-               #                 
-                                   try:
-                                        Research_Dev_annual_10_unpacked    = Research_Dev_annual_10_unpacked 
-                                        StockBased_Compansation_annual_10_annual =StockBased_Compansation_annual_10_unpacked  
+                                   @st.fragment
+                                   def display_fcashflow_year_slider():
+                                        try:
+                                             Research_Dev_annual_10_unpacked    = Research_Dev_annual_10_unpacked 
+                                             StockBased_Compansation_annual_10_annual =StockBased_Compansation_annual_10_unpacked  
 
-                                   except Exception as e:    
-                                        Research_Dev_annual_10_unpacked =  [0]*len_10_annual
-                                        StockBased_Compansation_annual_10_annual =  [0]*len_10_annual
+                                        except Exception as e:    
+                                             Research_Dev_annual_10_unpacked =  [0]*len_10_annual
+                                             StockBased_Compansation_annual_10_annual =  [0]*len_10_annual
 
 
-                                   data = pd.DataFrame({
-                                   'Date': date_annual,
-                                   'Dividends': [round(abs(x), 2) for x in Cash_Dividends_paid_Total_annual_10_unpacked],
-                                   'Free Cash Flow': FCF_annual_ten_unpacked,
-                                   'CapEx': [round(abs(x), 2) for x in Capex_annual_10_unpacked ],
-                                   'Net Income': net_income_annual_10_unpacked,
-                                   'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked,
-                                   'Research & Development':Research_Dev_annual_10_unpacked,
-                                   'Stock Based Compansation':StockBased_Compansation_annual_10_annual,
-                                   'FCF Payout Ratio': [round(abs(x) * 100, 2) for x in FCF_Payout_ratio_10_annual_unpacked],
-                                   'CapEx to Cash Flow Ratio':[round(abs(x) * 100, 2) for x in Capex_CashFlow_ratio_10_annual_unpacked],
-                                  })
+                                        data = pd.DataFrame({
+                                        'Date': date_annual,
+                                        'Dividends': [round(abs(x), 2) for x in Cash_Dividends_paid_Total_annual_10_unpacked],
+                                        'Free Cash Flow': FCF_annual_ten_unpacked,
+                                        'CapEx': [round(abs(x), 2) for x in Capex_annual_10_unpacked ],
+                                        'Net Income': net_income_annual_10_unpacked,
+                                        'Operating Cash Flow': Net_Operating_CashFlow_annual_10_unpacked,
+                                        'Research & Development':Research_Dev_annual_10_unpacked,
+                                        'Stock Based Compansation':StockBased_Compansation_annual_10_annual,
+                                        'FCF Payout Ratio': [round(abs(x) * 100, 2) for x in FCF_Payout_ratio_10_annual_unpacked],
+                                        'CapEx to Cash Flow Ratio':[round(abs(x) * 100, 2) for x in Capex_CashFlow_ratio_10_annual_unpacked],
+                                   })
+
+                                   # Year range slider function (EINGEFÜGT)
+                                        def year_range_slider(dates):
+                                             return st.select_slider(
+                                                  "Select year range:",
+                                                  options=dates,
+                                                  value=(dates[0], dates[-1]),
+                                                  key='cashflow_year_slider' # Key angepasst
+                                             )
+
+                                        # Get selected year range (EINGEFÜGT)
+                                        selected_start, selected_end = year_range_slider(data['Date'].tolist())
+
+                                        # Filter data (EINGEFÜGT)
+                                        start_idx = data['Date'].tolist().index(selected_start)
+                                        end_idx = data['Date'].tolist().index(selected_end) + 1
+                                        data_filtered = data.iloc[start_idx:end_idx]
+                                        
+
+                                        fig = go.Figure()
+
+                                        fig.add_trace(go.Bar(
+                                        x=data_filtered['Date'],
+                                        y=data_filtered['Operating Cash Flow'],
+                                        name='Operating Cash Flow',
+                                        marker_color='darkred',
+                                        visible=True,  # Default visible
+                                        customdata=data_filtered['Operating Cash Flow']/ 1e9,
+                                        hovertemplate='<b>%{x}</b><br>Operating Cash Flow: %{customdata}B<extra></extra>'
+                                        ))
+                                        #hovertemplate='<b>%{x}</b><br>Operating Cash Flow: %{customdata:.2f}<extra></extra>'
+
+                                        fig.add_trace(go.Bar(
+                                        x=data_filtered['Date'],
+                                        y=data_filtered['Net Income'],
+                                        name='Net Income',
+                                        marker_color='indigo',
+                                        visible=True,  # Default visible
+                                        customdata=data_filtered['Net Income']/ 1e9,
+                                        hovertemplate='<b>%{x}</b><br>Net Income: %{customdata}B<extra></extra>'
+                                        ))
+                                        
+                                        fig.add_trace(go.Bar(
+                                        x=data_filtered['Date'],
+                                        y=data_filtered['Free Cash Flow'],
+                                        name='Free Cash Flow',
+                                        marker_color='olive',
+                                        visible=True,  # Default visible
+                                        customdata=data_filtered['Free Cash Flow']/ 1e9,
+                                        hovertemplate='<b>%{x}</b><br>Free Cash Flow: %{customdata}B<extra></extra>'
+                                        ))
+
+                                        fig.add_trace(go.Bar(
+                                        x=data_filtered['Date'],
+                                        y=data_filtered['Stock Based Compansation'],
+                                        name='Stock Based Compansation',
+                                   
+                                        visible=True,  
+                                        customdata=data_filtered['Stock Based Compansation']/ 1e9,
+                                        hovertemplate='<b>%{x}</b><br>Stock Based Compansation: %{customdata}B<extra></extra>'
+                                        ))
                                    
 
-                                   fig = go.Figure()
-
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['Operating Cash Flow'],
-                                   name='Operating Cash Flow',
-                                   marker_color='darkred',
-                                   visible=True,  # Default visible
-                                   customdata=data['Operating Cash Flow']/ 1e9,
-                                   hovertemplate='<b>%{x}</b><br>Operating Cash Flow: %{customdata}B<extra></extra>'
-                                   ))
-                                   #hovertemplate='<b>%{x}</b><br>Operating Cash Flow: %{customdata:.2f}<extra></extra>'
-
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['Net Income'],
-                                   name='Net Income',
-                                   marker_color='indigo',
-                                   visible=True,  # Default visible
-                                   customdata=data['Net Income']/ 1e9,
-                                   hovertemplate='<b>%{x}</b><br>Net Income: %{customdata}B<extra></extra>'
-                                   ))
-                                   
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['Free Cash Flow'],
-                                   name='Free Cash Flow',
-                                   marker_color='olive',
-                                   visible=True,  # Default visible
-                                   customdata=data['Free Cash Flow']/ 1e9,
-                                   hovertemplate='<b>%{x}</b><br>Free Cash Flow: %{customdata}B<extra></extra>'
-                                   ))
-
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['Stock Based Compansation'],
-                                   name='Stock Based Compansation',
-                                  
-                                   visible=True,  
-                                   customdata=data['Stock Based Compansation']/ 1e9,
-                                   hovertemplate='<b>%{x}</b><br>Stock Based Compansation: %{customdata}B<extra></extra>'
-                                   ))
-                                  
-
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['Research & Development'],
-                                   name='Research & Development',
-                                   visible=True,  
-                                   customdata=data['Research & Development']/ 1e9,
-                                   hovertemplate='<b>%{x}</b><br>Research & Development: %{customdata}B<extra></extra>'
-                                   ))
+                                        fig.add_trace(go.Bar(
+                                        x=data_filtered['Date'],
+                                        y=data_filtered['Research & Development'],
+                                        name='Research & Development',
+                                        visible=True,  
+                                        customdata=data_filtered['Research & Development']/ 1e9,
+                                        hovertemplate='<b>%{x}</b><br>Research & Development: %{customdata}B<extra></extra>'
+                                        ))
 
 
 
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['CapEx'],
-                                   name='CapEx',
-                                   marker_color='black',
-                                   visible=True, 
-                                   customdata=data['CapEx']/ 1e9,
-                                   hovertemplate='<b>%{x}</b><br>CapEx: %{customdata}B<extra></extra>'
-                                   ))
+                                        fig.add_trace(go.Bar(
+                                        x=data_filtered['Date'],
+                                        y=data_filtered['CapEx'],
+                                        name='CapEx',
+                                        marker_color='black',
+                                        visible=True, 
+                                        customdata=data_filtered['CapEx']/ 1e9,
+                                        hovertemplate='<b>%{x}</b><br>CapEx: %{customdata}B<extra></extra>'
+                                        ))
 
 
 
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['Dividends'],
-                                   name='Dividends Paid',
-                                   marker_color='green',
-                                   visible=True,  # Default visible
-                                   customdata=data['Dividends']/ 1e9,
-                                   hovertemplate='<b>%{x}</b><br>Dividends: %{customdata}B<extra></extra>'
-                                   ))
-                                   
-                                   fig.update_layout(
-                                   xaxis_type='category' 
-                                   )
+                                        fig.add_trace(go.Bar(
+                                        x=data_filtered['Date'],
+                                        y=data_filtered['Dividends'],
+                                        name='Dividends Paid',
+                                        marker_color='green',
+                                        visible=True,  # Default visible
+                                        customdata=data_filtered['Dividends']/ 1e9,
+                                        hovertemplate='<b>%{x}</b><br>Dividends: %{customdata}B<extra></extra>'
+                                        ))
+                                        
+                                        fig.update_layout(
+                                        xaxis_type='category' 
+                                        )
 
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['FCF Payout Ratio'],
-                                   name='FCF Payout Ratio',
-                                   marker_color='olive',
-                                   visible=True,  
-                                   customdata=data['FCF Payout Ratio'], 
-                                   hovertemplate='<b>%{x}</b><br>FCF Payout Ratio: %{customdata:.2f}%<extra></extra>'
-                                   ))
-                                   
-                                   fig.add_trace(go.Bar(
-                                   x=data['Date'],
-                                   y=data['CapEx to Cash Flow Ratio'],
-                                   name='CapEx to Cash Flow Ratio',
-                                   #marker_color='olive',
-                                   visible=True,  
-                                   customdata=data['CapEx to Cash Flow Ratio'], 
-                                   hovertemplate='<b>%{x}</b><br>CapEx to Cash Flow Ratio: %{customdata:.2f}%<extra></extra>'
-                                   ))
-                                   
+                                        fig.add_trace(go.Bar(
+                                        x=data_filtered['Date'],
+                                        y=data_filtered['FCF Payout Ratio'],
+                                        name='FCF Payout Ratio',
+                                        marker_color='olive',
+                                        visible=True,  
+                                        customdata=data_filtered['FCF Payout Ratio'], 
+                                        hovertemplate='<b>%{x}</b><br>FCF Payout Ratio: %{customdata:.2f}%<extra></extra>'
+                                        ))
+                                        
+                                        fig.add_trace(go.Bar(
+                                        x=data_filtered['Date'],
+                                        y=data_filtered['CapEx to Cash Flow Ratio'],
+                                        name='CapEx to Cash Flow Ratio',
+                                        #marker_color='olive',
+                                        visible=True,  
+                                        customdata=data_filtered['CapEx to Cash Flow Ratio'], 
+                                        hovertemplate='<b>%{x}</b><br>CapEx to Cash Flow Ratio: %{customdata:.2f}%<extra></extra>'
+                                        ))
+                                        
 
-                           
-                                   fig.update_layout(
-                                        barmode='group', xaxis_title='Date',
-                                                  )
-                                   fig.update_layout(
-                                   legend=dict (
-                                   orientation="h",
-                                   yanchor="top",
-                                   y=1.1,
-                                   xanchor="center",
-                                   x=0.5
-                                   )
-                                   )
+                              
+                                        fig.update_layout(
+                                             barmode='group', xaxis_title='Date',
+                                                       )
+                                        fig.update_layout(
+                                        legend=dict (
+                                        orientation="h",
+                                        yanchor="top",
+                                        y=1.1,
+                                        xanchor="center",
+                                        x=0.5
+                                        )
+                                        )
 
-                                   fig.update_traces(texttemplate='%{y}', textposition='inside')
-                                   
+                                        fig.update_traces(texttemplate='%{y}', textposition='inside')
+                                        
 
-                                   fig.update_layout(
-                                   dragmode=False, 
-                                   )
-                                                                 
+                                        fig.update_layout(
+                                        dragmode=False, 
+                                        )
+                                                                      
 
-                                   st.plotly_chart(fig,use_container_width=True,config=config)
-                                   #with col2:
+                                        st.plotly_chart(fig,use_container_width=True,config=config)
+                                   display_fcashflow_year_slider()
                #------------------------------------------------------------------------------------------------------------------------------------
                                         
                
