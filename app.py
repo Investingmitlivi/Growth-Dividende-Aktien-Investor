@@ -7689,7 +7689,7 @@ if selected == "Stock Analysis Tool":
                def clear_cache():
                     st.cache_data.clear()
 
-               @st.cache_data(show_spinner=False,ttl=43200) #12 Stunden
+               @st.cache_data(show_spinner=False,ttl=10800) #3 Stunden= 3 * 60 *60 = 10800 Sekunden
                def fetch_data_from_api(ticker):
                     try:
                          url = f"{base_url}{ticker}?api_key={api_key}"
