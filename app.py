@@ -149,7 +149,7 @@ base_currency_4 = "PLN"
 
 
 #@st.cache_data(show_spinner=False, ttl=86400)  # 24 hour cache
-@st.cache_data(show_spinner=False, ttl=43200)  # 12 hour cache
+@st.cache_data(show_spinner=False, ttl=10800)
 def get_exchange_rate(base_currency, target_currency):
     """
     Get exchange rate from specified currency to EUR
@@ -7714,7 +7714,7 @@ if selected == "Stock Analysis Tool":
                #st.write(data)
 
                
-               @st.cache_data(show_spinner=False, ttl=3600)
+               @st.cache_data(show_spinner=False, ttl=10800)
                def store_financial_data(data, ticker):
 
                     if f'{ticker}_financial_data_stored' in st.session_state:
@@ -8277,7 +8277,7 @@ if selected == "Stock Analysis Tool":
           ############################################################################################################
 
 
-               @st.cache_data(show_spinner=False, ttl=3600)
+               @st.cache_data(show_spinner=False, ttl=10800)
                def calculate_stock_performance(ticker):
                     period_mapping = {
                          "5d": "5 Days",
@@ -11037,7 +11037,7 @@ if selected == "Stock Analysis Tool":
                          st.markdown(contact_form, unsafe_allow_html = True)
           #################################################################################
                
-                         @st.cache_data(show_spinner=False,ttl=86400)  # 24-hour cache
+                         @st.cache_data(show_spinner=False,ttl=10800)  # 24-hour cache
                          def local_css(file_name):
                                    with open(file_name)as f:
                                         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)      
@@ -12696,7 +12696,7 @@ if selected == "Stock Analysis Tool":
                                         
                
 
-                              #@st.cache_data(show_spinner=False,ttl=3600) 
+                              #@st.cache_data(show_spinner=False,ttl=10800)
                               def display_growth_rate_formexer():
 
                                    with st.form(key='growth_rate_formex'):
@@ -13095,7 +13095,7 @@ if selected == "Stock Analysis Tool":
                with st.container():   
                     with Reversed_DCF:                         
                          # Discounted Cash Flow function with reverse DCF logic
-                         #@st.cache_data(show_spinner=False, ttl=3600) 
+                         #@st.cache_data(show_spinner=False, ttl=10800)
                          @st.fragment                                             
                          def Reversed_DCF():
                               
@@ -16173,7 +16173,7 @@ if selected == "Stock Analysis Tool":
 
 
 
-                         @st.cache_data(show_spinner=False, ttl=86400)  # 24 hour cache
+                         @st.cache_data(show_spinner=False, ttl=10800)
                          def main():
                               
                               # Data from the PowerPoint slide
