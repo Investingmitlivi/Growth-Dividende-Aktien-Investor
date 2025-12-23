@@ -9230,6 +9230,7 @@ if selected == "Stock Analysis Tool":
                                              st.session_state[f'{ticker}_five_yrs_roce'],
                                              st.session_state[f'{ticker}_total_equity'],
                                              st.session_state[f'{ticker}_net_income_margin_10_unpacked'],
+                                             st.session_state[f'{ticker}_Net_income_margin_10_quarter_unpacked'],
                                              st.session_state[f'{ticker}_net_income_margin_annual5_unpacked'],
                                              st.session_state[f'{ticker}_net_income_margin_1'],
                                              st.session_state[f'{ticker}_FCF_Margin_annual_10unpacked'],
@@ -9291,6 +9292,7 @@ if selected == "Stock Analysis Tool":
                               Average_total_equity_annual = (sum(Total_Equity_annual_one) / len(Total_Equity_annual_one)) / 1000000000
                          
                               Net_income_margin_10_unpacked = annual_data['net_income_margin'][-10:]
+                              Net_income_margin_10_quarter_unpacked = quarterly_data['net_income_margin'][-10:]
 
                               Net_income_margin_annual5_unpacked = annual_data['net_income_margin'][-5:]
                               
@@ -9362,6 +9364,7 @@ if selected == "Stock Analysis Tool":
                               st.session_state[f'{ticker}_five_yrs_roce'] = five_yrs_ROCE
                               st.session_state[f'{ticker}_total_equity'] = Average_total_equity_annual
                               st.session_state[f'{ticker}_net_income_margin_10_unpacked'] = Net_income_margin_10_unpacked
+                              st.session_state[f'{ticker}_Net_income_margin_10_quarter_unpacked'] = Net_income_margin_10_quarter_unpacked
                               st.session_state[f'{ticker}_net_income_margin_annual5_unpacked'] = Net_income_margin_annual5_unpacked
                               st.session_state[f'{ticker}_net_income_margin_1'] = Net_income_margin_1
                               st.session_state[f'{ticker}_FCF_Margin_annual_10unpacked'] = FCF_Margin_annual_10unpacked
@@ -9408,7 +9411,7 @@ if selected == "Stock Analysis Tool":
 
                               return (
                                    average_ROA_annual_ttm, One_YR_ROCE, five_yrs_ROCE, Average_total_equity_annual,
-                                   Net_income_margin_10_unpacked, Net_income_margin_annual5_unpacked, Net_income_margin_1,
+                                   Net_income_margin_10_unpacked, Net_income_margin_10_quarter_unpacked, Net_income_margin_annual5_unpacked, Net_income_margin_1,
                                    FCF_Margin_annual_10unpacked, FCF_Margin_5, FCF_Margin_1,
                                    debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,Price_to_tangible_book_annual_5_unpacked,
                                    EBITDA_growth_annual_10_unpacked, Price_to_book_5_annual_unpacked,Price_to_book_10_annual_unpacked, 
@@ -9431,7 +9434,7 @@ if selected == "Stock Analysis Tool":
 
                          # Example call to the function
                          (average_ROA_annual_ttm, One_YR_ROCE, five_yrs_ROCE, Average_total_equity_annual,
-                         Net_income_margin_10_unpacked, Net_income_margin_annual5_unpacked, Net_income_margin_1,
+                         Net_income_margin_10_unpacked, Net_income_margin_10_quarter_unpacked, Net_income_margin_annual5_unpacked, Net_income_margin_1,
                          FCF_Margin_annual_10unpacked, FCF_Margin_5, FCF_Margin_1,
                          debt_equity_annual_10_unpacked, Price_to_tangible_book_annual_10_unpacked,Price_to_tangible_book_annual_5_unpacked,
                          EBITDA_growth_annual_10_unpacked,Price_to_book_5_annual_unpacked,Price_to_book_10_annual_unpacked, 
@@ -16130,6 +16133,310 @@ if selected == "Stock Analysis Tool":
                                                                  
 
                                    st.plotly_chart(fig,use_container_width=True,config=config)
+
+
+
+                                   #------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                   
+                               
+                                   gross_margin_quartar_10 = ["{:.2f}%".format(gross_margin_quarter10_unpacked * 100) for gross_margin_quarter10_unpacked in gross_margin_quarter10_unpacked]
+                                   data = pd.DataFrame({
+                                   'Date': date_quarter,
+                                   'Gross Margin': gross_margin_quartar_10,
+                                   })
+
+                                   fig1 = px.bar(data, x='Date', y='Gross Margin',
+                                             text='Gross Margin',  # Display the value on top of each bar
+                                             labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                             #title=title_text
+                                             ) 
+
+
+                                   fig1.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+
+                                   fig1.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
+                                   
+                                   
+                                   Operating_Margin_10_quartal = ["{:.2f}%".format(operating_margin_quater10_unpacked * 100) for operating_margin_quater10_unpacked in operating_margin_quater10_unpacked]
+                                   
+                                        
+                                   data = pd.DataFrame({
+                                   'Date': date_quarter,
+                                   'Operating Margin': Operating_Margin_10_quartal,
+                                   })
+                                   col1, col2 = st.columns(2)
+                                   # Create the figure without a title
+                                   fig2 = px.bar(data, x='Date', y='Operating Margin',
+                                             text='Operating Margin',  # Display the value on top of each bar
+                                             labels={'value': 'Amount(%)'}  # Include the percentage sign in the label
+                                             )
+ 
+
+                                   fig2.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+                                        
+                                   fig2.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
+                              #col1, col2 = st.columns(2)
+                                   with col1:
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .gross-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .gross-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .gross-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .gross-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='gross-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='gross-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Gross Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_yrs_average_gross_margin}</span>
+                                                  </div>
+                                                  <div class='gross-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='gross-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Gross Margin: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{average_gross_margin_quater1}</span>
+                                                  </div>
+                                             </div>
+                                             <div class='gross-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Die Bruttogewinnmarge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) vom Umsatz übrig bleibt.                                                  </span>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+
+                                        st.plotly_chart(fig1,use_container_width=True,config=config)      
+
+
+                                   with col2:
+
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .operating-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .operating-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .operating-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .operating-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='operating-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='operating-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Operating Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_yrs_average_operating_margin}</span>
+                                                  </div>
+                                                  <div class='operating-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='operating-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Operating Margin: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{average_operating_margin1_quarter}</span>
+                                                  </div>
+                                             </div>
+                                             <div class='operating-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Die Operative Marge ist der Gewinn, der nach Abzug der Herstellkosten (COGS) und der Betriebskosten vom Umsatz übrig bleibt. </span>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                        st.plotly_chart(fig2,use_container_width=True,config=config)
+
+
+               #------------------------------------------------------------  
+
+
+                                   try:
+                                        
+                                        Net_income_margin_quarter_10_ = ["{:.2f}%".format(Net_income_margin_10_quarter_unpacked * 100) for Net_income_margin_10_quarter_unpacked in Net_income_margin_10_quarter_unpacked]
+                                   except Exception as e:
+                                        Net_income_margin_quarter_10_ = 0.0
+                                        
+                                   data = pd.DataFrame({
+                                   'Date': date_quarter,
+                                   'Net Profit Margin': Net_income_margin_quarter_10_,
+                                   })
+
+
+                                   fig1 = px.bar(data, x='Date', y='Net Profit Margin',
+                                             text='Net Profit Margin',  # Display the value on top of each bar
+                                             labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                             #title=title_text
+                                             )
+
+                                   fig1.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+
+                                   fig1.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
+                                   try:
+                                        
+                                        FCF_Margin_quarter_10 = ["{:.2f}%".format(FCF_Margin_quarter_10_unpacked * 100) for FCF_Margin_quarter_10_unpacked in FCF_Margin_quarter_10_unpacked]
+                                   except Exception as e:
+                                        FCF_Margin_quarter_10 = 0.0
+                                        
+                                   data = pd.DataFrame({
+                                   'Date': date_quarter,
+                                   'FCF Margin': FCF_Margin_quarter_10,
+                                   })
+
+                                   
+                              
+                                   fig2 = px.bar(data, x='Date', y='FCF Margin',
+                                             text='FCF Margin',  # Display the value on top of each bar
+                                             labels={'value': 'Amount(%)'},  # Include the percentage sign in the label
+                                             ) 
+                               
+
+                                   fig2.update_layout(
+                                   dragmode=False,  # Disable dragging for zooming
+                                   )
+
+                                   fig2.update_layout(
+                                   xaxis_type='category' 
+                                   )
+
+                                   col1, col2 = st.columns(2)
+                                   with col1:
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .fcf-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .fcf-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .fcf-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .fcf-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin-bottom: 0.5vw;'>
+                                             <div class='fcf-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='fcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y FCF Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{FCF_Margin_5}%</span>
+                                                  </div>
+                                                  <div class='fcf-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='fcf-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current FCF Margin: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{FCF_Margin_1:.2f}%</span>
+                                                  </div>
+                                             </div>
+                                             <div class='fcf-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Die FCF-Marge zeigt, wie effizient ein Unternehmen Umsatz in freien Cashflow umwandelt
+                                                  </span>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+
+                                        st.plotly_chart(fig2,use_container_width=True,config=config)
+
+                                   with col2:
+                                        st.markdown(f"""
+                                        <style>
+                                             @media (max-width: 768px) {{
+                                                  .net-container {{
+                                                       flex-direction: column;
+                                                       align-items: center;
+                                                       gap: 4px;
+                                                  }}
+                                                  .net-item {{
+                                                       padding: 3px 0 !important;
+                                                       width: 100%;
+                                                       text-align: center;
+                                                  }}
+                                                  .net-divider {{
+                                                       border-left: none !important;
+                                                       border-top: 1px solid #e0e0e0;
+                                                       width: 60%;
+                                                       height: 1px !important;
+                                                       margin: 3px auto !important;
+                                                  }}
+                                                  .net-desc {{
+                                                       margin-top: 3px !important;
+                                                       font-size: 12px !important;
+                                                  }}
+                                             }}
+                                        </style>
+                                        <div style='border: 1px solid #f0f2f6; padding: 0.6vw; border-radius: 8px; margin: 0.5vw 0 0 0;'>
+                                             <div class='net-container' style='display: flex; justify-content: space-around; align-items: baseline; flex-wrap: wrap;'>
+                                                  <div class='net-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>5Y Net Margin Y/Y: </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{five_yrs_Nettomarge}%</span>
+                                                  </div>
+                                                  <div class='net-divider' style='border-left: 1px solid #e0e0e0; height: 18px; margin: 0 0.4vw;'></div>
+                                                  <div class='net-item' style='padding: 0 0.8vw; white-space: nowrap;'>
+                                                       <span style='font-size: clamp(10px, 1.2vw, 13px); font-style: italic; color: dodgerblue;'>Current Net Margin : </span>
+                                                       <span style='font-size: clamp(13px, 1.6vw, 16px); font-weight: bold;'>{Net_margin_ttm}</span>
+                                                  </div>
+                                             </div>
+                                             <div class='net-desc' style='margin-top: 0.5vw; text-align: center;'>
+                                                  <span style='font-family: Calibri; font-style: italic; font-size: clamp(10px, 1.1vw, 13px);'>
+                                                  Die Nettogewinnmarge zeigt den Gewinn nach Abzug aller Kosten vom Umsatz
+                                                  </span>
+                                             </div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
+                                        st.plotly_chart(fig1,use_container_width=True,config=config)
                                         
                #...........................................................................................................
   
