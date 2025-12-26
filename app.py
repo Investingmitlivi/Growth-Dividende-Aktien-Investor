@@ -7655,6 +7655,7 @@ if selected == "Stock Analysis Tool":
                          'EQB:CA':'EQB Inc.',
                          'PUM:DE':'PUMA SE',
                          'BC8:DE':'Bechtle AG',
+                         'DTE:DE':'Deutsche Telekom AG',
 
                     }
  
@@ -7937,6 +7938,7 @@ if selected == "Stock Analysis Tool":
                     'BESI:NL':'BESI.AS',
                     'PUM:DE':'PUM.DE',
                     'BC8:DE':'BC8.DE',
+                    'DTE:DE':'DTE.DE',
                                      
                }
 
